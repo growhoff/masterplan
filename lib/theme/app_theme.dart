@@ -37,6 +37,6 @@ ThemeData createTheme() {
               ),
             ),
           )
-        ),        
+        ),
         );
 }
