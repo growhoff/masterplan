@@ -5,6 +5,8 @@ import 'package:master_plan/presentation/pages/login/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/login/login_page.dart';
 import 'package:master_plan/presentation/pages/master/maste_page.dart';
 import 'package:master_plan/presentation/pages/operator/operator_page.dart';
+import 'package:master_plan/presentation/pages/operator/pages/queue/queue_page.dart';
+import 'package:master_plan/presentation/pages/operator/pages/work/work_page.dart';
 import '../../theme/theme.dart';
 import 'bloc/cubit.dart';
 
@@ -25,7 +27,9 @@ class MyApp extends StatelessWidget {
         BlocProvider<CubitMain>(create: (context) => CubitMain()),
         BlocProvider<CubitLogin>(create: (context) => CubitLogin()),
       ], 
-      child: const LoginPage(),
+      // child: const LoginPage(),
+
+      child: ChiefPage(),
       )
     );
   }

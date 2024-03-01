@@ -30,7 +30,7 @@ ThemeData createTheme() {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(
-            padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 16, horizontal: 68)),
+            padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 16, horizontal: 72)),
             shape: MaterialStateProperty.all(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
