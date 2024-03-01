@@ -4,6 +4,7 @@ import 'package:master_plan/presentation/pages/chief/chief_page.dart';
 import 'package:master_plan/presentation/pages/login/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/login/login_page.dart';
 import 'package:master_plan/presentation/pages/master/maste_page.dart';
+import 'package:master_plan/presentation/pages/master/pages/choosingOperator/choosing_operator_page.dart';
 import 'package:master_plan/presentation/pages/operator/operator_page.dart';
 import 'package:master_plan/presentation/pages/operator/pages/queue/queue_page.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/work_page.dart';
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
         '/operatorPage':(BuildContext context) => const OperatorPage(),
         '/masterPage':(BuildContext context) => const MasterPage(),
         '/chiefPage':(BuildContext context) => const ChiefPage(),
+        '/choosingOperatorPage':(BuildContext context) => const ChoosingOperatorPage(),
       },
       home: MultiBlocProvider(providers: [
         BlocProvider<CubitMain>(create: (context) => CubitMain()),
@@ -29,7 +31,7 @@ class MyApp extends StatelessWidget {
       ], 
       // child: const LoginPage(),
 
-      child: ChiefPage(),
+      child: MasterPage(),
       )
     );
   }
