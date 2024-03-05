@@ -24,11 +24,20 @@ class ContentOperator extends StatelessWidget {
           title: const Text('Оператор'),
           // actions: const[ Center(child: Text('userInfo.number / userInfo.fio / userInfo.position / userInfo.regionNumber'))],
         ),
-        body:  const SafeArea(
+        body:  SafeArea(
           child: Padding(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             child: Center(
-              child: ButtonCustom()
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const ButtonCustom(),
+                  const SizedBox(height: 8),
+                  ElevatedButton(onPressed: (){}, child: const Text('Календарь смен')),
+                  const SizedBox(height: 8),
+                  ElevatedButton(onPressed: (){}, child: const Text('Очередь деталей')),
+                ],
+              ),
             )
             ),
         ),
@@ -52,8 +61,10 @@ class _ButtonCustomState extends State<ButtonCustom> {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
+        if (!isStart) Navigator.pushNamed(context, '/workPage');
         isStart = !isStart;
         setState(() {});
+        
       }, 
       child: Text(!isStart ? 'Начать смену' : 'Закончить смену'),
     );

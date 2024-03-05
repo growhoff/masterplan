@@ -3,7 +3,7 @@ import 'package:master_plan/presentation/pages/master/data/data_master.dart';
 
 class NavBarCustom extends StatefulWidget {
   const NavBarCustom({super.key});
-
+  
   @override
   State<NavBarCustom> createState() => _NavBarCustomState();
 }

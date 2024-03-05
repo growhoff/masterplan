@@ -36,7 +36,7 @@ class ContentListWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
              children: [
                Text('equipmentName $index'),
-               const Icon(Icons.hail_sharp)
+               const Icon(Icons.circle)
              ],
            ),
            const SizedBox(height: 8),

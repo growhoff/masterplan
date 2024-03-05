@@ -4,9 +4,11 @@ import 'package:master_plan/presentation/pages/chief/chief_page.dart';
 import 'package:master_plan/presentation/pages/login/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/login/login_page.dart';
 import 'package:master_plan/presentation/pages/master/maste_page.dart';
+import 'package:master_plan/presentation/pages/master/pages/addOperation/add_operation_page.dart';
 import 'package:master_plan/presentation/pages/master/pages/choosingOperator/choosing_operator_page.dart';
 import 'package:master_plan/presentation/pages/master/widgets/navbar_custom.dart';
 import 'package:master_plan/presentation/pages/operator/operator_page.dart';
+import 'package:master_plan/presentation/pages/operator/pages/work/work_page.dart';
 import '../../theme/theme.dart';
 import 'bloc/cubit.dart';
 
@@ -23,13 +25,15 @@ class MyApp extends StatelessWidget {
         '/masterPage':(BuildContext context) => const MasterPage(),
         '/chiefPage':(BuildContext context) => const ChiefPage(),
         '/choosingOperatorPage':(BuildContext context) => const ChoosingOperatorPage(),
+        '/workPage':(BuildContext context) => const WorkPage(),
+        '/navBarCustom':(BuildContext context) => const NavBarCustom(),
+        '/addOperationPage':(BuildContext context) => const AddOperationPage(),
       },
       home: MultiBlocProvider(providers: [
         BlocProvider<CubitMain>(create: (context) => CubitMain()),
         BlocProvider<CubitLogin>(create: (context) => CubitLogin()),
       ], 
       // child: const LoginPage(),
-
       child: const NavBarCustom(),
       )
     );
