@@ -1,10 +1,10 @@
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class StageDetailsTable extends SupabaseTable{
+class ChangeTable extends SupabaseTable{
 
-  final table = Supabase.instance.client.from('f_stage_details');
-  
+  final table = Supabase.instance.client.from('f_change');
+
   @override
   Future<void> delete() {
     // TODO: implement delete
@@ -19,7 +19,8 @@ class StageDetailsTable extends SupabaseTable{
 
   @override
   Future<List<Map<String, dynamic>>> select() {
-    return table.select();
+    // TODO: implement select
+    throw UnimplementedError();
   }
 
   @override

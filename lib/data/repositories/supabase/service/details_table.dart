@@ -3,7 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class DetailsTable extends SupabaseTable{
 
-  final table = Supabase.instance.client.from('details');
+  final table = Supabase.instance.client.from('f_details');
   
   @override
   Future<void> delete() {

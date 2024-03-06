@@ -52,13 +52,13 @@ class ContentLogin extends StatelessWidget {
                   width: double.maxFinite,
                   child: ElevatedButton(
                       onPressed: () async{
-                        final isResult = await context.read<CubitMain>().save(numberController.text, passwordController.text);
+                        // final isResult = await context.read<CubitMain>().save(numberController.text, passwordController.text);
                         // showDialog
-                        switch(isResult){
-                          case 'Начальник': if (context.mounted) Navigator.pushNamed(context, '/chiefPage');
-                          case 'Оператор': if (context.mounted) Navigator.pushNamed(context, '/operatorPage');
-                          case 'Мастер': if (context.mounted) Navigator.pushNamed(context, '/masterPage');
-                        }
+                        // switch(isResult){
+                        //   case 'Начальник': if (context.mounted) Navigator.pushNamed(context, '/chiefPage');
+                        //   case 'Оператор': if (context.mounted) Navigator.pushNamed(context, '/operatorPage');
+                        //   case 'Мастер': if (context.mounted) Navigator.pushNamed(context, '/masterPage');
+                        // }
                         
                         numberController.clear();
                         passwordController.clear();

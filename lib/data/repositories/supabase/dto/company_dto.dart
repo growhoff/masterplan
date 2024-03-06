@@ -1,17 +1,21 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 
 class CompanyDTO {
+  final int id;
   final String shortName;
   final String fullName;
-
   CompanyDTO({
+    required this.id,
     required this.shortName,
     required this.fullName,
   });
 
+
+
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      'id': id,
       'short_name': shortName,
       'full_name': fullName,
     };
@@ -19,6 +23,7 @@ class CompanyDTO {
 
   factory CompanyDTO.fromMap(Map<String, dynamic> map) {
     return CompanyDTO(
+      id: map['id'] as int,
       shortName: map['short_name'] as String,
       fullName: map['full_name'] as String,
     );

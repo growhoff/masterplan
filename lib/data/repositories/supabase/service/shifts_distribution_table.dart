@@ -3,7 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ShiftsDistributionTable extends SupabaseTable{
 
-  final table = Supabase.instance.client.from('shifts_distribution');
+  final table = Supabase.instance.client.from('f_shifts_distribution');
   
   @override
   Future<void> delete() {

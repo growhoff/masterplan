@@ -1,9 +1,9 @@
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class StageDetailsTable extends SupabaseTable{
+class OperatorOperationsTable extends SupabaseTable{
 
-  final table = Supabase.instance.client.from('f_stage_details');
+  final table = Supabase.instance.client.from('f_operator_operations');
   
   @override
   Future<void> delete() {

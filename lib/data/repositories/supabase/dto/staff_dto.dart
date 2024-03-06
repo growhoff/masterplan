@@ -1,41 +1,34 @@
 import 'dart:convert';
 
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+
 class StaffDTO {
-  final String number;
+  final int id;
+  final String login;
   final String password;
-  final String fio;
-  final int region;
-  final String position;
-  final String company;
+  final int userId;
   StaffDTO({
-    required this.number,
+    required this.id,
+    required this.login,
     required this.password,
-    required this.fio,
-    required this.region,
-    required this.position,
-    required this.company,
+    required this.userId,
   });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'number': number,
+      'id': id,
+      'login': login,
       'password': password,
-      'FIO': fio,
-      'region': region,
-      'position': position,
-      'company': company,
+      'user_id': userId,
     };
   }
 
   factory StaffDTO.fromMap(Map<String, dynamic> map) {
     return StaffDTO(
-      number: map['number'] as String,
+      id: map['id'] as int,
+      login: map['login'] as String,
       password: map['password'] as String,
-      fio: map['FIO'] as String,
-      region: map['region'] as int,
-      position: map['position'] as String,
-      company: map['company'] as String,
+      userId: map['user_id'] as int,
     );
   }
 

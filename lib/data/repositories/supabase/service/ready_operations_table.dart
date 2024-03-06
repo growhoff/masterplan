@@ -3,7 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ReadyOperationsTable extends SupabaseTable{
 
-  final table = Supabase.instance.client.from('ready_operations');
+  final table = Supabase.instance.client.from('f_ready_operations');
   
   @override
   Future<void> delete() {

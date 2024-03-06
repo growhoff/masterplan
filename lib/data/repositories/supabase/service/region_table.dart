@@ -3,7 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RegionTable extends SupabaseTable{
 
-  final table = Supabase.instance.client.from('region');
+  final table = Supabase.instance.client.from('f_region');
   
   @override
   Future<void> delete() {
