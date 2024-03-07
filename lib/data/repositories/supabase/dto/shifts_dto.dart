@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
+
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
-class ShiftsDTO {
+class ShiftsDTO extends Dto{
   final int id;
   final int userId;
   final DateTime timeStart;
