@@ -1,20 +1,19 @@
+import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class StaffTable extends SupabaseTable{
 
-  final table = Supabase.instance.client.from('staff');
+  final table = Supabase.instance.client.from('f_staff');
   
   @override
-  Future<void> delete() {
-    // TODO: implement delete
-    throw UnimplementedError();
+  Future<void> delete(int id) {
+    return table.delete().eq('id', id);
   }
 
   @override
-  Future<void> insert() {
-    // TODO: implement insert
-    throw UnimplementedError();
+  Future<void> insert(Dto dto) {
+    return table.insert(dto);
   }
 
   @override
@@ -27,9 +26,8 @@ class StaffTable extends SupabaseTable{
   }
 
   @override
-  Future<void> update() {
-    // TODO: implement update
-    throw UnimplementedError();
+  Future<void> update(int id, Dto dto) {
+   return table.update({'name': '1'}).eq('id', id);
   }
 
 }

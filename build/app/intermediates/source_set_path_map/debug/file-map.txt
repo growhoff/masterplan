@@ -1,0 +1,18 @@
+com.example.master_plan.app-jetified-window-1.0.0-beta04-0 C:\Users\user\.gradle\caches\transforms-3\25cee5f028ac2a6b79fd6278ff5b59e2\transformed\jetified-window-1.0.0-beta04\res
+com.example.master_plan.app-jetified-annotation-experimental-1.3.0-1 C:\Users\user\.gradle\caches\transforms-3\937d6edc8055f6701a18eeac1a67afe6\transformed\jetified-annotation-experimental-1.3.0\res
+com.example.master_plan.app-lifecycle-runtime-2.3.1-2 C:\Users\user\.gradle\caches\transforms-3\9a249567dcb8025899915ed9a2426636\transformed\lifecycle-runtime-2.3.1\res
+com.example.master_plan.app-jetified-window-java-1.0.0-beta04-3 C:\Users\user\.gradle\caches\transforms-3\ae81e06d24c799147c26814497a2a305\transformed\jetified-window-java-1.0.0-beta04\res
+com.example.master_plan.app-core-1.10.1-4 C:\Users\user\.gradle\caches\transforms-3\c4988ff80110f75080a936fc6f044848\transformed\core-1.10.1\res
+com.example.master_plan.app-browser-1.5.0-5 C:\Users\user\.gradle\caches\transforms-3\d12883dde0390e08dd2a1192741cec1b\transformed\browser-1.5.0\res
+com.example.master_plan.app-debug-6 D:\Flutter project\master-plan\master_plan\android\app\src\debug\res
+com.example.master_plan.app-main-7 D:\Flutter project\master-plan\master_plan\android\app\src\main\res
+com.example.master_plan.app-pngs-8 D:\Flutter project\master-plan\master_plan\build\app\generated\res\pngs\debug
+com.example.master_plan.app-resValues-9 D:\Flutter project\master-plan\master_plan\build\app\generated\res\resValues\debug
+com.example.master_plan.app-rs-10 D:\Flutter project\master-plan\master_plan\build\app\generated\res\rs\debug
+com.example.master_plan.app-mergeDebugResources-11 D:\Flutter project\master-plan\master_plan\build\app\intermediates\incremental\debug\mergeDebugResources\merged.dir
+com.example.master_plan.app-mergeDebugResources-12 D:\Flutter project\master-plan\master_plan\build\app\intermediates\incremental\debug\mergeDebugResources\stripped.dir
+com.example.master_plan.app-merged_res-13 D:\Flutter project\master-plan\master_plan\build\app\intermediates\merged_res\debug
+com.example.master_plan.app-packaged_res-14 D:\Flutter project\master-plan\master_plan\build\app_links\intermediates\packaged_res\debug
+com.example.master_plan.app-packaged_res-15 D:\Flutter project\master-plan\master_plan\build\path_provider_android\intermediates\packaged_res\debug
+com.example.master_plan.app-packaged_res-16 D:\Flutter project\master-plan\master_plan\build\shared_preferences_android\intermediates\packaged_res\debug
+com.example.master_plan.app-packaged_res-17 D:\Flutter project\master-plan\master_plan\build\url_launcher_android\intermediates\packaged_res\debug
