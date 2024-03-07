@@ -9,14 +9,9 @@ class ChiefPage extends StatelessWidget {
   }
 }
 
-class ChiefPageView extends StatefulWidget {
+class ChiefPageView extends StatelessWidget {
   const ChiefPageView({super.key});
 
-  @override
-  State<ChiefPageView> createState() => _ChiefPageViewState();
-}
-
-class _ChiefPageViewState extends State<ChiefPageView> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

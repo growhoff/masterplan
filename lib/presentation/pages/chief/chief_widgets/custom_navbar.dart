@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../chief_data/chief_data.dart';
 
-class NavBarCustom extends StatefulWidget {
-  const NavBarCustom({super.key});
+class NavBarCustomChief extends StatefulWidget {
+  const NavBarCustomChief({super.key});
 
   @override
-  State<NavBarCustom> createState() => _NavBarCustomState();
+  State<NavBarCustomChief> createState() => _NavBarCustomChiefState();
 }
 
-class _NavBarCustomState extends State<NavBarCustom> {
+class _NavBarCustomChiefState extends State<NavBarCustomChief> {
 
   int selectedIndex = 0;
 
@@ -18,15 +18,15 @@ class _NavBarCustomState extends State<NavBarCustom> {
     return GestureDetector(
       child: Scaffold(
         appBar: AppBar(
-          title: Text(DataMaster.listPage[selectedIndex].title),
-          actions: DataMaster.listPage[selectedIndex].actions,
+          title: Text(DataChief.listPage[selectedIndex].title),
+          actions: DataChief.listPage[selectedIndex].actions,
         ),
-        body: DataMaster.listPage[selectedIndex].page,
+        body: DataChief.listPage[selectedIndex].page,
         bottomNavigationBar: NavigationBar(
           labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
           selectedIndex: selectedIndex,
           height: 50,
-          destinations: DataMaster.listPage.map((e) => NavigationDestination(icon: Icon(e.icon, color: Colors.black),label: e.title,)).toList(),
+          destinations: DataChief.listPage.map((e) => NavigationDestination(icon: Icon(e.icon, color: Colors.black),label: e.title,)).toList(),
           onDestinationSelected: (value) {
             selectedIndex = value;
             setState(() {});

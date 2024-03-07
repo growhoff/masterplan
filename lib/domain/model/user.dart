@@ -1,15 +1,15 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class UserModel {
-  final String number;
+  final int id;
   final String fio;
-  final int region;
-  final String position;
-  final String company;
+  final int positionId;
+  final int regionId;
+  final int companyId;
   UserModel({
-    required this.number,
+    required this.id,
     required this.fio,
-    required this.region,
-    required this.position,
-    required this.company,
+    required this.positionId,
+    required this.regionId,
+    required this.companyId,
   });
 }

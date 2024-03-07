@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:master_plan/presentation/pages/master/data/data_master.dart';
 
-class NavBarCustom extends StatefulWidget {
-  const NavBarCustom({super.key});
+class NavBarCustomMaster extends StatefulWidget {
+  const NavBarCustomMaster({super.key});
   
   @override
-  State<NavBarCustom> createState() => _NavBarCustomState();
+  State<NavBarCustomMaster> createState() => _NavBarCustomMasterState();
 }
 
-class _NavBarCustomState extends State<NavBarCustom> {
+class _NavBarCustomMasterState extends State<NavBarCustomMaster> {
 
   int selectedIndex = 0;
 

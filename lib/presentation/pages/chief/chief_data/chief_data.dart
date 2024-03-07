@@ -7,18 +7,18 @@ import 'package:master_plan/presentation/pages/chief/chief_monitoring_page.dart'
 import '../chief_model/tab_bar_model.dart';
 import '../chief_page.dart';
 
-abstract class DataMaster {
+abstract class DataChief {
   static List<TabBarModel> listPage = [
     TabBarModel(
         title: 'Списки',
         actions: [],
         page: const ChiefPage(),
-        icon: Icons.personal_video),
+        icon: Icons.list),
     TabBarModel(
         title: 'Проверка',
         actions: [],
         page: const ChiefCheckPage(),
-        icon: Icons.browser_updated),
+        icon: Icons.home_outlined),
     TabBarModel(
         title: 'Распределение',
         actions: [],
@@ -28,12 +28,12 @@ abstract class DataMaster {
         title: 'Мониторинг',
         actions: [],
         page: const ChiefMonitoringPage(),
-        icon: Icons.library_add),
+        icon: Icons.camera_alt_outlined),
     TabBarModel(
         title: 'Аналитика',
         actions: [],
         page: const ChiefAnalyticsPage(),
-        icon: Icons.check_box),
+        icon: Icons.stacked_bar_chart_sharp),
   ];
 // actions: const[ Center(child: Text('userInfo.number / userInfo.fio / userInfo.position / userInfo.regionNumber'))],
 }

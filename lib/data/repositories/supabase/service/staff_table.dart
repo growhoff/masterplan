@@ -22,7 +22,7 @@ class StaffTable extends SupabaseTable{
   }
 
   Future<List<Map<String, dynamic>>> selectName({required String login}) {
-    return table.select().eq('number', login);
+    return table.select().eq('login', login);
   }
 
   @override
