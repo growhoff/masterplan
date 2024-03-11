@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/presentation/app/bloc/cubit.dart';
+import 'package:master_plan/presentation/app/bloc/state.dart';
 
 import '../chief_data/chief_data.dart';
 
@@ -18,7 +21,9 @@ class _NavBarCustomChiefState extends State<NavBarCustomChief> {
     return GestureDetector(
       child: Scaffold(
         appBar: AppBar(
-          title: Text(DataChief.listPage[selectedIndex].title),
+          title: BlocBuilder<CubitMain, StateMain>(builder: (context, state) => Row(children: [
+            Text('${state.user.id} / ${state.user.fio} / ${state.user.position} / ${state.user.region}', style: const TextStyle(fontSize: 12)),
+          ],)),
           actions: DataChief.listPage[selectedIndex].actions,
         ),
         body: DataChief.listPage[selectedIndex].page,

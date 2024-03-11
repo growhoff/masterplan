@@ -8,7 +8,6 @@ class StateMain extends Equatable{
     required this.user,
   });
 
-
   @override
   bool operator ==(covariant StateMain other) {
     if (identical(this, other)) return true;

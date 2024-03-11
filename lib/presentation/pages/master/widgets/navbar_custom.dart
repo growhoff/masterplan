@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/presentation/app/bloc/cubit.dart';
+import 'package:master_plan/presentation/app/bloc/state.dart';
 import 'package:master_plan/presentation/pages/master/data/data_master.dart';
 
 class NavBarCustomMaster extends StatefulWidget {
@@ -17,7 +20,10 @@ class _NavBarCustomMasterState extends State<NavBarCustomMaster> {
     return GestureDetector(
       child: Scaffold(
         appBar: AppBar(
-          title: Text(DataMaster.listPage[selectedIndex].title),
+          title: BlocBuilder<CubitMain, StateMain>(builder: (context, state) => Column(children: [
+              Text(DataMaster.listPage[selectedIndex].title), 
+              Text('${state.user.id} / ${state.user.fio} / ${state.user.position} / ${state.user.region}', style: const TextStyle(fontSize: 12)),
+            ])),
           actions: DataMaster.listPage[selectedIndex].actions,
         ),
         body: DataMaster.listPage[selectedIndex].page,

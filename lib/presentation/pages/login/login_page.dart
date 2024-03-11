@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
+import 'package:master_plan/presentation/pages/login/bloc/cubit.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ContentLogin();
+    return BlocProvider<CubitLogin>(
+      create: (context) => CubitLogin(),
+      child: ContentLogin());
   }
 }
 
@@ -55,9 +58,9 @@ class ContentLogin extends StatelessWidget {
                         final isResult = await context.read<CubitMain>().save(numberController.text, passwordController.text);
                         // showDialog
                         switch(isResult){
-                          case '1': if (context.mounted) Navigator.pushNamed(context, '/chiefPage');
-                          case '2': if (context.mounted) Navigator.pushNamed(context, '/navBarCustom');
-                          case '3': if (context.mounted) Navigator.pushNamed(context, '/operatorPage');
+                          case 'Начальник': if (context.mounted) Navigator.pushNamed(context, '/chiefPage');
+                          case 'Мастер': if (context.mounted) Navigator.pushNamed(context, '/masterPage');
+                          case 'Оператор': if (context.mounted) Navigator.pushNamed(context, '/operatorPage');
                         }
                         
                         numberController.clear();

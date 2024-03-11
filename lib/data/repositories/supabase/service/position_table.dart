@@ -21,6 +21,10 @@ class PositionTable extends SupabaseTable{
     return table.select();
   }
 
+  Future<List<Map<String, dynamic>>> selectId(int id) {
+    return table.select().eq('id', id);
+  }
+
   @override
   Future<void> update(int id, Dto dto) {
    return table.update({'name': '1'}).eq('id', id);

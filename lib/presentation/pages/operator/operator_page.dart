@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:master_plan/presentation/app/bloc/cubit.dart';
-// import 'package:master_plan/presentation/app/bloc/state.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/presentation/app/bloc/cubit.dart';
+import 'package:master_plan/presentation/app/bloc/state.dart';
 
 
 class OperatorPage extends StatelessWidget {
@@ -21,8 +21,12 @@ class ContentOperator extends StatelessWidget {
     return GestureDetector(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Оператор'),
-          // actions: const[ Center(child: Text('userInfo.number / userInfo.fio / userInfo.position / userInfo.regionNumber'))],
+          title: BlocBuilder<CubitMain, StateMain>(builder: (context, state) => Column(
+            children: [
+              const Text('Оператор'),
+              Text('${state.user.id} / ${state.user.fio} / ${state.user.position} / ${state.user.region}', style: const TextStyle(fontSize: 12)),
+            ])),
+          actions: const [],
         ),
         body:  SafeArea(
           child: Padding(

@@ -2,14 +2,14 @@
 class UserModel {
   final int id;
   final String fio;
-  final int positionId;
-  final int regionId;
-  final int companyId;
+  final String position;
+  final String region;
+  final String company;
   UserModel({
     required this.id,
     required this.fio,
-    required this.positionId,
-    required this.regionId,
-    required this.companyId,
+    required this.position,
+    required this.region,
+    required this.company,
   });
 }

@@ -15,24 +15,22 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return  MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: createTheme(),
-      routes: {
-        '/loginPage':(BuildContext context) => const LoginPage(),
-        '/operatorPage':(BuildContext context) => const OperatorPage(),
-        '/masterPage':(BuildContext context) => const NavBarCustomMaster(),
-        '/chiefPage':(BuildContext context) => const NavBarCustomChief(),
-        '/choosingOperatorPage':(BuildContext context) => const ChoosingOperatorPage(),
-        '/workPage':(BuildContext context) => const WorkPage(),
-        '/addOperationPage':(BuildContext context) => const AddOperationPage(),
-      },
-      home: MultiBlocProvider(providers: [
-        BlocProvider<CubitMain>(create: (context) => CubitMain()),
-        BlocProvider<CubitLogin>(create: (context) => CubitLogin()),
-      ], 
-      child: const LoginPage(),
-      )
+    return BlocProvider<CubitMain>(
+      create: (context) => CubitMain(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: createTheme(),
+        routes: {
+          '/loginPage':(BuildContext context) => const LoginPage(),
+          '/operatorPage':(BuildContext context) => const OperatorPage(),
+          '/masterPage':(BuildContext context) => const NavBarCustomMaster(),
+          '/chiefPage':(BuildContext context) => const NavBarCustomChief(),
+          '/choosingOperatorPage':(BuildContext context) => const ChoosingOperatorPage(),
+          '/workPage':(BuildContext context) => const WorkPage(),
+          '/addOperationPage':(BuildContext context) => const AddOperationPage(),
+        },
+        home: const LoginPage(),
+      ),
     );
   }
 }
