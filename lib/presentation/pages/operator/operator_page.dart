@@ -24,7 +24,7 @@ class ContentOperator extends StatelessWidget {
           title: BlocBuilder<CubitMain, StateMain>(builder: (context, state) => Column(
             children: [
               const Text('Оператор'),
-              Text('${state.user.id} / ${state.user.fio} / ${state.user.position} / ${state.user.region}', style: const TextStyle(fontSize: 12)),
+              Text('${state.user!.id} / ${state.user!.fio} / ${state.user!.position} / ${state.user!.region}', style: const TextStyle(fontSize: 12)),
             ])),
           actions: const [],
         ),
@@ -36,6 +36,8 @@ class ContentOperator extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const ButtonCustom(),
+                  const SizedBox(height: 8),
+                  ElevatedButton(onPressed: ()=> Navigator.pushNamed(context, '/workPage'), child: const Text('Вернуться')),
                   const SizedBox(height: 8),
                   ElevatedButton(onPressed: (){}, child: const Text('Календарь смен')),
                   const SizedBox(height: 8),

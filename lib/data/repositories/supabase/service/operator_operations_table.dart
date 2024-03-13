@@ -18,7 +18,7 @@ class OperatorOperationsTable extends SupabaseTable{
 
   @override
   Future<List<Map<String, dynamic>>> select() {
-    return table.select();
+    return table.select('id, order, f_region(*), f_company(*), time, time_start, time_working, f_status(*), stage_operation_id, stage_master_operation_id, f_equipment(*), f_details(*)');
   }
 
   @override

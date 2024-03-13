@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class ElementBarData {
+class ElementBarDataOperator {
   final String header;
   final Widget content;
-  ElementBarData({
+  ElementBarDataOperator({
     required this.header,
     required this.content,
   });

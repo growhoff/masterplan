@@ -22,7 +22,7 @@ class _NavBarCustomMasterState extends State<NavBarCustomMaster> {
         appBar: AppBar(
           title: BlocBuilder<CubitMain, StateMain>(builder: (context, state) => Column(children: [
               Text(DataMaster.listPage[selectedIndex].title), 
-              Text('${state.user.id} / ${state.user.fio} / ${state.user.position} / ${state.user.region}', style: const TextStyle(fontSize: 12)),
+              Text('${state.user!.id} / ${state.user!.fio} / ${state.user!.position} / ${state.user!.region}', style: const TextStyle(fontSize: 12)),
             ])),
           actions: DataMaster.listPage[selectedIndex].actions,
         ),

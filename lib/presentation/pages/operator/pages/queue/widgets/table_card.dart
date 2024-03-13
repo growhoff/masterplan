@@ -21,7 +21,9 @@ class TableCard extends StatelessWidget {
         children: [
           heder,
           const SizedBox(height: 8),
-          ListView.builder(
+          list == [] 
+          ? const Text('List null')
+          : ListView.builder(
             shrinkWrap: true,
             itemBuilder: (context, index) => RowList(
                 text1: list[index].plan,

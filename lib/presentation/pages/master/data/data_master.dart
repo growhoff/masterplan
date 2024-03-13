@@ -43,7 +43,7 @@ abstract class DataMaster {
     TabBarData(
         title: 'Очередь',
         actions: [],
-        page: const QueuePage(),
+        page: const QueuePageMaster(),
         icon: Icons.library_add),
     TabBarData(
         title: 'Готовые детали',

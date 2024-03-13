@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:master_plan/presentation/pages/operator/data/data_operator.dart';
-import '../../../../widgets/element_bar.dart';
-import 'widgets/elevated_button_castom.dart';
-import 'widgets/line_text_spawn.dart';
-import 'widgets/timer.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:master_plan/presentation/app/bloc/cubit.dart';
-// import 'package:master_plan/presentation/app/bloc/state.dart';
+import 'package:master_plan/presentation/pages/operator/model/element_bar_data.dart';
+import 'package:master_plan/presentation/pages/operator/pages/work/bloc/cubit.dart';
+// import 'package:master_plan/presentation/pages/operator/pages/work/bloc/state.dart';
+import 'package:master_plan/presentation/pages/operator/widgets/element_bar.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/presentation/app/bloc/cubit.dart';
+import 'package:master_plan/presentation/app/bloc/state.dart';
+
+import 'widgets/content_details.dart';
 
 class WorkPage extends StatelessWidget {
   const WorkPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const ContentWork();
+    return BlocProvider<CubitWork>(
+      create: (context) => CubitWork(),
+      child: const ContentWork(),
+    ); 
   }
 }
 
@@ -25,8 +29,11 @@ class ContentWork extends StatelessWidget {
     return GestureDetector(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Оператор'),
-          // actions: const[ Center(child: Text('userInfo.number / userInfo.fio / userInfo.position / userInfo.regionNumber'))],
+          title: BlocBuilder<CubitMain, StateMain>(builder: (context, state) => Column(
+            children: [
+              const Text('Оператор'),
+              Text('${state.user!.id} / ${state.user!.fio} / ${state.user!.position} / ${state.user!.region}', style: const TextStyle(fontSize: 12)),
+            ])),
         ),
         body: SafeArea(
       child: SingleChildScrollView(
@@ -35,46 +42,19 @@ class ContentWork extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ElementBar(list: DataOperator.listWork),
+              BlocBuilder<CubitMain, StateMain>(builder: (context, state) {
+                List<ElementBarDataOperator> list = [];
+                for (var e in state.listoperatorOperations!) {
+                  list.add(ElementBarDataOperator(header: e.equipment, content: ContentDetail(detail: e.details, operations: '${e.stageOperationId}', time: e.timeStart,)));
+                }
+                return ElementBarOperator(list: list);
+              },)
             ],
           )
         ),
       ),
     )
       ),
-    );
-  }
-}
-
-class PageDetail extends StatelessWidget {
-  const PageDetail({super.key, required this.detail, required this.operations});
-  final String detail;
-  final String operations;
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-              LineTextSpawn(title: 'Деталь', text: detail),
-              const SizedBox(height: 8),
-              LineTextSpawn(title: 'Операция', text: operations),
-              const SizedBox(height: 50),
-              const TimerWidget(),
-              // const SizedBox(height: 8),
-              // ElevatedButton(onPressed: (){}, child: const Text('Начать работу')),
-              const SizedBox(height: 100),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  ElevatedButtonCastom(text: 'Переналадка', color: Colors.amber, onPressed: (){},),
-                  ElevatedButtonCastom(text: 'Уборка', color: Colors.blueGrey, onPressed: (){},),
-                ],
-              ),
-              const SizedBox(height: 8),
-              ElevatedButtonCastom(text: 'Деталь', color: Colors.green, onPressed: (){},),
-              const SizedBox(height: 8),
-              ElevatedButtonCastom(text: 'Поломка', color: Colors.red, onPressed: (){},)
-      ],
     );
   }
 }

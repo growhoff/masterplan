@@ -21,6 +21,10 @@ class EquipmentTable extends SupabaseTable{
     return table.select();
   }
 
+  Future<List<Map<String, dynamic>>> selectEq(int regionId, int companyId) {
+    return table.select().eq('region_id', regionId).eq('company_id', companyId);
+  }
+
   @override
   Future<void> update(int id, Dto dto) {
    return table.update({'name': '1'}).eq('id', id);

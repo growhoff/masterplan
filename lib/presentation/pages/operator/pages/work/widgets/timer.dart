@@ -1,11 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:master_plan/presentation/pages/operator/pages/queue/queue_page.dart';
 import 'buttonIcon.dart';
 
 class TimerWidget extends StatefulWidget {
-  const TimerWidget({super.key});
-
+  const TimerWidget(this.timeStart, {super.key});
+  final int timeStart;
   @override
   State<TimerWidget> createState() => _TimerWidgetState();
 }
@@ -33,7 +32,16 @@ class _TimerWidgetState extends State<TimerWidget> {
     final minuteString = convertXX(minute);
     final secondString = convertXX(second);
     result = '$hourString:$minuteString:$secondString';
-    setState(() {});
+  }
+
+  void timeToStringNow(int time) {
+    hour = time ~/ 3600;
+    minute = (time % 3600) ~/ 60;
+    second = (time % 3600) % 60;
+    final hourString = convertXX(hour);
+    final minuteString = convertXX(minute);
+    final secondString = convertXX(second);
+    result = '$hourString:$minuteString:$secondString';
   }
 
   void start(int init){
@@ -42,6 +50,7 @@ class _TimerWidgetState extends State<TimerWidget> {
     timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
       tick++;
       timeToString(tick);
+      setState(() {});
     });
     
     } else{
@@ -71,14 +80,17 @@ class _TimerWidgetState extends State<TimerWidget> {
 
   @override
   void initState() {
-  super.initState();
+    tick = widget.timeStart;
+    timeToStringNow(tick);
+    super.initState();
+    setState(() {});
   }
 
-  @override
-  void dispose() {
-    timer!.cancel();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   timer!.cancel();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +104,7 @@ class _TimerWidgetState extends State<TimerWidget> {
                 ButtonCircleIcon(onPressed: () => restart(), icon: Icons.restart_alt),
                 ButtonCircleIcon(onPressed: () => start(0), icon: !isRunning ? Icons.play_arrow_rounded : Icons.pause),
                 // ButtonCircleIcon(onPressed: () => pause(), icon: Icons.pause),
-                ButtonCircleIcon(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const QueuePage())), icon: Icons.list),
+                ButtonCircleIcon(onPressed: () => Navigator.pushNamed(context, '/queuePage'), icon: Icons.list),
               ],
             ),
       ],

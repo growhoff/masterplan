@@ -22,7 +22,7 @@ class _NavBarCustomChiefState extends State<NavBarCustomChief> {
       child: Scaffold(
         appBar: AppBar(
           title: BlocBuilder<CubitMain, StateMain>(builder: (context, state) => Row(children: [
-            Text('${state.user.id} / ${state.user.fio} / ${state.user.position} / ${state.user.region}', style: const TextStyle(fontSize: 12)),
+            Text('${state.user!.id} / ${state.user!.fio} / ${state.user!.position} / ${state.user!.region}', style: const TextStyle(fontSize: 12)),
           ],)),
           actions: DataChief.listPage[selectedIndex].actions,
         ),

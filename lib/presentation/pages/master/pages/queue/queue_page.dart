@@ -8,8 +8,8 @@ import 'widgets/row_list_four.dart';
 // import 'package:master_plan/presentation/app/bloc/cubit.dart';
 // import 'package:master_plan/presentation/app/bloc/state.dart';
 
-class QueuePage extends StatelessWidget {
-  const QueuePage({super.key});
+class QueuePageMaster extends StatelessWidget {
+  const QueuePageMaster({super.key});
   @override
   Widget build(BuildContext context) {
     return  SafeArea(
