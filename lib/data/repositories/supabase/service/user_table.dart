@@ -25,6 +25,10 @@ class UserTable extends SupabaseTable{
     return table.select().eq('id', id);
   }
 
+  Future<List<Map<String, dynamic>>> selectEqOperator({required int regionId, required int companyId}) {
+    return table.select().eq('region_id', regionId).eq('company_id', companyId).eq('position_id', 3);
+  }
+
   @override
   Future<void> update(int id, Dto dto) {
    return table.update({'name': '1'}).eq('id', id);

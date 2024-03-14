@@ -7,8 +7,10 @@ import 'package:master_plan/domain/model/equipment.dart';
 import 'package:master_plan/domain/model/operatoroperations.dart';
 import 'package:master_plan/domain/model/position.dart';
 import 'package:master_plan/domain/model/region.dart';
+import 'package:master_plan/domain/model/shiftsdistribution.dart';
 import 'package:master_plan/domain/model/status.dart';
 import 'package:master_plan/domain/model/user.dart';
+import 'package:master_plan/domain/model/user_lite.dart';
 
 class StateMain extends Equatable {
     final UserModel? user;
@@ -19,6 +21,8 @@ class StateMain extends Equatable {
     final List<Details>? listDetails;
     final List<Status>? listStatus;
     final List<OperatorOperations>? listoperatorOperations;
+    final List<ShiftsDistribution>? listShiftsDistribution;
+    final List<UserModelLite>? listOperators;
   const StateMain({
     this.user,
     this.company,
@@ -28,6 +32,8 @@ class StateMain extends Equatable {
     this.listDetails,
     this.listStatus,
     this.listoperatorOperations,
+    this.listShiftsDistribution,
+    this.listOperators,
   });
 
   @override
@@ -40,7 +46,9 @@ class StateMain extends Equatable {
       listEquipment ?? [],
       listDetails ?? [],
       listStatus ?? [],
-      listoperatorOperations ?? []
+      listoperatorOperations ?? [],
+      listShiftsDistribution ?? [],
+      listOperators ?? [],
     ];
   }
 
@@ -53,7 +61,9 @@ class StateMain extends Equatable {
     List<Equipment>? listEquipment,
     List<Details>? listDetails,
     List<Status>? listStatus,
-    List<OperatorOperations>? operatorOperations,
+    List<OperatorOperations>? listoperatorOperations,
+    List<ShiftsDistribution>? listShiftsDistribution,
+    List<UserModelLite>? listOperators,
   }) {
     return StateMain(
       user: user ?? this.user,
@@ -63,7 +73,9 @@ class StateMain extends Equatable {
       listEquipment: listEquipment ?? this.listEquipment,
       listDetails: listDetails ?? this.listDetails,
       listStatus: listStatus ?? this.listStatus,
-      listoperatorOperations: operatorOperations ?? this.listoperatorOperations
+      listoperatorOperations: listoperatorOperations ?? this.listoperatorOperations,
+      listShiftsDistribution: listShiftsDistribution ?? this.listShiftsDistribution,
+      listOperators: listOperators ?? this.listOperators,
     );
   }
 

@@ -21,6 +21,10 @@ class ShiftsDistributionTable extends SupabaseTable{
     return table.select();
   }
 
+  Future<List<Map<String, dynamic>>> selectEq(int regionId, int companyId, DateTime date) {
+    return table.select('id, f_change(*), date, f_equipment(*), f_user(*), f_region(*), f_company(*)').eq('region_id', regionId).eq('company_id', companyId).eq('date', date);
+  }
+
   @override
   Future<void> update(int id, Dto dto) {
    return table.update({'name': '1'}).eq('id', id);

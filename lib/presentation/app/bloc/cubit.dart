@@ -5,6 +5,7 @@ import 'package:master_plan/data/repositories/supabase/dto/equipment_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/position_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/region_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/shifts_distribution_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/status_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/user_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/company_table.dart';
@@ -13,17 +14,21 @@ import 'package:master_plan/data/repositories/supabase/service/equipment_table.d
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/position_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/region_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/shifts_distribution_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/status_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/user_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/staff_table.dart';
+import 'package:master_plan/domain/model/change.dart';
 import 'package:master_plan/domain/model/company.dart';
 import 'package:master_plan/domain/model/details.dart';
 import 'package:master_plan/domain/model/equipment.dart';
 import 'package:master_plan/domain/model/operatoroperations.dart';
 import 'package:master_plan/domain/model/position.dart';
 import 'package:master_plan/domain/model/region.dart';
+import 'package:master_plan/domain/model/shiftsdistribution.dart';
 import 'package:master_plan/domain/model/status.dart';
 import 'package:master_plan/domain/model/user.dart';
+import 'package:master_plan/domain/model/user_lite.dart';
 import 'state.dart';
 
 class CubitMain extends Cubit<StateMain> { 
@@ -44,6 +49,8 @@ class CubitMain extends Cubit<StateMain> {
         await getStatus();
         await getDetails();
         await getOperatorOperations();
+        await getShiftsDistribution();
+        await getOperatorList();
 
         // if (equipment == []) print('Пользователь не закреплен к станкам');
         return state.position!.name;
@@ -144,6 +151,74 @@ class CubitMain extends Cubit<StateMain> {
       listOperatorOperations.add(OperatorOperations(id: dto.id, order: dto.order, region: dto.regionId.name, company: dto.companyId.shortName, time: dto.time, timeStart: dto.timeStart, timeWorking: dto.timeWorking, status: dto.statusId.name, stageOperationId: dto.stageOperationId, stageMasterOperationId: dto.stageMasterOperationId, equipment: dto.equipmentId.name, details: '${dto.detailsId.planNumber} ${dto.detailsId.planName}'));
     }
 
-    emit(state.copyWith(operatorOperations: listOperatorOperations));
+    emit(state.copyWith(listoperatorOperations: listOperatorOperations));
   }
+
+//выгрузить всех операторов
+    // dynamic data = await Supabase.instance.client
+    //   .from('staff')
+    //   .select()
+    //   .eq('position', 'Оператор')
+    //   .eq('region', FFAppState().masterRegionNumber)
+    //   .eq('company', FFAppState().companyName);
+
+  Future<void> getOperatorList() async{
+    final tableOperators = UserTable(); 
+    final queryOperators = await tableOperators.selectEqOperator(regionId: state.region!.id, companyId: state.company!.id);
+    List<UserDTO> listOperatorsDto = [];
+    for (var element in queryOperators) {
+      final dto = UserDTO.fromMap(element);
+      listOperatorsDto.add(dto);
+    }
+
+    List<UserModelLite> listOperators = [];
+    for (var dto in listOperatorsDto) {
+      listOperators.add(UserModelLite(id: dto.id, fio: dto.fio));
+    }
+
+    emit(state.copyWith(listOperators: listOperators));
+  }
+
+  Future<void> getShiftsDistribution() async{
+    final tableShiftsDistribution = ShiftsDistributionTable(); 
+    final queryShiftsDistribution = await tableShiftsDistribution.selectEq(state.region!.id, state.company!.id, DateTime.now());
+    List<ShiftsDistributionDTO> listShiftsDistributionDto = [];
+    for (var element in queryShiftsDistribution) {
+      final dto = ShiftsDistributionDTO.fromMap(element);
+      listShiftsDistributionDto.add(dto);
+    }
+
+    List<ShiftsDistribution> listShiftsDistribution = [];
+    for (var dto in listShiftsDistributionDto) {
+      listShiftsDistribution.add(ShiftsDistribution(id: dto.id, change: ChangeModel(id: dto.change.id, name: dto.change.name, number: dto.change.number), date: dto.date, equipment: Equipment(id: dto.equipment.id, inventoryNumber: dto.equipment.inventoryNumber, name: dto.equipment.name, regionId: dto.equipment.regionId, companyId: dto.equipment.companyId, userId: dto.equipment.userId), user: UserModelLite(id: dto.user.id, fio: dto.user.fio), region: Region(id: dto.region.id, name: dto.region.name, number: dto.region.number), company: Company(id: dto.company.id, name: dto.company.shortName, fullName: dto.company.fullName)));
+    }
+
+    emit(state.copyWith(listShiftsDistribution: listShiftsDistribution));
+  }
+  
+//выгрузить смены
+  //   dynamic data = await Supabase.instance.client
+  //     .from('shifts_distribution')
+  //     .select()
+  //     .eq('region', FFAppState().masterRegionNumber)
+  //     .eq('data', datatime)
+  //     .eq('company', FFAppState().companyName);
+
+  // List<ShiftDistributionStruct> shiftList = [];
+  // final equipmentList = FFAppState().equipmentList;
+
+  // for (int i = 0; i < equipmentList.length; i++) {
+  //   String one = 'none';
+  //   String two = 'none';
+  //   for (int j = 0; j < data.length; j++) {
+  //     if (data[j]['equipment_name'] == equipmentList[i]) {
+  //       if (data[j]['change'] == '1') one = data[j]['user'];
+  //       if (data[j]['change'] == '2') two = data[j]['user'];
+  //     }
+  //   }
+  //   shiftList.add(ShiftDistributionStruct(
+  //       equipment: equipmentList[i], changeOneFio: one, changeTwoFio: two));
+  // }
+
+  // FFAppState().shiftsDistributionList = shiftList;
 }

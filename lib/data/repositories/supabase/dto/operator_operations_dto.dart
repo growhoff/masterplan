@@ -41,16 +41,16 @@ class OperatorOperationsDTO extends Dto {
     return <String, dynamic>{
       'id': id,
       'order': order,
-      'region_id': regionId.toMap(),
-      'company_id': companyId.toMap(),
+      'region_id': regionId.id,
+      'company_id': companyId.id,
       'time': time,
       'time_start': timeStart,
       'time_working': timeWorking,
-      'status_id': statusId.toMap(),
+      'status_id': statusId.id,
       'stage_operation_id': stageOperationId,
       'stage_master_operation_id': stageMasterOperationId,
-      'equipment_id': equipmentId.toMap(),
-      'details_id': detailsId.toMap(),
+      'equipment_id': equipmentId.id,
+      'details_id': detailsId.id,
     };
   }
 
