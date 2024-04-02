@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/presentation/app/bloc/cubit.dart';
+import 'package:master_plan/presentation/app/bloc/state.dart';
+// import 'package:master_plan/presentation/pages/master/bloc/cubit.dart';
+// import 'package:master_plan/presentation/pages/master/bloc/state.dart';
 // import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:master_plan/presentation/app/bloc/cubit.dart';
 // import 'package:master_plan/presentation/app/bloc/state.dart';
@@ -17,35 +22,41 @@ class ContentChoosingOperator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Выберите оператора'),
-          // actions: const[ Center(child: Text('userInfo.number / userInfo.fio / userInfo.position / userInfo.regionNumber'))],
-        ),
-        body: SafeArea(
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
+    return Scaffold(
+      appBar: AppBar(
+        title: 
+        BlocBuilder<CubitMain, StateMain>(builder: (context, state) => Column(children: [
+            const Text('Выберите оператора'),
+            Text('${state.user!.id} / ${state.user!.fio} / ${state.position!.name} / ${state.region!.name}', style: const TextStyle(fontSize: 12)),
+          ])),
+        // const Text('Выберите оператора'),
+        // actions: const[ Center(child: Text('userInfo.number / userInfo.fio / userInfo.position / userInfo.regionNumber'))],
+      ),
+      body: SafeArea(
+    child: SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child:  Column(
             children: [
              const Text('equipment'),
              const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('Смена № [change]'),
-                Text('d/M/y')
+                 Text('d/M/y')
               ],
              ),
              const SizedBox(height: 8),
-             ListView.builder(
-              shrinkWrap: true,
-              itemCount: 5,
-              itemBuilder: (context, index) => ListTile(
-                title: Text('[listUsersItem $index]'),
-                onTap: () {},
-              ),
-              ),
+              BlocBuilder<CubitMain, StateMain>(
+               builder:(context, state) => ListView.builder(
+                shrinkWrap: true,
+                itemCount: state.listOperators!.length,
+                itemBuilder: (context, index) => ListTile(
+                  title: Text(state.listOperators![index].fio),
+                  onTap: () {},
+                ),
+                ),
+             ),
               const SizedBox(height: 8),
               SizedBox(
                 width: double.maxFinite,
@@ -55,11 +66,10 @@ class ContentChoosingOperator extends StatelessWidget {
                 ),
               )
             ],
-          )
-        ),
+          ),
+        )
       ),
     ),
-      ),
     );
   }
 }

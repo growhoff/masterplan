@@ -4,7 +4,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class UserTable extends SupabaseTable{
 
-  final table = Supabase.instance.client.from('f_user');
+  // final table = Supabase.instance.client.from('f_user');
+    final table = Supabase.instance.client.from('z_user');
   
   @override
   Future<void> delete(int id) {

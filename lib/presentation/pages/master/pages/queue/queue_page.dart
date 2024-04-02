@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/domain/model/oper_operations.dart';
+import 'package:master_plan/presentation/app/bloc/cubit.dart';
+import 'package:master_plan/presentation/app/bloc/state.dart';
 import 'package:master_plan/presentation/pages/master/data/data_master.dart';
 import 'package:master_plan/presentation/pages/master/pages/readyDetails/widgets/rowExpand.dart';
 import '../../../../widgets/element_bar.dart';
@@ -35,12 +39,20 @@ class ContetnQueue extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-         Row(
-                children: [
-                  Text('Время работы станка $title: '),
-                  const Text('[timeConverter]')
-                ],
-              ),
+            BlocBuilder<CubitMain, StateMain>(
+              builder: (context, state) {
+                int time = 0;
+                for (var num in state.listOperOperations!) {
+                  time += int.parse(num.time);
+                }
+                return Row(
+                  children: [
+                    Text('Время работы станка $title: '),
+                     Text('$time')
+                  ],
+                );
+              }
+            ),
               const SizedBox(height: 8),
               SizedBox(
                 width: double.maxFinite,
@@ -53,19 +65,43 @@ class ContetnQueue extends StatelessWidget {
               const SizedBox(height: 8),
               const RowExpand(text1: 'Деталь', text2: 'Операция', text3: 'Время обработки'),
               const SizedBox(height: 8),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: 4,
-                itemBuilder: (context, index) => const Card(
-                  color: Colors.amber,
-                  child: Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: RowExpand(text1: '[detailNumber]', text2: '[operationName]', text3: '[timeFact]'),
-                ),),),
+              BlocBuilder<CubitMain, StateMain>( 
+                builder: (context, state) {
+                List<OperOperations> list = [];
+                for (var element in state.listOperOperations!) {
+                  if (element.status == 'ready') list.add(element);
+                } 
+                  return ListViewOperationsReady(list);
+                }
+              ),
               const SizedBox(height: 8),
               //лист с удалением элементов и изменением порядка
-              const ReorderWidget(['1','2','3'], header: RowListFour(text1: 'Деталь', text2: 'Номер', text3: 'Время обработки'))
+              BlocBuilder<CubitMain, StateMain>(builder: (context, state) {
+                List<OperOperations> list = [];
+                for (var element in state.listOperOperations!) {
+                  if (element.status != 'ready') list.add(element);
+                } 
+                return ReorderWidget(list, header: const RowListFour(text1: 'Деталь', text2: 'Номер', text3: 'Время обработки'));
+              }
+              )
       ],
     );
+  }
+}
+
+class ListViewOperationsReady extends StatelessWidget {
+  const ListViewOperationsReady(this.list, {super.key,});
+  final List<OperOperations> list;
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+    shrinkWrap: true,
+    itemCount: list.length,
+    itemBuilder: (context, index) => Card(
+      color: Colors.amber,
+      child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: RowExpand(text1: list[index].planNumber, text2: list[index].operationName, text3: list[index].time),
+    ),),);
   }
 }

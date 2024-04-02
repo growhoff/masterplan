@@ -4,7 +4,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class PositionTable extends SupabaseTable{
 
-  final table = Supabase.instance.client.from('f_position');
+  // final table = Supabase.instance.client.from('f_position');
+    final table = Supabase.instance.client.from('z_position');
   
   @override
   Future<void> delete(int id) {

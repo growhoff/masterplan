@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/change_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/machine_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/shifts_distribution_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/user_dto.dart';
+import 'package:master_plan/presentation/app/bloc/cubit.dart';
+import 'package:master_plan/presentation/app/bloc/state.dart';
 import 'package:master_plan/presentation/pages/master/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/master/bloc/state.dart';
 import 'package:master_plan/presentation/pages/master/widgets/change_list_operator.dart';
@@ -44,12 +50,22 @@ class MasterContent extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  BlocBuilder<CubitMaster, StateMaster>(builder: (context, state) => ChangeListOperator(['${state.change}', 'f2', 'g4'])),
-                  const SizedBox(height: 8),
-                  SizedBox(
-                    width: double.maxFinite,
-                    child: ElevatedButton(onPressed: (){Navigator.pushNamed(context, '/choosingOperatorPage');}, child: const Text('Назначить')),
-                  )
+                  // BlocBuilder<CubitMain, StateMain>(builder: (context, state) => ChangeListOperator(state.listShiftsDistribution!)),
+                  BlocBuilder<CubitMaster, StateMaster>(
+                    builder: (context2, state2) => BlocBuilder<CubitMain, StateMain>(builder: (context, state) {
+                      List<ZShiftsDistributionDTO2> list = [];
+                      for (var element in state.zShiftsDistributionList!) {
+                        if (!(element.changeId.id == state2.change) && !(element.date == DateTime.now())) {list.add(element);}
+                        else {list.add(ZShiftsDistributionDTO2(id: -1,changeId: ChangeDTO2.init(), date: DateTime.now(), userId: UserDTO2.init(), machineId: MachineDTO2.init()));}
+                      }
+                      return ChangeListOperator(state.zShiftsDistributionList!);
+                    }),
+                  ),
+                  // const SizedBox(height: 8),
+                  // SizedBox(
+                  //   width: double.maxFinite,
+                  //   child: ElevatedButton(onPressed: (){Navigator.pushNamed(context, '/choosingOperatorPage');}, child: const Text('Назначить')),
+                  // )
                 ],
               ),
               ),

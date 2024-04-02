@@ -1,9 +1,10 @@
 
 import 'package:flutter/material.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/shifts_distribution_dto.dart';
 
 class ChangeListOperator extends StatelessWidget {
   const ChangeListOperator(this.list, {super.key});
-  final List<String> list;
+  final List<ZShiftsDistributionDTO2> list;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -12,17 +13,17 @@ class ChangeListOperator extends StatelessWidget {
                     itemCount: list.length,
                     itemBuilder: (context, index) =>  Column(
                       children: [
-                        const Text('Станок'),
+                        Text(list[index].machineId.name),
                         Card(
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 8),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(list[index]),
+                                Text(list[index].userId.fio),
                                 Row(
                               children: [
-                                IconButton(onPressed: (){}, icon: const Icon(Icons.add)),
+                                IconButton(onPressed: ()=> Navigator.pushNamed(context, '/choosingOperatorPage'), icon: const Icon(Icons.add)),
                                 IconButton(onPressed: (){}, icon: const Icon(Icons.delete))
                               ],
                             ),

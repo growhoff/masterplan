@@ -1,11 +1,12 @@
 
 import 'package:flutter/material.dart';
+import 'package:master_plan/domain/model/oper_operations.dart';
 
 import 'reorderable_icon_widget.dart';
 
 class ReorderWidget extends StatefulWidget {
   const ReorderWidget(this.list, {super.key, required this.header});
-  final List<String> list;
+  final List<OperOperations> list;
   final Widget header;
   @override
   State<ReorderWidget> createState() => _ReorderWidgetState();
@@ -13,7 +14,7 @@ class ReorderWidget extends StatefulWidget {
 
 class _ReorderWidgetState extends State<ReorderWidget> {
 
-  late List<String> list;
+  late List<OperOperations> list;
 
   @override
   void initState() {
@@ -31,9 +32,9 @@ class _ReorderWidgetState extends State<ReorderWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(child: ReorderableIconWidget(index)),
-            Expanded(flex: 2, child: Text('[planNumber] $index')),
-            Expanded(flex: 2, child: Text('[operationNumber] $index')),
-            Expanded(flex: 2, child: Text('[operationTime] $index')),
+            Expanded(flex: 2, child: Text(list[index].planNumber)),
+            Expanded(flex: 2, child: Text('${list[index].operationNumber}')),
+            Expanded(flex: 2, child: Text(list[index].time)),
             Expanded(child: IconButton(onPressed: () => list.removeAt(index), icon: const Icon(Icons.close)))
           ],
         ),

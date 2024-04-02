@@ -27,7 +27,7 @@ class ContentQueue extends StatelessWidget {
           title: BlocBuilder<CubitMain, StateMain>(builder: (context, state) => Column(
             children: [
               const Text('Очередь'),
-              Text('${state.user!.id} / ${state.user!.fio} / ${state.user!.position} / ${state.user!.region}', style: const TextStyle(fontSize: 12)),
+              Text('${state.user!.id} / ${state.user!.fio} / ${state.position!.name} / ${state.region!.name}', style: const TextStyle(fontSize: 12)),
             ])),
         ),
         body: SafeArea(

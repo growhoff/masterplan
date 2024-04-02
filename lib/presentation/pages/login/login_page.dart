@@ -58,6 +58,7 @@ class ContentLogin extends StatelessWidget {
                         final isResult = await context.read<CubitMain>().save(numberController.text, passwordController.text);
                         // showDialog
                         switch(isResult){
+                          case 'Директор': break;
                           case 'Начальник': if (context.mounted) Navigator.pushNamed(context, '/chiefPage');
                           case 'Мастер': if (context.mounted) Navigator.pushNamed(context, '/masterPage');
                           case 'Оператор': if (context.mounted) Navigator.pushNamed(context, '/operatorPage');

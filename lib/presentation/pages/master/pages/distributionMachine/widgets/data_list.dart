@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:master_plan/domain/model/stage_master_operations.dart';
 
 class DataList extends StatefulWidget {
-  const DataList({
-    super.key,
-  });
-
+  const DataList(this.listOper, {super.key});
+  final List<StageMasterOperations> listOper;
   @override
   State<DataList> createState() => _DataListState();
 }
 
 class _DataListState extends State<DataList> {
-  static const numItems = 5;
-  List<bool> selected = List<bool>.generate(numItems, (int index) => false);
 
+  late List<bool> selected;
+  late List<StageMasterOperations> listOper;
+  @override
+  void initState() {
+    listOper = widget.listOper;
+    selected = List<bool>.generate(listOper.length, (int index) => false);
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return DataTable(
@@ -23,7 +28,7 @@ class _DataListState extends State<DataList> {
           ),
         ],
         rows: List<DataRow>.generate(
-          numItems,
+          listOper.length,
           (int index) => DataRow(
             cells: [
               DataCell(
@@ -32,10 +37,10 @@ class _DataListState extends State<DataList> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Этап № [stageNumber $index]'),
-                      const Text('Операция № [operationNumber]'),
-                      const Text('[operationName]'),
-                      const Text('количество [1] / [2]')
+                      Text('Этап № ${listOper[index].stageNumber}'),
+                      Text('Операция № ${listOper[index].operationNumber}'),
+                      Text(listOper[index].operationName),
+                      Text('количество ${listOper[index].quantity} / ${listOper[index].operationsListLength}')
                     ],
                   ),
                 ),

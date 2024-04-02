@@ -1,10 +1,13 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:master_plan/data/repositories/supabase/dto/details_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/equipment_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/status_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/user_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-
-class ReadyOperationsDTO extends Dto{
+class ReadyOperationsDTO extends Dto {
   final int id;
   final int regionId;
   final int companyId;
@@ -12,11 +15,11 @@ class ReadyOperationsDTO extends Dto{
   final int timeFact;
   final int timeStart;
   final int timeStop;
-  final int statusId;
+  final StatusDTO statusId;
   final int stageOperationId;
-  final int detaildId;
-  final int equipmentId;
-  final int userId;
+  final DetailsDTO detailsId;
+  final EquipmentDTO equipmentId;
+  final UserDTO userId;
   final bool isUploaded;
   ReadyOperationsDTO({
     required this.id,
@@ -28,7 +31,7 @@ class ReadyOperationsDTO extends Dto{
     required this.timeStop,
     required this.statusId,
     required this.stageOperationId,
-    required this.detaildId,
+    required this.detailsId,
     required this.equipmentId,
     required this.userId,
     required this.isUploaded,
@@ -43,11 +46,11 @@ class ReadyOperationsDTO extends Dto{
       'time_fact': timeFact,
       'time_start': timeStart,
       'time_stop': timeStop,
-      'status_id': statusId,
+      'status_id': statusId.toMap(),
       'stage_operation_id': stageOperationId,
-      'detaild_id': detaildId,
-      'equipment_id': equipmentId,
-      'user_id': userId,
+      'details_id': detailsId.toMap(),
+      'equipment_id': equipmentId.toMap(),
+      'user_id': userId.toMap(),
       'is_uploaded': isUploaded,
     };
   }
@@ -61,11 +64,11 @@ class ReadyOperationsDTO extends Dto{
       timeFact: map['time_fact'] as int,
       timeStart: map['time_start'] as int,
       timeStop: map['time_stop'] as int,
-      statusId: map['status_id'] as int,
+      statusId: StatusDTO.fromMap(map['f_status'] as Map<String,dynamic>),
       stageOperationId: map['stage_operation_id'] as int,
-      detaildId: map['detaild_id'] as int,
-      equipmentId: map['equipment_id'] as int,
-      userId: map['user_id'] as int,
+      detailsId: DetailsDTO.fromMap(map['f_details'] as Map<String,dynamic>),
+      equipmentId: EquipmentDTO.fromMap(map['f_equipment'] as Map<String,dynamic>),
+      userId: UserDTO.fromMap(map['f_user'] as Map<String,dynamic>),
       isUploaded: map['is_uploaded'] as bool,
     );
   }

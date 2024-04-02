@@ -4,7 +4,7 @@ import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 class RegionDTO extends Dto{
   final int id;
   final String name;
-  final int number;
+  final String number;
   final int companyId;
   RegionDTO({
     required this.id,
@@ -26,7 +26,7 @@ class RegionDTO extends Dto{
     return RegionDTO(
       id: map['id'] as int,
       name: map['name'] as String,
-      number: map['number'] as int,
+      number: map['number'] as String,
       companyId: map['company_id'] as int,
     );
   }

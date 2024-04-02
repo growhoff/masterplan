@@ -1,7 +1,5 @@
 import 'dart:convert';
-
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
-
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
 class ShiftsDTO extends Dto{

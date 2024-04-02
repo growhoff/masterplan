@@ -21,6 +21,10 @@ class ReadyOperationsTable extends SupabaseTable{
     return table.select();
   }
 
+  Future<List<Map<String, dynamic>>> selectEq(int regionId, int companyId, int equipmentId) {
+    return table.select('*, f_status(*), f_details(*), f_equipment(*), f_user(*)').eq('region_id', regionId).eq('company_id', companyId).eq('equipment_id', equipmentId).eq('is_uploaded', false);
+  }
+
   @override
   Future<void> update(int id, Dto dto) {
    return table.update({'name': '1'}).eq('id', id);

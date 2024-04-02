@@ -10,9 +10,11 @@ class RowExpand extends StatelessWidget {
     return Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(child: Text(text1, textAlign: TextAlign.start)),
-                Expanded(child: Text(text2, textAlign: TextAlign.center)),
-                Expanded(child: Text(text3, textAlign: TextAlign.end))
+                Expanded(flex: 2, child: Text(text1, textAlign: TextAlign.start)),
+                Expanded(flex: 2, child: Text(text2, textAlign: TextAlign.center)),
+                Expanded(flex: 2, child: Text(text3, textAlign: TextAlign.center)),
+                const Spacer(),
+                const Spacer(),
               ],
             );
   }

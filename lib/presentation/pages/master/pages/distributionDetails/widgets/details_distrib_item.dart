@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/domain/model/stage_master_operations.dart';
+import 'package:master_plan/presentation/app/bloc/cubit.dart';
+import 'package:master_plan/presentation/app/bloc/state.dart';
 import 'dropdawn_custom.dart';
 
 class ListContetnDetails extends StatelessWidget {
-  const ListContetnDetails(this.index, {super.key});
-  final int index;
+  const ListContetnDetails(this.oper, {super.key});
+  final StageMasterOperations oper;
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -12,15 +16,21 @@ class ListContetnDetails extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Этап № [stageNumber]'),
+            Text('Этап № ${oper.stageNumber}'),
             const SizedBox(height: 8),
-            const Text('[planNumber]'),
+            Text(oper.planNumber),
             const SizedBox(height: 8),
-            const Text('[operationName]'),
+            Text(oper.operationName),
             const SizedBox(height: 8),
-            const Text('кол-во на участке: [quantity]'),
+            Text('кол-во на участке: ${oper.quantity}'),
             const SizedBox(height: 8),
-            const DropdownButtonCustom(["Нож", "Булавка", "Бумага", "Ручка"]),
+            BlocBuilder<CubitMain, StateMain>(builder: (context, state) {
+              List<String> list = [];
+              for (var element in state.listEquipment!) {
+                list.add(element.name);
+              }
+              return DropdownButtonCustom(list);
+            }),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

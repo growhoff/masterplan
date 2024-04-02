@@ -2,7 +2,7 @@
 class Region {
   final int id;
   final String name;
-  final int number;
+  final String number;
   Region({
     required this.id,
     required this.name,

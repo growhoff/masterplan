@@ -2,33 +2,55 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/data/repositories/supabase/dto/company_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/details_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/equipment_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/oper_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/position_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/ready_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/region_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/shifts_distribution_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/stage_master_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/status_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/user_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/area_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/company_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/machine_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/position_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/shifts_distribution_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/unit_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/user_dto.dart';
+import 'package:master_plan/data/repositories/supabase/service/z_area_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/company_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/details_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/equipment_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/oper_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/position_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/ready_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/region_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/shifts_distribution_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/st_master_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/status_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/z_machine_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/z_shifts_distribution.dart';
+import 'package:master_plan/data/repositories/supabase/service/z_unit_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/user_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/staff_table.dart';
 import 'package:master_plan/domain/model/change.dart';
 import 'package:master_plan/domain/model/company.dart';
 import 'package:master_plan/domain/model/details.dart';
 import 'package:master_plan/domain/model/equipment.dart';
+import 'package:master_plan/domain/model/oper_operations.dart';
 import 'package:master_plan/domain/model/operatoroperations.dart';
 import 'package:master_plan/domain/model/position.dart';
+import 'package:master_plan/domain/model/ready_operations.dart';
 import 'package:master_plan/domain/model/region.dart';
 import 'package:master_plan/domain/model/shiftsdistribution.dart';
+import 'package:master_plan/domain/model/stage_master_operations.dart';
 import 'package:master_plan/domain/model/status.dart';
+// import 'package:master_plan/domain/model/test.dart';
 import 'package:master_plan/domain/model/user.dart';
 import 'package:master_plan/domain/model/user_lite.dart';
+// import 'package:supabase_flutter/supabase_flutter.dart';
 import 'state.dart';
 
 class CubitMain extends Cubit<StateMain> { 
@@ -41,16 +63,26 @@ class CubitMain extends Cubit<StateMain> {
       //ошибка авторизации.нет пользователя
       return 'Error 1';
     } else{
-      if (query[0]['password'] == password){
+      if (query.first['password'] == password){
         //успешная авторизация
         
-        await getUser(query[0]['id']);
-        await getEquipment(state.region!.id, state.company!.id);
-        await getStatus();
-        await getDetails();
-        await getOperatorOperations();
-        await getShiftsDistribution();
-        await getOperatorList();
+        await getUserNew(query.first['user_id']);
+        if (state.position!.id == 2){
+          await getUnitNew();
+          }
+        if (state.position!.id == 3){
+          await getAreaNew();
+          }
+        
+        // await getEquipment(state.region!.id, state.company!.id);
+        // await getStatus();
+        // await getDetails();
+        // await getOperatorOperations();
+        // await getShiftsDistribution();
+        // await getOperatorList();
+        // await getStageMasterOperation();
+        // await getReadyOperations();
+        // await getOperatorsOperations();
 
         // if (equipment == []) print('Пользователь не закреплен к станкам');
         return state.position!.name;
@@ -60,7 +92,7 @@ class CubitMain extends Cubit<StateMain> {
       }
     }
   }
-
+  /*
   Future<void> getUser(int id) async{
     final tableUser = UserTable();
     final tableCompany = CompanyTable();
@@ -85,6 +117,66 @@ class CubitMain extends Cubit<StateMain> {
 
     emit(state.copyWith(user: user, company: company, region: region, position: position));
   }
+*/
+
+
+  Future<void> getUserNew(int id) async{
+    final userTable = UserTable();
+    final companyTable = CompanyTable();
+    final positionTable = PositionTable();
+
+    final userQuery = await userTable.selectId(id);
+    final userDto = UserDTO2.fromMap(userQuery.first);
+
+    final queryCompany = await companyTable.selectId(userDto.companyId);
+    final queryPosition = await positionTable.selectId(userDto.positionId);
+
+    final companyDto = CompanyDTO2.fromMap(queryCompany.first);
+    final positionDto = PositionDTO2.fromMap(queryPosition.first);
+
+    // final user = UserModel(id: userDto.id, fio: userDto.fio, position: positionDto.name, region: regionDto.name, company: companyDto.shortName);
+    // final company = Company(id: companyDto.id, name: companyDto.shortName, fullName: companyDto.fullName);
+    // final region = Region(id: regionDto.id, name: regionDto.name, number: regionDto.number);
+    // final position = Position(id: positionDto.id, name: positionDto.name);
+
+    final region = Region(id: 0, name: 'region', number: '0');
+
+    emit(state.copyWith(user: userDto, company: companyDto, position: positionDto, region: region));
+  }
+
+
+  Future<void> getAreaNew() async{
+    final areaTable = AreaTable();
+    final areaQuery = await areaTable.selectId(state.user!.areaId!);
+    final areaDto = AreaDTO2.fromMap(areaQuery.first);
+
+    final machineTable = MachineTable();
+    final machineQuery = await machineTable.selectId(areaDto.machineId);
+    List<MachineDTO2> machineList = [];
+    for (var machine in machineQuery) {
+      machineList.add(MachineDTO2.fromMap(machine));
+    }
+
+    final zshiftsDistributionTable = ZShiftsDistributionTable();
+    final zshiftsDistributionQuery = await zshiftsDistributionTable.selectEq(areaDto.machineId);
+    List<ZShiftsDistributionDTO2> zshiftsDistributionList = [];
+    for (var shiftsDistr in zshiftsDistributionQuery) {
+      zshiftsDistributionList.add(ZShiftsDistributionDTO2.fromMap(shiftsDistr));
+    }
+    // final zshiftsDistributionDto = UnitDTO2.fromMap(zshiftsDistributionQuery.first);
+
+    emit(state.copyWith(area: areaDto, machineList: machineList, zshiftsDistributionList: zshiftsDistributionList));
+  }
+
+
+  Future<void> getUnitNew() async{
+    final unitTable = UnitTable();
+    final unitQuery = await unitTable.selectId(state.user!.unitId!);
+    final unitDto = UnitDTO2.fromMap(unitQuery.first);
+    emit(state.copyWith(unit: unitDto));
+  }
+
+
 
   Future<void> getEquipment(int regionId, int companyId) async{
     final tableEquipment = EquipmentTable(); 
@@ -154,14 +246,6 @@ class CubitMain extends Cubit<StateMain> {
     emit(state.copyWith(listoperatorOperations: listOperatorOperations));
   }
 
-//выгрузить всех операторов
-    // dynamic data = await Supabase.instance.client
-    //   .from('staff')
-    //   .select()
-    //   .eq('position', 'Оператор')
-    //   .eq('region', FFAppState().masterRegionNumber)
-    //   .eq('company', FFAppState().companyName);
-
   Future<void> getOperatorList() async{
     final tableOperators = UserTable(); 
     final queryOperators = await tableOperators.selectEqOperator(regionId: state.region!.id, companyId: state.company!.id);
@@ -189,36 +273,70 @@ class CubitMain extends Cubit<StateMain> {
     }
 
     List<ShiftsDistribution> listShiftsDistribution = [];
-    for (var dto in listShiftsDistributionDto) {
-      listShiftsDistribution.add(ShiftsDistribution(id: dto.id, change: ChangeModel(id: dto.change.id, name: dto.change.name, number: dto.change.number), date: dto.date, equipment: Equipment(id: dto.equipment.id, inventoryNumber: dto.equipment.inventoryNumber, name: dto.equipment.name, regionId: dto.equipment.regionId, companyId: dto.equipment.companyId, userId: dto.equipment.userId), user: UserModelLite(id: dto.user.id, fio: dto.user.fio), region: Region(id: dto.region.id, name: dto.region.name, number: dto.region.number), company: Company(id: dto.company.id, name: dto.company.shortName, fullName: dto.company.fullName)));
+    for (int i = 0; i < state.listEquipment!.length; i++) {
+      bool isWrt = false;
+      for (var dto in listShiftsDistributionDto) {
+        if (dto.equipment.id == state.listEquipment![i].id) {
+          listShiftsDistribution.add(ShiftsDistribution(id: dto.id, change: ChangeModel(id: dto.change.id, name: dto.change.name, number: dto.change.number), date: dto.date, equipment: Equipment(id: dto.equipment.id, inventoryNumber: dto.equipment.inventoryNumber, name: dto.equipment.name, regionId: dto.equipment.regionId, companyId: dto.equipment.companyId, userId: dto.equipment.userId), user: UserModelLite(id: dto.user.id, fio: dto.user.fio), region: Region(id: dto.region.id, name: dto.region.name, number: dto.region.number), company: Company(id: dto.company.id, name: dto.company.shortName, fullName: dto.company.fullName)));
+          isWrt = true;
+          }
+      }
+      if (isWrt == false) listShiftsDistribution.add(ShiftsDistribution(id: -1, change: ChangeModel(id: -1, name: '-1', number: -1), date: DateTime.now(), equipment: state.listEquipment![i], user: UserModelLite(id: -1, fio: 'none'), region: Region(id: state.listEquipment![i].regionId, name: '-1', number: '-1'), company: Company(id: state.listEquipment![i].companyId, name: '', fullName:'')));
     }
-
+    
     emit(state.copyWith(listShiftsDistribution: listShiftsDistribution));
   }
-  
-//выгрузить смены
-  //   dynamic data = await Supabase.instance.client
-  //     .from('shifts_distribution')
-  //     .select()
-  //     .eq('region', FFAppState().masterRegionNumber)
-  //     .eq('data', datatime)
-  //     .eq('company', FFAppState().companyName);
 
-  // List<ShiftDistributionStruct> shiftList = [];
-  // final equipmentList = FFAppState().equipmentList;
 
-  // for (int i = 0; i < equipmentList.length; i++) {
-  //   String one = 'none';
-  //   String two = 'none';
-  //   for (int j = 0; j < data.length; j++) {
-  //     if (data[j]['equipment_name'] == equipmentList[i]) {
-  //       if (data[j]['change'] == '1') one = data[j]['user'];
-  //       if (data[j]['change'] == '2') two = data[j]['user'];
-  //     }
-  //   }
-  //   shiftList.add(ShiftDistributionStruct(
-  //       equipment: equipmentList[i], changeOneFio: one, changeTwoFio: two));
-  // }
+// new
+  Future<void> getStageMasterOperation() async{
+    final tableStageMasterOperations = StageMasterOperationsTable(); 
+    final queryStageMasterOperations = await tableStageMasterOperations.select();
+    List<StageMasterOperationsDTO> listStageMasterOperationsDto = [];
+    for (var element in queryStageMasterOperations) {
+      final dto = StageMasterOperationsDTO.fromMap(element);
+      listStageMasterOperationsDto.add(dto);
+    }
 
-  // FFAppState().shiftsDistributionList = shiftList;
+    List<StageMasterOperations> listStageMasterOperations = [];
+    for (var dto in listStageMasterOperationsDto) {
+      listStageMasterOperations.add(StageMasterOperations(id: dto.id, stageNumber: dto.ststage.stageNumber, operationNumber: dto.operationNumber, operationName: dto.stageDistribution.operationName, planNumber: dto.ststage.planNumber, planName: dto.ststage.planName, operationsListLength: '${dto.stageDistribution.operationsIdList.length}', quantity: '${dto.stageDistribution.quantity}'));
+    }
+
+    emit(state.copyWith(listStageMasterOperations: listStageMasterOperations));
+  }
+
+  Future<void> getReadyOperations() async{
+    final tableReadyOperations = ReadyOperationsTable(); 
+    final queryReadyOperations = await tableReadyOperations.selectEq(state.region!.id, state.company!.id, 3);
+    List<ReadyOperationsDTO> listReadyOperationsDto = [];
+    for (var element in queryReadyOperations) {
+      final dto = ReadyOperationsDTO.fromMap(element);
+      listReadyOperationsDto.add(dto);
+    }
+
+    List<ReadyOperations> listReadyOperations = [];
+    for (var dto in listReadyOperationsDto) {
+      listReadyOperations.add(ReadyOperations(id: dto.id, timePlan: dto.timePlan, timeFact: dto.timeFact, timeStart: dto.timeStart, timeStop: dto.timeStop, status: dto.statusId.name, stageOperationId: dto.stageOperationId, details: '${dto.detailsId.planNumber} ${dto.detailsId.planName}', equipment: dto.equipmentId.name, user: dto.userId.fio, isUploaded: dto.isUploaded));
+    }
+
+    emit(state.copyWith(listReadyOperations: listReadyOperations));
+  }
+
+  Future<void> getOperatorsOperations() async{
+    final tableOperatorsOperations = OperatorsOperationsTable(); 
+    final queryOperatorsOperations = await tableOperatorsOperations.selectEq();
+    List<OperatorsOperationsDTO> listOperatorsOperationsDto = [];
+    for (var element in queryOperatorsOperations) {
+      final dto = OperatorsOperationsDTO.fromMap(element);
+      listOperatorsOperationsDto.add(dto);
+    }
+
+    List<OperOperations> listOperatorsOperations = [];
+    for (var dto in listOperatorsOperationsDto) {
+      listOperatorsOperations.add(OperOperations(id: dto.id, operationNumber: dto.operationNumber, order: dto.order, planNumber: dto.planNumber, operationName: dto.operationName, time: dto.time, status: dto.status));
+    }
+
+    emit(state.copyWith(listOperOperations: listOperatorsOperations));
+  }
 }

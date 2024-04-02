@@ -12,22 +12,7 @@ abstract class DataMaster {
   static List<TabBarData> listPage = [
     TabBarData(
         title: 'Список смен',
-        actions: [
-          Tooltip(
-            message: 'Закрепить все',
-            child: IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.auto_fix_high),
-            ),
-          ),
-          Tooltip(
-            message: 'Открепить все',
-            child: IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.auto_fix_off),
-            ),
-          )
-        ],
+        actions: [],
         page: const MasterPage(),
         icon: Icons.graphic_eq),
     TabBarData(
@@ -58,11 +43,11 @@ abstract class DataMaster {
   ];
   // actions: const[ Center(child: Text('userInfo.number / userInfo.fio / userInfo.position / userInfo.regionNumber'))],
 
-  static List<ElementBarData> listElementBar = [
-    ElementBarData(header: 'Станок', content: const ContetnReady('Станок')),
-    ElementBarData(header: 'Фрезер', content: const ContetnReady('Фрезер')),
-    ElementBarData(header: 'Шлиф', content: const ContetnReady('Шлиф')),
-  ];
+  // static List<ElementBarData> listElementBar = [
+  //   ElementBarData(header: 'Станок', content: const ContetnReady('Станок')),
+  //   ElementBarData(header: 'Фрезер', content: const ContetnReady('Фрезер')),
+  //   ElementBarData(header: 'Шлиф', content: const ContetnReady('Шлиф')),
+  // ];
 
   static List<ElementBarData> listElementBarQueue = [
     ElementBarData(header: 'Станок', content: const ContetnQueue('Станок')),
