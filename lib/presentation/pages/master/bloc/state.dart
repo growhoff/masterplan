@@ -4,7 +4,7 @@ import 'package:equatable/equatable.dart';
 class StateMaster extends Equatable {
   final int change;
   const StateMaster({
-    this.change = 0,
+    this.change = 1,
   });
 
   @override

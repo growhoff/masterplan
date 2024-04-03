@@ -21,8 +21,8 @@ class ZShiftsDistributionTable extends SupabaseTable{
     return table.select();
   }
 
-  Future<List<Map<String, dynamic>>> selectEq(List<int> machineListId) { //, DateTime date
-        String filters = '';
+  Future<List<Map<String, dynamic>>> selectEq(List<int> machineListId, DateTime date) { //, DateTime date
+        String filters = 'date.eq.$date,';
       for (var i = 0; i < machineListId.length; i++) {
         if (i == (machineListId.length - 1)) {
           filters += 'machine_id.eq.${machineListId[i]}';

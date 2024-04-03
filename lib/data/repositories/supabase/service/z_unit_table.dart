@@ -22,7 +22,7 @@ class UnitTable extends SupabaseTable{
   }
 
     Future<List<Map<String, dynamic>>> selectId(int id) {
-    return table.select('*, z_area(*)').eq('id', id);
+    return table.select().eq('id', id);
   }
 
   @override

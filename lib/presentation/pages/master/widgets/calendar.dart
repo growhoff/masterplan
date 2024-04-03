@@ -10,16 +10,19 @@ class Calendar extends StatefulWidget {
 
 class _CalendarState extends State<Calendar> {
 
-  DateTime day = DateTime.now();
+  DateTime days = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
     return TableCalendar(
+              // locale: 'ru',
+              rowHeight: 43,
               firstDay: DateTime.now(),
               lastDay: DateTime.utc(2030, 3, 14),
-              focusedDay: day,
+              focusedDay: days,
+              selectedDayPredicate: (day) => isSameDay(day, days),
               onDaySelected: (selectedDay, focusedDay) {
-                day = focusedDay;
+                days = selectedDay;
                 setState(() {});
               },
             );

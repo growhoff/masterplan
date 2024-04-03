@@ -14,8 +14,12 @@ import 'package:master_plan/data/repositories/supabase/dto/user_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/area_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/company_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/machine_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/operation_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/operator_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/position_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/shifts_distribution_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/stage_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/transfer_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/unit_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/user_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/z_area_table.dart';
@@ -31,7 +35,11 @@ import 'package:master_plan/data/repositories/supabase/service/shifts_distributi
 import 'package:master_plan/data/repositories/supabase/service/st_master_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/status_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/z_machine_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/z_operation_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/z_operator_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/z_shifts_distribution.dart';
+import 'package:master_plan/data/repositories/supabase/service/z_stage_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/z_transfer_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/z_unit_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/user_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/staff_table.dart';
@@ -50,6 +58,9 @@ import 'package:master_plan/domain/model/status.dart';
 // import 'package:master_plan/domain/model/test.dart';
 import 'package:master_plan/domain/model/user.dart';
 import 'package:master_plan/domain/model/user_lite.dart';
+import 'package:master_plan/domain/model/z_area.dart';
+import 'package:master_plan/domain/model/z_machine.dart';
+import 'package:master_plan/domain/model/z_unit.dart';
 // import 'package:supabase_flutter/supabase_flutter.dart';
 import 'state.dart';
 
@@ -68,10 +79,11 @@ class CubitMain extends Cubit<StateMain> {
         
         await getUserNew(query.first['user_id']);
         if (state.position!.id == 2){
-          await getUnitNew();
+          emit(state.copyWith(unit: await getUnitZ(state.user!.unitId!)));
           }
         if (state.position!.id == 3){
-          await getAreaNew();
+          emit(state.copyWith(area: await getAreaZ(state.user!.areaId!)));
+          await getMasterData();
           }
         
         // await getEquipment(state.region!.id, state.company!.id);
@@ -134,48 +146,89 @@ class CubitMain extends Cubit<StateMain> {
     final companyDto = CompanyDTO2.fromMap(queryCompany.first);
     final positionDto = PositionDTO2.fromMap(queryPosition.first);
 
-    // final user = UserModel(id: userDto.id, fio: userDto.fio, position: positionDto.name, region: regionDto.name, company: companyDto.shortName);
-    // final company = Company(id: companyDto.id, name: companyDto.shortName, fullName: companyDto.fullName);
-    // final region = Region(id: regionDto.id, name: regionDto.name, number: regionDto.number);
-    // final position = Position(id: positionDto.id, name: positionDto.name);
-
     final region = Region(id: 0, name: 'region', number: '0');
 
     emit(state.copyWith(user: userDto, company: companyDto, position: positionDto, region: region));
   }
 
+  Future<ZUnit> getUnitZ(int unitId) async{
+    final unitTable = UnitTable();
+    final unitQuery = await unitTable.selectId(unitId);
+    final unitDto = UnitDTO2.fromMap(unitQuery.first);
 
-  Future<void> getAreaNew() async{
+    List<ZArea> areaList = [];
+    for (var id in unitDto.areaId) {
+      areaList.add(await getAreaZ(id));
+    }
+
+    return ZUnit(id: unitDto.id, name: unitDto.name, areaList: areaList, areaListId: unitDto.areaId);
+  }
+
+  Future<ZArea> getAreaZ(int areaId) async{
     final areaTable = AreaTable();
-    final areaQuery = await areaTable.selectId(state.user!.areaId!);
+    final areaQuery = await areaTable.selectId(areaId);
     final areaDto = AreaDTO2.fromMap(areaQuery.first);
 
     final machineTable = MachineTable();
-    final machineQuery = await machineTable.selectId(areaDto.machineId);
-    List<MachineDTO2> machineList = [];
+    final machineQuery = await machineTable.selectListId(areaDto.machineId);
+    List<ZMachine> machineList = [];
     for (var machine in machineQuery) {
-      machineList.add(MachineDTO2.fromMap(machine));
+      final model = MachineDTO2.fromMap(machine);
+      machineList.add(ZMachine(id: model.id, inventoryNumber: model.inventoryNumber, name: model.name));
     }
+    return ZArea(id: areaDto.id, name: areaDto.name, number: areaDto.number, machineList: machineList, machineListId: areaDto.machineId);
+  }
 
+  Future<ZMachine> getMachineZ(int machineId) async{
+    final machineTable = MachineTable();
+    final machineQuery = await machineTable.selectId(machineId);
+    final model = MachineDTO2.fromMap(machineQuery.first);
+    return ZMachine(id: model.id, inventoryNumber: model.inventoryNumber, name: model.name);
+  }
+
+  Future<void> getMasterData() async{
     final zshiftsDistributionTable = ZShiftsDistributionTable();
-    final zshiftsDistributionQuery = await zshiftsDistributionTable.selectEq(areaDto.machineId);
+    final zshiftsDistributionQuery = await zshiftsDistributionTable.selectEq(state.area!.machineListId, DateTime.now());
     List<ZShiftsDistributionDTO2> zshiftsDistributionList = [];
     for (var shiftsDistr in zshiftsDistributionQuery) {
       zshiftsDistributionList.add(ZShiftsDistributionDTO2.fromMap(shiftsDistr));
     }
-    // final zshiftsDistributionDto = UnitDTO2.fromMap(zshiftsDistributionQuery.first);
 
-    emit(state.copyWith(area: areaDto, machineList: machineList, zshiftsDistributionList: zshiftsDistributionList));
+
+    final zOperatorOperationsTable = ZOperatorOperationsTable();
+    final zOperatorOperationsQuery = await zOperatorOperationsTable.selectListId(state.area!.machineListId);
+    List<OperatorOperationsDTO2> operatorOperationsList = [];
+    for (var operatorOper in zOperatorOperationsQuery) {
+      operatorOperationsList.add(OperatorOperationsDTO2.fromMap(operatorOper));
+    }
+
+
+    final stageTable = ZStageTable();
+    final stageQuery = await stageTable.selectListId(operatorOperationsList.first.batchid.stepId);//пока берем первый элемент, потом пройти по всем
+    List<StageDTO2> stageList = [];
+    for (var stage in stageQuery) {
+      stageList.add(StageDTO2.fromMap(stage));
+    }
+
+
+    final operationTable = ZOperationTable();
+    final operationQuery = await operationTable.selectListId(stageList.first.operationId);//пока берем первый элемент, потом пройти по всем
+    List<OperationDTO2> operationList = [];
+    for (var operation in operationQuery) {
+      operationList.add(OperationDTO2.fromMap(operation));
+    }
+
+
+    final transferTable = ZTransferTable();
+    final transferQuery = await transferTable.selectListId(stageList.first.operationId);//пока берем первый элемент, потом пройти по всем
+    List<TransferDTO2> transferList = [];
+    for (var transfer in transferQuery) {
+      transferList.add(TransferDTO2.fromMap(transfer));
+    }
+
+
+    emit(state.copyWith(zshiftsDistributionList: zshiftsDistributionList, operatorOperationsList: operatorOperationsList));
   }
-
-
-  Future<void> getUnitNew() async{
-    final unitTable = UnitTable();
-    final unitQuery = await unitTable.selectId(state.user!.unitId!);
-    final unitDto = UnitDTO2.fromMap(unitQuery.first);
-    emit(state.copyWith(unit: unitDto));
-  }
-
 
 
   Future<void> getEquipment(int regionId, int companyId) async{

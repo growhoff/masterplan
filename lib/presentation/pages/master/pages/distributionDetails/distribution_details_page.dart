@@ -20,8 +20,8 @@ class DetailDistribPage extends StatelessWidget {
               BlocBuilder<CubitMain, StateMain>(
                 builder: (context, state) => ListView.builder(
                   shrinkWrap: true,
-                  itemCount: 2,
-                  itemBuilder: (context, index) => ListContetnDetails(state.listStageMasterOperations![index])),
+                  itemCount: state.operatorOperationsList!.length,
+                  itemBuilder: (context, index) => ListContetnDetails(state.operatorOperationsList![index])),//state.listStageMasterOperations![index]
               ),
               const SizedBox(height: 8),
               SizedBox(

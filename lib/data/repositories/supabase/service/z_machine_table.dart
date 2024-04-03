@@ -21,7 +21,11 @@ class MachineTable extends SupabaseTable{
     return table.select();
   }
 
-    Future<List<Map<String, dynamic>>> selectId(List<int> listId) {
+  Future<List<Map<String, dynamic>>> selectId(int id) {
+    return table.select().eq('id', id);
+  }
+
+  Future<List<Map<String, dynamic>>> selectListId(List<int> listId) {
       String filters = '';
       for (var i = 0; i < listId.length; i++) {
         if (i == (listId.length - 1)) {

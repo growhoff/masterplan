@@ -1,5 +1,10 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
+
+import 'package:master_plan/data/repositories/supabase/dto2/batch_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/machine_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/status_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/user_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 
 class OperatorOperationsDTO2 extends Dto {
@@ -9,14 +14,14 @@ class OperatorOperationsDTO2 extends Dto {
   final int timestart;
   final int timestop;
   final int timeworking;
-  final int statusid;
+  final StatusDTO2 statusid;
   final int stageoperationid;
   final int stagemasteroperationid;
-  final int batchid;
-  final int userid;
+  final BatchDTO2 batchid;
+  final UserDTO2 userid;
   final bool isuploaded;
   final int order;
-  final int machineid;
+  final MachineDTO2 machineid;
   OperatorOperationsDTO2({
     required this.id,
     required this.timeplan,
@@ -34,6 +39,7 @@ class OperatorOperationsDTO2 extends Dto {
     required this.machineid,
   });
 
+
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
@@ -42,14 +48,14 @@ class OperatorOperationsDTO2 extends Dto {
       'time_start': timestart,
       'time_stop': timestop,
       'time_working': timeworking,
-      'status_id': statusid,
+      'status_id': statusid.toMap(),
       'stage_operation_id': stageoperationid,
       'stage_master_operation_id': stagemasteroperationid,
-      'batch_id': batchid,
-      'user_id': userid,
+      'batch_id': batchid.toMap(),
+      'user_id': userid.toMap(),
       'is_uploaded': isuploaded,
       'order': order,
-      'machine_id': machineid,
+      'machine_id': machineid.toMap(),
     };
   }
 
@@ -61,14 +67,14 @@ class OperatorOperationsDTO2 extends Dto {
       timestart: map['time_start'] as int,
       timestop: map['time_stop'] as int,
       timeworking: map['time_working'] as int,
-      statusid: map['status_id'] as int,
+      statusid: StatusDTO2.fromMap(map['z_status'] as Map<String,dynamic>),
       stageoperationid: map['stage_operation_id'] as int,
       stagemasteroperationid: map['stage_master_operation_id'] as int,
-      batchid: map['batch_id'] as int,
-      userid: map['user_id'] as int,
+      batchid: BatchDTO2.fromMap(map['z_batch'] as Map<String,dynamic>),
+      userid: UserDTO2.fromMap(map['z_user'] as Map<String,dynamic>),
       isuploaded: map['is_uploaded'] as bool,
       order: map['order'] as int,
-      machineid: map['machine_id'] as int,
+      machineid: MachineDTO2.fromMap(map['z_machine'] as Map<String,dynamic>),
     );
   }
 

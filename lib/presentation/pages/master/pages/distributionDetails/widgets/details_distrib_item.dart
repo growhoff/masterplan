@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/operator_operations_dto.dart';
 import 'package:master_plan/domain/model/stage_master_operations.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import 'package:master_plan/presentation/app/bloc/state.dart';
@@ -7,7 +8,8 @@ import 'dropdawn_custom.dart';
 
 class ListContetnDetails extends StatelessWidget {
   const ListContetnDetails(this.oper, {super.key});
-  final StageMasterOperations oper;
+  // final StageMasterOperations oper;
+  final OperatorOperationsDTO2 oper;
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -16,18 +18,18 @@ class ListContetnDetails extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Этап № ${oper.stageNumber}'),
+            Text('Этап № ${oper.batchid.stepId.last}'), //oper.stageNumber
             const SizedBox(height: 8),
-            Text(oper.planNumber),
+            Text('${oper.batchid.number}'),//oper.planNumber
             const SizedBox(height: 8),
-            Text(oper.operationName),
+            Text('Операция ${oper.batchid.stepId.first}'), //oper.operationName
             const SizedBox(height: 8),
-            Text('кол-во на участке: ${oper.quantity}'),
+            Text('кол-во на участке: ${oper.batchid.count }'),//oper.quantity
             const SizedBox(height: 8),
             BlocBuilder<CubitMain, StateMain>(builder: (context, state) {
               List<String> list = [];
-              for (var element in state.listEquipment!) {
-                list.add(element.name);
+              for (var machine in state.machineList!) {
+                list.add(machine.name);
               }
               return DropdownButtonCustom(list);
             }),

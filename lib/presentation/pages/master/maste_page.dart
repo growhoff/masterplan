@@ -45,20 +45,23 @@ class MasterContent extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      BlocBuilder<CubitMaster, StateMaster>(builder: (context, state) => ElevatedButton(onPressed: () => context.read<CubitMaster>().setChange(0), style: ElevatedButton.styleFrom(backgroundColor: state.change == 0 ? Colors.blue : Colors.blueGrey), child: const Text('1 смена'))),
-                      BlocBuilder<CubitMaster, StateMaster>(builder: (context, state) => ElevatedButton(onPressed: () => context.read<CubitMaster>().setChange(1), style: ElevatedButton.styleFrom(backgroundColor: state.change == 1 ? Colors.blue : Colors.blueGrey), child: const Text('2 смена')))
+                      BlocBuilder<CubitMaster, StateMaster>(builder: (context, state) => ElevatedButton(onPressed: () => context.read<CubitMaster>().setChange(1), style: ElevatedButton.styleFrom(backgroundColor: state.change == 1 ? Colors.blue : Colors.blueGrey), child: const Text('1 смена'))),
+                      BlocBuilder<CubitMaster, StateMaster>(builder: (context, state) => ElevatedButton(onPressed: () => context.read<CubitMaster>().setChange(2), style: ElevatedButton.styleFrom(backgroundColor: state.change == 2 ? Colors.blue : Colors.blueGrey), child: const Text('2 смена')))
                     ],
                   ),
                   const SizedBox(height: 8),
                   // BlocBuilder<CubitMain, StateMain>(builder: (context, state) => ChangeListOperator(state.listShiftsDistribution!)),
-                  BlocBuilder<CubitMaster, StateMaster>(
-                    builder: (context2, state2) => BlocBuilder<CubitMain, StateMain>(builder: (context, state) {
+                  BlocBuilder<CubitMaster, StateMaster>(builder: (context2, state2) => 
+                    BlocBuilder<CubitMain, StateMain>(builder: (context, state) {
                       List<ZShiftsDistributionDTO2> list = [];
-                      for (var element in state.zShiftsDistributionList!) {
-                        if (!(element.changeId.id == state2.change) && !(element.date == DateTime.now())) {list.add(element);}
-                        else {list.add(ZShiftsDistributionDTO2(id: -1,changeId: ChangeDTO2.init(), date: DateTime.now(), userId: UserDTO2.init(), machineId: MachineDTO2.init()));}
+                      for (var machine in state.machineList!){
+                        bool iswr = false;
+                        for (var shiftsDistr in state.zShiftsDistributionList!) {
+                          if ((shiftsDistr.machineId.id == machine.id) && (shiftsDistr.changeId.number == state2.change)) {list.add(shiftsDistr); iswr = true;}
+                        }
+                        if (!iswr) {list.add(ZShiftsDistributionDTO2(id: -1,changeId: ChangeDTO2.init(), date: DateTime.now(), userId: UserDTO2.init(), machineId: machine));}
                       }
-                      return ChangeListOperator(state.zShiftsDistributionList!);
+                      return ChangeListOperator(list);
                     }),
                   ),
                   // const SizedBox(height: 8),
