@@ -50,16 +50,15 @@ class MasterContent extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  // BlocBuilder<CubitMain, StateMain>(builder: (context, state) => ChangeListOperator(state.listShiftsDistribution!)),
                   BlocBuilder<CubitMaster, StateMaster>(builder: (context2, state2) => 
                     BlocBuilder<CubitMain, StateMain>(builder: (context, state) {
                       List<ZShiftsDistributionDTO2> list = [];
-                      for (var machine in state.machineList!){
+                      for (var machine in state.area!.machineList){
                         bool iswr = false;
                         for (var shiftsDistr in state.zShiftsDistributionList!) {
                           if ((shiftsDistr.machineId.id == machine.id) && (shiftsDistr.changeId.number == state2.change)) {list.add(shiftsDistr); iswr = true;}
                         }
-                        if (!iswr) {list.add(ZShiftsDistributionDTO2(id: -1,changeId: ChangeDTO2.init(), date: DateTime.now(), userId: UserDTO2.init(), machineId: machine));}
+                        if (!iswr) {list.add(ZShiftsDistributionDTO2(id: -1,changeId: ChangeDTO2.init(), date: DateTime.now(), userId: UserDTO2.init(), machineId: MachineDTO2(id: machine.id, inventoryNumber: machine.inventoryNumber, name: machine.name)));}
                       }
                       return ChangeListOperator(list);
                     }),

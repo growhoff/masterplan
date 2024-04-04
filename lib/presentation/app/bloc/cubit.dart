@@ -12,10 +12,12 @@ import 'package:master_plan/data/repositories/supabase/dto/stage_master_operatio
 import 'package:master_plan/data/repositories/supabase/dto/status_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/user_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/area_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/company_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/operation_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/operator_operations_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/package_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/position_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/shifts_distribution_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/stage_dto.dart';
@@ -34,9 +36,11 @@ import 'package:master_plan/data/repositories/supabase/service/region_table.dart
 import 'package:master_plan/data/repositories/supabase/service/shifts_distribution_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/st_master_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/status_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/z_batch_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/z_machine_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/z_operation_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/z_operator_operations_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/z_package_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/z_shifts_distribution.dart';
 import 'package:master_plan/data/repositories/supabase/service/z_stage_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/z_transfer_table.dart';
@@ -59,7 +63,13 @@ import 'package:master_plan/domain/model/status.dart';
 import 'package:master_plan/domain/model/user.dart';
 import 'package:master_plan/domain/model/user_lite.dart';
 import 'package:master_plan/domain/model/z_area.dart';
+import 'package:master_plan/domain/model/z_batch.dart';
 import 'package:master_plan/domain/model/z_machine.dart';
+import 'package:master_plan/domain/model/z_operation.dart';
+import 'package:master_plan/domain/model/z_operator_operations.dart';
+import 'package:master_plan/domain/model/z_package.dart';
+import 'package:master_plan/domain/model/z_stage.dart';
+import 'package:master_plan/domain/model/z_transfer.dart';
 import 'package:master_plan/domain/model/z_unit.dart';
 // import 'package:supabase_flutter/supabase_flutter.dart';
 import 'state.dart';
@@ -197,38 +207,76 @@ class CubitMain extends Cubit<StateMain> {
 
     final zOperatorOperationsTable = ZOperatorOperationsTable();
     final zOperatorOperationsQuery = await zOperatorOperationsTable.selectListId(state.area!.machineListId);
-    List<OperatorOperationsDTO2> operatorOperationsList = [];
+    List<ZOperatorOperations> operatorOperationsList = [];
     for (var operatorOper in zOperatorOperationsQuery) {
-      operatorOperationsList.add(OperatorOperationsDTO2.fromMap(operatorOper));
+      final model = OperatorOperationsDTO2.fromMap(operatorOper);
+      operatorOperationsList.add(ZOperatorOperations(id: model.id, timeplan: model.timeplan, timefact: model.timefact, timestart: model.timestart, timestop: model.timestop, timeworking: model.timeworking, status: model.statusid, stageoperationid: model.stageoperationid, stagemasteroperationid: model.stagemasteroperationid, batch: await getBatchZ(model.batchid.id), user: model.userid, isuploaded: model.isuploaded, order: model.order, machine: model.machineid));
     }
-
-
-    final stageTable = ZStageTable();
-    final stageQuery = await stageTable.selectListId(operatorOperationsList.first.batchid.stepId);//пока берем первый элемент, потом пройти по всем
-    List<StageDTO2> stageList = [];
-    for (var stage in stageQuery) {
-      stageList.add(StageDTO2.fromMap(stage));
-    }
-
-
-    final operationTable = ZOperationTable();
-    final operationQuery = await operationTable.selectListId(stageList.first.operationId);//пока берем первый элемент, потом пройти по всем
-    List<OperationDTO2> operationList = [];
-    for (var operation in operationQuery) {
-      operationList.add(OperationDTO2.fromMap(operation));
-    }
-
-
-    final transferTable = ZTransferTable();
-    final transferQuery = await transferTable.selectListId(stageList.first.operationId);//пока берем первый элемент, потом пройти по всем
-    List<TransferDTO2> transferList = [];
-    for (var transfer in transferQuery) {
-      transferList.add(TransferDTO2.fromMap(transfer));
-    }
-
 
     emit(state.copyWith(zshiftsDistributionList: zshiftsDistributionList, operatorOperationsList: operatorOperationsList));
   }
+
+  Future<ZTransfer> getTransferZ(int transferId) async{
+      final transferTable = ZTransferTable();
+      final transferQuery = await transferTable.selectId(transferId);
+      final model = TransferDTO2.fromMap(transferQuery.first);
+      return ZTransfer(id: model.id, number: model.number, name: model.name, code: model.code, timepz: model.timepz, timesh: model.timesh);
+  }
+
+  Future<ZOperation> getOperationZ(int operationId) async{
+    final operationTable = ZOperationTable();
+    final operationQuery = await operationTable.selectId(operationId);
+    final operationDto = OperationDTO2.fromMap(operationQuery.first);
+
+    final transferTable = ZTransferTable();
+    final transferQuery = await transferTable.selectListId(operationDto.transferId);
+    List<ZTransfer> transferList = [];
+    for (var transfer in transferQuery) {
+      final model = TransferDTO2.fromMap(transfer);
+      transferList.add(ZTransfer(id: model.id, number: model.number, name: model.name, code: model.code, timepz: model.timepz, timesh: model.timesh));
+    }
+    return ZOperation(id: operationDto.id, number: operationDto.number, name: operationDto.name, code: operationDto.code, isready: operationDto.isready, transferList: transferList, transferListId: operationDto.transferId);
+  }
+
+  Future<ZStage> getStageZ(int stageId) async{
+    final stageTable = ZStageTable();
+    final stageQuery = await stageTable.selectId(stageId);
+    final stageDto = StageDTO2.fromMap(stageQuery.first);
+
+    List<ZOperation> operationList = [];
+    for (var id in stageDto.operationId) {
+      operationList.add(await getOperationZ(id));
+    }
+
+    return ZStage(id: stageDto.id, number: stageDto.number, code: stageDto.code, operationList: operationList, operationListId: stageDto.operationId);
+  }
+
+  Future<ZBatch> getBatchZ(int batchId) async{
+    final batchTable = ZBatchTable();
+    final batchQuery = await batchTable.selectId(batchId);
+    final batchDto = BatchDTO2.fromMap(batchQuery.first);
+
+    List<ZStage> stageList = [];
+    for (var id in batchDto.stepId) {
+      stageList.add(await getStageZ(id));
+    }
+
+    return ZBatch(id: batchDto.id, number: batchDto.number, name: batchDto.name, count: batchDto.count, code: batchDto.code, technology: batchDto.technology, order: batchDto.order, isready: batchDto.isready, stageList: stageList, stageListId: batchDto.stepId);
+  }
+
+  Future<ZPackage> getPackageZ(int packageId) async{
+    final packageTable = ZPackageTable();
+    final packageQuery = await packageTable.selectId(packageId);
+    final packageDto = PackageDTO2.fromMap(packageQuery.first);
+
+    List<ZBatch> batchList = [];
+    for (var id in packageDto.batchId) {
+      batchList.add(await getBatchZ(id));
+    }
+
+    return ZPackage(id: packageDto.id, number: packageDto.number, batchList: batchList, batchListId: packageDto.batchId);
+  }
+
 
 
   Future<void> getEquipment(int regionId, int companyId) async{

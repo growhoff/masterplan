@@ -25,7 +25,11 @@ class DetailPage extends StatelessWidget {
             //  ),
 
             //DataTable как альтернатива
-            BlocBuilder<CubitMain, StateMain>(builder: (context, state) => DataList(state.listStageMasterOperations!),),
+            BlocBuilder<CubitMain, StateMain>(builder: (context, state) {
+              if ((state.operatorOperationsList!.length > 0) || (state.operatorOperationsList != null)){ return DataList(state.operatorOperationsList!);}
+              else {return const Text('Список пуст');}
+              
+            }),
              const SizedBox(height: 8),
              SizedBox(
               width: double.maxFinite,

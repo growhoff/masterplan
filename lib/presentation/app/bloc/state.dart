@@ -25,6 +25,7 @@ import 'package:master_plan/domain/model/status.dart';
 import 'package:master_plan/domain/model/user.dart';
 import 'package:master_plan/domain/model/user_lite.dart';
 import 'package:master_plan/domain/model/z_area.dart';
+import 'package:master_plan/domain/model/z_operator_operations.dart';
 import 'package:master_plan/domain/model/z_unit.dart';
 
 class StateMain extends Equatable {
@@ -41,7 +42,7 @@ class StateMain extends Equatable {
     final List<AreaDTO2>? areaList;
     final List<MachineDTO2>? machineList;
     final List<ZShiftsDistributionDTO2>? zShiftsDistributionList; 
-    final List<OperatorOperationsDTO2>? operatorOperationsList;
+    final List<ZOperatorOperations>? operatorOperationsList;
 
     final List<Equipment>? listEquipment;
     final List<Details>? listDetails;
@@ -120,7 +121,7 @@ class StateMain extends Equatable {
     List<AreaDTO2>? areaList,
     List<MachineDTO2>? machineList,
     List<ZShiftsDistributionDTO2>? zshiftsDistributionList,
-    List<OperatorOperationsDTO2>? operatorOperationsList,
+    List<ZOperatorOperations>? operatorOperationsList,
 
     List<Equipment>? listEquipment,
     List<Details>? listDetails,
