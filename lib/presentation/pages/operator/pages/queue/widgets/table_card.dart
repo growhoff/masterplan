@@ -1,7 +1,6 @@
 
 import 'package:flutter/material.dart';
-
-import '../model/operation.dart';
+import 'package:master_plan/presentation/pages/operator/pages/queue/model/item_operation.dart';
 import 'row_list.dart';
 
 class TableCard extends StatelessWidget {
@@ -12,7 +11,7 @@ class TableCard extends StatelessWidget {
       required this.list});
   final Color color;
   final Widget heder;
-  final List<Operation> list;
+  final List<ItemOperation> list;
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -26,9 +25,9 @@ class TableCard extends StatelessWidget {
           : ListView.builder(
             shrinkWrap: true,
             itemBuilder: (context, index) => RowList(
-                text1: list[index].plan,
-                text2: list[index].operation,
-                text3: list[index].time),
+                text1: '${list[index].detailNumber}',
+                text2: list[index].operationName,
+                text3: '${list[index].timeFact}'),
             itemCount: list.length,
           ),
         ],

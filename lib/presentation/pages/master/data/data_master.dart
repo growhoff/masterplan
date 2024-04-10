@@ -49,9 +49,9 @@ abstract class DataMaster {
   //   ElementBarData(header: 'Шлиф', content: const ContetnReady('Шлиф')),
   // ];
 
-  static List<ElementBarData> listElementBarQueue = [
-    ElementBarData(header: 'Станок', content: const ContetnQueue('Станок')),
-    ElementBarData(header: 'Фрезер', content: const ContetnQueue('Фрезер')),
-    ElementBarData(header: 'Шлиф', content: const ContetnQueue('Шлиф')),
-  ];
+  // static List<ElementBarData> listElementBarQueue = [
+  //   ElementBarData(header: 'Станок', content: const ContetnQueue('Станок')),
+  //   ElementBarData(header: 'Фрезер', content: const ContetnQueue('Фрезер')),
+  //   ElementBarData(header: 'Шлиф', content: const ContetnQueue('Шлиф')),
+  // ];
 }

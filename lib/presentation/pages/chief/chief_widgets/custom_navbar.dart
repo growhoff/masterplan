@@ -21,7 +21,8 @@ class _NavBarCustomChiefState extends State<NavBarCustomChief> {
     return GestureDetector(
       child: Scaffold(
         appBar: AppBar(
-          title: BlocBuilder<CubitMain, StateMain>(builder: (context, state) => Row(children: [
+          title: BlocBuilder<CubitMain, StateMain>(builder: (context, state) => Column(children: [
+            const Text('Начальник'),
             Text('${state.user!.id} / ${state.user!.fio} / ${state.position!.name} / ${state.region!.name}', style: const TextStyle(fontSize: 12)),
           ],)),
           actions: DataChief.listPage[selectedIndex].actions,

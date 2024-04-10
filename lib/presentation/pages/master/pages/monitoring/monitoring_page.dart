@@ -1,4 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/presentation/app/bloc/cubit.dart';
+import 'package:master_plan/presentation/app/bloc/state.dart';
+import 'package:master_plan/presentation/pages/master/model/element_bar_data.dart';
+import 'package:master_plan/presentation/pages/master/pages/monitoring/model/item_machine.dart';
+import 'package:master_plan/presentation/pages/master/pages/monitoring/model/item_machine_monitor.dart';
+import 'package:intl/intl.dart';
+import '../../../../widgets/element_bar.dart';
 // import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:master_plan/presentation/app/bloc/cubit.dart';
 // import 'package:master_plan/presentation/app/bloc/state.dart';
@@ -7,66 +15,155 @@ class MonitoringPage extends StatelessWidget {
   const MonitoringPage({super.key});
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: ListView.builder(
-          itemCount: 5,
-          itemBuilder: (context, index) => ContentListWidget(index: index),)
+    return  SafeArea(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              BlocBuilder<CubitMain, StateMain>(builder: (context, state) {
+                List<ElementBarData> list = [];
+                List<ItemMachineMonitor> listMonitor = [];
+
+                for (var machine in state.area!.machineList) {
+                  List<ItemMachineStatus> listStatus = [];
+                  int allTime = 0;
+                  for (var operList in state.operatorOperationsList!) {
+                    if (operList.machine.id == machine.id) {
+                      listStatus.add(ItemMachineStatus(timeStart: operList.timestart, timeEnd: operList.timestop, timeWorking: operList.timeworking, status: operList.status));
+                      allTime += operList.timeworking;
+                      }
+                  }
+                  listMonitor.add(ItemMachineMonitor(machine: machine, listStatus: listStatus, allTime: allTime));
+                }
+
+                for (var machineItem in listMonitor) {
+                  list.add(ElementBarData(header: machineItem.machine.name, content: ContentListWidget(machineItem)));
+                }
+                return ElementBar(list: list);
+              }),
+            ],
+          )
+        ),
       ),
     );
   }
 }
 
 class ContentListWidget extends StatelessWidget {
-  const ContentListWidget({
-    super.key,
-    required this.index
-  });
-  final int index;
+  const ContentListWidget(this.monitor, {super.key});
+  final ItemMachineMonitor monitor;
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+      Row(
+        children: [
+          Expanded(child: Text('${monitor.machine.name} станок', textAlign: TextAlign.left)),
+          Expanded(child: Text('дата: ${DateFormat('dd.MM.yyyy').format(DateTime.now())}', textAlign: TextAlign.center)),
+          const Expanded(child: Text('смена: 1,2', textAlign: TextAlign.right))
+        ],
+      ),
+      const SizedBox(height: 8),
+      const Divider(),
+      const SizedBox(height: 8),
+      StatusLine(monitor.listStatus),
+      const SizedBox(height: 8),
+      const Divider(),
+      const SizedBox(height: 8),
+        const Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(flex: 4, child: Text('Статус')),
+            Expanded(flex: 2,child: Text('Начало')),
+            Expanded(flex: 2,child: Text('Конец')),
+            Expanded(flex: 2,child: Text('Общее')),
+            Expanded(child: Text('%')),
+          ],
+        ),
+        const SizedBox(height: 8),
+       ListView.separated(
+          shrinkWrap: true,
+          itemCount: monitor.listStatus.length,
+          itemBuilder: (context, index) => StatusItem(item: monitor.listStatus[index], allTime: monitor.allTime),
+          separatorBuilder: (context, index) => const SizedBox(height: 3),
+          )
+      ],
+    );
+  }
+}
+
+class StatusItem extends StatelessWidget {
+  const StatusItem({super.key, required this.item, required this.allTime});
+  final ItemMachineStatus item;
+  final int allTime;
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.black12,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
+        padding: const EdgeInsets.all(5.0),
+        child: Row(
           children: [
-           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-             children: [
-               Text('equipmentName $index'),
-               const Icon(Icons.circle)
-             ],
-           ),
-           const SizedBox(height: 8),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(child: Text('Деталь')),
-                Expanded(child: Text('planNumber')),
-                Expanded(child: Text('Время в работе'))
-              ],
-            ),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(child: Text('Операция')),
-                Expanded(child: Text('operationName')),
-                Expanded(child: Text('workingTime'))
-              ],
-            ),
-            const SizedBox(height: 8),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Загрузка станк'),
-                Text('minutesConverter')
-              ],
-            )
+                Expanded(flex: 4, child: Row(
+                  children: [
+                    Container(
+                      color: convertColor(item.status.id),
+                      width: 10,
+                      height: 10,
+                    ),
+                    const SizedBox(width: 5),
+                    Text(item.status.name)
+                  ],
+                )),
+                Expanded(flex: 2,child: Text(convertTime(item.timeStart))),
+                Expanded(flex: 2,child: Text(convertTime(item.timeEnd))),
+                Expanded(flex: 2,child: Text(convertTime(item.timeWorking))),
+                Expanded(child: Text('${((item.timeWorking / allTime) * 100).round()}%')),
           ],
         ),
       ),
     );
   }
+}
+
+class StatusLine extends StatelessWidget {
+  const StatusLine(this.list, {super.key});
+  final List<ItemMachineStatus> list; 
+  @override
+  Widget build(BuildContext context) {
+    
+    return SizedBox(
+      height: 25,
+      child: Row(
+        children: list.map((e) => Expanded(
+          flex: e.timeWorking, 
+          child: Container(decoration: BoxDecoration(border: Border.all(width: 1, color: Colors.black), color: convertColor(e.status.id)))
+          )
+        ).toList(),
+      ),
+    );
+  }
+}
+
+String convertTime(int time){
+  final h = time ~/ 60;
+  final min = time - h * 60;
+  final minStr = min > 9 ? '$min' : '0$min';
+  final hStr = h > 9 ? '$h' : '0$h';
+return '$hStr:$minStr';
+}
+
+Color convertColor(int status){
+  Color colorStatus;
+  switch (status) {
+      case 1: colorStatus = Colors.green;
+      case 2: colorStatus = Colors.yellow;
+      case 3: colorStatus = Colors.red;
+      case 4: colorStatus = Colors.orange;
+      case 5: colorStatus = Colors.purple;
+      case 6: colorStatus = Colors.blue;
+        break;
+      default: colorStatus = Colors.white;
+    }
+    return colorStatus;
 }

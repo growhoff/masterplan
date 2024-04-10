@@ -37,6 +37,22 @@ class ZOperatorOperationsTable extends SupabaseTable{
   return table.select('*, z_status(*), z_batch(*), z_user(*), z_machine(*)').or(filters);
 }
 
+  Future<List<Map<String, dynamic>>> selectListIdSt(List<int> listId) {
+    String filters = '';
+
+    // if (listId.isEmpty) {filters = 'status_id.eq.5';}
+    // else {filters = 'status_id.eq.5,';}
+
+    for (var i = 0; i < listId.length; i++) {
+      if (i == (listId.length - 1)) {
+        filters += 'machine_id.eq.${listId[i]}';
+      } else {
+        filters += 'machine_id.eq.${listId[i]},';
+      }
+    }
+  return table.select('*, z_status(*), z_batch(*), z_user(*), z_machine(*)').or(filters);//.eq('status_id', 5)
+}
+
   @override
   Future<void> update(int id, Dto dto) {
    return table.update({'name': '1'}).eq('id', id);

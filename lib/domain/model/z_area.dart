@@ -4,7 +4,7 @@ import 'package:master_plan/domain/model/z_machine.dart';
 class ZArea {
   final int id;
   final String name;
-  final int number;
+  final String number;
   final List<ZMachine> machineList;
   final List<int> machineListId;
   ZArea({

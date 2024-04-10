@@ -32,16 +32,12 @@ class ReadyDetailsPage extends StatelessWidget {
                 for (var machine in state.area!.machineList) {
                   int timeWorking = 0;
                   List<ZBatch> batchList = [];
-                  // bool isWrt = false;
                   for (var operList in state.operatorOperationsList!) {
-                    if (operList.batch.isready && (operList.machine.id == machine.id)) {
+                    //проверка на готовые детали
+                    if ((operList.status.id == 2) && (operList.machine.id == machine.id)) {
                       batchList.add(operList.batch);
                       timeWorking += operList.timeworking;
-                      // list.add(ElementBarData(header: machine.name, content: ContetnReady(batchList: batchList, machine: machine, timeWorking: timeWorking)));
-                      // isWrt = true;
                     }
-                    
-                    // if (!isWrt)  list.add(ElementBarData(header: machine.name, content: ContetnReady(batchList: batchList, machine: machine, timeWorking: timeWorking)));
                   }
                   listMachine.add(ItemMachine(machine: machine, batchList: batchList, timeWorking: timeWorking));
                 }
@@ -87,7 +83,7 @@ class ContetnReady extends StatelessWidget {
               Row(
                 children: [
                   Text('Время работы станка - ${machine.name}: '),
-                  Text('$timeWorking')
+                  Text('$timeWorking минут')
                 ],
               ),
               const SizedBox(height: 8),

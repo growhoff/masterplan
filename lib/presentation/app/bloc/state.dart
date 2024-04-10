@@ -87,7 +87,7 @@ class StateMain extends Equatable {
       company ?? CompanyDTO2.init(), 
       position ?? PositionDTO2.init(),
 
-      area ?? ZArea(id: 0, name: '', number: 1, machineList: [], machineListId: []),
+      area ?? ZArea(id: 0, name: '', number: '', machineList: [], machineListId: []),
       unit ?? ZUnit(id: 0, name: '', areaList: [], areaListId: []),
       areaList ?? [],
       machineList ?? [],

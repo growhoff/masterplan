@@ -26,7 +26,7 @@ class RowExpandContent extends StatelessWidget {
                     ),
                     onPressed: (){}, 
                     child: const Text('Брак'),),
-                ), // IconButton(onPressed: (){}, icon: const Icon(Icons.fmd_bad_outlined))
+                ),
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 5),
                   child: ElevatedButton(
@@ -40,7 +40,7 @@ class RowExpandContent extends StatelessWidget {
                     ),
                     onPressed: (){}, 
                     child: const Text('Доработка')),
-                ),//IconButton(onPressed: (){}, icon: const Icon(Icons.mode_edit_outline_rounded))
+                ),
               ],
             );
   }

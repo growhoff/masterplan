@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import 'package:master_plan/presentation/app/bloc/state.dart';
+import 'package:master_plan/presentation/pages/operator/bloc/cubit.dart';
+import 'package:master_plan/presentation/pages/operator/bloc/state.dart';
 
 
 class OperatorPage extends StatelessWidget {
@@ -9,7 +11,10 @@ class OperatorPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const ContentOperator();
+    return BlocProvider<CubitOperator>(
+      create: (context) => CubitOperator(),
+      child: const ContentOperator(),
+    );
   }
 }
 
@@ -35,9 +40,9 @@ class ContentOperator extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const ButtonCustom(),
-                  const SizedBox(height: 8),
-                  ElevatedButton(onPressed: ()=> Navigator.pushNamed(context, '/workPage'), child: const Text('Вернуться')),
+                  const ButtomStart(),
+                  const SizedBox(height: 16),
+                  const ButtomBack(),
                   const SizedBox(height: 8),
                   ElevatedButton(onPressed: (){}, child: const Text('Календарь смен')),
                   const SizedBox(height: 8),
@@ -52,27 +57,29 @@ class ContentOperator extends StatelessWidget {
   }
 }
 
-class ButtonCustom extends StatefulWidget {
-  const ButtonCustom({super.key});
-
-  @override
-  State<ButtonCustom> createState() => _ButtonCustomState();
-}
-
-class _ButtonCustomState extends State<ButtonCustom> {
-
-  bool isStart = false;
+class ButtomBack extends StatelessWidget {
+  const ButtomBack({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {
-        if (!isStart) Navigator.pushNamed(context, '/workPage');
-        isStart = !isStart;
-        setState(() {});
-        
-      }, 
-      child: Text(!isStart ? 'Начать смену' : 'Закончить смену'),
+    return BlocBuilder<CubitOperator, StateOperator>(builder: (context, state) => Visibility(visible: state.isStart ,child: ElevatedButton(onPressed: ()=> Navigator.pushNamed(context, '/workPage'), child: const Text('Вернуться'))));
+  }
+}
+
+class ButtomStart extends StatelessWidget {
+  const ButtomStart({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<CubitMain, StateMain>(
+      builder: (context, state2) => BlocBuilder<CubitOperator, StateOperator>(
+            builder: (context, state) => ElevatedButton(
+                  onPressed: () {
+                    if (!state.isStart && state2.zShiftsDistributionList!.isNotEmpty) Navigator.pushNamed(context, '/workPage');
+                    context.read<CubitOperator>().toggleBtn(!state.isStart);
+                  },
+                  child: Text(!state.isStart ? 'Начать смену' : 'Закончить смену'),
+                )),
     );
   }
 }
