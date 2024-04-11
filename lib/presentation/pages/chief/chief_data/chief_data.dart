@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:master_plan/presentation/pages/chief/chief_analytics_page.dart';
-import 'package:master_plan/presentation/pages/chief/chief_check_page.dart';
+import 'package:master_plan/presentation/pages/chief/chief_check_page/chief_check_page.dart';
 import 'package:master_plan/presentation/pages/chief/chief_distribution_page.dart';
 import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_lists_page.dart';
 import 'package:master_plan/presentation/pages/chief/chief_monitoring_page.dart';

@@ -34,7 +34,7 @@ class UserDTO2 extends Dto {
       this.photo = '',
       this.positionDTO});
 
-  static final empty = UserDTO2(
+  static final  empty = UserDTO2(
       id: 0,
       fio: '',
       positionId: 0,
