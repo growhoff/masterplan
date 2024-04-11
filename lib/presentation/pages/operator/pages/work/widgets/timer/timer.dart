@@ -5,7 +5,7 @@ import 'package:master_plan/presentation/pages/operator/pages/work/bloc/cubit.da
 import 'package:master_plan/presentation/pages/operator/pages/work/bloc/state.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/widgets/timer/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/widgets/timer/bloc/state.dart';
-import '../buttonIcon.dart';
+import '../button_icon.dart';
 
 class Time extends StatelessWidget {
   const Time({super.key});

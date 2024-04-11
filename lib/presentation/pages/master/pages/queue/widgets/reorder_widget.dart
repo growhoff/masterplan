@@ -1,6 +1,4 @@
-
 import 'package:flutter/material.dart';
-// import 'package:master_plan/domain/model/oper_operations.dart';
 import 'package:master_plan/domain/model/z_batch.dart';
 import 'package:master_plan/presentation/pages/master/pages/queue/model/item_text_ready_queue.dart';
 import 'reorderable_icon_widget.dart';

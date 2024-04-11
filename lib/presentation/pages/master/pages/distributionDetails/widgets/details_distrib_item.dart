@@ -7,7 +7,6 @@ import 'dropdawn_custom.dart';
 
 class ListContetnDetails extends StatelessWidget {
   const ListContetnDetails(this.oper, {super.key});
-  // final StageMasterOperations oper;
   final ZOperatorOperations oper;
   @override
   Widget build(BuildContext context) {

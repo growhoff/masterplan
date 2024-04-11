@@ -7,9 +7,6 @@ import 'package:master_plan/presentation/pages/master/pages/monitoring/model/ite
 import 'package:master_plan/presentation/pages/master/pages/monitoring/model/item_machine_monitor.dart';
 import 'package:intl/intl.dart';
 import '../../../../widgets/element_bar.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:master_plan/presentation/app/bloc/cubit.dart';
-// import 'package:master_plan/presentation/app/bloc/state.dart';
 
 class MonitoringPage extends StatelessWidget {
   const MonitoringPage({super.key});

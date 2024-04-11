@@ -10,9 +10,6 @@ import 'package:master_plan/presentation/pages/master/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/master/bloc/state.dart';
 import 'package:master_plan/presentation/pages/master/widgets/change_list_operator.dart';
 import 'widgets/calendar.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:master_plan/presentation/app/bloc/cubit.dart';
-// import 'package:master_plan/presentation/app/bloc/state.dart';
 
 class MasterPage extends StatelessWidget {
   const MasterPage({super.key});
@@ -63,11 +60,6 @@ class MasterContent extends StatelessWidget {
                       return ChangeListOperator(list);
                     }),
                   ),
-                  // const SizedBox(height: 8),
-                  // SizedBox(
-                  //   width: double.maxFinite,
-                  //   child: ElevatedButton(onPressed: (){Navigator.pushNamed(context, '/choosingOperatorPage');}, child: const Text('Назначить')),
-                  // )
                 ],
               ),
               ),

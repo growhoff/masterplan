@@ -1,21 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:master_plan/domain/model/oper_operations.dart';
 import 'package:master_plan/domain/model/z_batch.dart';
 import 'package:master_plan/domain/model/z_machine.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import 'package:master_plan/presentation/app/bloc/state.dart';
-// import 'package:master_plan/presentation/pages/master/data/data_master.dart';
 import 'package:master_plan/presentation/pages/master/model/element_bar_data.dart';
 import 'package:master_plan/presentation/pages/master/pages/queue/model/item_machine_queue.dart';
 import 'package:master_plan/presentation/pages/master/pages/queue/model/item_text_ready_queue.dart';
-import 'package:master_plan/presentation/pages/master/pages/readyDetails/widgets/rowExpand.dart';
+import 'package:master_plan/presentation/pages/master/pages/readyDetails/widgets/row_expand.dart';
 import '../../../../widgets/element_bar.dart';
 import 'widgets/reorder_widget.dart';
 import 'widgets/row_list_four.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:master_plan/presentation/app/bloc/cubit.dart';
-// import 'package:master_plan/presentation/app/bloc/state.dart';
 
 class QueuePageMaster extends StatelessWidget {
   const QueuePageMaster({super.key});
@@ -68,8 +63,6 @@ class QueuePageMaster extends StatelessWidget {
                   }
                   return ElementBar(list: list);
                 }),
-
-                // ElementBar(list: DataMaster.listElementBarQueue),
               ],
             )),
       ),

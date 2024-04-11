@@ -1,39 +1,26 @@
-// // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/area_dto.dart';
-
 import 'package:master_plan/data/repositories/supabase/dto2/company_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/machine_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto2/operator_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/position_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/shifts_distribution_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto2/unit_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/user_dto.dart';
-
-import 'package:master_plan/domain/model/company.dart';
 import 'package:master_plan/domain/model/details.dart';
 import 'package:master_plan/domain/model/equipment.dart';
 import 'package:master_plan/domain/model/oper_operations.dart';
 import 'package:master_plan/domain/model/operatoroperations.dart';
-import 'package:master_plan/domain/model/position.dart';
 import 'package:master_plan/domain/model/ready_operations.dart';
 import 'package:master_plan/domain/model/region.dart';
 import 'package:master_plan/domain/model/shiftsdistribution.dart';
 import 'package:master_plan/domain/model/stage_master_operations.dart';
 import 'package:master_plan/domain/model/status.dart';
-import 'package:master_plan/domain/model/user.dart';
 import 'package:master_plan/domain/model/user_lite.dart';
 import 'package:master_plan/domain/model/z_area.dart';
 import 'package:master_plan/domain/model/z_operator_operations.dart';
 import 'package:master_plan/domain/model/z_unit.dart';
 
 class StateMain extends Equatable {
-    // final UserModel? user;
-    // final Company? company;
     final Region? region;
-    // final Position? position;
-
     final UserDTO2? user;
     final CompanyDTO2? company;
     final PositionDTO2? position;
@@ -79,10 +66,7 @@ class StateMain extends Equatable {
   @override
   List<Object> get props {
     return [
-      // user ?? UserModel(id: -1, fio: '', position: '', region: '', company: ''),
-      // company ?? Company(id: -1, name: 'none', fullName: 'none'),
       region ?? Region(id: -1, name: 'none', number: '-1'),
-      // position ?? Position(id: -1, name: 'none'),
       user ?? UserDTO2.init(), 
       company ?? CompanyDTO2.init(), 
       position ?? PositionDTO2.init(),
@@ -108,11 +92,7 @@ class StateMain extends Equatable {
 
 
   StateMain copyWith({
-    // UserModel? user,
-    // Company? company,
-    Region? region,
-    // Position? position,
-    
+    Region? region,   
     UserDTO2? user,
     CompanyDTO2? company,
     PositionDTO2? position,

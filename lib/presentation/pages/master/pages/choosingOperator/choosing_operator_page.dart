@@ -2,11 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import 'package:master_plan/presentation/app/bloc/state.dart';
-// import 'package:master_plan/presentation/pages/master/bloc/cubit.dart';
-// import 'package:master_plan/presentation/pages/master/bloc/state.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:master_plan/presentation/app/bloc/cubit.dart';
-// import 'package:master_plan/presentation/app/bloc/state.dart';
 
 class ChoosingOperatorPage extends StatelessWidget {
   const ChoosingOperatorPage({super.key});
@@ -29,9 +24,7 @@ class ContentChoosingOperator extends StatelessWidget {
             const Text('Выберите оператора'),
             Text('${state.user!.id} / ${state.user!.fio} / ${state.position!.name} / ${state.region!.name}', style: const TextStyle(fontSize: 12)),
           ])),
-        // const Text('Выберите оператора'),
-        // actions: const[ Center(child: Text('userInfo.number / userInfo.fio / userInfo.position / userInfo.regionNumber'))],
-      ),
+        ),
       body: SafeArea(
     child: SingleChildScrollView(
       child: Padding(

@@ -7,13 +7,9 @@ import 'package:master_plan/presentation/app/bloc/state.dart';
 import 'package:master_plan/presentation/pages/master/model/element_bar_data.dart';
 import 'package:master_plan/presentation/pages/master/pages/readyDetails/model/item_machine.dart';
 import 'package:master_plan/presentation/pages/master/pages/readyDetails/model/item_text_ready.dart';
-import 'package:master_plan/presentation/pages/master/pages/readyDetails/widgets/rowExpand.dart';
-import 'package:master_plan/presentation/pages/master/pages/readyDetails/widgets/rowExpandContent.dart';
-
+import 'package:master_plan/presentation/pages/master/pages/readyDetails/widgets/row_expand.dart';
+import 'package:master_plan/presentation/pages/master/pages/readyDetails/widgets/row_expand_content.dart';
 import '../../../../widgets/element_bar.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:master_plan/presentation/app/bloc/cubit.dart';
-// import 'package:master_plan/presentation/app/bloc/state.dart';
 
 class ReadyDetailsPage extends StatelessWidget {
   const ReadyDetailsPage({super.key});

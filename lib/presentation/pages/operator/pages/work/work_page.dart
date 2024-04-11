@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/bloc/cubit.dart';
-import 'package:master_plan/presentation/pages/operator/pages/work/widgets/timer/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/operator/widgets/element_bar.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';

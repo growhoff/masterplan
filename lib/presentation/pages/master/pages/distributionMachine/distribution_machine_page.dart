@@ -3,9 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import 'package:master_plan/presentation/app/bloc/state.dart';
 import 'package:master_plan/presentation/pages/master/pages/distributionMachine/widgets/data_list.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:master_plan/presentation/app/bloc/cubit.dart';
-// import 'package:master_plan/presentation/app/bloc/state.dart';
 
 class DetailPage extends StatelessWidget {
   const DetailPage({super.key});
@@ -17,14 +14,6 @@ class DetailPage extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              
-            //  ListView.builder(
-            //   shrinkWrap: true,
-            //   itemCount: 5,
-            //   itemBuilder: (context, index) => CheckItem(index),
-            //  ),
-
-            //DataTable как альтернатива
             BlocBuilder<CubitMain, StateMain>(builder: (context, state) {
               if ((state.operatorOperationsList!.length > 0) || (state.operatorOperationsList != null)){ return DataList(state.operatorOperationsList!);}
               else {return const Text('Список пуст');}
