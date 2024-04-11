@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/presentation/pages/chief/chief_check_page/chief_check_cubit/chief_check_cubit.dart';
 
-import 'chief_widgets/stage_check_element.dart';
+import '../chief_widgets/stage_check_element.dart';
 
 class ChiefCheckPage extends StatelessWidget {
   const ChiefCheckPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const ChiefCheckPageView();
+    return BlocProvider(
+      create: (context) => ChiefCheckCubit(),
+      child: ChiefCheckPageView(),
+    );
   }
 }
 
@@ -32,8 +37,11 @@ class _ChiefCheckPageViewState extends State<ChiefCheckPageView> {
           ),
           ElevatedButton(
             onPressed: () {},
-            style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10)),
-            child: const Text('Загрузить этап (excel)', style: TextStyle(fontSize: 18)),
+            style: ElevatedButton.styleFrom(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 10)),
+            child: const Text('Загрузить этап (excel)',
+                style: TextStyle(fontSize: 18)),
           ),
           const SizedBox(height: 10),
           Expanded(
@@ -55,10 +63,13 @@ class _ChiefCheckPageViewState extends State<ChiefCheckPageView> {
             height: 10,
           ),
           ElevatedButton(
-              onPressed: () {},        
-              style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10)),
-              child: const Text('отправить на распределение', style: TextStyle(fontSize: 18)),
-              ),
+            onPressed: () {},
+            style: ElevatedButton.styleFrom(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 10)),
+            child: const Text('отправить на распределение',
+                style: TextStyle(fontSize: 18)),
+          ),
           const SizedBox(height: 10)
         ],
       ),

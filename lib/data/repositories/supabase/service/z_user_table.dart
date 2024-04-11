@@ -1,3 +1,4 @@
+import 'package:master_plan/data/repositories/supabase/dto2/user2_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -11,10 +12,20 @@ class ZUserTable extends SupabaseTable{
     return table.delete().eq('id', id);
   }
 
-  @override
-  Future<void> insert(Dto dto) {
-    return table.insert(dto);
-  }
+   @override
+    Future<int> insert(Dto dto) async {
+      if (dto is User2DTO2) {
+        var data = await table.insert({
+          'fio': dto.fio,
+          'position_id': dto.positionId,
+          'area_id': dto.areaId,
+          'company_id': dto.companyId,
+          // 'photo': dto.photo,
+        }).select('id');
+        return data[0]['id'];
+      }
+      return 0;
+    }
 
   @override
   Future<List<Map<String, dynamic>>> select() {
@@ -34,4 +45,7 @@ class ZUserTable extends SupabaseTable{
    return table.update({'name': '1'}).eq('id', id);
   }
 
+  stream(){
+    return table.stream(primaryKey: ['id']);
+  }
 }

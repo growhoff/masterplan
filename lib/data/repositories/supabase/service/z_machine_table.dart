@@ -1,3 +1,4 @@
+import 'package:master_plan/data/repositories/supabase/dto2/machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -12,8 +13,15 @@ class ZMachineTable extends SupabaseTable{
   }
 
   @override
-  Future<void> insert(Dto dto) {
-    return table.insert(dto);
+  Future<int> insert(Dto dto) async {
+    if (dto is MachineDTO2) {
+      var data = await table.insert({
+        'name': dto.name,
+        'inventory_number': dto.inventoryNumber
+      }).select('id');
+      return data[0]['id'];
+    }
+    return 0;
   }
 
   @override
@@ -38,8 +46,17 @@ class ZMachineTable extends SupabaseTable{
   }
 
   @override
-  Future<void> update(int id, Dto dto) {
-   return table.update({'name': '1'}).eq('id', id);
+  Future update(int id, Dto dto) async{
+    if (dto is MachineDTO2) {
+      await table.update({
+        'name': dto.name,
+        'inventory_number': dto.inventoryNumber
+      }).eq('id', id);
+    }
+  }
+
+  stream() {
+    return table.stream(primaryKey: ['id']);
   }
 
 }

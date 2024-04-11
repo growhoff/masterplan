@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 
-class ChiefPage extends StatelessWidget {
-  const ChiefPage({super.key});
+class ChiefListsPage extends StatelessWidget {
+  const ChiefListsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const ChiefPageView();
+    return const ChiefListsPageView();
   }
 }
 
-class ChiefPageView extends StatelessWidget {
-  const ChiefPageView({super.key});
+class ChiefListsPageView extends StatefulWidget {
+  const ChiefListsPageView({super.key});
 
+  @override
+  State<ChiefListsPageView> createState() => _ChiefListsPageViewState();
+}
+
+class _ChiefListsPageViewState extends State<ChiefListsPageView> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -24,18 +29,19 @@ class ChiefPageView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
-                      onPressed: () {},
-                      //context.pushNamed('EquipmentListPage');
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/chiefMachinesListPage');
+                      },
                       child: const Text('Список оборудования')),
                   const SizedBox(height: 8),
                   ElevatedButton(
-                      onPressed: () {},
-                      // context.pushNamed('StaffListPage');
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/chiefStaffListPage');
+                      },
                       child: const Text('Список персонала')),
                   const SizedBox(height: 8),
                   ElevatedButton(
-                      onPressed: () {},
-                      //context.pushNamed('RegionsListPage');
+                      onPressed: () {Navigator.pushNamed(context, '/chiefAreasPage');},
                       child: const Text('Список участков')),
                 ],
               ),

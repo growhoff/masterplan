@@ -1,3 +1,4 @@
+import 'package:master_plan/data/repositories/supabase/dto2/staff_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -12,8 +13,14 @@ class ZStaffTable extends SupabaseTable{
   }
 
   @override
-  Future<void> insert(Dto dto) {
-    return table.insert(dto);
+  Future<void> insert(Dto dto) async {
+    if (dto is StaffDTO2) {
+      await table.insert({
+        'login': dto.login,
+        'password': dto.password,
+        'user_id': dto.userId
+      });
+    }
   }
 
   @override
@@ -30,4 +37,16 @@ class ZStaffTable extends SupabaseTable{
    return table.update({'name': '1'}).eq('id', id);
   }
 
+  stream(){
+    return table.stream(primaryKey: ['id']);
+  }
+
+  Future<List<Map<String, dynamic>>> selectByRegionId({required int regionId}) async{
+
+    var data = await table
+        .select('*, z_user:user_id!inner(*, z_position:position_id(*))')
+        .eq('z_user.area_id', regionId);
+
+    return data;
+  }
 }
