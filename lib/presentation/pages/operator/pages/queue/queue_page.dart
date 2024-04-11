@@ -42,11 +42,14 @@ class QueuePage extends StatelessWidget {
     return GestureDetector(
       child: Scaffold(
         appBar: AppBar(
-          title: BlocBuilder<CubitMain, StateMain>(builder: (context, state) => Column(
+          title: BlocBuilder<CubitMain, StateMain>(builder: (context, state) {
+            final user = state.user!;
+            return Column(
             children: [
-              const Text('Очередь'),
-              Text('${state.user!.id} / ${state.user!.fio} / ${state.position!.name} / ${state.region!.name}', style: const TextStyle(fontSize: 12)),
-            ])),
+              const Text('Оператор'),
+              Text('${user.id} / ${user.fio} / ${user.position.name}', style: const TextStyle(fontSize: 12)),// ${user.area!.name}
+            ]);
+          }),
         ),
         body: SafeArea(
       child: SingleChildScrollView(

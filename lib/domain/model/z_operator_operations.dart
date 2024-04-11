@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:master_plan/data/repositories/supabase/dto2/machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/status_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto2/user_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/user2_dto.dart';
 import 'package:master_plan/domain/model/z_batch.dart';
 
 class ZOperatorOperations {
@@ -15,7 +15,7 @@ class ZOperatorOperations {
   final int stageoperationid;
   final int stagemasteroperationid;
   final ZBatch batch;
-  final UserDTO2 user;
+  final User2DTO2 user;
   final bool isuploaded;
   final int order;
   final MachineDTO2 machine;

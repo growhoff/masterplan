@@ -1,20 +1,16 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/area_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/batch_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto2/company_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/operation_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/operator_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/package_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto2/position_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/shifts_distribution_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/stage_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/transfer_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/unit_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/user_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/z_area_table.dart';
-import 'package:master_plan/data/repositories/supabase/service/company_table.dart';
-import 'package:master_plan/data/repositories/supabase/service/position_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/z_batch_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/z_machine_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/z_operation_table.dart';
@@ -24,9 +20,8 @@ import 'package:master_plan/data/repositories/supabase/service/z_shifts_distribu
 import 'package:master_plan/data/repositories/supabase/service/z_stage_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/z_transfer_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/z_unit_table.dart';
-import 'package:master_plan/data/repositories/supabase/service/user_table.dart';
-import 'package:master_plan/data/repositories/supabase/service/staff_table.dart';
-import 'package:master_plan/domain/model/region.dart';
+import 'package:master_plan/data/repositories/supabase/service/z_user_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/z_staff_table.dart';
 import 'package:master_plan/domain/model/z_area.dart';
 import 'package:master_plan/domain/model/z_batch.dart';
 import 'package:master_plan/domain/model/z_machine.dart';
@@ -42,7 +37,7 @@ class CubitMain extends Cubit<StateMain> {
   CubitMain() : super(const StateMain());
 
     Future<String> save(String login, String password) async{
-    final tableStaff = StaffTable();
+    final tableStaff = ZStaffTable();
     final query = await tableStaff.selectName(login: login);
     if (query == []) {
       //ошибка авторизации.нет пользователя
@@ -52,77 +47,38 @@ class CubitMain extends Cubit<StateMain> {
         //успешная авторизация
         await getUserNew(query.first['user_id']);
 
-        //начальник
-        if (state.position!.id == 2){
-          emit(state.copyWith(unit: await getUnitZ(state.user!.unitId!)));
+        switch(state.user!.position.id){
+          //начальник
+          case 2: emit(state.copyWith(unit: await getUnitZ(state.user!.unit!.id)));
+            break;
+          //мастер
+          case 3: emit(state.copyWith(area: await getAreaZ(state.user!.area!.id)));
+            await getMasterData();
+            break;
+          //оператор
+          case 4: await getMachineOperatorZ(state.user!.id); 
+            break;
+          default: break;
         }
-        //мастер
-        if (state.position!.id == 3){
-          emit(state.copyWith(area: await getAreaZ(state.user!.areaId!)));
-          await getMasterData();
-        }
-        //оператор
-        if (state.position!.id == 4){
-          await getMachineOperatorZ(state.user!.id);
-        }
-
+        
         // if (equipment == []) print('Пользователь не закреплен к станкам');
-        return state.position!.name;
+        return state.user!.position.name;
       } else {
         //ошибка. неверный пароль
         return 'Error 2';
       }
     }
   }
-  /*
-  Future<void> getUser(int id) async{
-    final tableUser = UserTable();
-    final tableCompany = CompanyTable();
-    final tableRegion = RegionTable();
-    final tablePosition = PositionTable();
-
-    final queryUser = await tableUser.selectId(id);
-    final userDto = UserDTO.fromMap(queryUser[0]);
-
-    final queryCompany = await tableCompany.selectId(userDto.companyId);
-    final queryRegion = await tableRegion.selectId(userDto.regionId);
-    final queryPosition = await tablePosition.selectId(userDto.positionId);
-
-    final companyDto = CompanyDTO.fromMap(queryCompany[0]);
-    final regionDto = RegionDTO.fromMap(queryRegion[0]);
-    final positionDto = PositionDTO.fromMap(queryPosition[0]);
-
-    final user = UserModel(id: userDto.id, fio: userDto.fio, position: positionDto.name, region: regionDto.name, company: companyDto.shortName);
-    final company = Company(id: companyDto.id, name: companyDto.shortName, fullName: companyDto.fullName);
-    final region = Region(id: regionDto.id, name: regionDto.name, number: regionDto.number);
-    final position = Position(id: positionDto.id, name: positionDto.name);
-
-    emit(state.copyWith(user: user, company: company, region: region, position: position));
-  }
-*/
-
 
   Future<void> getUserNew(int id) async{
-    final userTable = UserTable();
-    final companyTable = CompanyTable();
-    final positionTable = PositionTable();
-
+    final userTable = ZUserTable();
     final userQuery = await userTable.selectId(id);
     final userDto = UserDTO2.fromMap(userQuery.first);
-
-    final queryCompany = await companyTable.selectId(userDto.companyId);
-    final queryPosition = await positionTable.selectId(userDto.positionId);
-
-    final companyDto = CompanyDTO2.fromMap(queryCompany.first);
-    final positionDto = PositionDTO2.fromMap(queryPosition.first);
-
-    final region = Region(id: 0, name: 'region', number: '0');
-
-    emit(state.copyWith(user: userDto, company: companyDto, position: positionDto, region: region));
+    emit(state.copyWith(user: userDto));
   }
 
   Future<ZUnit> getUnitZ(int unitId) async{
-    final unitTable = UnitTable();
+    final unitTable = ZUnitTable();
     final unitQuery = await unitTable.selectId(unitId);
     final unitDto = UnitDTO2.fromMap(unitQuery.first);
 
@@ -135,11 +91,11 @@ class CubitMain extends Cubit<StateMain> {
   }
 
   Future<ZArea> getAreaZ(int areaId) async{
-    final areaTable = AreaTable();
+    final areaTable = ZAreaTable();
     final areaQuery = await areaTable.selectId(areaId);
     final areaDto = AreaDTO2.fromMap(areaQuery.first);
 
-    final machineTable = MachineTable();
+    final machineTable = ZMachineTable();
     final machineQuery = await machineTable.selectListId(areaDto.machineId);
     List<ZMachine> machineList = [];
     for (var machine in machineQuery) {
@@ -150,7 +106,7 @@ class CubitMain extends Cubit<StateMain> {
   }
 
   Future<ZMachine> getMachineZ(int machineId) async{
-    final machineTable = MachineTable();
+    final machineTable = ZMachineTable();
     final machineQuery = await machineTable.selectId(machineId);
     final model = MachineDTO2.fromMap(machineQuery.first);
     return ZMachine(id: model.id, inventoryNumber: model.inventoryNumber, name: model.name);
@@ -166,7 +122,7 @@ class CubitMain extends Cubit<StateMain> {
 
     List<int> machineListId = [];
     for (var element in zshiftsDistributionList) {
-      machineListId.add(element.machineId.id);
+      machineListId.add(element.machine.id);
     }
 
     List<ZOperatorOperations> operatorOperationsList = [];
@@ -175,7 +131,7 @@ class CubitMain extends Cubit<StateMain> {
       final zOperatorOperationsQuery = await zOperatorOperationsTable.selectListIdSt(machineListId);
       for (var operatorOper in zOperatorOperationsQuery) {
         final model = OperatorOperationsDTO2.fromMap(operatorOper);
-        operatorOperationsList.add(ZOperatorOperations(id: model.id, timeplan: model.timeplan, timefact: model.timefact, timestart: model.timestart, timestop: model.timestop, timeworking: model.timeworking, status: model.statusid, stageoperationid: model.stageoperationid, stagemasteroperationid: model.stagemasteroperationid, batch: await getBatchZ(model.batchid.id), user: model.userid, isuploaded: model.isuploaded, order: model.order, machine: model.machineid));
+        operatorOperationsList.add(ZOperatorOperations(id: model.id, timeplan: model.timeplan, timefact: model.timefact, timestart: model.timestart, timestop: model.timestop, timeworking: model.timeworking, status: model.status, stageoperationid: model.stageoperationid, stagemasteroperationid: model.stagemasteroperationid, batch: await getBatchZ(model.batch.id), user: model.user, isuploaded: model.isuploaded, order: model.order, machine: model.machine));
       }
     }
 
@@ -196,7 +152,7 @@ class CubitMain extends Cubit<StateMain> {
     List<ZOperatorOperations> operatorOperationsList = [];
     for (var operatorOper in zOperatorOperationsQuery) {
       final model = OperatorOperationsDTO2.fromMap(operatorOper);
-      operatorOperationsList.add(ZOperatorOperations(id: model.id, timeplan: model.timeplan, timefact: model.timefact, timestart: model.timestart, timestop: model.timestop, timeworking: model.timeworking, status: model.statusid, stageoperationid: model.stageoperationid, stagemasteroperationid: model.stagemasteroperationid, batch: await getBatchZ(model.batchid.id), user: model.userid, isuploaded: model.isuploaded, order: model.order, machine: model.machineid));
+      operatorOperationsList.add(ZOperatorOperations(id: model.id, timeplan: model.timeplan, timefact: model.timefact, timestart: model.timestart, timestop: model.timestop, timeworking: model.timeworking, status: model.status, stageoperationid: model.stageoperationid, stagemasteroperationid: model.stagemasteroperationid, batch: await getBatchZ(model.batch.id), user: model.user, isuploaded: model.isuploaded, order: model.order, machine: model.machine));
     }
 
     emit(state.copyWith(zshiftsDistributionList: zshiftsDistributionList, operatorOperationsList: operatorOperationsList));

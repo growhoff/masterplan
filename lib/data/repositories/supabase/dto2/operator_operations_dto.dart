@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:master_plan/data/repositories/supabase/dto2/batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/status_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto2/user_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/user2_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 
 class OperatorOperationsDTO2 extends Dto {
@@ -14,14 +14,14 @@ class OperatorOperationsDTO2 extends Dto {
   final int timestart;
   final int timestop;
   final int timeworking;
-  final StatusDTO2 statusid;
+  final StatusDTO2 status;
   final int stageoperationid;
   final int stagemasteroperationid;
-  final BatchDTO2 batchid;
-  final UserDTO2 userid;
+  final BatchDTO2 batch;
+  final User2DTO2 user;
   final bool isuploaded;
   final int order;
-  final MachineDTO2 machineid;
+  final MachineDTO2 machine;
   OperatorOperationsDTO2({
     required this.id,
     required this.timeplan,
@@ -29,14 +29,14 @@ class OperatorOperationsDTO2 extends Dto {
     required this.timestart,
     required this.timestop,
     required this.timeworking,
-    required this.statusid,
+    required this.status,
     required this.stageoperationid,
     required this.stagemasteroperationid,
-    required this.batchid,
-    required this.userid,
+    required this.batch,
+    required this.user,
     required this.isuploaded,
     required this.order,
-    required this.machineid,
+    required this.machine,
   });
 
 
@@ -48,14 +48,14 @@ class OperatorOperationsDTO2 extends Dto {
       'time_start': timestart,
       'time_stop': timestop,
       'time_working': timeworking,
-      'status_id': statusid.toMap(),
+      'status_id': status.toMap(),
       'stage_operation_id': stageoperationid,
       'stage_master_operation_id': stagemasteroperationid,
-      'batch_id': batchid.toMap(),
-      'user_id': userid.toMap(),
+      'batch_id': batch.toMap(),
+      'user_id': user.toMap(),
       'is_uploaded': isuploaded,
       'order': order,
-      'machine_id': machineid.toMap(),
+      'machine_id': machine.toMap(),
     };
   }
 
@@ -67,14 +67,14 @@ class OperatorOperationsDTO2 extends Dto {
       timestart: map['time_start'] as int,
       timestop: map['time_stop'] as int,
       timeworking: map['time_working'] as int,
-      statusid: StatusDTO2.fromMap(map['z_status'] as Map<String,dynamic>),
+      status: StatusDTO2.fromMap(map['z_status'] as Map<String,dynamic>),
       stageoperationid: map['stage_operation_id'] as int,
       stagemasteroperationid: map['stage_master_operation_id'] as int,
-      batchid: BatchDTO2.fromMap(map['z_batch'] as Map<String,dynamic>),
-      userid: UserDTO2.fromMap(map['z_user'] as Map<String,dynamic>),
+      batch: BatchDTO2.fromMap(map['z_batch'] as Map<String,dynamic>),
+      user: User2DTO2.fromMap(map['z_user'] as Map<String,dynamic>),
       isuploaded: map['is_uploaded'] as bool,
       order: map['order'] as int,
-      machineid: MachineDTO2.fromMap(map['z_machine'] as Map<String,dynamic>),
+      machine: MachineDTO2.fromMap(map['z_machine'] as Map<String,dynamic>),
     );
   }
 

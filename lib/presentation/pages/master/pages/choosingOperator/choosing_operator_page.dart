@@ -20,10 +20,13 @@ class ContentChoosingOperator extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: 
-        BlocBuilder<CubitMain, StateMain>(builder: (context, state) => Column(children: [
+        BlocBuilder<CubitMain, StateMain>(builder: (context, state) {
+          final user = state.user!;
+          return Column(children: [
             const Text('Выберите оператора'),
-            Text('${state.user!.id} / ${state.user!.fio} / ${state.position!.name} / ${state.region!.name}', style: const TextStyle(fontSize: 12)),
-          ])),
+            Text('${user.id} / ${user.fio} / ${user.position.name} / ${user.area!.name}',style: const TextStyle(fontSize: 12)),
+            ]);
+        }),
         ),
       body: SafeArea(
     child: SingleChildScrollView(
@@ -40,16 +43,18 @@ class ContentChoosingOperator extends StatelessWidget {
               ],
              ),
              const SizedBox(height: 8),
-              BlocBuilder<CubitMain, StateMain>(
-               builder:(context, state) => ListView.builder(
-                shrinkWrap: true,
-                itemCount: state.listOperators!.length,
-                itemBuilder: (context, index) => ListTile(
-                  title: Text(state.listOperators![index].fio),
-                  onTap: () {},
-                ),
-                ),
-             ),
+            //подгрузить новый список операторов
+
+            //   BlocBuilder<CubitMain, StateMain>(
+            //    builder:(context, state) => ListView.builder(
+            //     shrinkWrap: true,
+            //     itemCount: state.listOperators!.length,
+            //     itemBuilder: (context, index) => ListTile(
+            //       title: Text(state.listOperators![index].fio),
+            //       onTap: () {},
+            //     ),
+            //     ),
+            //  ),
               const SizedBox(height: 8),
               SizedBox(
                 width: double.maxFinite,

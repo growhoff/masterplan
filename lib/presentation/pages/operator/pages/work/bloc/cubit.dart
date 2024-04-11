@@ -20,11 +20,11 @@ class CubitWork extends Cubit<StateWork> {
     for (var shiftsDistr in zShiftsDistributionList!) {
       List<ZOperatorOperations> listOper = [];
       ZMachine machine = ZMachine(
-          id: shiftsDistr.machineId.id,
-          inventoryNumber: shiftsDistr.machineId.inventoryNumber,
-          name: shiftsDistr.machineId.name);
+          id: shiftsDistr.machine.id,
+          inventoryNumber: shiftsDistr.machine.inventoryNumber,
+          name: shiftsDistr.machine.name);
       for (var operList in operatorOperationsList!) {
-        if (shiftsDistr.machineId.id == operList.machine.id) {
+        if (shiftsDistr.machine.id == operList.machine.id) {
           listOper.add(operList);
         }
       }

@@ -3,21 +3,21 @@ import 'dart:convert';
 
 import 'package:master_plan/data/repositories/supabase/dto2/change_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/machine_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto2/user_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/user2_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 
 class ZShiftsDistributionDTO2 extends Dto {
   final int id;
   final DateTime date;
-  final UserDTO2 userId;
-  final ChangeDTO2 changeId;
-  final MachineDTO2 machineId;
+  final User2DTO2 user;
+  final ChangeDTO2 change;
+  final MachineDTO2 machine;
   ZShiftsDistributionDTO2({
     required this.id,
     required this.date,
-    required this.userId,
-    required this.changeId,
-    required this.machineId,
+    required this.user,
+    required this.change,
+    required this.machine,
   });
 
 
@@ -25,9 +25,9 @@ class ZShiftsDistributionDTO2 extends Dto {
     return <String, dynamic>{
       'id': id,
       'date': date.millisecondsSinceEpoch,
-      'user_id': userId.toMap(),
-      'change_id': changeId.toMap(),
-      'machine_id': machineId.toMap(),
+      'user_id': user.toMap(),
+      'change_id': change.toMap(),
+      'machine_id': machine.toMap(),
     };
   }
 
@@ -36,9 +36,9 @@ class ZShiftsDistributionDTO2 extends Dto {
     return ZShiftsDistributionDTO2(
       id: map['id'] as int,
       date: DateTime.tryParse(map['date'] as String) ?? DateTime(int.parse(listTime[0]), int.parse(listTime[1]), int.parse(listTime[2])),
-      userId: UserDTO2.fromMap(map['z_user'] as Map<String,dynamic>),
-      changeId: ChangeDTO2.fromMap(map['z_change'] as Map<String,dynamic>),
-      machineId: MachineDTO2.fromMap(map['z_machine'] as Map<String,dynamic>),
+      user: User2DTO2.fromMap(map['z_user'] as Map<String,dynamic>),
+      change: ChangeDTO2.fromMap(map['z_change'] as Map<String,dynamic>),
+      machine: MachineDTO2.fromMap(map['z_machine'] as Map<String,dynamic>),
     );
   }
 

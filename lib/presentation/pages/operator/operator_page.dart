@@ -26,11 +26,14 @@ class ContentOperator extends StatelessWidget {
     return GestureDetector(
       child: Scaffold(
         appBar: AppBar(
-          title: BlocBuilder<CubitMain, StateMain>(builder: (context, state) => Column(
+          title: BlocBuilder<CubitMain, StateMain>(builder: (context, state) {
+            final user = state.user!;
+            return Column(
             children: [
               const Text('Оператор'),
-              Text('${state.user!.id} / ${state.user!.fio} / ${state.position!.name} / ${state.region!.name}', style: const TextStyle(fontSize: 12)),
-            ])),
+              Text('${user.id} / ${user.fio} / ${user.position.name}', style: const TextStyle(fontSize: 12)),//${user.areaId!.name}//нужно ли выводить отношение к участку?
+            ]);
+            }),
           actions: const [],
         ),
         body:  SafeArea(

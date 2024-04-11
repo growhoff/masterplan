@@ -2,7 +2,7 @@ import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class UnitTable extends SupabaseTable{
+class ZUnitTable extends SupabaseTable{
 
   final table = Supabase.instance.client.from('z_unit');
 
