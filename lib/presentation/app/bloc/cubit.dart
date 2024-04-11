@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/data/repositories/supabase/dto/company_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/details_dto.dart';
@@ -55,37 +56,39 @@ import 'package:master_plan/domain/model/region.dart';
 import 'package:master_plan/domain/model/shiftsdistribution.dart';
 import 'package:master_plan/domain/model/stage_master_operations.dart';
 import 'package:master_plan/domain/model/status.dart';
+
 // import 'package:master_plan/domain/model/test.dart';
 import 'package:master_plan/domain/model/user.dart';
 import 'package:master_plan/domain/model/user_lite.dart';
 import 'package:master_plan/domain/model/z_area.dart';
 import 'package:master_plan/domain/model/z_machine.dart';
 import 'package:master_plan/domain/model/z_unit.dart';
-// import 'package:supabase_flutter/supabase_flutter.dart';
-import 'state.dart';
 
-class CubitMain extends Cubit<StateMain> { 
+// import 'package:supabase_flutter/supabase_flutter.dart';
+part 'state.dart';
+
+class CubitMain extends Cubit<StateMain> {
   CubitMain() : super(const StateMain());
 
-    Future<String> save(String login, String password) async{
+  Future<String> save(String login, String password) async {
     final tableStaff = StaffTable();
     final query = await tableStaff.selectName(login: login);
     if (query == []) {
       //ошибка авторизации.нет пользователя
       return 'Error 1';
-    } else{
-      if (query.first['password'] == password){
+    } else {
+      if (query.first['password'] == password) {
         //успешная авторизация
-        
+
         await getUserNew(query.first['user_id']);
-        if (state.position!.id == 2){
-          emit(state.copyWith(unit: await getUnitZ(state.user!.unitId!)));
-          }
-        if (state.position!.id == 3){
+        // if (state.position!.id == 2){
+        //   emit(state.copyWith(unit: await getUnitZ(state.user!.unitId!)));
+        //   }
+        if (state.position!.id == 3) {
           emit(state.copyWith(area: await getAreaZ(state.user!.areaId!)));
           await getMasterData();
-          }
-        
+        }
+
         // await getEquipment(state.region!.id, state.company!.id);
         // await getStatus();
         // await getDetails();
@@ -97,13 +100,15 @@ class CubitMain extends Cubit<StateMain> {
         // await getOperatorsOperations();
 
         // if (equipment == []) print('Пользователь не закреплен к станкам');
-        return state.position!.name;
+        //return state.position!.name;
+        return 'Начальник';
       } else {
         //ошибка. неверный пароль
         return 'Error 2';
       }
     }
   }
+
   /*
   Future<void> getUser(int id) async{
     final tableUser = UserTable();
@@ -131,108 +136,127 @@ class CubitMain extends Cubit<StateMain> {
   }
 */
 
+  Future<void> getUserNew(int id) async {
+    // final userTable = UserTable();
+    // final companyTable = CompanyTable();
+    // final positionTable = PositionTable();
+    //
+    // final userQuery = await userTable.selectId(id);
+    // final userDto = UserDTO2.fromMap(userQuery);
+    //
+    // final queryCompany = await companyTable.selectId(userDto.companyId);
+    // final queryPosition = await positionTable.selectId(userDto.positionId);
+    //
+    // final companyDto = CompanyDTO2.fromMap(queryCompany.first);
+    // final positionDto = PositionDTO2.fromMap(queryPosition.first);
+    //
+    // final region = Region(id: 0, name: 'region', number: '0');
 
-  Future<void> getUserNew(int id) async{
-    final userTable = UserTable();
-    final companyTable = CompanyTable();
-    final positionTable = PositionTable();
-
-    final userQuery = await userTable.selectId(id);
-    final userDto = UserDTO2.fromMap(userQuery.first);
-
-    final queryCompany = await companyTable.selectId(userDto.companyId);
-    final queryPosition = await positionTable.selectId(userDto.positionId);
-
-    final companyDto = CompanyDTO2.fromMap(queryCompany.first);
-    final positionDto = PositionDTO2.fromMap(queryPosition.first);
-
-    final region = Region(id: 0, name: 'region', number: '0');
-
-    emit(state.copyWith(user: userDto, company: companyDto, position: positionDto, region: region));
+    emit(state.copyWith(
+        user: UserDTO2.init(),
+        company: CompanyDTO2(id: 0, name: '', code: '', unitId: []),
+        position: PositionDTO2(id: 2, name: ''),
+        region: Region(id: 0, name: '', number: '')));
   }
 
-  Future<ZUnit> getUnitZ(int unitId) async{
+  Future<ZUnit> getUnitZ(int unitId) async {
     final unitTable = UnitTable();
     final unitQuery = await unitTable.selectId(unitId);
     final unitDto = UnitDTO2.fromMap(unitQuery.first);
 
-    List<ZArea> areaList = [];
+    List<AreaModel> areaList = [];
     for (var id in unitDto.areaId) {
       areaList.add(await getAreaZ(id));
     }
 
-    return ZUnit(id: unitDto.id, name: unitDto.name, areaList: areaList, areaListId: unitDto.areaId);
+    return ZUnit(
+        id: unitDto.id,
+        name: unitDto.name,
+        areaList: areaList,
+        areaListId: unitDto.areaId);
   }
 
-  Future<ZArea> getAreaZ(int areaId) async{
+  Future<AreaModel> getAreaZ(int areaId) async {
     final areaTable = AreaTable();
     final areaQuery = await areaTable.selectId(areaId);
     final areaDto = AreaDTO2.fromMap(areaQuery.first);
 
     final machineTable = MachineTable();
     final machineQuery = await machineTable.selectListId(areaDto.machineId);
-    List<ZMachine> machineList = [];
+    List<MachineModel> machineList = [];
     for (var machine in machineQuery) {
       final model = MachineDTO2.fromMap(machine);
-      machineList.add(ZMachine(id: model.id, inventoryNumber: model.inventoryNumber, name: model.name));
+      machineList.add(MachineModel(
+          id: model.id,
+          inventoryNumber: model.inventoryNumber,
+          name: model.name));
     }
-    return ZArea(id: areaDto.id, name: areaDto.name, number: areaDto.number, machineList: machineList, machineListId: areaDto.machineId);
+    return AreaModel(
+        id: areaDto.id,
+        name: areaDto.name,
+        number: areaDto.number,
+        machineList: machineList,
+        machineListId: areaDto.machineId);
   }
 
-  Future<ZMachine> getMachineZ(int machineId) async{
+  Future<MachineModel> getMachineZ(int machineId) async {
     final machineTable = MachineTable();
     final machineQuery = await machineTable.selectId(machineId);
     final model = MachineDTO2.fromMap(machineQuery.first);
-    return ZMachine(id: model.id, inventoryNumber: model.inventoryNumber, name: model.name);
+    return MachineModel(
+        id: model.id, inventoryNumber: model.inventoryNumber, name: model.name);
   }
 
-  Future<void> getMasterData() async{
+  Future<void> getMasterData() async {
     final zshiftsDistributionTable = ZShiftsDistributionTable();
-    final zshiftsDistributionQuery = await zshiftsDistributionTable.selectEq(state.area!.machineListId, DateTime.now());
+    final zshiftsDistributionQuery = await zshiftsDistributionTable.selectEq(
+        state.area!.machineListId, DateTime.now());
     List<ZShiftsDistributionDTO2> zshiftsDistributionList = [];
     for (var shiftsDistr in zshiftsDistributionQuery) {
       zshiftsDistributionList.add(ZShiftsDistributionDTO2.fromMap(shiftsDistr));
     }
 
-
     final zOperatorOperationsTable = ZOperatorOperationsTable();
-    final zOperatorOperationsQuery = await zOperatorOperationsTable.selectListId(state.area!.machineListId);
+    final zOperatorOperationsQuery =
+        await zOperatorOperationsTable.selectListId(state.area!.machineListId);
     List<OperatorOperationsDTO2> operatorOperationsList = [];
     for (var operatorOper in zOperatorOperationsQuery) {
       operatorOperationsList.add(OperatorOperationsDTO2.fromMap(operatorOper));
     }
 
-
     final stageTable = ZStageTable();
-    final stageQuery = await stageTable.selectListId(operatorOperationsList.first.batchid.stepId);//пока берем первый элемент, потом пройти по всем
+    final stageQuery = await stageTable.selectListId(operatorOperationsList
+        .first
+        .batchid
+        .stepId); //пока берем первый элемент, потом пройти по всем
     List<StageDTO2> stageList = [];
     for (var stage in stageQuery) {
       stageList.add(StageDTO2.fromMap(stage));
     }
 
-
     final operationTable = ZOperationTable();
-    final operationQuery = await operationTable.selectListId(stageList.first.operationId);//пока берем первый элемент, потом пройти по всем
+    final operationQuery = await operationTable.selectListId(stageList
+        .first.operationId); //пока берем первый элемент, потом пройти по всем
     List<OperationDTO2> operationList = [];
     for (var operation in operationQuery) {
       operationList.add(OperationDTO2.fromMap(operation));
     }
 
-
     final transferTable = ZTransferTable();
-    final transferQuery = await transferTable.selectListId(stageList.first.operationId);//пока берем первый элемент, потом пройти по всем
+    final transferQuery = await transferTable.selectListId(stageList
+        .first.operationId); //пока берем первый элемент, потом пройти по всем
     List<TransferDTO2> transferList = [];
     for (var transfer in transferQuery) {
       transferList.add(TransferDTO2.fromMap(transfer));
     }
 
-
-    emit(state.copyWith(zshiftsDistributionList: zshiftsDistributionList, operatorOperationsList: operatorOperationsList));
+    emit(state.copyWith(
+        zshiftsDistributionList: zshiftsDistributionList,
+        operatorOperationsList: operatorOperationsList));
   }
 
-
-  Future<void> getEquipment(int regionId, int companyId) async{
-    final tableEquipment = EquipmentTable(); 
+  Future<void> getEquipment(int regionId, int companyId) async {
+    final tableEquipment = EquipmentTable();
     final queryEquipment = await tableEquipment.selectEq(regionId, companyId);
     List<EquipmentDTO> listEquipmentDto = [];
     for (var element in queryEquipment) {
@@ -242,14 +266,20 @@ class CubitMain extends Cubit<StateMain> {
 
     List<Equipment> listEquipmentModel = [];
     for (var dto in listEquipmentDto) {
-      listEquipmentModel.add(Equipment(id: dto.id, inventoryNumber: dto.inventoryNumber, name: dto.name, regionId: dto.regionId, companyId: dto.companyId, userId: dto.userId));
+      listEquipmentModel.add(Equipment(
+          id: dto.id,
+          inventoryNumber: dto.inventoryNumber,
+          name: dto.name,
+          regionId: dto.regionId,
+          companyId: dto.companyId,
+          userId: dto.userId));
     }
 
     emit(state.copyWith(listEquipment: listEquipmentModel));
   }
 
-  Future<void> getStatus() async{
-    final tableStatus = StatusTable(); 
+  Future<void> getStatus() async {
+    final tableStatus = StatusTable();
     final queryStatus = await tableStatus.select();
     List<StatusDTO> listStatusDto = [];
     for (var element in queryStatus) {
@@ -265,8 +295,8 @@ class CubitMain extends Cubit<StateMain> {
     emit(state.copyWith(listStatus: listStatus));
   }
 
-  Future<void> getDetails() async{
-    final tableDetails = DetailsTable(); 
+  Future<void> getDetails() async {
+    final tableDetails = DetailsTable();
     final queryDetails = await tableDetails.select();
     List<DetailsDTO> listDetailsDto = [];
     for (var element in queryDetails) {
@@ -276,14 +306,15 @@ class CubitMain extends Cubit<StateMain> {
 
     List<Details> listDetails = [];
     for (var dto in listDetailsDto) {
-      listDetails.add(Details(id: dto.id, planNumber: dto.planNumber, planName: dto.planName));
+      listDetails.add(Details(
+          id: dto.id, planNumber: dto.planNumber, planName: dto.planName));
     }
 
     emit(state.copyWith(listDetails: listDetails));
   }
 
-  Future<void> getOperatorOperations() async{
-    final tableOperatorOperations = OperatorOperationsTable(); 
+  Future<void> getOperatorOperations() async {
+    final tableOperatorOperations = OperatorOperationsTable();
     final queryOperatorOperations = await tableOperatorOperations.select();
     List<OperatorOperationsDTO> listOperatorOperationsDto = [];
     for (var element in queryOperatorOperations) {
@@ -293,15 +324,28 @@ class CubitMain extends Cubit<StateMain> {
 
     List<OperatorOperations> listOperatorOperations = [];
     for (var dto in listOperatorOperationsDto) {
-      listOperatorOperations.add(OperatorOperations(id: dto.id, order: dto.order, region: dto.regionId.name, company: dto.companyId.shortName, time: dto.time, timeStart: dto.timeStart, timeWorking: dto.timeWorking, status: dto.statusId.name, stageOperationId: dto.stageOperationId, stageMasterOperationId: dto.stageMasterOperationId, equipment: dto.equipmentId.name, details: '${dto.detailsId.planNumber} ${dto.detailsId.planName}'));
+      listOperatorOperations.add(OperatorOperations(
+          id: dto.id,
+          order: dto.order,
+          region: dto.regionId.name,
+          company: dto.companyId.shortName,
+          time: dto.time,
+          timeStart: dto.timeStart,
+          timeWorking: dto.timeWorking,
+          status: dto.statusId.name,
+          stageOperationId: dto.stageOperationId,
+          stageMasterOperationId: dto.stageMasterOperationId,
+          equipment: dto.equipmentId.name,
+          details: '${dto.detailsId.planNumber} ${dto.detailsId.planName}'));
     }
 
     emit(state.copyWith(listoperatorOperations: listOperatorOperations));
   }
 
-  Future<void> getOperatorList() async{
-    final tableOperators = UserTable(); 
-    final queryOperators = await tableOperators.selectEqOperator(regionId: state.region!.id, companyId: state.company!.id);
+  Future<void> getOperatorList() async {
+    final tableOperators = UserTable();
+    final queryOperators = await tableOperators.selectEqOperator(
+        regionId: state.region!.id, companyId: state.company!.id);
     List<UserDTO> listOperatorsDto = [];
     for (var element in queryOperators) {
       final dto = UserDTO.fromMap(element);
@@ -316,9 +360,10 @@ class CubitMain extends Cubit<StateMain> {
     emit(state.copyWith(listOperators: listOperators));
   }
 
-  Future<void> getShiftsDistribution() async{
-    final tableShiftsDistribution = ShiftsDistributionTable(); 
-    final queryShiftsDistribution = await tableShiftsDistribution.selectEq(state.region!.id, state.company!.id, DateTime.now());
+  Future<void> getShiftsDistribution() async {
+    final tableShiftsDistribution = ShiftsDistributionTable();
+    final queryShiftsDistribution = await tableShiftsDistribution.selectEq(
+        state.region!.id, state.company!.id, DateTime.now());
     List<ShiftsDistributionDTO> listShiftsDistributionDto = [];
     for (var element in queryShiftsDistribution) {
       final dto = ShiftsDistributionDTO.fromMap(element);
@@ -330,21 +375,55 @@ class CubitMain extends Cubit<StateMain> {
       bool isWrt = false;
       for (var dto in listShiftsDistributionDto) {
         if (dto.equipment.id == state.listEquipment![i].id) {
-          listShiftsDistribution.add(ShiftsDistribution(id: dto.id, change: ChangeModel(id: dto.change.id, name: dto.change.name, number: dto.change.number), date: dto.date, equipment: Equipment(id: dto.equipment.id, inventoryNumber: dto.equipment.inventoryNumber, name: dto.equipment.name, regionId: dto.equipment.regionId, companyId: dto.equipment.companyId, userId: dto.equipment.userId), user: UserModelLite(id: dto.user.id, fio: dto.user.fio), region: Region(id: dto.region.id, name: dto.region.name, number: dto.region.number), company: Company(id: dto.company.id, name: dto.company.shortName, fullName: dto.company.fullName)));
+          listShiftsDistribution.add(ShiftsDistribution(
+              id: dto.id,
+              change: ChangeModel(
+                  id: dto.change.id,
+                  name: dto.change.name,
+                  number: dto.change.number),
+              date: dto.date,
+              equipment: Equipment(
+                  id: dto.equipment.id,
+                  inventoryNumber: dto.equipment.inventoryNumber,
+                  name: dto.equipment.name,
+                  regionId: dto.equipment.regionId,
+                  companyId: dto.equipment.companyId,
+                  userId: dto.equipment.userId),
+              user: UserModelLite(id: dto.user.id, fio: dto.user.fio),
+              region: Region(
+                  id: dto.region.id,
+                  name: dto.region.name,
+                  number: dto.region.number),
+              company: Company(
+                  id: dto.company.id,
+                  name: dto.company.shortName,
+                  fullName: dto.company.fullName)));
           isWrt = true;
-          }
+        }
       }
-      if (isWrt == false) listShiftsDistribution.add(ShiftsDistribution(id: -1, change: ChangeModel(id: -1, name: '-1', number: -1), date: DateTime.now(), equipment: state.listEquipment![i], user: UserModelLite(id: -1, fio: 'none'), region: Region(id: state.listEquipment![i].regionId, name: '-1', number: '-1'), company: Company(id: state.listEquipment![i].companyId, name: '', fullName:'')));
+      if (isWrt == false)
+        listShiftsDistribution.add(ShiftsDistribution(
+            id: -1,
+            change: ChangeModel(id: -1, name: '-1', number: -1),
+            date: DateTime.now(),
+            equipment: state.listEquipment![i],
+            user: UserModelLite(id: -1, fio: 'none'),
+            region: Region(
+                id: state.listEquipment![i].regionId, name: '-1', number: '-1'),
+            company: Company(
+                id: state.listEquipment![i].companyId,
+                name: '',
+                fullName: '')));
     }
-    
+
     emit(state.copyWith(listShiftsDistribution: listShiftsDistribution));
   }
 
-
 // new
-  Future<void> getStageMasterOperation() async{
-    final tableStageMasterOperations = StageMasterOperationsTable(); 
-    final queryStageMasterOperations = await tableStageMasterOperations.select();
+  Future<void> getStageMasterOperation() async {
+    final tableStageMasterOperations = StageMasterOperationsTable();
+    final queryStageMasterOperations =
+        await tableStageMasterOperations.select();
     List<StageMasterOperationsDTO> listStageMasterOperationsDto = [];
     for (var element in queryStageMasterOperations) {
       final dto = StageMasterOperationsDTO.fromMap(element);
@@ -353,15 +432,25 @@ class CubitMain extends Cubit<StateMain> {
 
     List<StageMasterOperations> listStageMasterOperations = [];
     for (var dto in listStageMasterOperationsDto) {
-      listStageMasterOperations.add(StageMasterOperations(id: dto.id, stageNumber: dto.ststage.stageNumber, operationNumber: dto.operationNumber, operationName: dto.stageDistribution.operationName, planNumber: dto.ststage.planNumber, planName: dto.ststage.planName, operationsListLength: '${dto.stageDistribution.operationsIdList.length}', quantity: '${dto.stageDistribution.quantity}'));
+      listStageMasterOperations.add(StageMasterOperations(
+          id: dto.id,
+          stageNumber: dto.ststage.stageNumber,
+          operationNumber: dto.operationNumber,
+          operationName: dto.stageDistribution.operationName,
+          planNumber: dto.ststage.planNumber,
+          planName: dto.ststage.planName,
+          operationsListLength:
+              '${dto.stageDistribution.operationsIdList.length}',
+          quantity: '${dto.stageDistribution.quantity}'));
     }
 
     emit(state.copyWith(listStageMasterOperations: listStageMasterOperations));
   }
 
-  Future<void> getReadyOperations() async{
-    final tableReadyOperations = ReadyOperationsTable(); 
-    final queryReadyOperations = await tableReadyOperations.selectEq(state.region!.id, state.company!.id, 3);
+  Future<void> getReadyOperations() async {
+    final tableReadyOperations = ReadyOperationsTable();
+    final queryReadyOperations = await tableReadyOperations.selectEq(
+        state.region!.id, state.company!.id, 3);
     List<ReadyOperationsDTO> listReadyOperationsDto = [];
     for (var element in queryReadyOperations) {
       final dto = ReadyOperationsDTO.fromMap(element);
@@ -370,14 +459,25 @@ class CubitMain extends Cubit<StateMain> {
 
     List<ReadyOperations> listReadyOperations = [];
     for (var dto in listReadyOperationsDto) {
-      listReadyOperations.add(ReadyOperations(id: dto.id, timePlan: dto.timePlan, timeFact: dto.timeFact, timeStart: dto.timeStart, timeStop: dto.timeStop, status: dto.statusId.name, stageOperationId: dto.stageOperationId, details: '${dto.detailsId.planNumber} ${dto.detailsId.planName}', equipment: dto.equipmentId.name, user: dto.userId.fio, isUploaded: dto.isUploaded));
+      listReadyOperations.add(ReadyOperations(
+          id: dto.id,
+          timePlan: dto.timePlan,
+          timeFact: dto.timeFact,
+          timeStart: dto.timeStart,
+          timeStop: dto.timeStop,
+          status: dto.statusId.name,
+          stageOperationId: dto.stageOperationId,
+          details: '${dto.detailsId.planNumber} ${dto.detailsId.planName}',
+          equipment: dto.equipmentId.name,
+          user: dto.userId.fio,
+          isUploaded: dto.isUploaded));
     }
 
     emit(state.copyWith(listReadyOperations: listReadyOperations));
   }
 
-  Future<void> getOperatorsOperations() async{
-    final tableOperatorsOperations = OperatorsOperationsTable(); 
+  Future<void> getOperatorsOperations() async {
+    final tableOperatorsOperations = OperatorsOperationsTable();
     final queryOperatorsOperations = await tableOperatorsOperations.selectEq();
     List<OperatorsOperationsDTO> listOperatorsOperationsDto = [];
     for (var element in queryOperatorsOperations) {
@@ -387,7 +487,14 @@ class CubitMain extends Cubit<StateMain> {
 
     List<OperOperations> listOperatorsOperations = [];
     for (var dto in listOperatorsOperationsDto) {
-      listOperatorsOperations.add(OperOperations(id: dto.id, operationNumber: dto.operationNumber, order: dto.order, planNumber: dto.planNumber, operationName: dto.operationName, time: dto.time, status: dto.status));
+      listOperatorsOperations.add(OperOperations(
+          id: dto.id,
+          operationNumber: dto.operationNumber,
+          order: dto.order,
+          planNumber: dto.planNumber,
+          operationName: dto.operationName,
+          time: dto.time,
+          status: dto.status));
     }
 
     emit(state.copyWith(listOperOperations: listOperatorsOperations));

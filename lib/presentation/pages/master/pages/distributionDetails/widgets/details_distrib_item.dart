@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/operator_operations_dto.dart';
 import 'package:master_plan/domain/model/stage_master_operations.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
-import 'package:master_plan/presentation/app/bloc/state.dart';
+
 import 'dropdawn_custom.dart';
 
 class ListContetnDetails extends StatelessWidget {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/domain/model/oper_operations.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
-import 'package:master_plan/presentation/app/bloc/state.dart';
+
 import 'package:master_plan/presentation/pages/master/data/data_master.dart';
 import 'package:master_plan/presentation/pages/master/pages/readyDetails/widgets/rowExpand.dart';
 import '../../../../widgets/element_bar.dart';

@@ -1,9 +1,9 @@
+import 'package:master_plan/data/repositories/supabase/dto2/machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class MachineTable extends SupabaseTable{
-
+class MachineTable extends SupabaseTable {
   final table = Supabase.instance.client.from('z_machine');
 
   @override
@@ -12,8 +12,15 @@ class MachineTable extends SupabaseTable{
   }
 
   @override
-  Future<void> insert(Dto dto) {
-    return table.insert(dto);
+  Future<int> insert(Dto dto) async {
+    if (dto is MachineDTO2) {
+      var data = await table.insert({
+        'name': dto.name,
+        'inventory_number': dto.inventoryNumber
+      }).select('id');
+      return data[0]['id'];
+    }
+    return 0;
   }
 
   @override
@@ -26,20 +33,28 @@ class MachineTable extends SupabaseTable{
   }
 
   Future<List<Map<String, dynamic>>> selectListId(List<int> listId) {
-      String filters = '';
-      for (var i = 0; i < listId.length; i++) {
-        if (i == (listId.length - 1)) {
-          filters += 'id.eq.${listId[i]}';
-        } else {
-          filters += 'id.eq.${listId[i]},';
-        }
+    String filters = '';
+    for (var i = 0; i < listId.length; i++) {
+      if (i == (listId.length - 1)) {
+        filters += 'id.eq.${listId[i]}';
+      } else {
+        filters += 'id.eq.${listId[i]},';
       }
+    }
     return table.select().or(filters);
   }
 
   @override
-  Future<void> update(int id, Dto dto) {
-   return table.update({'name': '1'}).eq('id', id);
+  Future update(int id, Dto dto) async{
+    if (dto is MachineDTO2) {
+      await table.update({
+        'name': dto.name,
+        'inventory_number': dto.inventoryNumber
+      }).eq('id', id);
+    }
   }
 
+  stream() {
+    return table.stream(primaryKey: ['id']);
+  }
 }

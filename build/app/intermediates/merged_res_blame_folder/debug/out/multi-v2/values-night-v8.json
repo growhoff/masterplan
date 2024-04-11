@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.master_plan.app-mergeDebugResources-11:/values-night-v8/values-night-v8.xml",
+            "outputFile": "com.example.master_plan.app-mergeDebugResources-21:/values-night-v8/values-night-v8.xml",
             "map": [
                 {
-                    "source": "D:\\Flutter project\\master-plan\\master_plan\\android\\app\\src\\main\\res\\values-night\\styles.xml",
+                    "source": "D:\\Projects\\masterplan\\android\\app\\src\\main\\res\\values-night\\styles.xml",
                     "from": {
                         "startLines": "3,14",
                         "startColumns": "4,4",

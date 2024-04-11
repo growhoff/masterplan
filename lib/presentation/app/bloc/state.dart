@@ -1,31 +1,6 @@
-// // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
-import 'package:master_plan/data/repositories/supabase/dto2/area_dto.dart';
 
-import 'package:master_plan/data/repositories/supabase/dto2/company_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto2/machine_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto2/operator_operations_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto2/position_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto2/shifts_distribution_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto2/unit_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto2/user_dto.dart';
 
-import 'package:master_plan/domain/model/company.dart';
-import 'package:master_plan/domain/model/details.dart';
-import 'package:master_plan/domain/model/equipment.dart';
-import 'package:master_plan/domain/model/oper_operations.dart';
-import 'package:master_plan/domain/model/operatoroperations.dart';
-import 'package:master_plan/domain/model/position.dart';
-import 'package:master_plan/domain/model/ready_operations.dart';
-import 'package:master_plan/domain/model/region.dart';
-import 'package:master_plan/domain/model/shiftsdistribution.dart';
-import 'package:master_plan/domain/model/stage_master_operations.dart';
-import 'package:master_plan/domain/model/status.dart';
-import 'package:master_plan/domain/model/user.dart';
-import 'package:master_plan/domain/model/user_lite.dart';
-import 'package:master_plan/domain/model/z_area.dart';
-import 'package:master_plan/domain/model/z_unit.dart';
+part of 'cubit.dart';
 
 class StateMain extends Equatable {
     // final UserModel? user;
@@ -36,7 +11,7 @@ class StateMain extends Equatable {
     final UserDTO2? user;
     final CompanyDTO2? company;
     final PositionDTO2? position;
-    final ZArea? area;
+    final AreaModel? area;
     final ZUnit? unit;
     final List<AreaDTO2>? areaList;
     final List<MachineDTO2>? machineList;
@@ -86,7 +61,7 @@ class StateMain extends Equatable {
       company ?? CompanyDTO2.init(), 
       position ?? PositionDTO2.init(),
 
-      area ?? ZArea(id: 0, name: '', number: 1, machineList: [], machineListId: []),
+      area ?? AreaModel(id: 0, name: '', number: '', machineList: [], machineListId: []),
       unit ?? ZUnit(id: 0, name: '', areaList: [], areaListId: []),
       areaList ?? [],
       machineList ?? [],
@@ -115,7 +90,7 @@ class StateMain extends Equatable {
     UserDTO2? user,
     CompanyDTO2? company,
     PositionDTO2? position,
-    ZArea? area,
+    AreaModel? area,
     ZUnit? unit,
     List<AreaDTO2>? areaList,
     List<MachineDTO2>? machineList,

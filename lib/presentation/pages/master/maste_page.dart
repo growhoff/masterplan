@@ -5,7 +5,6 @@ import 'package:master_plan/data/repositories/supabase/dto2/machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/shifts_distribution_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/user_dto.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
-import 'package:master_plan/presentation/app/bloc/state.dart';
 import 'package:master_plan/presentation/pages/master/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/master/bloc/state.dart';
 import 'package:master_plan/presentation/pages/master/widgets/change_list_operator.dart';

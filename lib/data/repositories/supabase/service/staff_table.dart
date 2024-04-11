@@ -2,6 +2,8 @@ import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../dto2/staff_dto.dart';
+
 class StaffTable extends SupabaseTable{
 
   // final table = Supabase.instance.client.from('f_staff');
@@ -13,8 +15,14 @@ class StaffTable extends SupabaseTable{
   }
 
   @override
-  Future<void> insert(Dto dto) {
-    return table.insert(dto);
+  Future<void> insert(Dto dto) async {
+    if (dto is StaffDTO2) {
+      await table.insert({
+        'login': dto.login,
+        'password': dto.password,
+        'user_id': dto.userId
+      });
+    }
   }
 
   @override
@@ -29,6 +37,28 @@ class StaffTable extends SupabaseTable{
   @override
   Future<void> update(int id, Dto dto) {
    return table.update({'name': '1'}).eq('id', id);
+  }
+
+  stream(){
+    return table.stream(primaryKey: ['id']);
+  }
+
+  Future<List<Map<String, dynamic>>> selectByRegionId({required int regionId}) async{
+
+    var data = await table
+        .select('*, z_user:user_id!inner(*, z_position:position_id(*))')
+        .eq('z_user.area_id', regionId);
+
+    return data;
+  }
+
+  Future<List<Map<String, dynamic>>> selectByLogin({required String login}) async{
+
+    var data = await table
+        .select('*, z_user:user_id!inner(*, z_position:position_id(*))')
+        .eq('login', login);
+
+    return data;
   }
 
 }

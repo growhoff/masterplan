@@ -12,4 +12,5 @@ class UserModel {
     required this.region,
     required this.company,
   });
+  
 }

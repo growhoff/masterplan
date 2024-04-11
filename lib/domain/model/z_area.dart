@@ -1,13 +1,13 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:master_plan/domain/model/z_machine.dart';
 
-class ZArea {
+class AreaModel {
   final int id;
   final String name;
-  final int number;
-  final List<ZMachine> machineList;
+  final String number;
+  final List<MachineModel> machineList;
   final List<int> machineListId;
-  ZArea({
+  AreaModel({
     required this.id,
     required this.name,
     required this.number,

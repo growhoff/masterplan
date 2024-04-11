@@ -7,7 +7,7 @@ import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 class AreaDTO2 extends Dto {
   final int id;
   final String name;
-  final int number;
+  final String number;
   final List<int> machineId;
   AreaDTO2({
     required this.id,
@@ -31,7 +31,7 @@ class AreaDTO2 extends Dto {
     return AreaDTO2(
       id: map['id'] as int,
       name: map['name'] as String,
-      number: map['number'] as int,
+      number: map['number'] as String,
       machineId: (map['machine_id'] as List<dynamic>).map((e) => e as int).toList(),
     );
   }

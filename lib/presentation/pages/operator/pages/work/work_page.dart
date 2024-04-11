@@ -5,7 +5,7 @@ import 'package:master_plan/presentation/pages/operator/pages/work/bloc/cubit.da
 import 'package:master_plan/presentation/pages/operator/widgets/element_bar.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
-import 'package:master_plan/presentation/app/bloc/state.dart';
+
 
 import 'widgets/content_details.dart';
 

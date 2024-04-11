@@ -30,4 +30,5 @@ class RegionTable extends SupabaseTable{
    return table.update({'name': '1'}).eq('id', id);
   }
 
+
 }
