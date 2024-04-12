@@ -1,13 +1,13 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:master_plan/data/repositories/supabase/dto2/machine_dto.dart';
-import 'package:master_plan/data/repositories/supabase/service/z_area_table.dart';
-import 'package:master_plan/data/repositories/supabase/service/z_machine_table.dart';
-import 'package:master_plan/domain/model/z_machine.dart';
+import 'package:master_plan/data/repositories/supabase/dto/machine_dto.dart';
+import 'package:master_plan/data/repositories/supabase/service/area_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/machine_table.dart';
+import 'package:master_plan/domain/model/machine.dart';
 
-import '../../../../../../data/repositories/supabase/dto2/area_dto.dart';
-import '../../../../../../domain/model/z_area.dart';
+import '../../../../../../data/repositories/supabase/dto/area_dto.dart';
+import '../../../../../../domain/model/area.dart';
 
 
 
@@ -16,10 +16,10 @@ part 'chief_machine_state.dart';
 class ChiefMachineCubit extends Cubit<ChiefMachineState> {
   ChiefMachineCubit() : super(const ChiefMachineState());
 
-  final machineTableStream = ZMachineTable().stream();
-  final areaStream = ZAreaTable().stream();
-  final ZAreaTable _areaTable = ZAreaTable();
-  final ZMachineTable _machineTable = ZMachineTable();
+  final machineTableStream = MachineTable().stream();
+  final areaStream = AreaTable().stream();
+  final AreaTable _areaTable = AreaTable();
+  final MachineTable _machineTable = MachineTable();
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController numberController = TextEditingController();
@@ -39,10 +39,10 @@ class ChiefMachineCubit extends Cubit<ChiefMachineState> {
 
   fetchAreas() async {
     final areasSupabaseList = await _areaTable.select();
-    List<ZArea> areasList = [];
+    List<Area> areasList = [];
     for (var item in areasSupabaseList) {
-      final areaDto = AreaDTO2.fromMap(item);
-      areasList.add(ZArea(
+      final areaDto = AreaDTO.fromMap(item);
+      areasList.add(Area(
           id: areaDto.id,
           name: areaDto.name,
           number: areaDto.number,
@@ -69,12 +69,12 @@ class ChiefMachineCubit extends Cubit<ChiefMachineState> {
 
   fetchMachinesList() {
     machineTableStream.listen((list) {
-      List<ZMachine> machinesList = [];
+      List<Machine> machinesList = [];
       for (var item in list) {
-        final machineDto = MachineDTO2.fromMap(item);
+        final machineDto = MachineDTO.fromMap(item);
         if (state.areasList[activeAreaIndex].machineListId
             .contains(machineDto.id)) {
-          machinesList.add(ZMachine(
+          machinesList.add(Machine(
               id: machineDto.id,
               inventoryNumber: machineDto.inventoryNumber,
               name: machineDto.name));
@@ -89,7 +89,7 @@ class ChiefMachineCubit extends Cubit<ChiefMachineState> {
     List<String> areasNamesList = [];
     var areasList = await _areaTable.select();
     for (var area in areasList) {
-      AreaDTO2 areaDto = AreaDTO2.fromMap(area);
+      AreaDTO areaDto = AreaDTO.fromMap(area);
       String key = '${areaDto.number} ${areaDto.name}';
       areasNamesList.add(key);
       areasMap[key] = areaDto.id;
@@ -110,7 +110,7 @@ class ChiefMachineCubit extends Cubit<ChiefMachineState> {
 
   Future insertMachine() async {
     int machineId = await _machineTable.insert(
-      MachineDTO2(
+      MachineDTO(
           id: 0,
           inventoryNumber: int.parse(numberController.text),
           name: nameController.text),
@@ -130,7 +130,7 @@ class ChiefMachineCubit extends Cubit<ChiefMachineState> {
   }
 
   Future updateMachine({
-    required ZMachine machine,
+    required Machine machine,
     required int oldAreaId,
   }) async {
 
@@ -145,7 +145,7 @@ class ChiefMachineCubit extends Cubit<ChiefMachineState> {
 
     await _machineTable.update(
         machine.id,
-        MachineDTO2(
+        MachineDTO(
             id: machine.id,
             inventoryNumber: numberController.text == ''
                 ? machine.inventoryNumber

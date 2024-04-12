@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:master_plan/domain/model/z_batch.dart';
-import 'package:master_plan/domain/model/z_machine.dart';
+import 'package:master_plan/domain/model/batch.dart';
+import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import 'package:master_plan/presentation/app/bloc/state.dart';
 import 'package:master_plan/presentation/pages/master/model/element_bar_data.dart';
@@ -27,7 +27,7 @@ class ReadyDetailsPage extends StatelessWidget {
 
                 for (var machine in state.area!.machineList) {
                   int timeWorking = 0;
-                  List<ZBatch> batchList = [];
+                  List<Batch> batchList = [];
                   for (var operList in state.operatorOperationsList!) {
                     //проверка на готовые детали
                     if ((operList.status.id == 2) && (operList.machine.id == machine.id)) {
@@ -53,8 +53,8 @@ class ReadyDetailsPage extends StatelessWidget {
 
 class ContetnReady extends StatelessWidget {
   const ContetnReady({super.key, required this.batchList, required this.machine, required this.timeWorking});
-  final List<ZBatch> batchList;
-  final ZMachine machine;
+  final List<Batch> batchList;
+  final Machine machine;
   final int timeWorking;
   @override
   Widget build(BuildContext context) {

@@ -11,7 +11,7 @@ class ChiefRegionsInitial extends ChiefAreasState {
 class ChiefRegionsSuccess extends ChiefAreasState {
   ChiefRegionsSuccess({required this.regions});
 
-  final List<ZArea> regions;
+  final List<Area> regions;
 
   @override
   List<Object?> get props => [regions];

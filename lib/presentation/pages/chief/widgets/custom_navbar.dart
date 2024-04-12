@@ -23,7 +23,7 @@ class _NavBarCustomChiefState extends State<NavBarCustomChief> {
         appBar: AppBar(
           title: BlocBuilder<CubitMain, StateMain>(builder: (context, state) {
             final user = state.user!;
-            return Row(children: [
+            return Column(children: [
             const Text('Начальник'),
             Text('${user.id} / ${user.fio} / ${user.position.name} / ${user.unit!.name}', style: const TextStyle(fontSize: 12)),
           ],);

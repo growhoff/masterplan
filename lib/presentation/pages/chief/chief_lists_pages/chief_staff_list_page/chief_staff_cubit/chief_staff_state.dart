@@ -6,12 +6,12 @@ class ChiefStaffState extends Equatable {
     this.areasList = const [],
   });
 
-  final List<ZArea> areasList;
-  final List<StaffModel> staffList;
+  final List<Area> areasList;
+  final List<Staff> staffList;
 
   ChiefStaffState copyWith({
-    List<StaffModel>? staffList,
-    List<ZArea>? areasList,
+    List<Staff>? staffList,
+    List<Area>? areasList,
   }) {
     return ChiefStaffState(
       staffList: staffList ?? this.staffList,

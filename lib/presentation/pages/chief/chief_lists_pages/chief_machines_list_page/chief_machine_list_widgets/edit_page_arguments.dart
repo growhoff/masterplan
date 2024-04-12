@@ -1,8 +1,8 @@
-import '../../../../../../domain/model/z_machine.dart';
+import '../../../../../../domain/model/machine.dart';
 
 class EditPageArguments {
   EditPageArguments(this.machineModel, this.areaId);
 
-  final ZMachine machineModel;
+  final Machine machineModel;
   final int areaId;
 }

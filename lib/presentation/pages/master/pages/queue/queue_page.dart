@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:master_plan/domain/model/z_batch.dart';
-import 'package:master_plan/domain/model/z_machine.dart';
+import 'package:master_plan/domain/model/batch.dart';
+import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import 'package:master_plan/presentation/app/bloc/state.dart';
 import 'package:master_plan/presentation/pages/master/model/element_bar_data.dart';
@@ -28,8 +28,8 @@ class QueuePageMaster extends StatelessWidget {
 
                   for (var machine in state.area!.machineList) {
                     int timeWorking = 0;
-                    List<ZBatch> batchListQueue = [];
-                    List<ZBatch> batchListOther = [];
+                    List<Batch> batchListQueue = [];
+                    List<Batch> batchListOther = [];
                     for (var operList in state.operatorOperationsList!) {
                       //проверка на детали в очереди operList.status.id == 5
                       //проверка на детали помимо "в очереди" и готовых (operList.status.id != 5) && (operList.status.id != 2)
@@ -72,9 +72,9 @@ class QueuePageMaster extends StatelessWidget {
 
 class ContetnQueue extends StatelessWidget {
   const ContetnQueue({super.key, required this.batchListQueue, required this.batchListOther, required this.machine, required this.timeWorking});
-  final List<ZBatch> batchListQueue;
-  final List<ZBatch> batchListOther;
-  final ZMachine machine;
+  final List<Batch> batchListQueue;
+  final List<Batch> batchListOther;
+  final Machine machine;
   final int timeWorking;
   //статус первого списка не null и не ready
   //статус второго списка  null
@@ -114,7 +114,7 @@ class ContetnQueue extends StatelessWidget {
 
 class ListViewOperationsReady extends StatelessWidget {
   const ListViewOperationsReady(this.list, {super.key});
-  final List<ZBatch> list;
+  final List<Batch> list;
   @override
   Widget build(BuildContext context) {
     List<ItemTextReadyQueue> listOperations = [];

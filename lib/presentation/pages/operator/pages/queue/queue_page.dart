@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:master_plan/domain/model/z_operator_operations.dart';
+import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/presentation/pages/operator/pages/queue/model/item_operation.dart';
 import 'widgets/line_text_spawn.dart';
 import 'widgets/row_list.dart';
@@ -10,7 +10,7 @@ import 'package:master_plan/presentation/app/bloc/state.dart';
 
 class QueuePage extends StatelessWidget {
   const QueuePage(this.operList, {super.key});
-  final List<ZOperatorOperations> operList;
+  final List<OperatorOperations> operList;
   @override
   Widget build(BuildContext context) {
 

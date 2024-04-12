@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:master_plan/domain/model/z_operator_operations.dart';
+import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import 'package:master_plan/presentation/app/bloc/state.dart';
 import 'dropdawn_custom.dart';
 
 class ListContetnDetails extends StatelessWidget {
   const ListContetnDetails(this.oper, {super.key});
-  final ZOperatorOperations oper;
+  final OperatorOperations oper;
   @override
   Widget build(BuildContext context) {
     return Card(

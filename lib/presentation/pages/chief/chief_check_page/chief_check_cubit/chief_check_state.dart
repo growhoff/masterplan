@@ -1,6 +1,14 @@
 part of 'chief_check_cubit.dart';
 
-@immutable
-abstract class ChiefCheckState {}
+class ChiefCheckState extends Equatable {
+  const ChiefCheckState({this.stagesList = const []});
 
-class ChiefCheckInitial extends ChiefCheckState {}
+  final List<Stage> stagesList;
+
+  @override
+  List<Object?> get props => [stagesList];
+
+  ChiefCheckState copyWith({List<Stage>? stagesList}) {
+    return ChiefCheckState(stagesList: stagesList ?? this.stagesList);
+  }
+}

@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_staff_list_page/chief_staff_list_widgets/staff_element_icon.dart';
 
-import '../../../../../../domain/model/staff_model.dart';
+import '../../../../../../domain/model/staff.dart';
 
 class StaffListElement extends StatefulWidget {
   const StaffListElement(
@@ -11,7 +11,7 @@ class StaffListElement extends StatefulWidget {
       required this.deleteStaff,
       super.key});
 
-  final StaffModel staffModel;
+  final Staff staffModel;
   final VoidCallback fetchStaff;
   final VoidCallback deleteStaff;
 
@@ -30,58 +30,58 @@ class _StaffListElementState extends State<StaffListElement> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Padding(
-              //   padding: const EdgeInsets.symmetric(horizontal: 10),
-              //   child: widget.staffModel.user.photo == null
-              //       ? Container(
-              //           width: 50,
-              //           height: 50,
-              //           decoration: BoxDecoration(
-              //               color: Colors.grey.shade200,
-              //               borderRadius: BorderRadius.circular(8)),
-              //         )
-              //       : Container(
-              //           width: 50,
-              //           height: 50,
-              //           clipBehavior: Clip.antiAlias,
-              //           decoration: BoxDecoration(
-              //               borderRadius: BorderRadius.circular(8)),
-              //           child: Image.network(
-              //             Uri.parse(widget.staffModel.user.photo!)
-              //                 .replace(queryParameters: {
-              //               't':
-              //                   DateTime.now().millisecondsSinceEpoch.toString()
-              //             }).toString(),
-              //             fit: BoxFit.cover,
-              //           ),
-              //         ),
-              // ),
-              // Expanded(
-              //   flex: 3,
-              //   child: Column(
-              //     crossAxisAlignment: CrossAxisAlignment.start,
-              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //     children: [
-              //       Text(
-              //         widget.staffModel.user.fio,
-              //         style: TextStyle(fontSize: 18),
-              //       ),
-              //       const SizedBox(
-              //         height: 10,
-              //       ),
-              //       Text(
-              //           'должность: ${widget.staffModel.user.positionId}'),
-              //       const SizedBox(
-              //         height: 10,
-              //       ),
-              //       Text('номер: ${widget.staffModel.login}'),
-              //       const SizedBox(
-              //         height: 10,
-              //       ),
-              //       Text('пароль: ${widget.staffModel.password}')
-              //     ],
-              //   ),
-              // ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: widget.staffModel.user.photo == null
+                    ? Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                            color: Colors.grey.shade200,
+                            borderRadius: BorderRadius.circular(8)),
+                      )
+                    : Container(
+                        width: 50,
+                        height: 50,
+                        clipBehavior: Clip.antiAlias,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8)),
+                        child: Image.network(
+                          Uri.parse(widget.staffModel.user.photo!)
+                              .replace(queryParameters: {
+                            't':
+                                DateTime.now().millisecondsSinceEpoch.toString()
+                          }).toString(),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+              ),
+              Expanded(
+                flex: 3,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      widget.staffModel.user.fio,
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                        'должность: ${widget.staffModel.user.positionId}'),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text('номер: ${widget.staffModel.login}'),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text('пароль: ${widget.staffModel.password}')
+                  ],
+                ),
+              ),
               Expanded(
                 flex: 1,
                 child: Column(

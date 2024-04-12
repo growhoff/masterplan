@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-// import 'package:master_plan/domain/model/stage_master_operations.dart';
-import 'package:master_plan/domain/model/z_operator_operations.dart';
+import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/presentation/pages/master/pages/distributionMachine/model/item_text.dart';
 
 class DataList extends StatefulWidget {
   const DataList(this.listOper, {super.key});
-  final List<ZOperatorOperations>? listOper;
+  final List<OperatorOperations>? listOper;
   @override
   State<DataList> createState() => _DataListState();
 }

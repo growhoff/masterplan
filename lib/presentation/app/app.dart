@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_areas_pages/chief_area_edit_page.dart';
+import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_areas_pages/chief_area_insert_page.dart';
+import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_areas_pages/chief_areas_page.dart';
+import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_machines_list_page/chief_equipment_add_page.dart';
+import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_machines_list_page/chief_machine_edit_page.dart';
+import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_machines_list_page/chief_machines_list_page.dart';
+import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_staff_list_page/chief_staff_add_page.dart';
+import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_staff_list_page/chief_staff_list_page.dart';
 import 'package:master_plan/presentation/pages/chief/widgets/custom_navbar.dart';
 import 'package:master_plan/presentation/pages/login/login_page.dart';
 import 'package:master_plan/presentation/pages/master/pages/addOperation/add_operation_page.dart';
@@ -27,6 +35,14 @@ class MyApp extends StatelessWidget {
           '/choosingOperatorPage':(BuildContext context) => const ChoosingOperatorPage(),
           '/workPage':(BuildContext context) => const WorkPage(),
           '/addOperationPage':(BuildContext context) => const AddOperationPage(),
+          '/chiefAreasPage': (BuildContext context) => const ChiefAreasPage(),
+          '/chiefAreaInsertPage': (BuildContext context) => const ChiefAreaInsertPage(),
+          '/chiefAreaEditPage': (BuildContext context) => const ChiefAreaEditPage(),
+          '/chiefMachinesListPage': (BuildContext context) => const ChiefMachinesListPage(),
+          '/chiefMachineInsertPage': (BuildContext context) => const ChiefMachineInsertPage(),
+          '/chiefMachineEditPage': (BuildContext context) => const ChiefMachineEditPage(),
+          '/chiefStaffListPage': (BuildContext context) => const ChiefStaffListPage(),
+          '/chiefStaffAddPage': (BuildContext context) => const ChiefStaffAddPage(),
         },
         home: const LoginPage(),
       ),

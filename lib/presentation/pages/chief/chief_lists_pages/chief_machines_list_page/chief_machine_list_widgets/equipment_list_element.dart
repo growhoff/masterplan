@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'package:master_plan/domain/model/z_machine.dart';
+import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_machines_list_page/chief_machine_list_widgets/edit_page_arguments.dart';
 
 class MachinesListElement extends StatefulWidget {
@@ -14,7 +14,7 @@ class MachinesListElement extends StatefulWidget {
       });
 
 
-  final ZMachine machineModel;
+  final Machine machineModel;
   final VoidCallback deleteMachine;
 
   final int areaId;

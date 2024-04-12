@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:master_plan/data/repositories/supabase/dto2/shifts_distribution_dto.dart';
-import 'package:master_plan/domain/model/z_machine.dart';
-import 'package:master_plan/domain/model/z_operator_operations.dart';
+import 'package:master_plan/data/repositories/supabase/dto/shifts_distribution_dto.dart';
+import 'package:master_plan/domain/model/machine.dart';
+import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/presentation/pages/operator/model/element_bar_data.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/model/machine_item.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/model/page_item.dart';
@@ -9,8 +9,8 @@ import 'package:master_plan/presentation/pages/operator/pages/work/widgets/conte
 import 'state.dart';
 
 class CubitWork extends Cubit<StateWork> {
-  final List<ZShiftsDistributionDTO2>? zShiftsDistributionList;
-  final List<ZOperatorOperations>? operatorOperationsList;
+  final List<ZShiftsDistributionDTO>? zShiftsDistributionList;
+  final List<OperatorOperations>? operatorOperationsList;
 
   CubitWork(this.zShiftsDistributionList, this.operatorOperationsList) : super(const StateWork()) {
     List<ElementBarDataOperator> list = [];
@@ -18,8 +18,8 @@ class CubitWork extends Cubit<StateWork> {
     List<PageItem>? pageData = [];
 
     for (var shiftsDistr in zShiftsDistributionList!) {
-      List<ZOperatorOperations> listOper = [];
-      ZMachine machine = ZMachine(
+      List<OperatorOperations> listOper = [];
+      Machine machine = Machine(
           id: shiftsDistr.machine.id,
           inventoryNumber: shiftsDistr.machine.inventoryNumber,
           name: shiftsDistr.machine.name);

@@ -1,10 +1,10 @@
 
 import 'package:flutter/material.dart';
-import 'package:master_plan/data/repositories/supabase/dto2/shifts_distribution_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/shifts_distribution_dto.dart';
 
 class ChangeListOperator extends StatelessWidget {
   const ChangeListOperator(this.list, {super.key});
-  final List<ZShiftsDistributionDTO2> list;
+  final List<ZShiftsDistributionDTO> list;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
