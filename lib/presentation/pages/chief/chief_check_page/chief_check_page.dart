@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/pages/chief/chief_check_page/chief_check_cubit/chief_check_cubit.dart';
 
-import '../chief_widgets/stage_check_element.dart';
+import '../widgets/stage_check_element.dart';
 
 class ChiefCheckPage extends StatelessWidget {
   const ChiefCheckPage({super.key});

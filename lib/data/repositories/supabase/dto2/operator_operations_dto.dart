@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:master_plan/data/repositories/supabase/dto2/batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/status_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto2/user2_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/user_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 
 class OperatorOperationsDTO2 extends Dto {
@@ -18,7 +18,7 @@ class OperatorOperationsDTO2 extends Dto {
   final int stageoperationid;
   final int stagemasteroperationid;
   final BatchDTO2 batch;
-  final User2DTO2 user;
+  final UserDTO2 user;
   final bool isuploaded;
   final int order;
   final MachineDTO2 machine;
@@ -71,7 +71,7 @@ class OperatorOperationsDTO2 extends Dto {
       stageoperationid: map['stage_operation_id'] as int,
       stagemasteroperationid: map['stage_master_operation_id'] as int,
       batch: BatchDTO2.fromMap(map['z_batch'] as Map<String,dynamic>),
-      user: User2DTO2.fromMap(map['z_user'] as Map<String,dynamic>),
+      user: UserDTO2.fromMap(map['z_user'] as Map<String,dynamic>),
       isuploaded: map['is_uploaded'] as bool,
       order: map['order'] as int,
       machine: MachineDTO2.fromMap(map['z_machine'] as Map<String,dynamic>),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../chief_model/element_bar_model.dart';
+import '../model/element_bar_model.dart';
 
 class ElementBar extends StatefulWidget {
   const ElementBar({super.key, required this.list});

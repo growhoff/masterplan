@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ChiefMonitoringComponent extends StatefulWidget {
@@ -38,7 +37,7 @@ class MonitoringContainer extends StatelessWidget {
   }
 }
 
-List<MonitoringContainer> monitoringList = [
+List<MonitoringContainer> monitoringList = const [
   MonitoringContainer(time: 1, color: Colors.red),
   MonitoringContainer(time: 3, color: Colors.green),
   MonitoringContainer(time: 2, color: Colors.blue),

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/change_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/company_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/machine_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/position_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/shifts_distribution_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto2/user2_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/user_dto.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import 'package:master_plan/presentation/app/bloc/state.dart';
 import 'package:master_plan/presentation/pages/master/bloc/cubit.dart';
@@ -55,7 +57,7 @@ class MasterContent extends StatelessWidget {
                         for (var shiftsDistr in state.zShiftsDistributionList!) {
                           if ((shiftsDistr.machine.id == machine.id) && (shiftsDistr.change.number == state2.change)) {list.add(shiftsDistr); iswr = true;}
                         }
-                        if (!iswr) {list.add(ZShiftsDistributionDTO2(id: -1,change: ChangeDTO2.init(), date: DateTime.now(), user: User2DTO2(id: 0, fio: 'none', companyId: 0, positionId: 0), machine: MachineDTO2(id: machine.id, inventoryNumber: machine.inventoryNumber, name: machine.name)));}
+                        if (!iswr) {list.add(ZShiftsDistributionDTO2(id: -1,change: ChangeDTO2.init(), date: DateTime.now(), user: UserDTO2(position: PositionDTO2(id: 0, name: ''), company: CompanyDTO2.init() ,id: 0, fio: 'none', companyId: 0, positionId: 0), machine: MachineDTO2(id: machine.id, inventoryNumber: machine.inventoryNumber, name: machine.name)));}
                       }
                       return ChangeListOperator(list);
                     }),

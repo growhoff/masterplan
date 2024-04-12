@@ -1,4 +1,4 @@
-import 'package:master_plan/data/repositories/supabase/dto2/user2_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/user_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -14,13 +14,13 @@ class ZUserTable extends SupabaseTable{
 
    @override
     Future<int> insert(Dto dto) async {
-      if (dto is User2DTO2) {
+      if (dto is UserDTO2) {
         var data = await table.insert({
           'fio': dto.fio,
           'position_id': dto.positionId,
           'area_id': dto.areaId,
           'company_id': dto.companyId,
-          // 'photo': dto.photo,
+          'photo': dto.photo,
         }).select('id');
         return data[0]['id'];
       }

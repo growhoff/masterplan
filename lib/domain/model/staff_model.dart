@@ -1,10 +1,11 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:master_plan/domain/model/z_user_model.dart';
 
 class StaffModel {
   StaffModel(
       {required this.id,
       required this.login,
-      // required this.user,
+      required this.user,
       required this.userId,
       required this.password});
 
@@ -12,5 +13,5 @@ class StaffModel {
   final String login;
   final String password;
   final int userId;
-  // final ZUserModel user;
+  final ZUserModel user;
 }

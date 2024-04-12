@@ -27,7 +27,7 @@ class _StageCheckElementState extends State<StageCheckElement> {
     return Align(
         alignment: Alignment.center,
         child: Container(
-          margin: EdgeInsets.fromLTRB(0,5,0,10),
+          margin: const EdgeInsets.fromLTRB(0,5,0,10),
           decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
@@ -35,7 +35,7 @@ class _StageCheckElementState extends State<StageCheckElement> {
                   color: Colors.grey.withOpacity(0.8),
                   spreadRadius: 3,
                   blurRadius: 5,
-                  offset: Offset(0, 3),
+                  offset: const Offset(0, 3),
                 )
               ],
               border: Border.all(color: Colors.black, width: 1),
@@ -74,13 +74,8 @@ class _StageCheckElementState extends State<StageCheckElement> {
                     ),
                     ElevatedButton(
                       onPressed: () {},
-                      child: Text(
-                        'подробнее',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 15)),
+                      style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15)),
+                      child: const Text('подробнее', style: TextStyle(fontSize: 18)),
                     )
                   ],
                 ),

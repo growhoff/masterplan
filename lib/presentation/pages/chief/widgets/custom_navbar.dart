@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import 'package:master_plan/presentation/app/bloc/state.dart';
 
-import '../chief_data/chief_data.dart';
+import '../data/chief_data.dart';
 
 class NavBarCustomChief extends StatefulWidget {
   const NavBarCustomChief({super.key});

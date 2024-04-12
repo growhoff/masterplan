@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:master_plan/presentation/pages/chief/chief_widgets/chief_monitoring_component.dart';
+import 'package:master_plan/presentation/pages/chief/widgets/chief_monitoring_component.dart';
 
-import 'chief_model/element_bar_model.dart';
-import 'chief_widgets/element_bar_widget.dart';
+import 'model/element_bar_model.dart';
+import 'widgets/element_bar_widget.dart';
 
 class ChiefMonitoringPage extends StatelessWidget {
   const ChiefMonitoringPage({super.key});

@@ -30,7 +30,7 @@ class StateMain extends Equatable {
   @override
   List<Object> get props {
     return [
-      user ?? UserDTO2(id: 0, fio: '', company: CompanyDTO2.init(), position: PositionDTO2(id: 0, name: '')), 
+      user ?? UserDTO2(id: 0, fio: '', company: CompanyDTO2.init(), position: PositionDTO2(id: 0, name: ''), positionId: 0, companyId: 0), 
       area ?? ZArea(id: 0, name: '', number: '', machineList: [], machineListId: []),
       unit ?? ZUnit(id: 0, name: '', areaList: [], areaListId: []),
       areaList ?? [],

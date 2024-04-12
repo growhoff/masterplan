@@ -3,9 +3,10 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 // import 'package:gpassword/gpassword.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/area_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/company_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/position_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/staff_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto2/user2_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/user_dto.dart';
 // import 'package:master_plan/data/repositories/supabase/dto2/user_dto.dart';
 // import 'package:master_plan/data/repositories/supabase/service/position_table.dart';
 // import 'package:master_plan/data/repositories/supabase/service/staff_table.dart';
@@ -14,6 +15,7 @@ import 'package:master_plan/data/repositories/supabase/service/z_area_table.dart
 import 'package:master_plan/data/repositories/supabase/service/z_position_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/z_staff_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/z_user_table.dart';
+import 'package:master_plan/domain/model/z_user_model.dart';
 // import 'package:master_plan/domain/model/z_user_model.dart';
 
 // import '../../../../../../data/repositories/supabase/dto/position_dto.dart';
@@ -80,17 +82,17 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
           login: staffDto.login,
           password: staffDto.password,
           userId: staffDto.userId,
-          // user: ZUserModel(
-          //     id: staffDto.userDTO.id,
-          //     fio: staffDto.userDTO.fio,
-          //     areaId: staffDto.userDTO.areaId,
-          //     positionId: staffDto.userDTO.positionId,
-          //     companyId: staffDto.userDTO.companyId,
-          //     photo: staffDto.userDTO.photo,
-          //     unitId: staffDto.userDTO.unitId,
-          //     positionModel: PositionModel(
-          //         id: staffDto.userDTO.positionDTO!.id,
-          //         name: staffDto.userDTO.positionDTO!.name))
+          user: ZUserModel(
+              id: staffDto.user.id,
+              fio: staffDto.user.fio,
+              areaId: staffDto.user.areaId,
+              positionId: staffDto.user.positionId,
+              companyId: staffDto.user.companyId,
+              photo: staffDto.user.photo,
+              unitId: staffDto.user.unitId,
+              positionModel: PositionModel(
+                  id: staffDto.user.position.id,
+                  name: staffDto.user.position.name))
               ));
     }
 
@@ -182,13 +184,14 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
     //   imageUrl = null;
     // }
 
-    var userId = await _userTable.insert(User2DTO2(
+    var userId = await _userTable.insert(UserDTO2(
         id: 0,
         fio: fioController.text,
         positionId: positionsMap[selectedPosition]!,
         areaId: areasMap[selectedArea],
         companyId: 1,
-        positionDTO: PositionDTO2(id: 0, name: ''),
+        company: CompanyDTO2.init(),
+        position: PositionDTO2(id: 0, name: ''),
         photo: null,
         unitId: null));
 
@@ -201,7 +204,7 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
                 ? '1111'
                 : passwordController.text,
         userId: userId,
-        // userDTO: User2DTO2.empty
+        user: UserDTO2.empty
         ));
 
     fioController.clear();

@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class ZShiftsDistributionTable extends SupabaseTable{
 
   final table = Supabase.instance.client.from('z_shifts_distribution');
+  final selectUser = '*, z_position(*), z_company(*), z_unit(*), z_area(*)';
   
   @override
   Future<void> delete(int id) {
@@ -22,7 +23,7 @@ class ZShiftsDistributionTable extends SupabaseTable{
   }
 
   Future<List<Map<String, dynamic>>> selectEqUser(int userId) {
-    return table.select('*, z_user(*), z_change(*), z_machine(*)').eq('user_id', userId).eq('date', DateTime.now());
+    return table.select('*, z_user($selectUser), z_change(*), z_machine(*)').eq('user_id', userId).eq('date', DateTime.now());
   }
 
   Future<List<Map<String, dynamic>>> selectList(List<int> machineListId, DateTime date) { //, DateTime date
@@ -34,7 +35,7 @@ class ZShiftsDistributionTable extends SupabaseTable{
           filters += 'machine_id.eq.${machineListId[i]},';
         }
       }
-    return table.select('*, z_user(*), z_change(*), z_machine(*)').or(filters);
+    return table.select('*, z_user($selectUser), z_change(*), z_machine(*)').or(filters);
   }
 
   @override

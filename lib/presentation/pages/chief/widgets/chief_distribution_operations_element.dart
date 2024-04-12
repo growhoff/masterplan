@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ChiefDistributionOperationsElement extends StatefulWidget {
@@ -59,8 +58,8 @@ class _ChiefDistributionOperationsElementState
               height: 15,
             ),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: (DropdownMenu(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: (const DropdownMenu(
                   enableFilter: true,
                   enableSearch: true,
                   width: 200,
@@ -74,7 +73,7 @@ class _ChiefDistributionOperationsElementState
             const SizedBox(
               height: 15,
             ),
-            Row(
+            const Row(
               children: [
                 Text('кол-во, передаваемое на участок'),
                 SizedBox(

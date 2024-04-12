@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'chief_widgets/chief_distribution_operations_element.dart';
+import 'widgets/chief_distribution_operations_element.dart';
 
 class ChiefDistributionPage extends StatelessWidget {
   const ChiefDistributionPage({super.key});
