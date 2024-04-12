@@ -3,7 +3,7 @@ import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class AreaTable extends SupabaseTable {
+class ZAreaTable extends SupabaseTable {
   final table = Supabase.instance.client.from('z_area');
 
   @override
@@ -21,7 +21,7 @@ class AreaTable extends SupabaseTable {
 
   @override
   Future<List<Map<String, dynamic>>> select() {
-    return table.select().order('id', ascending: true);
+    return table.select();
   }
 
   Future<List<Map<String, dynamic>>> selectId(int id) {
@@ -60,8 +60,7 @@ class AreaTable extends SupabaseTable {
     }
   }
 
-  Future<void> removeMachine(
-      {required int areaId, required int machineId}) async {
+  Future<void> removeMachine({required int areaId, required int machineId}) async {
     print(areaId);
     var data = await table.select().eq('id', areaId);
     print(data[0]['machine_id']);
@@ -71,14 +70,11 @@ class AreaTable extends SupabaseTable {
     await table.update({'machine_id': machinesList}).eq('id', areaId);
   }
 
-  Future<void> changeMachineArea(
-      {required int oldAreaId,
-       int? newAreaId,
-      required int machineId}) async {
-   if (newAreaId != null){
-     await removeMachine(areaId: oldAreaId, machineId: machineId);
-     await addMachine(areaId: newAreaId, machineId: machineId);
-   }
+  Future<void> changeMachineArea({required int oldAreaId, int? newAreaId, required int machineId}) async {
+    if (newAreaId != null) {
+      await removeMachine(areaId: oldAreaId, machineId: machineId);
+      await addMachine(areaId: newAreaId, machineId: machineId);
+    }
   }
 
   stream() {

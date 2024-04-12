@@ -10,13 +10,11 @@ class ChiefAreaEditPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final area = ModalRoute.of(context)!.settings.arguments as AreaModel;
+    final area = ModalRoute.of(context)!.settings.arguments as ZArea;
 
     return BlocProvider(
       create: (context) => ChiefAreasCubit(),
-      child: ChiefAreaEditPageView(
-        area: area,
-      ),
+      child: ChiefAreaEditPageView(area: area),
     );
   }
 }
@@ -24,7 +22,7 @@ class ChiefAreaEditPage extends StatelessWidget {
 class ChiefAreaEditPageView extends StatefulWidget {
   const ChiefAreaEditPageView({required this.area, super.key});
 
-  final AreaModel area;
+  final ZArea area;
 
   @override
   State<ChiefAreaEditPageView> createState() =>
@@ -55,29 +53,17 @@ class _ChiefAreaEditPageViewState extends State<ChiefAreaEditPageView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Номер участка',
-                      style: TextStyle(fontSize: 18),
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
+                    const Text('Номер участка', style: TextStyle(fontSize: 18)),
+                    const SizedBox(height: 5),
                     TextField(
                       decoration:
                           InputDecoration(hintText: widget.area.number),
                       controller:
                           context.read<ChiefAreasCubit>().numberController,
                     ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      'Название',
-                      style: TextStyle(fontSize: 18),
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
+                    const SizedBox(height: 20),
+                    const Text('Название', style: TextStyle(fontSize: 18)),
+                    const SizedBox(height: 5),
                     TextField(
                       decoration: InputDecoration(hintText: widget.area.name),
                       controller:
@@ -98,9 +84,9 @@ class _ChiefAreaEditPageViewState extends State<ChiefAreaEditPageView> {
                             builder: (context) => Container(
                                 alignment: Alignment.center,
                                 height: 50,
-                                child: Text('участок изменен')));
+                                child: const Text('участок изменен')));
                       },
-                      child: Text('редактировать'),
+                      child: const Text('редактировать'),
                     ))
                   ],
                 ),

@@ -13,14 +13,14 @@ class ChangeListOperator extends StatelessWidget {
                     itemCount: list.length,
                     itemBuilder: (context, index) =>  Column(
                       children: [
-                        Text(list[index].machineId.name),
+                        Text(list[index].machine.name),
                         Card(
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 8),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(list[index].userId.fio),
+                                Text(list[index].user.fio),
                                 Row(
                               children: [
                                 IconButton(onPressed: ()=> Navigator.pushNamed(context, '/choosingOperatorPage'), icon: const Icon(Icons.add)),

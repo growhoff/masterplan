@@ -3,4 +3,8 @@ import 'state.dart';
 
 class CubitOperator extends Cubit<StateOperator> { 
   CubitOperator() : super(const StateOperator());
+
+  void toggleBtn(bool isStart){
+    emit(state.copyWith(isStart: isStart));
+  }
 }

@@ -1,10 +1,10 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
-class MachineModel{
+class ZMachine{
   final int id;
   final int inventoryNumber;
   final String name;
-  MachineModel({
+  ZMachine({
     required this.id,
     required this.inventoryNumber,
     required this.name,

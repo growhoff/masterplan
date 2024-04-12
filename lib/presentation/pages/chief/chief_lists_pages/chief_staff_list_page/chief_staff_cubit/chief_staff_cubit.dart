@@ -1,17 +1,24 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:gpassword/gpassword.dart';
+// import 'package:gpassword/gpassword.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/area_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/company_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/position_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/staff_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/user_dto.dart';
-import 'package:master_plan/data/repositories/supabase/service/position_table.dart';
-import 'package:master_plan/data/repositories/supabase/service/staff_table.dart';
-import 'package:master_plan/data/repositories/supabase/service/user_table.dart';
+// import 'package:master_plan/data/repositories/supabase/dto2/user_dto.dart';
+// import 'package:master_plan/data/repositories/supabase/service/position_table.dart';
+// import 'package:master_plan/data/repositories/supabase/service/staff_table.dart';
+// import 'package:master_plan/data/repositories/supabase/service/user_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/z_area_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/z_position_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/z_staff_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/z_user_table.dart';
 import 'package:master_plan/domain/model/z_user_model.dart';
+// import 'package:master_plan/domain/model/z_user_model.dart';
 
-import '../../../../../../data/repositories/supabase/dto/position_dto.dart';
+// import '../../../../../../data/repositories/supabase/dto/position_dto.dart';
 import '../../../../../../domain/model/position.dart';
 import '../../../../../../domain/model/staff_model.dart';
 import '../../../../../../domain/model/z_area.dart';
@@ -25,11 +32,11 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
   final TextEditingController numberController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  final AreaTable _areasTable = AreaTable();
+  final ZAreaTable _areasTable = ZAreaTable();
 
-  final StaffTable _staffTable = StaffTable();
-  final UserTable _userTable = UserTable();
-  final PositionTable _positionTable = PositionTable();
+  final ZStaffTable _staffTable = ZStaffTable();
+  final ZUserTable _userTable = ZUserTable();
+  final ZPositionTable _positionTable = ZPositionTable();
 
   int activeAreaId = 0;
 
@@ -39,7 +46,7 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
   Map<String, int> areasMap = {};
   Map<String, int> positionsMap = {};
 
-  final GPassword _gPassword = GPassword(); // генератор пароля (библиотека)
+  // final GPassword _gPassword = GPassword(); // генератор пароля (библиотека)
 
   Future<void> fetchAreasAndStaff() async {
     await fetchAreas();
@@ -49,10 +56,10 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
   Future<void> fetchAreas() async {
     final areas = await _areasTable.select();
 
-    List<AreaModel> areasList = [];
+    List<ZArea> areasList = [];
     for (var area in areas) {
       final AreaDTO2 areaDto = AreaDTO2.fromMap(area);
-      areasList.add(AreaModel(
+      areasList.add(ZArea(
           id: areaDto.id,
           name: areaDto.name,
           number: areaDto.number,
@@ -76,16 +83,17 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
           password: staffDto.password,
           userId: staffDto.userId,
           user: ZUserModel(
-              id: staffDto.userDTO.id,
-              fio: staffDto.userDTO.fio,
-              areaId: staffDto.userDTO.areaId,
-              positionId: staffDto.userDTO.positionId,
-              companyId: staffDto.userDTO.companyId,
-              photo: staffDto.userDTO.photo,
-              unitId: staffDto.userDTO.unitId,
+              id: staffDto.user.id,
+              fio: staffDto.user.fio,
+              areaId: staffDto.user.areaId,
+              positionId: staffDto.user.positionId,
+              companyId: staffDto.user.companyId,
+              photo: staffDto.user.photo,
+              unitId: staffDto.user.unitId,
               positionModel: PositionModel(
-                  id: staffDto.userDTO.positionDTO!.id,
-                  name: staffDto.userDTO.positionDTO!.name))));
+                  id: staffDto.user.position.id,
+                  name: staffDto.user.position.name))
+              ));
     }
 
     emit(state.copyWith(staffList: staffList));
@@ -147,7 +155,7 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
     List<PositionModel> positionsList = [];
 
     for (int i = 0; i < positions.length; i++) {
-      PositionDTO positionDto = PositionDTO.fromMap(positions[i]);
+      PositionDTO2 positionDto = PositionDTO2.fromMap(positions[i]);
 
       positionsList
           .add(PositionModel(id: positionDto.id, name: positionDto.name));
@@ -179,10 +187,11 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
     var userId = await _userTable.insert(UserDTO2(
         id: 0,
         fio: fioController.text,
-        positionId: positionsMap[selectedPosition],
+        positionId: positionsMap[selectedPosition]!,
         areaId: areasMap[selectedArea],
         companyId: 1,
-        positionDTO: PositionDTO(id: 0, name: ''),
+        company: CompanyDTO2.init(),
+        position: PositionDTO2(id: 0, name: ''),
         photo: null,
         unitId: null));
 
@@ -191,10 +200,12 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
         login: numberController.text,
         password:
             passwordController.text == '' || passwordController.text == ' '
-                ? _gPassword.generate(passwordLength: 4)
+                // ? _gPassword.generate(passwordLength: 4)
+                ? '1111'
                 : passwordController.text,
         userId: userId,
-        userDTO: UserDTO2.empty));
+        user: UserDTO2.empty
+        ));
 
     fioController.clear();
     numberController.clear();

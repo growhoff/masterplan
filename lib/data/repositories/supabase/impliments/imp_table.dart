@@ -5,5 +5,4 @@ abstract class SupabaseTable{
   Future<void> update(int id, Dto dto);
   Future<void> delete(int id);
   Future<void> insert(Dto dto);
-
 }

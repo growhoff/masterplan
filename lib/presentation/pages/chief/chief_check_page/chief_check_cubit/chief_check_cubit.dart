@@ -1,35 +1,91 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:master_plan/data/repositories/supabase/service/stage_table.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/operation_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/stage_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/z_operation_table.dart';
-import 'package:rxdart/rxdart.dart';
 
-import '../../../../../data/repositories/supabase/dto2/stage_dto.dart';
-import '../../../../../domain/model/stage_model.dart';
+import 'package:master_plan/domain/model/z_operation.dart';
+import 'package:master_plan/domain/model/z_stage.dart';
+
+import '../../../../../data/repositories/supabase/service/z_stage_table.dart';
 
 part 'chief_check_state.dart';
 
 class ChiefCheckCubit extends Cubit<ChiefCheckState> {
-  ChiefCheckCubit() : super(ChiefCheckState());
+  ChiefCheckCubit() : super(const ChiefCheckState());
 
-  final stageStream = StageTable().stream();
+  final ZStageTable _stageTable = ZStageTable();
+  final ZOperationTable _operationTable = ZOperationTable();
 
-  final operationsStream = ZOperationTable().stream().listen((list){print(list);});
+  final _stagesStream = ZStageTable().stream();
 
-  final replaySubject = ReplaySubject();
+  Future<void> fetchStages()async{
 
-  Future<void> listenStreams()async{
+    _stagesStream.listen((stages) async{
 
-   var x =  stageStream.listen((list) => print(list));
-
-    print('начали листен');
-
-      replaySubject.add(x);
-    replaySubject.stream.listen(print);
-    print('добавили первый');
-    replaySubject.stream.listen(operationsStream);
-
-
+      List<ZStage> stagesList = [];
+      for (var stage in stages){
+        final stageDto = StageDTO2.fromMap(stage);
+        final List<ZOperation> operationsList = [];
+        final fetchedOperations = await _operationTable.selectListId(stageDto.operationId);
+        for (var operation in fetchedOperations){
+          final operationDto = OperationDTO2.fromMap(operation);
+          operationsList.add(ZOperation(id: operationDto.id,
+            number: operationDto.number,
+            name: operationDto.name,
+            code: operationDto.code,
+            isready: operationDto.isready,
+            transferList: [],
+            transferListId: []));
+        }
+        stagesList.add(ZStage(
+        id: stageDto.id,
+        number: stageDto.number,
+        name: stageDto.name,
+        code: stageDto.code,
+        operationList: operationsList,
+        operationListId: stageDto.operationId,
+      ));
+      }
+      emit(state.copyWith(stagesList: stagesList));
+    });
   }
+
+//   Future<void> fetchStages() async {
+//     final fetchedStagesList = await _stageTable.select();
+//
+//     print(fetchedStagesList.length);
+//     List<ZStage> stagesList = [];
+//     List<ZOperation> operationsList = [];
+//     for (var stage in fetchedStagesList) {
+//       final StageDTO2 stageDto = StageDTO2.fromMap(stage);
+//       final fetchedOperationsList =
+//           await _operationTable.selectListId(stageDto.operationId);
+//       operationsList = [];
+//       for (var operation in fetchedOperationsList) {
+//         final OperationDTO2 operationDto = OperationDTO2.fromMap(operation);
+//         operationsList.add(ZOperation(
+//             id: operationDto.id,
+//             number: operationDto.number,
+//             name: operationDto.name,
+//             code: operationDto.code,
+//             isready: operationDto.isready,
+//             transferList: [],
+//             transferListId: []));
+//       }
+//       stagesList.add(ZStage(
+//         id: stageDto.id,
+//         number: stageDto.number,
+//         name: stageDto.name,
+//         code: stageDto.code,
+//         operationList: operationsList,
+//         operationListId: stageDto.operationId,
+//       ));
+//     }
+//     print(stagesList.length);
+//     emit(state.copyWith(stagesList: stagesList));
+//   }
+// }
+
 
 }

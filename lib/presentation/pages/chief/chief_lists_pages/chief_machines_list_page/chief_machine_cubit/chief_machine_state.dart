@@ -7,14 +7,14 @@ final class ChiefMachineState extends Equatable {
       this.areasNamesList = const [],
       this.isNeedUpdate = false});
 
-  final List<MachineModel> machinesList;
-  final List<AreaModel> areasList;
+  final List<ZMachine> machinesList;
+  final List<ZArea> areasList;
   final List<String> areasNamesList;
   final bool isNeedUpdate;
 
   ChiefMachineState copyWith(
-      {List<MachineModel>? machinesList,
-      List<AreaModel>? areasList,
+      {List<ZMachine>? machinesList,
+      List<ZArea>? areasList,
       List<String>? areasNamesList,
       bool isNeedUpdate = false}) {
     return ChiefMachineState(

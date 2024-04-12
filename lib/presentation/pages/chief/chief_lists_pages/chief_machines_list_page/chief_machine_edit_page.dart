@@ -28,7 +28,7 @@ class ChiefMachineEditPageView extends StatefulWidget {
   ChiefMachineEditPageView(
       {required this.machine, required this.areaId, super.key});
 
-  final MachineModel machine;
+  final ZMachine machine;
   final int areaId;
 
   @override

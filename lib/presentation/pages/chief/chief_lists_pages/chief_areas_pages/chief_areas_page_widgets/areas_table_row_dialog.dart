@@ -5,7 +5,7 @@ class AreasTableDialog extends StatefulWidget {
   const AreasTableDialog(
       {required this.area, required this.deleteRegion, super.key});
 
-  final AreaModel area;
+  final ZArea area;
   final VoidCallback deleteRegion;
 
   @override

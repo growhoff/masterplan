@@ -1,24 +1,32 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:async';
 import 'package:equatable/equatable.dart';
-import 'package:master_plan/domain/model/operatoroperations.dart';
+import 'package:master_plan/presentation/pages/operator/model/element_bar_data.dart';
+import 'package:master_plan/presentation/pages/operator/pages/work/model/page_item.dart';
 
 class StateWork extends Equatable {
-    final List<OperatorOperations>? operatorOperations;
+    final List<PageItem> pageData;
+    final int activePage;
+    final List<ElementBarDataOperator> list;
   const StateWork({
-    this.operatorOperations,
+    this.pageData = const [],
+    this.activePage = 0,
+    this.list = const [],
   });
 
+  @override
+  List<Object> get props => [pageData, activePage, list];
+
   StateWork copyWith({
-    List<OperatorOperations>? operatorOperations,
+    List<PageItem>? pageData,
+    List<Timer>? timer,
+    int? activePage,
+    List<ElementBarDataOperator>? list,
   }) {
     return StateWork(
-      operatorOperations: operatorOperations ?? this.operatorOperations,
+      pageData: pageData ?? this.pageData,
+      activePage: activePage ?? this.activePage,
+      list: list ?? this.list
     );
   }
-
-  @override
-  bool get stringify => true;
-
-  @override
-  List<Object> get props => [operatorOperations ?? []];
 }

@@ -1,12 +1,14 @@
 part of 'chief_check_cubit.dart';
 
-class ChiefCheckState extends Equatable{
+class ChiefCheckState extends Equatable {
+  const ChiefCheckState({this.stagesList = const []});
 
-  ChiefCheckState({this.stagesList = const []});
-
-  final List<StageModel> stagesList;
+  final List<ZStage> stagesList;
 
   @override
   List<Object?> get props => [stagesList];
 
+  ChiefCheckState copyWith({List<ZStage>? stagesList}) {
+    return ChiefCheckState(stagesList: stagesList ?? this.stagesList);
+  }
 }

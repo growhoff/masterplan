@@ -14,7 +14,7 @@ class MachinesListElement extends StatefulWidget {
       });
 
 
-  final MachineModel machineModel;
+  final ZMachine machineModel;
   final VoidCallback deleteMachine;
 
   final int areaId;

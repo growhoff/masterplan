@@ -16,10 +16,10 @@ part 'chief_machine_state.dart';
 class ChiefMachineCubit extends Cubit<ChiefMachineState> {
   ChiefMachineCubit() : super(const ChiefMachineState());
 
-  final machineTableStream = MachineTable().stream();
-  final areaStream = AreaTable().stream();
-  final AreaTable _areaTable = AreaTable();
-  final MachineTable _machineTable = MachineTable();
+  final machineTableStream = ZMachineTable().stream();
+  final areaStream = ZAreaTable().stream();
+  final ZAreaTable _areaTable = ZAreaTable();
+  final ZMachineTable _machineTable = ZMachineTable();
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController numberController = TextEditingController();
@@ -39,10 +39,10 @@ class ChiefMachineCubit extends Cubit<ChiefMachineState> {
 
   fetchAreas() async {
     final areasSupabaseList = await _areaTable.select();
-    List<AreaModel> areasList = [];
+    List<ZArea> areasList = [];
     for (var item in areasSupabaseList) {
       final areaDto = AreaDTO2.fromMap(item);
-      areasList.add(AreaModel(
+      areasList.add(ZArea(
           id: areaDto.id,
           name: areaDto.name,
           number: areaDto.number,
@@ -69,12 +69,12 @@ class ChiefMachineCubit extends Cubit<ChiefMachineState> {
 
   fetchMachinesList() {
     machineTableStream.listen((list) {
-      List<MachineModel> machinesList = [];
+      List<ZMachine> machinesList = [];
       for (var item in list) {
         final machineDto = MachineDTO2.fromMap(item);
         if (state.areasList[activeAreaIndex].machineListId
             .contains(machineDto.id)) {
-          machinesList.add(MachineModel(
+          machinesList.add(ZMachine(
               id: machineDto.id,
               inventoryNumber: machineDto.inventoryNumber,
               name: machineDto.name));
@@ -130,7 +130,7 @@ class ChiefMachineCubit extends Cubit<ChiefMachineState> {
   }
 
   Future updateMachine({
-    required MachineModel machine,
+    required ZMachine machine,
     required int oldAreaId,
   }) async {
 

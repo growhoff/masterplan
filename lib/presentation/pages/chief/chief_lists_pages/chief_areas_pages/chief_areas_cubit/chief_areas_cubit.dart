@@ -11,19 +11,19 @@ part 'chief_areas_state.dart';
 class ChiefAreasCubit extends Cubit<ChiefAreasState> {
   ChiefAreasCubit() : super(ChiefRegionsInitial());
 
-  final AreaTable _areaTable = AreaTable();
+  final ZAreaTable _areaTable = ZAreaTable();
 
-  final areaStream = AreaTable().stream();
+  final areaStream = ZAreaTable().stream();
 
   TextEditingController numberController = TextEditingController();
   TextEditingController nameController = TextEditingController();
 
   Future<void> fetchAreas() async {
     areaStream.listen((list) {
-      List<AreaModel> newAreasList = [];
+      List<ZArea> newAreasList = [];
       for (var item in list) {
         final areaDTO = AreaDTO2.fromMap(item);
-        newAreasList.add(AreaModel(
+        newAreasList.add(ZArea(
             id: areaDTO.id,
             name: areaDTO.name,
             number: areaDTO.number,
@@ -48,7 +48,7 @@ class ChiefAreasCubit extends Cubit<ChiefAreasState> {
     ));
   }
 
-  Future updateArea({required AreaModel area}) async {
+  Future updateArea({required ZArea area}) async {
     final AreaDTO2 newArea = AreaDTO2(
       id: area.id,
       name: nameController.text == '' ? area.name : nameController.text,

@@ -4,7 +4,7 @@ import 'package:master_plan/domain/model/z_area.dart';
 class ZUnit {
   final int id;
   final String name;
-  final List<AreaModel> areaList;
+  final List<ZArea> areaList;
   final List<int> areaListId;
   ZUnit({
     required this.id,

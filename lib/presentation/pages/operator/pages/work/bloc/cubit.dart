@@ -1,29 +1,43 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
-// import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
-import 'package:master_plan/domain/model/operatoroperations.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/shifts_distribution_dto.dart';
+import 'package:master_plan/domain/model/z_machine.dart';
+import 'package:master_plan/domain/model/z_operator_operations.dart';
+import 'package:master_plan/presentation/pages/operator/model/element_bar_data.dart';
+import 'package:master_plan/presentation/pages/operator/pages/work/model/machine_item.dart';
+import 'package:master_plan/presentation/pages/operator/pages/work/model/page_item.dart';
+import 'package:master_plan/presentation/pages/operator/pages/work/widgets/content_details.dart';
 import 'state.dart';
 
-class CubitWork extends Cubit<StateWork> { 
-  CubitWork() : super(StateWork(operatorOperations: [OperatorOperations(id: -1, order: -1, region: 'none', company: 'none', time: -1, timeStart: -1, timeWorking: -1, status: 'none', stageOperationId: -1, stageMasterOperationId: -1, equipment: 'none', details: 'none')])){
-    // getOperatorOperations();
+class CubitWork extends Cubit<StateWork> {
+  final List<ZShiftsDistributionDTO2>? zShiftsDistributionList;
+  final List<ZOperatorOperations>? operatorOperationsList;
+
+  CubitWork(this.zShiftsDistributionList, this.operatorOperationsList) : super(const StateWork()) {
+    List<ElementBarDataOperator> list = [];
+    List<MachineItem> machineList = [];
+    List<PageItem>? pageData = [];
+
+    for (var shiftsDistr in zShiftsDistributionList!) {
+      List<ZOperatorOperations> listOper = [];
+      ZMachine machine = ZMachine(
+          id: shiftsDistr.machine.id,
+          inventoryNumber: shiftsDistr.machine.inventoryNumber,
+          name: shiftsDistr.machine.name);
+      for (var operList in operatorOperationsList!) {
+        if (shiftsDistr.machine.id == operList.machine.id) {
+          listOper.add(operList);
+        }
+      }
+      machineList.add(MachineItem(machine: machine, operList: listOper));
+      pageData.add(PageItem(machine: machine, operList: listOper, time: 0));
+    }
+    for (var i = 0; i < machineList.length; i++) {
+      list.add(ElementBarDataOperator(header: machineList[i].machine.name, content: const ContentDetail()));
+    }
+    emit(state.copyWith(list: list, pageData: pageData));
   }
 
-  // Future<void> getOperatorOperations() async{
-  //   final tableOperatorOperations = OperatorOperationsTable(); 
-  //   final queryOperatorOperations = await tableOperatorOperations.select();
-  //   List<OperatorOperationsDTO> listOperatorOperationsDto = [];
-  //   for (var element in queryOperatorOperations) {
-  //     final dto = OperatorOperationsDTO.fromMap(element);
-  //     listOperatorOperationsDto.add(dto);
-  //   }
-
-  //   List<OperatorOperations> listOperatorOperations = [];
-  //   for (var dto in listOperatorOperationsDto) {
-  //     listOperatorOperations.add(OperatorOperations(id: dto.id, order: dto.order, region: dto.regionId.name, company: dto.companyId.shortName, time: dto.time, timeStart: dto.timeStart, timeWorking: dto.timeWorking, status: dto.statusId.name, stageOperationId: dto.stageOperationId, stageMasterOperationId: dto.stageMasterOperationId, equipment: dto.equipmentId.name, details: '${dto.detailsId.planNumber} ${dto.detailsId.planName}'));
-  //   }
-
-  //   emit(state.copyWith(operatorOperations: listOperatorOperations));
-  // }
-
+  void setActivePage(int index){
+    emit(state.copyWith(activePage: index));
+  }
 }

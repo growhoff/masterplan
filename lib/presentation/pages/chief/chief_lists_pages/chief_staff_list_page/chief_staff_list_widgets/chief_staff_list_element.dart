@@ -108,7 +108,7 @@ class _StaffListElementState extends State<StaffListElement> {
                                           CrossAxisAlignment.start,
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Text(widget.staffModel.user.fio),
+                                        // Text(widget.staffModel.user.fio),
                                         const SizedBox(
                                           height: 5,
                                         ),

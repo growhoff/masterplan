@@ -2,19 +2,19 @@
 import 'package:equatable/equatable.dart';
 
 class StateOperator extends Equatable {
-  final int id;
+  final bool isStart;
   const StateOperator({
-    this.id = 0,
+    this.isStart = false,
   });
 
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [isStart];
 
   StateOperator copyWith({
-    int? id,
+    bool? isStart,
   }) {
     return StateOperator(
-      id: id ?? this.id,
+      isStart: isStart ?? this.isStart,
     );
   }
 

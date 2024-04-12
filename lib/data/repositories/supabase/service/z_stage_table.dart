@@ -42,4 +42,7 @@ class ZStageTable extends SupabaseTable{
    return table.update({'name': '1'}).eq('id', id);
   }
 
+  stream(){
+    return table.stream(primaryKey: ['id']);
+  }
 }

@@ -1,12 +1,11 @@
-
 import 'package:flutter/material.dart';
-import 'package:master_plan/domain/model/oper_operations.dart';
-
+import 'package:master_plan/domain/model/z_batch.dart';
+import 'package:master_plan/presentation/pages/master/pages/queue/model/item_text_ready_queue.dart';
 import 'reorderable_icon_widget.dart';
 
 class ReorderWidget extends StatefulWidget {
   const ReorderWidget(this.list, {super.key, required this.header});
-  final List<OperOperations> list;
+  final List<ZBatch> list;
   final Widget header;
   @override
   State<ReorderWidget> createState() => _ReorderWidgetState();
@@ -14,16 +13,28 @@ class ReorderWidget extends StatefulWidget {
 
 class _ReorderWidgetState extends State<ReorderWidget> {
 
-  late List<OperOperations> list;
+  List<ItemTextReadyQueue> listOperations = [];
 
   @override
   void initState() {
-    list = widget.list;
+    for (var batch in widget.list) {
+      for (var stage in batch.stageList) {
+        for (var operat in stage.operationList) {
+          int time = 0;
+          for (var transfer in operat.transferList) {
+            time += transfer.timepz;
+          }
+          listOperations.add(ItemTextReadyQueue(detailNumber: batch.number, operationName: operat.name, timeFact: time));
+        }
+      }
+    }
     super.initState();
   }
   @override
   Widget build(BuildContext context) {
-    return ReorderableListView.builder(
+    return (listOperations.isEmpty) 
+    ? const Center(child: Text('Список операций в очереди пуст')) 
+    : ReorderableListView.builder(
         // buildDefaultDragHandles: false,
         shrinkWrap: true,
         header: widget.header,
@@ -32,17 +43,17 @@ class _ReorderWidgetState extends State<ReorderWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(child: ReorderableIconWidget(index)),
-            Expanded(flex: 2, child: Text(list[index].planNumber)),
-            Expanded(flex: 2, child: Text('${list[index].operationNumber}')),
-            Expanded(flex: 2, child: Text(list[index].time)),
-            Expanded(child: IconButton(onPressed: () => list.removeAt(index), icon: const Icon(Icons.close)))
+            Expanded(flex: 2, child: Text('${listOperations[index].detailNumber}')),
+            Expanded(flex: 2, child: Text(listOperations[index].operationName)),
+            Expanded(flex: 2, child: Text('${listOperations[index].timeFact}')),
+            Expanded(child: IconButton(onPressed: () => listOperations.removeAt(index), icon: const Icon(Icons.close)))
           ],
         ),
-        itemCount: list.length, 
+        itemCount: listOperations.length, 
         onReorder: (oldIndex, newIndex) {
           if (newIndex > oldIndex) {newIndex = newIndex - 1;}
-          final element  = list.removeAt(oldIndex);
-          list.insert(newIndex, element);
+          final element  = listOperations.removeAt(oldIndex);
+          listOperations.insert(newIndex, element);
           setState(() {});
         }
       );

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/change_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/company_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/machine_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto2/position_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/shifts_distribution_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/user_dto.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
+import 'package:master_plan/presentation/app/bloc/state.dart';
 import 'package:master_plan/presentation/pages/master/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/master/bloc/state.dart';
 import 'package:master_plan/presentation/pages/master/widgets/change_list_operator.dart';
 import 'widgets/calendar.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:master_plan/presentation/app/bloc/cubit.dart';
-// import 'package:master_plan/presentation/app/bloc/state.dart';
 
 class MasterPage extends StatelessWidget {
   const MasterPage({super.key});
@@ -49,25 +49,19 @@ class MasterContent extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  // BlocBuilder<CubitMain, StateMain>(builder: (context, state) => ChangeListOperator(state.listShiftsDistribution!)),
                   BlocBuilder<CubitMaster, StateMaster>(builder: (context2, state2) => 
                     BlocBuilder<CubitMain, StateMain>(builder: (context, state) {
                       List<ZShiftsDistributionDTO2> list = [];
-                      for (var machine in state.machineList!){
+                      for (var machine in state.area!.machineList){
                         bool iswr = false;
                         for (var shiftsDistr in state.zShiftsDistributionList!) {
-                          if ((shiftsDistr.machineId.id == machine.id) && (shiftsDistr.changeId.number == state2.change)) {list.add(shiftsDistr); iswr = true;}
+                          if ((shiftsDistr.machine.id == machine.id) && (shiftsDistr.change.number == state2.change)) {list.add(shiftsDistr); iswr = true;}
                         }
-                        if (!iswr) {list.add(ZShiftsDistributionDTO2(id: -1,changeId: ChangeDTO2.init(), date: DateTime.now(), userId: UserDTO2.init(), machineId: machine));}
+                        if (!iswr) {list.add(ZShiftsDistributionDTO2(id: -1,change: ChangeDTO2.init(), date: DateTime.now(), user: UserDTO2(position: PositionDTO2(id: 0, name: ''), company: CompanyDTO2.init() ,id: 0, fio: 'none', companyId: 0, positionId: 0), machine: MachineDTO2(id: machine.id, inventoryNumber: machine.inventoryNumber, name: machine.name)));}
                       }
                       return ChangeListOperator(list);
                     }),
                   ),
-                  // const SizedBox(height: 8),
-                  // SizedBox(
-                  //   width: double.maxFinite,
-                  //   child: ElevatedButton(onPressed: (){Navigator.pushNamed(context, '/choosingOperatorPage');}, child: const Text('Назначить')),
-                  // )
                 ],
               ),
               ),
