@@ -5,7 +5,7 @@ import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 
 class OperationDTO2 extends Dto {
   final int id;
-  final int number;
+  final String number;
   final String name;
   final String code;
   final bool isready;
@@ -35,7 +35,7 @@ class OperationDTO2 extends Dto {
   factory OperationDTO2.fromMap(Map<String, dynamic> map) {
     return OperationDTO2(
       id: map['id'] as int,
-      number: map['number'] as int,
+      number: map['number'] as String,
       name: map['name'] as String,
       code: map['code'] as String,
       isready: map['isready'] as bool,

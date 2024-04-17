@@ -27,6 +27,7 @@ INJECTED from D:\Projects\masterplan\android\app\src\main\AndroidManifest.xml:1:
 MERGED from D:\Projects\masterplan\android\app\src\main\AndroidManifest.xml:1:1-35:12
 MERGED from [:shared_preferences_android] D:\Projects\masterplan\build\shared_preferences_android\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-9:12
 MERGED from [:app_links] D:\Projects\masterplan\build\app_links\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-9:12
+MERGED from [:file_picker] D:\Projects\masterplan\build\file_picker\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-21:12
 MERGED from [:image_picker_android] D:\Projects\masterplan\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-21:12
 MERGED from [:flutter_plugin_android_lifecycle] D:\Projects\masterplan\build\flutter_plugin_android_lifecycle\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-9:12
 MERGED from [:url_launcher_android] D:\Projects\masterplan\build\url_launcher_android\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-16:12
@@ -81,6 +82,8 @@ MERGED from [:shared_preferences_android] D:\Projects\masterplan\build\shared_pr
 MERGED from [:shared_preferences_android] D:\Projects\masterplan\build\shared_preferences_android\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-7:41
 MERGED from [:app_links] D:\Projects\masterplan\build\app_links\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-7:41
 MERGED from [:app_links] D:\Projects\masterplan\build\app_links\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-7:41
+MERGED from [:file_picker] D:\Projects\masterplan\build\file_picker\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-7:41
+MERGED from [:file_picker] D:\Projects\masterplan\build\file_picker\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-7:41
 MERGED from [:image_picker_android] D:\Projects\masterplan\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-7:41
 MERGED from [:image_picker_android] D:\Projects\masterplan\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-7:41
 MERGED from [:flutter_plugin_android_lifecycle] D:\Projects\masterplan\build\flutter_plugin_android_lifecycle\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-7:41
@@ -151,6 +154,24 @@ uses-permission#android.permission.INTERNET
 ADDED from D:\Projects\masterplan\android\app\src\debug\AndroidManifest.xml:6:5-66
 	android:name
 		ADDED from D:\Projects\masterplan\android\app\src\debug\AndroidManifest.xml:6:22-64
+uses-permission#android.permission.READ_EXTERNAL_STORAGE
+ADDED from [:file_picker] D:\Projects\masterplan\build\file_picker\intermediates\merged_manifest\debug\AndroidManifest.xml:9:5-11:38
+	android:maxSdkVersion
+		ADDED from [:file_picker] D:\Projects\masterplan\build\file_picker\intermediates\merged_manifest\debug\AndroidManifest.xml:11:9-35
+	android:name
+		ADDED from [:file_picker] D:\Projects\masterplan\build\file_picker\intermediates\merged_manifest\debug\AndroidManifest.xml:10:9-64
+queries
+ADDED from [:file_picker] D:\Projects\masterplan\build\file_picker\intermediates\merged_manifest\debug\AndroidManifest.xml:13:5-19:15
+intent#action:name:android.intent.action.GET_CONTENT+data:mimeType:*/*
+ADDED from [:file_picker] D:\Projects\masterplan\build\file_picker\intermediates\merged_manifest\debug\AndroidManifest.xml:14:9-18:18
+action#android.intent.action.GET_CONTENT
+ADDED from [:file_picker] D:\Projects\masterplan\build\file_picker\intermediates\merged_manifest\debug\AndroidManifest.xml:15:13-72
+	android:name
+		ADDED from [:file_picker] D:\Projects\masterplan\build\file_picker\intermediates\merged_manifest\debug\AndroidManifest.xml:15:21-69
+data
+ADDED from [:file_picker] D:\Projects\masterplan\build\file_picker\intermediates\merged_manifest\debug\AndroidManifest.xml:17:13-44
+	android:mimeType
+		ADDED from [:file_picker] D:\Projects\masterplan\build\file_picker\intermediates\merged_manifest\debug\AndroidManifest.xml:17:19-41
 provider#io.flutter.plugins.imagepicker.ImagePickerFileProvider
 ADDED from [:image_picker_android] D:\Projects\masterplan\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:10:9-18:20
 	android:grantUriPermissions

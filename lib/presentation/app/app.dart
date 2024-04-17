@@ -16,6 +16,7 @@ import 'package:master_plan/presentation/pages/master/widgets/navbar_custom.dart
 import 'package:master_plan/presentation/pages/operator/operator_page.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/work_page.dart';
 import '../../theme/theme.dart';
+import '../pages/chief/chief_lists_pages/chief_staff_list_page/chief_staff_edit_page.dart';
 import 'bloc/cubit.dart';
 
 class MyApp extends StatelessWidget {
@@ -43,6 +44,8 @@ class MyApp extends StatelessWidget {
           '/chiefMachineEditPage': (BuildContext context) => const ChiefMachineEditPage(),
           '/chiefStaffListPage': (BuildContext context) => const ChiefStaffListPage(),
           '/chiefStaffAddPage': (BuildContext context) => const ChiefStaffAddPage(),
+          '/chiefStaffEditPage': (BuildContext context) => const ChiefStaffEditPage(),
+
         },
         home: const LoginPage(),
       ),

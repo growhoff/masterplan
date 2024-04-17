@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/pages/chief/chief_check_page/chief_check_cubit/chief_check_cubit.dart';
 
-import '../widgets/stage_check_element.dart';
+import 'stage_check_element.dart';
 
 class ChiefCheckPage extends StatelessWidget {
   const ChiefCheckPage({super.key});
@@ -26,7 +26,6 @@ class ChiefCheckPageView extends StatefulWidget {
 }
 
 class _ChiefCheckPageViewState extends State<ChiefCheckPageView> {
-
   @override
   void initState() {
     context.read<ChiefCheckCubit>().fetchStages();
@@ -37,7 +36,7 @@ class _ChiefCheckPageViewState extends State<ChiefCheckPageView> {
   Widget build(BuildContext context) {
     return BlocBuilder<ChiefCheckCubit, ChiefCheckState>(
       builder: (context, state) {
-        if (state.stagesList.isNotEmpty){
+        if (state.stagesList.isNotEmpty) {
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -46,7 +45,7 @@ class _ChiefCheckPageViewState extends State<ChiefCheckPageView> {
                   height: 10,
                 ),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {context.read<ChiefCheckCubit>().loadStageFromExcel();},
                   style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 15, vertical: 10)),
@@ -58,11 +57,16 @@ class _ChiefCheckPageViewState extends State<ChiefCheckPageView> {
                   child: ListView.separated(
                     shrinkWrap: true,
                     itemBuilder: (context, index) => StageCheckElement(
-                        stageNumber: "${state.stagesList[index].number}",
-                        planNumber: "${state.stagesList[index].code}",
-                        planName: "${state.stagesList[index].id}",
-                        operationsCount: state.stagesList[index].operationList.length,
-                        detailsCount: index),
+                      stage: state.stagesList[index],
+                      onCheckStage: () => context
+                          .read<ChiefCheckCubit>()
+                          .checkedStagesIdList
+                          .add(state.stagesList[index].id),
+                      onUncheckStage: () => context
+                          .read<ChiefCheckCubit>()
+                          .checkedStagesIdList
+                          .remove(state.stagesList[index].id),
+                    ),
                     itemCount: state.stagesList.length,
                     separatorBuilder: (context, index) => const SizedBox(
                       height: 10,
@@ -73,7 +77,10 @@ class _ChiefCheckPageViewState extends State<ChiefCheckPageView> {
                   height: 10,
                 ),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    context.read<ChiefCheckCubit>().sendStagesToDistribution();
+                    context.read<ChiefCheckCubit>().fetchStages();
+                   },
                   style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 15, vertical: 10)),
@@ -84,8 +91,11 @@ class _ChiefCheckPageViewState extends State<ChiefCheckPageView> {
               ],
             ),
           );
+        } else {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
         }
-        else{return Center(child: CircularProgressIndicator(),);}
       },
     );
   }

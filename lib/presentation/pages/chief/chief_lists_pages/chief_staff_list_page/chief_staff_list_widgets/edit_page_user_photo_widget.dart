@@ -17,6 +17,9 @@ class EditPageUserPhotoWidget extends StatefulWidget {
 }
 
 class _EditPageUserPhotoWidgetState extends State<EditPageUserPhotoWidget> {
+
+
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -67,7 +70,7 @@ class _EditPageUserPhotoWidgetState extends State<EditPageUserPhotoWidget> {
                       )
                     ],
                   ));
-          setState(() {});
+
         },
         child: Container(
             clipBehavior: Clip.antiAlias,

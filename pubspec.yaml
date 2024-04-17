@@ -48,6 +48,9 @@ dependencies:
   gpassword: ^0.0.1
   image_picker: ^1.0.7
   rxdart: ^0.27.7
+  mime: ^1.0.4
+  file_picker: ^8.0.0+1
+  excel: ^4.0.3
 
 dev_dependencies:
   json_serializable: ^6.7.1

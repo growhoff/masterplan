@@ -1,12 +1,15 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:image_picker/image_picker.dart';
+
 // import 'package:gpassword/gpassword.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/area_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/company_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/position_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/staff_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto2/user_dto.dart';
+
 // import 'package:master_plan/data/repositories/supabase/dto2/user_dto.dart';
 // import 'package:master_plan/data/repositories/supabase/service/position_table.dart';
 // import 'package:master_plan/data/repositories/supabase/service/staff_table.dart';
@@ -16,9 +19,11 @@ import 'package:master_plan/data/repositories/supabase/service/z_position_table.
 import 'package:master_plan/data/repositories/supabase/service/z_staff_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/z_user_table.dart';
 import 'package:master_plan/domain/model/z_user_model.dart';
+import 'package:mime/mime.dart';
 // import 'package:master_plan/domain/model/z_user_model.dart';
 
 // import '../../../../../../data/repositories/supabase/dto/position_dto.dart';
+import '../../../../../../data/repositories/supabase/service/images_storage.dart';
 import '../../../../../../domain/model/position.dart';
 import '../../../../../../domain/model/staff_model.dart';
 import '../../../../../../domain/model/z_area.dart';
@@ -38,10 +43,16 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
   final ZUserTable _userTable = ZUserTable();
   final ZPositionTable _positionTable = ZPositionTable();
 
+  final ImagePicker _imagePicker = ImagePicker();
+
+  final imageStorage = ImageStorage();
+
   int activeAreaId = 0;
 
   String selectedArea = '';
   String selectedPosition = '';
+
+  XFile? loadedProfileImage;
 
   Map<String, int> areasMap = {};
   Map<String, int> positionsMap = {};
@@ -92,8 +103,7 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
               unitId: staffDto.user.unitId,
               positionModel: PositionModel(
                   id: staffDto.user.position.id,
-                  name: staffDto.user.position.name))
-              ));
+                  name: staffDto.user.position.name))));
     }
 
     emit(state.copyWith(staffList: staffList));
@@ -165,24 +175,24 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
   }
 
   Future insertStaff() async {
-    // final String? imageUrl;
+    final String? imageUrl;
 
-    // if (loadedProfileImage != null) {
-    //   final imageBytes = await loadedProfileImage?.readAsBytes();
-    //
-    //   final imageExtension = lookupMimeType(loadedProfileImage!.path);
-    //
-    //   final String supabaseImagePath = '/users_photo/${numberController.text}';
-    //
-    //   await imageStorage.uploadBinary(
-    //       path: supabaseImagePath,
-    //       bytes: imageBytes,
-    //       imageExtension: imageExtension);
-    //
-    //   imageUrl = await imageStorage.getPublicUrl(path: supabaseImagePath);
-    // } else {
-    //   imageUrl = null;
-    // }
+    if (loadedProfileImage != null) {
+      final imageBytes = await loadedProfileImage?.readAsBytes();
+
+      final imageExtension = lookupMimeType(loadedProfileImage!.path);
+
+      final String supabaseImagePath = '/users_photo/${numberController.text}';
+
+      await imageStorage.uploadBinary(
+          path: supabaseImagePath,
+          bytes: imageBytes,
+          imageExtension: imageExtension);
+
+      imageUrl = await imageStorage.getPublicUrl(path: supabaseImagePath);
+    } else {
+      imageUrl = null;
+    }
 
     var userId = await _userTable.insert(UserDTO2(
         id: 0,
@@ -192,7 +202,7 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
         companyId: 1,
         company: CompanyDTO2.init(),
         position: PositionDTO2(id: 0, name: ''),
-        photo: null,
+        photo: imageUrl,
         unitId: null));
 
     await _staffTable.insert(StaffDTO2(
@@ -204,24 +214,87 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
                 ? '1111'
                 : passwordController.text,
         userId: userId,
-        user: UserDTO2.empty
-        ));
+        user: UserDTO2.empty));
 
     fioController.clear();
     numberController.clear();
     passwordController.clear();
+    loadedProfileImage = null;
   }
 
+  Future addPhotoFromGallery({required ImageSource imageSource}) async {
+    final XFile? image = await _imagePicker.pickImage(source: imageSource);
+    if (image == null) {
+      print('не удалось загрузить изображение из галереи');
+      return;
+    } else {
+      print(image.path);
+      loadedProfileImage = image;
+    }
+  }
+
+  Future updateProfileImageFromGallery(
+      {required String imageName,
+      required int userId,
+      required ImageSource imageSource}) async {
+    final XFile? image = await _imagePicker.pickImage(source: imageSource);
+    if (image == null) {
+      print('не удалось загрузить изображение из галереи');
+      return;
+    } else {
+      final imageBytes = await image.readAsBytes();
+
+      final String supabaseImagePath = '/users_photo/$imageName';
+
+      final imageExtension = lookupMimeType(image.path);
+
+      await imageStorage.uploadBinary(
+          path: supabaseImagePath,
+          bytes: imageBytes,
+          imageExtension: imageExtension);
+
+      final imageUrl = await imageStorage.getPublicUrl(path: supabaseImagePath);
+
+      await _userTable.updatePhoto(userId: userId, photoUrl: imageUrl);
+    }
+  }
+
+  Future updateStaff({required StaffModel staffModel}) async {
+    await _userTable.update(
+        staffModel.user.id,
+        UserDTO2(
+            id: staffModel.user.id,
+            fio: fioController.text == ''
+                ? staffModel.user.fio
+                : fioController.text,
+            positionId: positionsMap[selectedPosition],
+            areaId: areasMap[selectedArea],
+            companyId: staffModel.user.companyId,
+            position: PositionDTO2(id: 0, name: ''),
+            photo: ''));
+
+    await _staffTable.update(
+        staffModel.id,
+        StaffDTO2(
+            id: staffModel.id,
+            login: numberController.text == ''
+                ? staffModel.login
+                : numberController.text,
+            password: passwordController.text == ''
+                ? staffModel.password
+                : passwordController.text,
+            userId: staffModel.userId,
+            user: UserDTO2.empty));
+  }
 
   Future deleteStaff(
       {required int staffId,
-        required int userId,
-        required String? imagePath}) async {
+      required int userId,
+      required String? imagePath}) async {
     await _staffTable.delete(staffId);
     await _userTable.delete(userId);
-    // if (imagePath != null) {
-    //   await imageStorage.remove(path: imagePath);
-    //
-    // }
+    if (imagePath != null) {
+      await imageStorage.remove(path: imagePath);
+    }
   }
 }

@@ -1,9 +1,9 @@
+import 'package:master_plan/data/repositories/supabase/dto2/operation_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class ZOperationTable extends SupabaseTable{
-
+class ZOperationTable extends SupabaseTable {
   final table = Supabase.instance.client.from('z_operation');
 
   @override
@@ -12,8 +12,18 @@ class ZOperationTable extends SupabaseTable{
   }
 
   @override
-  Future<void> insert(Dto dto) {
-    return table.insert(dto);
+  Future<int> insert(Dto dto) async {
+    if (dto is OperationDTO2) {
+      var operation = await table.insert({
+        'number': dto.number,
+        'name': dto.name,
+        'code': dto.code,
+        'transfer_id': dto.transferId,
+        'isready': false,
+      }).select('id');
+      return operation[0]['id'];
+    }
+    return 0;
   }
 
   @override
@@ -39,7 +49,6 @@ class ZOperationTable extends SupabaseTable{
 
   @override
   Future<void> update(int id, Dto dto) {
-   return table.update({'name': '1'}).eq('id', id);
+    return table.update({'name': '1'}).eq('id', id);
   }
-
 }

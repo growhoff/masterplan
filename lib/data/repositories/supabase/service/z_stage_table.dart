@@ -1,9 +1,9 @@
+import 'package:master_plan/data/repositories/supabase/dto2/stage_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class ZStageTable extends SupabaseTable{
-
+class ZStageTable extends SupabaseTable {
   final table = Supabase.instance.client.from('z_stage');
 
   @override
@@ -12,13 +12,25 @@ class ZStageTable extends SupabaseTable{
   }
 
   @override
-  Future<void> insert(Dto dto) {
-    return table.insert(dto);
+  Future<int> insert(Dto dto) async {
+    if (dto is StageDTO2) {
+      var stage = await table.insert({
+        'number': dto.number,
+        'operation_id': dto.operationId,
+        'name': dto.name,
+      }).select('id');
+      return stage[0]['id'];
+    }
+    return 0;
   }
 
   @override
   Future<List<Map<String, dynamic>>> select() {
     return table.select();
+  }
+
+  Future<List<Map<String, dynamic>>> selectNotDistributed() {
+    return table.select().eq('is_distributed', false);
   }
 
   Future<List<Map<String, dynamic>>> selectId(int id) {
@@ -39,10 +51,21 @@ class ZStageTable extends SupabaseTable{
 
   @override
   Future<void> update(int id, Dto dto) {
-   return table.update({'name': '1'}).eq('id', id);
+    return table.update({'name': '1'}).eq('id', id);
   }
 
-  stream(){
+  stream() {
     return table.stream(primaryKey: ['id']);
+  }
+
+  Future<void> updateDistributionByListId(
+      {required List<int> stagesIdList}) async {
+    for (var id in stagesIdList) {
+      await table.update({'is_distributed': true}).eq('id', id);
+    }
+  }
+
+  Future<void> updateDistribution({required int id}) async {
+    await table.update({'is_distributed': true}).eq('id', id);
   }
 }

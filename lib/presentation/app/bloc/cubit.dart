@@ -24,6 +24,7 @@ import 'package:master_plan/data/repositories/supabase/service/z_user_table.dart
 import 'package:master_plan/data/repositories/supabase/service/z_staff_table.dart';
 import 'package:master_plan/domain/model/z_area.dart';
 import 'package:master_plan/domain/model/z_batch.dart';
+import 'package:master_plan/domain/model/z_detail.dart';
 import 'package:master_plan/domain/model/z_machine.dart';
 import 'package:master_plan/domain/model/z_operation.dart';
 import 'package:master_plan/domain/model/z_operator_operations.dart';
@@ -265,10 +266,9 @@ class CubitMain extends Cubit<StateMain> {
     return ZStage(
         id: stageDto.id,
         number: stageDto.number,
-        code: stageDto.code,
         name: stageDto.name,
         operationList: operationList,
-        operationListId: stageDto.operationId);
+        operationListId: stageDto.operationId, detailId: stageDto.detailId, detail: DetailModel.empty);
   }
 
   Future<ZBatch> getBatchZ(int batchId) async {
@@ -277,7 +277,7 @@ class CubitMain extends Cubit<StateMain> {
     final batchDto = BatchDTO2.fromMap(batchQuery.first);
 
     List<ZStage> stageList = [];
-    for (var id in batchDto.stepId) {
+    for (var id in batchDto.stageId) {
       stageList.add(await getStageZ(id));
     }
 
@@ -291,7 +291,7 @@ class CubitMain extends Cubit<StateMain> {
         order: batchDto.order,
         isready: batchDto.isready,
         stageList: stageList,
-        stageListId: batchDto.stepId);
+        stageListId: batchDto.stageId);
   }
 
   Future<ZPackage> getPackageZ(int packageId) async {
