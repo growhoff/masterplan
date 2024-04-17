@@ -4,14 +4,14 @@ import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 
 class BatchDTO extends Dto {
   final int id;
-  final int number;
+  final String number;
   final String name;
   final int count;
-  final int code;
-  final int technology;
+  final String code;
+  final String technology;
   final int order;
   final bool isready;
-  final List<int> stepId;
+  final List<int> stageId;
   BatchDTO({
     required this.id,
     required this.number,
@@ -21,7 +21,7 @@ class BatchDTO extends Dto {
     required this.technology,
     required this.order,
     required this.isready,
-    required this.stepId,
+    required this.stageId,
   });
 
   Map<String, dynamic> toMap() {
@@ -34,21 +34,21 @@ class BatchDTO extends Dto {
       'technology': technology,
       'order': order,
       'isready': isready,
-      'step_id': stepId,
+      'stage_id': stageId,
     };
   }
 
   factory BatchDTO.fromMap(Map<String, dynamic> map) {
     return BatchDTO(
       id: map['id'] as int,
-      number: map['number'] as int,
+      number: map['number'] as String,
       name: map['name'] as String,
       count: map['count'] as int,
-      code: map['code'] as int,
-      technology: map['technology'] as int,
+      code: map['code'] as String,
+      technology: map['technology'] as String,
       order: map['order'] as int,
       isready: map['isready'] as bool,
-      stepId: (map['step_id'] as List<dynamic>).map((e) => e as int).toList(),
+      stageId: (map['stage_id'] as List<dynamic>).map((e) => e as int).toList(),
     );
   }
 

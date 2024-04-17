@@ -22,7 +22,7 @@ class QueuePage extends StatelessWidget {
         for (var operat in stage.operationList) {
           int time = 0;
           for (var transfer in operat.transferList) {
-            time += transfer.timepz;
+            time += transfer.timesh;
           }
           //в работе
           if (batch.status.id == 1) listWork.add(ItemOperation(detailNumber: batch.batch.number, operationName: operat.name, timeFact: time));

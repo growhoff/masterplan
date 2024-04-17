@@ -1,5 +1,5 @@
 class ItemOperation {
-  final int detailNumber;
+  final String detailNumber;
   final String operationName;
   final int timeFact;
   ItemOperation({

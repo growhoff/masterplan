@@ -59,7 +59,7 @@ class _ChiefCheckPageViewState extends State<ChiefCheckPageView> {
                     shrinkWrap: true,
                     itemBuilder: (context, index) => StageCheckElement(
                         stageNumber: "${state.stagesList[index].number}",
-                        planNumber: "${state.stagesList[index].code}",
+                        planNumber: "${state.stagesList[index].number}",
                         planName: "${state.stagesList[index].id}",
                         operationsCount: state.stagesList[index].operationList.length,
                         detailsCount: index),

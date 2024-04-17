@@ -14,8 +14,7 @@ class AreaTable extends SupabaseTable {
   @override
   Future<void> insert(Dto dto) async {
     if (dto is AreaDTO) {
-      await table
-          .insert({'name': dto.name, 'number': dto.number, 'machine_id': []});
+      await table.insert({'name': dto.name, 'number': dto.number, 'machine_id': []});
     }
   }
 

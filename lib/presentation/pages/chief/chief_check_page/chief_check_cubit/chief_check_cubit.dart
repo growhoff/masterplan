@@ -27,21 +27,25 @@ class ChiefCheckCubit extends Cubit<ChiefCheckState> {
         final fetchedOperations = await _operationTable.selectListId(stageDto.operationId);
         for (var operation in fetchedOperations){
           final operationDto = OperationDTO.fromMap(operation);
-          operationsList.add(Operation(id: operationDto.id,
+          operationsList.add(Operation(
+            id: operationDto.id,
             number: operationDto.number,
             name: operationDto.name,
             code: operationDto.code,
             isready: operationDto.isready,
             transferList: [],
-            transferListId: []));
+            transferListId: [],
+            timepz: operationDto.timepz
+            ));
         }
         stagesList.add(Stage(
         id: stageDto.id,
         number: stageDto.number,
         name: stageDto.name,
-        code: stageDto.code,
         operationList: operationsList,
         operationListId: stageDto.operationId,
+        isdistributed: stageDto.isdistributed,
+        areaId: 0
       ));
       }
       emit(state.copyWith(stagesList: stagesList));

@@ -1,20 +1,22 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
+import 'package:master_plan/domain/model/operation.dart';
+import 'package:master_plan/presentation/pages/master/pages/distributionDetails/model/distrib_item.dart';
 
 class StateDistributionDetails extends Equatable {
-  final int id;
+  final List<DistribItem> operList;
   const StateDistributionDetails({
-    this.id = 0,
+    this.operList = const [],
   });
 
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [operList];
 
   StateDistributionDetails copyWith({
-    int? id,
+    List<DistribItem>? operList,
   }) {
     return StateDistributionDetails(
-      id: id ?? this.id,
+      operList: operList ?? this.operList,
     );
   }
 

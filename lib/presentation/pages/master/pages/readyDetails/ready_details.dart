@@ -26,6 +26,7 @@ class ReadyDetailsPage extends StatelessWidget {
                 List<ItemMachine> listMachine = [];
 
                 for (var machine in state.area!.machineList) {
+                  int idOper = 0;
                   int timeWorking = 0;
                   List<Batch> batchList = [];
                   for (var operList in state.operatorOperationsList!) {
@@ -33,13 +34,14 @@ class ReadyDetailsPage extends StatelessWidget {
                     if ((operList.status.id == 2) && (operList.machine.id == machine.id)) {
                       batchList.add(operList.batch);
                       timeWorking += operList.timeworking;
+                      idOper = operList.id;
                     }
                   }
-                  listMachine.add(ItemMachine(machine: machine, batchList: batchList, timeWorking: timeWorking));
+                  listMachine.add(ItemMachine(machine: machine, batchList: batchList, timeWorking: timeWorking, id: idOper));
                 }
 
                 for (var machineItem in listMachine) {
-                  list.add(ElementBarData(header: machineItem.machine.name, content: ContetnReady(batchList: machineItem.batchList, machine: machineItem.machine, timeWorking: machineItem.timeWorking)));
+                  list.add(ElementBarData(header: machineItem.machine.name, content: ContetnReady(idOper: machineItem.id, batchList: machineItem.batchList, machine: machineItem.machine, timeWorking: machineItem.timeWorking)));
                 }
                 return ElementBar(list: list);
               }),
@@ -52,7 +54,8 @@ class ReadyDetailsPage extends StatelessWidget {
 }
 
 class ContetnReady extends StatelessWidget {
-  const ContetnReady({super.key, required this.batchList, required this.machine, required this.timeWorking});
+  const ContetnReady({super.key, required this.batchList, required this.machine, required this.timeWorking, required this.idOper});
+  final int idOper;
   final List<Batch> batchList;
   final Machine machine;
   final int timeWorking;
@@ -64,7 +67,7 @@ class ContetnReady extends StatelessWidget {
         for (var operat in stage.operationList) {
           int time = 0;
           for (var transfer in operat.transferList) {
-            time += transfer.timepz;
+            time += transfer.timesh;
           }
           listOperations.add(ItemTextReady(detailNumber: batch.number, operationName: operat.name, timeFact: time));
         }

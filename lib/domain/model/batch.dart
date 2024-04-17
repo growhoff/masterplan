@@ -3,11 +3,11 @@ import 'package:master_plan/domain/model/stage.dart';
 
 class Batch {
   final int id;
-  final int number;
+  final String number;
   final String name;
   final int count;
-  final int code;
-  final int technology;
+  final String code;
+  final String technology;
   final int order;
   final bool isready;
   final List<Stage> stageList;

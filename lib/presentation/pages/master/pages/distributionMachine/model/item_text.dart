@@ -3,7 +3,7 @@ class ItemText {
   final int stageId;
   final int stageNumber;
   final int operationId;
-  final int operationNumber;
+  final String operationNumber;
   final String operationName;
   final String detailName;
   final int quantity;

@@ -7,6 +7,7 @@ import 'package:master_plan/presentation/app/bloc/state.dart';
 import 'package:master_plan/presentation/pages/master/model/element_bar_data.dart';
 import 'package:master_plan/presentation/pages/master/pages/queue/model/item_machine_queue.dart';
 import 'package:master_plan/presentation/pages/master/pages/queue/model/item_text_ready_queue.dart';
+import 'package:master_plan/presentation/pages/master/pages/queue/widgets/row_expand_queue.dart';
 import 'package:master_plan/presentation/pages/master/pages/readyDetails/widgets/row_expand.dart';
 import '../../../../widgets/element_bar.dart';
 import 'widgets/reorder_widget.dart';
@@ -123,7 +124,7 @@ class ListViewOperationsReady extends StatelessWidget {
         for (var operat in stage.operationList) {
           int time = 0;
           for (var transfer in operat.transferList) {
-            time += transfer.timepz;
+            time += transfer.timesh;
           }
           listOperations.add(ItemTextReadyQueue(detailNumber: batch.number, operationName: operat.name, timeFact: time));
         }
@@ -133,7 +134,7 @@ class ListViewOperationsReady extends StatelessWidget {
     ? const Center(child: Text('Список операций пуст')) 
     : Column(
       children: [
-        const RowExpand(text1: 'Деталь', text2: 'Операция', text3: 'Время обработки'),
+        const RowExpandQueue(text1: 'Деталь', text2: 'Операция', text3: 'Время обработки'),
         const SizedBox(height: 8),
         ListView.builder(
           shrinkWrap: true,
@@ -142,7 +143,7 @@ class ListViewOperationsReady extends StatelessWidget {
             color: Colors.amber,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: RowExpand(
+              child: RowExpandQueue(
                   text1: '${listOperations[index].detailNumber}',
                   text2: listOperations[index].operationName,
                   text3: '${listOperations[index].timeFact}'),

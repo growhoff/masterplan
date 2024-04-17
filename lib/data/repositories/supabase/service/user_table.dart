@@ -36,8 +36,8 @@ class UserTable extends SupabaseTable{
     return table.select('*, z_position(*), z_company(*), z_unit(*), z_area(*)').eq('id', id);
   }
 
-  Future<List<Map<String, dynamic>>> selectEqOperator({required int regionId, required int companyId}) {
-    return table.select().eq('region_id', regionId).eq('company_id', companyId).eq('position_id', 3);
+  Future<List<Map<String, dynamic>>> selectEqOperator({required int areaId, required int companyId}) {
+    return table.select('*, z_position(*), z_company(*), z_unit(*), z_area(*)').eq('area_id', areaId).eq('company_id', companyId).eq('position_id', 4);
   }
 
   @override

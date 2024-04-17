@@ -12,13 +12,12 @@ class OperatorOperations {
   final int timestop;
   final int timeworking;
   final StatusDTO status;
-  final int stageoperationid;
-  final int stagemasteroperationid;
   final Batch batch;
   final UserDTO user;
   final bool isuploaded;
   final int order;
   final MachineDTO machine;
+
   OperatorOperations({
     required this.id,
     required this.timeplan,
@@ -27,12 +26,11 @@ class OperatorOperations {
     required this.timestop,
     required this.timeworking,
     required this.status,
-    required this.stageoperationid,
-    required this.stagemasteroperationid,
     required this.batch,
     required this.user,
     required this.isuploaded,
     required this.order,
     required this.machine,
+
   });
 }

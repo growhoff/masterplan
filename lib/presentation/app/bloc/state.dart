@@ -8,6 +8,7 @@ import 'package:master_plan/data/repositories/supabase/dto/user_dto.dart';
 import 'package:master_plan/domain/model/area.dart';
 import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/domain/model/unit.dart';
+import 'package:master_plan/domain/model/user.dart';
 
 class StateMain extends Equatable {
     final UserDTO? user;
@@ -17,6 +18,7 @@ class StateMain extends Equatable {
     final List<MachineDTO>? machineList;
     final List<ZShiftsDistributionDTO>? zShiftsDistributionList; 
     final List<OperatorOperations>? operatorOperationsList;
+    final List<User>? operatorList;
   const StateMain({
     this.user,
     this.area,
@@ -25,6 +27,7 @@ class StateMain extends Equatable {
     this.machineList,
     this.zShiftsDistributionList,
     this.operatorOperationsList,
+    this.operatorList,
   });
 
   @override
@@ -37,6 +40,7 @@ class StateMain extends Equatable {
       machineList ?? [],
       zShiftsDistributionList ?? [],
       operatorOperationsList ?? [],
+      operatorList ?? [],
     ];
   }
 
@@ -51,6 +55,7 @@ class StateMain extends Equatable {
     List<MachineDTO>? machineList,
     List<ZShiftsDistributionDTO>? zshiftsDistributionList,
     List<OperatorOperations>? operatorOperationsList,
+    List<User>? operatorList,
   }) {
     return StateMain(
       user: user ?? this.user,
@@ -60,6 +65,7 @@ class StateMain extends Equatable {
       areaList: areaList ?? this.areaList,
       zShiftsDistributionList: zshiftsDistributionList ?? this.zShiftsDistributionList,
       operatorOperationsList: operatorOperationsList ?? this.operatorOperationsList,
+      operatorList: operatorList ?? this.operatorList,
     );
   }
 

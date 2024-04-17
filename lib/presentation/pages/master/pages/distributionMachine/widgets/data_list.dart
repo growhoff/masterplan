@@ -30,7 +30,7 @@ class _DataListState extends State<DataList> {
   @override
   Widget build(BuildContext context) {
     return listItem.isNotEmpty ? DataTable(
-        dataRowHeight: 80,
+        dataRowHeight: 85,
         columns: const [
           DataColumn(
             label: Text('Этапы'),
@@ -49,7 +49,7 @@ class _DataListState extends State<DataList> {
                       Text('Этап № ${listItem[index].stageNumber}'),
                       Text('Операция № ${listItem[index].operationNumber}'),
                       Text(listItem[index].detailName),
-                      Text('количество ${listItem[index].operationNumber} / ${listItem[index].quantity}')
+                      Text('Количество ${listItem[index].operationNumber} / ${listItem[index].quantity}')
                     ], 
                   ),
                 ),

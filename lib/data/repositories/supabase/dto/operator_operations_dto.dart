@@ -15,8 +15,6 @@ class OperatorOperationsDTO extends Dto {
   final int timestop;
   final int timeworking;
   final StatusDTO status;
-  final int stageoperationid;
-  final int stagemasteroperationid;
   final BatchDTO batch;
   final UserDTO user;
   final bool isuploaded;
@@ -30,8 +28,6 @@ class OperatorOperationsDTO extends Dto {
     required this.timestop,
     required this.timeworking,
     required this.status,
-    required this.stageoperationid,
-    required this.stagemasteroperationid,
     required this.batch,
     required this.user,
     required this.isuploaded,
@@ -49,8 +45,6 @@ class OperatorOperationsDTO extends Dto {
       'time_stop': timestop,
       'time_working': timeworking,
       'status_id': status.toMap(),
-      'stage_operation_id': stageoperationid,
-      'stage_master_operation_id': stagemasteroperationid,
       'batch_id': batch.toMap(),
       'user_id': user.toMap(),
       'is_uploaded': isuploaded,
@@ -68,8 +62,6 @@ class OperatorOperationsDTO extends Dto {
       timestop: map['time_stop'] as int,
       timeworking: map['time_working'] as int,
       status: StatusDTO.fromMap(map['z_status'] as Map<String,dynamic>),
-      stageoperationid: map['stage_operation_id'] as int,
-      stagemasteroperationid: map['stage_master_operation_id'] as int,
       batch: BatchDTO.fromMap(map['z_batch'] as Map<String,dynamic>),
       user: UserDTO.fromMap(map['z_user'] as Map<String,dynamic>),
       isuploaded: map['is_uploaded'] as bool,

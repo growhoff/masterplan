@@ -28,20 +28,23 @@ class ContentDetail extends StatelessWidget {
                 LineTextSpawn(title: 'Деталь', text: detail),
                 const SizedBox(height: 8),
                 LineTextSpawn(title: 'Операция', text: operations),
-                const SizedBox(height: 50),
+                const SizedBox(height: 20),
                 const Time(),
-                const SizedBox(height: 100),
+                const SizedBox(height: 30),
+                const Divider(),
+                const SizedBox(height: 16),
+                SizedBox(width: double.maxFinite, child: ElevatedButtonCastom(text: 'Деталь готова', color: Colors.green, onPressed: (){},)),
+                const SizedBox(height: 8),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    ElevatedButtonCastom(text: 'Переналадка', color: Colors.amber, onPressed: (){},),
-                    ElevatedButtonCastom(text: 'Уборка', color: Colors.blueGrey, onPressed: (){},),
+                    Expanded(flex: 5, child: SizedBox(width: double.maxFinite, child: ElevatedButtonCastom(text: 'Уборка', color: Colors.blueGrey, onPressed: (){},))),
+                    const Spacer(),
+                    Expanded(flex: 5, child: SizedBox(width: double.maxFinite, child: ElevatedButtonCastom(text: 'Переналадка', color: Colors.amber, onPressed: (){},))),
                   ],
                 ),
                 const SizedBox(height: 8),
-                ElevatedButtonCastom(text: 'Деталь готова', color: Colors.green, onPressed: (){},),
-                const SizedBox(height: 8),
-                ElevatedButtonCastom(text: 'Поломка', color: Colors.red, onPressed: (){},)
+                SizedBox(width: double.maxFinite, child: ElevatedButtonCastom(text: 'Поломка', color: Colors.red, onPressed: (){},)),
         ],
       );}
     );

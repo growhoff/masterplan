@@ -11,7 +11,6 @@ import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_sta
 import 'package:master_plan/presentation/pages/chief/widgets/custom_navbar.dart';
 import 'package:master_plan/presentation/pages/login/login_page.dart';
 import 'package:master_plan/presentation/pages/master/pages/addOperation/add_operation_page.dart';
-import 'package:master_plan/presentation/pages/master/pages/choosingOperator/choosing_operator_page.dart';
 import 'package:master_plan/presentation/pages/master/widgets/navbar_custom.dart';
 import 'package:master_plan/presentation/pages/operator/operator_page.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/work_page.dart';
@@ -32,7 +31,6 @@ class MyApp extends StatelessWidget {
           '/operatorPage':(BuildContext context) => const OperatorPage(),
           '/masterPage':(BuildContext context) => const NavBarCustomMaster(),
           '/chiefPage':(BuildContext context) => const NavBarCustomChief(),
-          '/choosingOperatorPage':(BuildContext context) => const ChoosingOperatorPage(),
           '/workPage':(BuildContext context) => const WorkPage(),
           '/addOperationPage':(BuildContext context) => const AddOperationPage(),
           '/chiefAreasPage': (BuildContext context) => const ChiefAreasPage(),

@@ -1,11 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
-import 'package:master_plan/presentation/app/bloc/state.dart';
+import 'package:master_plan/presentation/pages/master/pages/distributionDetails/bloc/cubit.dart';
+import 'package:master_plan/presentation/pages/master/pages/distributionDetails/bloc/state.dart';
 import 'widgets/details_distrib_item.dart';
 
 class DetailDistribPage extends StatelessWidget {
   const DetailDistribPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final stateMain = context.read<CubitMain>().state;
+    return BlocProvider(
+      create: (context) => CubitDistributionDetails(stateMain.operatorOperationsList!, stateMain.user!.areaId!),
+      child: const DetailDistribContent(),
+    );
+  }
+}
+
+class DetailDistribContent extends StatelessWidget {
+  const DetailDistribContent({super.key});
   @override
   Widget build(BuildContext context) {
     return  SafeArea(
@@ -14,11 +28,21 @@ class DetailDistribPage extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              BlocBuilder<CubitMain, StateMain>(
-                builder: (context, state) => ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: state.operatorOperationsList!.length,
-                  itemBuilder: (context, index) => ListContetnDetails(state.operatorOperationsList![index])),//state.listStageMasterOperations![index]
+              BlocBuilder<CubitDistributionDetails, StateDistributionDetails>(
+                builder: (context, state) {
+                  List<ExpansionPanel> list = [];
+                  for (var i = 0; i < state.operList.length; i++) {
+                    list.add(ExpansionPanel(
+                      headerBuilder: (context, isExpanded) => TitleItem(state.operList[i]), 
+                      body: BodyItem(i),
+                      isExpanded: state.operList[i].isSelected
+                    ));
+                  }
+                  return ExpansionPanelList(
+                  children: list,
+                  expansionCallback: (index, isExpanded) => context.read<CubitDistributionDetails>().toggleSelect(index),
+                );
+                }
               ),
               const SizedBox(height: 8),
               SizedBox(

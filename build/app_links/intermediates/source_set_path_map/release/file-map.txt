@@ -1,0 +1,12 @@
+com.llfbandit.app_links-jetified-window-1.0.0-beta04-0 C:\Users\user\.gradle\caches\transforms-3\25cee5f028ac2a6b79fd6278ff5b59e2\transformed\jetified-window-1.0.0-beta04\res
+com.llfbandit.app_links-jetified-annotation-experimental-1.1.0-1 C:\Users\user\.gradle\caches\transforms-3\6c0c163cc77ae6c91f9f7dfcd179c29c\transformed\jetified-annotation-experimental-1.1.0\res
+com.llfbandit.app_links-core-1.6.0-2 C:\Users\user\.gradle\caches\transforms-3\7e9df2ac2213a6bd3cef0f2f27870d79\transformed\core-1.6.0\res
+com.llfbandit.app_links-jetified-window-java-1.0.0-beta04-3 C:\Users\user\.gradle\caches\transforms-3\ae81e06d24c799147c26814497a2a305\transformed\jetified-window-java-1.0.0-beta04\res
+com.llfbandit.app_links-main-4 C:\Users\user\AppData\Local\Pub\Cache\hosted\pub.dev\app_links-3.5.0\android\src\main\res
+com.llfbandit.app_links-release-5 C:\Users\user\AppData\Local\Pub\Cache\hosted\pub.dev\app_links-3.5.0\android\src\release\res
+com.llfbandit.app_links-pngs-6 D:\Flutter project\master-plan\master_plan\build\app_links\generated\res\pngs\release
+com.llfbandit.app_links-resValues-7 D:\Flutter project\master-plan\master_plan\build\app_links\generated\res\resValues\release
+com.llfbandit.app_links-rs-8 D:\Flutter project\master-plan\master_plan\build\app_links\generated\res\rs\release
+com.llfbandit.app_links-mergeReleaseResources-9 D:\Flutter project\master-plan\master_plan\build\app_links\intermediates\incremental\release\mergeReleaseResources\merged.dir
+com.llfbandit.app_links-mergeReleaseResources-10 D:\Flutter project\master-plan\master_plan\build\app_links\intermediates\incremental\release\mergeReleaseResources\stripped.dir
+com.llfbandit.app_links-merged_res-11 D:\Flutter project\master-plan\master_plan\build\app_links\intermediates\merged_res\release

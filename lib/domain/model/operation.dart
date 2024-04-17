@@ -3,12 +3,13 @@ import 'package:master_plan/domain/model/transfer.dart';
 
 class Operation {
   final int id;
-  final int number;
+  final String number;
   final String name;
   final String code;
   final bool isready;
   final List<Transfer> transferList;
   final List<int> transferListId;
+  final int timepz;
   Operation({
     required this.id,
     required this.number,
@@ -17,5 +18,6 @@ class Operation {
     required this.isready,
     required this.transferList,
     required this.transferListId,
+    required this.timepz,
   });
 }

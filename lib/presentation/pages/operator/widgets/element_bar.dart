@@ -22,7 +22,9 @@ class ElementBarOperator extends StatelessWidget {
               separatorBuilder: (context, index) => const SizedBox(width: 5),
               itemCount: state.list.length),
           ),
-            const SizedBox(height: 18),
+            const SizedBox(height: 8),
+            const Divider(),
+            const SizedBox(height: 16),
             state.list[state.activePage].content
         ],
       ),

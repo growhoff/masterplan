@@ -28,9 +28,11 @@ import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/operation.dart';
 import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/domain/model/package.dart';
+import 'package:master_plan/domain/model/position.dart';
 import 'package:master_plan/domain/model/stage.dart';
 import 'package:master_plan/domain/model/transfer.dart';
 import 'package:master_plan/domain/model/unit.dart';
+import 'package:master_plan/domain/model/user.dart';
 import 'state.dart';
 
 class CubitMain extends Cubit<StateMain> { 
@@ -54,6 +56,7 @@ class CubitMain extends Cubit<StateMain> {
           //мастер
           case 3: emit(state.copyWith(area: await getAreaZ(state.user!.area!.id)));
             await getMasterData();
+            await getOperators();
             break;
           //оператор
           case 4: await getMachineOperatorZ(state.user!.id); 
@@ -122,7 +125,7 @@ class CubitMain extends Cubit<StateMain> {
 
     List<int> machineListId = [];
     for (var element in zshiftsDistributionList) {
-      machineListId.add(element.machine.id);
+      machineListId.add(element.machine!.id);
     }
 
     List<OperatorOperations> operatorOperationsList = [];
@@ -131,7 +134,7 @@ class CubitMain extends Cubit<StateMain> {
       final zOperatorOperationsQuery = await zOperatorOperationsTable.selectListIdSt(machineListId);
       for (var operatorOper in zOperatorOperationsQuery) {
         final model = OperatorOperationsDTO.fromMap(operatorOper);
-        operatorOperationsList.add(OperatorOperations(id: model.id, timeplan: model.timeplan, timefact: model.timefact, timestart: model.timestart, timestop: model.timestop, timeworking: model.timeworking, status: model.status, stageoperationid: model.stageoperationid, stagemasteroperationid: model.stagemasteroperationid, batch: await getBatchZ(model.batch.id), user: model.user, isuploaded: model.isuploaded, order: model.order, machine: model.machine));
+        operatorOperationsList.add(OperatorOperations(id: model.id, timeplan: model.timeplan, timefact: model.timefact, timestart: model.timestart, timestop: model.timestop, timeworking: model.timeworking, status: model.status, batch: await getBatchZ(model.batch.id), user: model.user, isuploaded: model.isuploaded, order: model.order, machine: model.machine));
       }
     }
 
@@ -152,7 +155,7 @@ class CubitMain extends Cubit<StateMain> {
     List<OperatorOperations> operatorOperationsList = [];
     for (var operatorOper in zOperatorOperationsQuery) {
       final model = OperatorOperationsDTO.fromMap(operatorOper);
-      operatorOperationsList.add(OperatorOperations(id: model.id, timeplan: model.timeplan, timefact: model.timefact, timestart: model.timestart, timestop: model.timestop, timeworking: model.timeworking, status: model.status, stageoperationid: model.stageoperationid, stagemasteroperationid: model.stagemasteroperationid, batch: await getBatchZ(model.batch.id), user: model.user, isuploaded: model.isuploaded, order: model.order, machine: model.machine));
+      operatorOperationsList.add(OperatorOperations(id: model.id, timeplan: model.timeplan, timefact: model.timefact, timestart: model.timestart, timestop: model.timestop, timeworking: model.timeworking, status: model.status, batch: await getBatchZ(model.batch.id), user: model.user, isuploaded: model.isuploaded, order: model.order, machine: model.machine));
     }
 
     emit(state.copyWith(zshiftsDistributionList: zshiftsDistributionList, operatorOperationsList: operatorOperationsList));
@@ -162,7 +165,7 @@ class CubitMain extends Cubit<StateMain> {
       final transferTable = TransferTable();
       final transferQuery = await transferTable.selectId(transferId);
       final model = TransferDTO.fromMap(transferQuery.first);
-      return Transfer(id: model.id, number: model.number, name: model.name, code: model.code, timepz: model.timepz, timesh: model.timesh);
+      return Transfer(id: model.id, number: model.number, name: model.name, code: model.code, timesh: model.timesh);
   }
 
   Future<Operation> getOperationZ(int operationId) async{
@@ -175,9 +178,9 @@ class CubitMain extends Cubit<StateMain> {
     List<Transfer> transferList = [];
     for (var transfer in transferQuery) {
       final model = TransferDTO.fromMap(transfer);
-      transferList.add(Transfer(id: model.id, number: model.number, name: model.name, code: model.code, timepz: model.timepz, timesh: model.timesh));
+      transferList.add(Transfer(id: model.id, number: model.number, name: model.name, code: model.code, timesh: model.timesh));
     }
-    return Operation(id: operationDto.id, number: operationDto.number, name: operationDto.name, code: operationDto.code, isready: operationDto.isready, transferList: transferList, transferListId: operationDto.transferId);
+    return Operation(id: operationDto.id, timepz: operationDto.timepz, number: operationDto.number, name: operationDto.name, code: operationDto.code, isready: operationDto.isready, transferList: transferList, transferListId: operationDto.transferId);
   }
 
   Future<Stage> getStageZ(int stageId) async{
@@ -190,7 +193,7 @@ class CubitMain extends Cubit<StateMain> {
       operationList.add(await getOperationZ(id));
     }
 
-    return Stage(id: stageDto.id, number: stageDto.number, code: stageDto.code, operationList: operationList, operationListId: stageDto.operationId, name: stageDto.name);
+    return Stage(id: stageDto.id, isdistributed: stageDto.isdistributed, areaId: stageDto.areaId, number: stageDto.number, operationList: operationList, operationListId: stageDto.operationId, name: stageDto.name);
   }
 
   Future<Batch> getBatchZ(int batchId) async{
@@ -199,11 +202,11 @@ class CubitMain extends Cubit<StateMain> {
     final batchDto = BatchDTO.fromMap(batchQuery.first);
 
     List<Stage> stageList = [];
-    for (var id in batchDto.stepId) {
+    for (var id in batchDto.stageId) {
       stageList.add(await getStageZ(id));
     }
 
-    return Batch(id: batchDto.id, number: batchDto.number, name: batchDto.name, count: batchDto.count, code: batchDto.code, technology: batchDto.technology, order: batchDto.order, isready: batchDto.isready, stageList: stageList, stageListId: batchDto.stepId);
+    return Batch(id: batchDto.id, number: batchDto.number, name: batchDto.name, count: batchDto.count, code: batchDto.code, technology: batchDto.technology, order: batchDto.order, isready: batchDto.isready, stageList: stageList, stageListId: batchDto.stageId);
   }
 
   Future<Package> getPackageZ(int packageId) async{
@@ -218,4 +221,19 @@ class CubitMain extends Cubit<StateMain> {
 
     return Package(id: packageDto.id, number: packageDto.number, batchList: batchList, batchListId: packageDto.batchId);
   }
+
+  Future<void> getOperators() async{
+    final userTable = UserTable();
+    final userQuery = await userTable.selectEqOperator(areaId: state.user!.areaId!, companyId: state.user!.companyId);
+    List<UserDTO> userListDto = [];
+    for (var userDto in userQuery) {
+      userListDto.add(UserDTO.fromMap(userDto));
+    }
+    List<User> userList = [];
+    for (var user in userListDto) {
+      userList.add(User(id: user.id, fio: user.fio, positionId: user.positionId, companyId: user.companyId, unitId: user.unitId, areaId: user.areaId, photo: user.photo, positionModel: Position(id: user.position.id, name: user.position.name)));
+    }
+    emit(state.copyWith(operatorList: userList));
+  }
+  
 }

@@ -1,3 +1,4 @@
+import 'package:master_plan/data/repositories/supabase/dto/shifts_distribution_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -8,14 +9,18 @@ class ShiftsDistributionTable extends SupabaseTable{
   final selectUser = '*, z_position(*), z_company(*), z_unit(*), z_area(*)';
   
   @override
-  Future<void> delete(int id) {
-    return table.delete().eq('id', id);
+  Future<void> delete(int id) async{
+    await table.delete().eq('id', id);
   }
 
   @override
-  Future<void> insert(Dto dto) {
-    return table.insert(dto);
+  Future<void> insert(Dto dto) async{
+    if (dto is ZShiftsDistributionDTO){
+      await table.insert(dto.toMap());
+    } 
   }
+
+
 
   @override
   Future<List<Map<String, dynamic>>> select() {

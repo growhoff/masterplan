@@ -7,14 +7,14 @@ class TransferDTO extends Dto {
   final int number;
   final String name;
   final String code;
-  final int timepz;
+
   final int timesh;
   TransferDTO({
     required this.id,
     required this.number,
     required this.name,
     required this.code,
-    required this.timepz,
+
     required this.timesh,
   });
 
@@ -24,7 +24,7 @@ class TransferDTO extends Dto {
       'number': number,
       'name': name,
       'code': code,
-      'time_pz': timepz,
+
       'time_sh': timesh,
     };
   }
@@ -35,7 +35,7 @@ class TransferDTO extends Dto {
       number: map['number'] as int,
       name: map['name'] as String,
       code: map['code'] as String,
-      timepz: map['time_pz'] as int,
+
       timesh: map['time_sh'] as int,
     );
   }

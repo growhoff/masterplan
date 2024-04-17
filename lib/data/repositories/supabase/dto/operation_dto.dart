@@ -4,11 +4,12 @@ import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 
 class OperationDTO extends Dto {
   final int id;
-  final int number;
+  final String number;
   final String name;
   final String code;
   final bool isready;
   final List<int> transferId;
+    final int timepz;
   OperationDTO({
     required this.id,
     required this.number,
@@ -16,6 +17,7 @@ class OperationDTO extends Dto {
     required this.code,
     required this.isready,
     required this.transferId,
+    required this.timepz,
   });
 
   // (map['operation_id'] as List<dynamic>).map((e) => e as int).toList(),
@@ -27,6 +29,7 @@ class OperationDTO extends Dto {
       'name': name,
       'code': code,
       'isready': isready,
+      'time_pz': timepz,
       'transfer_id': transferId,
     };
   }
@@ -34,11 +37,12 @@ class OperationDTO extends Dto {
   factory OperationDTO.fromMap(Map<String, dynamic> map) {
     return OperationDTO(
       id: map['id'] as int,
-      number: map['number'] as int,
+      number: map['number'] as String,
       name: map['name'] as String,
       code: map['code'] as String,
       isready: map['isready'] as bool,
       transferId: (map['transfer_id'] as List<dynamic>).map((e) => e as int).toList(),
+      timepz: map['time_pz'] as int,
     );
   }
 
