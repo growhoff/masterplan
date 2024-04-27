@@ -3,30 +3,23 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 
-// import 'package:gpassword/gpassword.dart';
-import 'package:master_plan/data/repositories/supabase/dto2/area_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto2/company_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto2/position_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto2/staff_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto2/user_dto.dart';
-
-// import 'package:master_plan/data/repositories/supabase/dto2/user_dto.dart';
-// import 'package:master_plan/data/repositories/supabase/service/position_table.dart';
-// import 'package:master_plan/data/repositories/supabase/service/staff_table.dart';
-// import 'package:master_plan/data/repositories/supabase/service/user_table.dart';
-import 'package:master_plan/data/repositories/supabase/service/z_area_table.dart';
-import 'package:master_plan/data/repositories/supabase/service/z_position_table.dart';
-import 'package:master_plan/data/repositories/supabase/service/z_staff_table.dart';
-import 'package:master_plan/data/repositories/supabase/service/z_user_table.dart';
-import 'package:master_plan/domain/model/z_user_model.dart';
 import 'package:mime/mime.dart';
-// import 'package:master_plan/domain/model/z_user_model.dart';
 
-// import '../../../../../../data/repositories/supabase/dto/position_dto.dart';
+import '../../../../../../data/repositories/supabase/dto/area_dto.dart';
+import '../../../../../../data/repositories/supabase/dto/company_dto.dart';
+import '../../../../../../data/repositories/supabase/dto/position_dto.dart';
+import '../../../../../../data/repositories/supabase/dto/staff_dto.dart';
+import '../../../../../../data/repositories/supabase/dto/user_dto.dart';
+import '../../../../../../data/repositories/supabase/service/area_table.dart';
+
 import '../../../../../../data/repositories/supabase/service/images_storage.dart';
+import '../../../../../../data/repositories/supabase/service/position_table.dart';
+import '../../../../../../data/repositories/supabase/service/staff_table.dart';
+import '../../../../../../data/repositories/supabase/service/user_table.dart';
+import '../../../../../../domain/model/area.dart';
 import '../../../../../../domain/model/position.dart';
-import '../../../../../../domain/model/staff_model.dart';
-import '../../../../../../domain/model/z_area.dart';
+import '../../../../../../domain/model/staff.dart';
+import '../../../../../../domain/model/user.dart';
 
 part 'chief_staff_state.dart';
 
@@ -37,11 +30,11 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
   final TextEditingController numberController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  final ZAreaTable _areasTable = ZAreaTable();
+  final AreaTable _areasTable = AreaTable();
 
-  final ZStaffTable _staffTable = ZStaffTable();
-  final ZUserTable _userTable = ZUserTable();
-  final ZPositionTable _positionTable = ZPositionTable();
+  final StaffTable _staffTable = StaffTable();
+  final UserTable _userTable = UserTable();
+  final PositionTable _positionTable = PositionTable();
 
   final ImagePicker _imagePicker = ImagePicker();
 
@@ -67,15 +60,15 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
   Future<void> fetchAreas() async {
     final areas = await _areasTable.select();
 
-    List<ZArea> areasList = [];
+    List<Area> areasList = [];
     for (var area in areas) {
-      final AreaDTO2 areaDto = AreaDTO2.fromMap(area);
-      areasList.add(ZArea(
-          id: areaDto.id,
-          name: areaDto.name,
-          number: areaDto.number,
-          machineList: [],
-          machineListId: areaDto.machineId));
+      final AreaDTO areaDto = AreaDTO.fromMap(area);
+      areasList.add(Area(
+        id: areaDto.id,
+        name: areaDto.name,
+        number: areaDto.number,
+        unitId: areaDto.unitId,
+      ));
     }
     activeAreaId = areasList[0].id;
     emit(state.copyWith(areasList: areasList));
@@ -84,16 +77,16 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
   Future<void> fetchStaff() async {
     final staff = await _staffTable.selectByRegionId(regionId: activeAreaId);
 
-    List<StaffModel> staffList = [];
+    List<Staff> staffList = [];
     for (int i = 0; i < staff.length; i++) {
-      StaffDTO2 staffDto = StaffDTO2.fromMap(staff[i]);
+      StaffDTO staffDto = StaffDTO.fromMap(staff[i]);
 
-      staffList.add(StaffModel(
+      staffList.add(Staff(
           id: staffDto.id,
           login: staffDto.login,
           password: staffDto.password,
           userId: staffDto.userId,
-          user: ZUserModel(
+          user: User(
               id: staffDto.user.id,
               fio: staffDto.user.fio,
               areaId: staffDto.user.areaId,
@@ -101,7 +94,7 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
               companyId: staffDto.user.companyId,
               photo: staffDto.user.photo,
               unitId: staffDto.user.unitId,
-              positionModel: PositionModel(
+              positionModel: Position(
                   id: staffDto.user.position.id,
                   name: staffDto.user.position.name))));
     }
@@ -134,7 +127,7 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
       }
     }
 
-    List<PositionModel> positionsList = await fetchPositions();
+    List<Position> positionsList = await fetchPositions();
 
     List<String> positionsNamesList = [];
     for (int i = 0; i < positionsList.length; i++) {
@@ -159,16 +152,15 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
         areasNamesList: areasNamesList));
   }
 
-  Future<List<PositionModel>> fetchPositions() async {
+  Future<List<Position>> fetchPositions() async {
     final positions = await _positionTable.select();
 
-    List<PositionModel> positionsList = [];
+    List<Position> positionsList = [];
 
     for (int i = 0; i < positions.length; i++) {
-      PositionDTO2 positionDto = PositionDTO2.fromMap(positions[i]);
+      PositionDTO positionDto = PositionDTO.fromMap(positions[i]);
 
-      positionsList
-          .add(PositionModel(id: positionDto.id, name: positionDto.name));
+      positionsList.add(Position(id: positionDto.id, name: positionDto.name));
     }
 
     return positionsList;
@@ -194,18 +186,18 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
       imageUrl = null;
     }
 
-    var userId = await _userTable.insert(UserDTO2(
+    var userId = await _userTable.insert(UserDTO(
         id: 0,
         fio: fioController.text,
         positionId: positionsMap[selectedPosition]!,
         areaId: areasMap[selectedArea],
         companyId: 1,
-        company: CompanyDTO2.init(),
-        position: PositionDTO2(id: 0, name: ''),
+        company: CompanyDTO.init(),
+        position: PositionDTO(id: 0, name: ''),
         photo: imageUrl,
         unitId: null));
 
-    await _staffTable.insert(StaffDTO2(
+    await _staffTable.insert(StaffDTO(
         id: 0,
         login: numberController.text,
         password:
@@ -214,7 +206,7 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
                 ? '1111'
                 : passwordController.text,
         userId: userId,
-        user: UserDTO2.empty));
+        user: UserDTO.empty));
 
     fioController.clear();
     numberController.clear();
@@ -259,23 +251,28 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
     }
   }
 
-  Future updateStaff({required StaffModel staffModel}) async {
+  Future updateStaff({required Staff staffModel}) async {
     await _userTable.update(
         staffModel.user.id,
-        UserDTO2(
+        UserDTO(
             id: staffModel.user.id,
             fio: fioController.text == ''
                 ? staffModel.user.fio
                 : fioController.text,
-            positionId: positionsMap[selectedPosition],
+            positionId: positionsMap[selectedPosition] ?? 1,
             areaId: areasMap[selectedArea],
             companyId: staffModel.user.companyId,
-            position: PositionDTO2(id: 0, name: ''),
-            photo: ''));
+            position: PositionDTO(id: 0, name: ''),
+            photo: '',
+            company: CompanyDTO(
+              id: 0,
+              name: '',
+              code: '',
+            )));
 
     await _staffTable.update(
         staffModel.id,
-        StaffDTO2(
+        StaffDTO(
             id: staffModel.id,
             login: numberController.text == ''
                 ? staffModel.login
@@ -284,7 +281,7 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
                 ? staffModel.password
                 : passwordController.text,
             userId: staffModel.userId,
-            user: UserDTO2.empty));
+            user: UserDTO.empty));
   }
 
   Future deleteStaff(

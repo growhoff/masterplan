@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../../../domain/model/staff_model.dart';
+import '../../../../../../domain/model/staff.dart';
+
 
 class StaffListElement extends StatefulWidget {
   const StaffListElement(
@@ -10,7 +11,7 @@ class StaffListElement extends StatefulWidget {
       required this.deleteStaff,
       super.key});
 
-  final StaffModel staffModel;
+  final Staff staffModel;
   final VoidCallback fetchStaff;
   final VoidCallback deleteStaff;
 

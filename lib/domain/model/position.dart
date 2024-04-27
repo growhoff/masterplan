@@ -1,7 +1,7 @@
-class PositionModel {
+class Position {
   final int id;
   final String name;
-  PositionModel({
+  Position({
     required this.id,
     required this.name,
   });

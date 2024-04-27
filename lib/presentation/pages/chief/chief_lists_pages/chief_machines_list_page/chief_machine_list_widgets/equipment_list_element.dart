@@ -1,23 +1,22 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'package:master_plan/domain/model/z_machine.dart';
 import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_machines_list_page/chief_machine_list_widgets/edit_page_arguments.dart';
 
+import '../../../../../../domain/model/machine.dart';
+
 class MachinesListElement extends StatefulWidget {
-  const MachinesListElement(
-      {required this.machineModel,
-      required this.deleteMachine,
+  const MachinesListElement({
+    required this.machineModel,
+    required this.deleteMachine,
 
-        required this.areaId,
-      super.key,
-      });
+    super.key,
+  });
 
-
-  final ZMachine machineModel;
+  final Machine machineModel;
   final VoidCallback deleteMachine;
 
-  final int areaId;
+
 
   @override
   State<MachinesListElement> createState() => _MachinesListElementState();
@@ -59,7 +58,8 @@ class _MachinesListElementState extends State<MachinesListElement> {
                         iconSize: 24,
                         onPressed: () {
                           Navigator.pushNamed(context, '/chiefMachineEditPage',
-                              arguments: EditPageArguments(widget.machineModel, widget.areaId));
+                              arguments: EditPageArguments(
+                                  widget.machineModel, widget.machineModel.areaId));
                         },
                         icon: const Icon(Icons.edit)),
                     IconButton(

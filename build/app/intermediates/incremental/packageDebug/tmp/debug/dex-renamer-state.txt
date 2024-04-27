@@ -1,4 +1,4 @@
-#Tue Apr 16 17:12:27 MSK 2024
+#Fri Apr 26 20:53:31 MSK 2024
 base.0=D\:\\Projects\\masterplan\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
 path.0=classes.dex
 renamed.0=classes.dex

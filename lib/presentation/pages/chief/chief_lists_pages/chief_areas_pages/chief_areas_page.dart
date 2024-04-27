@@ -95,19 +95,19 @@ class _ChiefAreasPageViewState extends State<ChiefAreasPageView> {
                               )
                             ]),
                         ...List.generate(
-                            state.regions.length,
+                            state.areas.length,
                             (index) => TableRow(children: [
                                   TableRowInkWell(
                                     onTap: () {
                                       showDialog(
                                         context: context,
                                         builder: (ctx) => AreasTableDialog(
-                                            area: state.regions[index],
+                                            area: state.areas[index],
                                             deleteRegion: () => context
                                                 .read<ChiefAreasCubit>()
                                                 .deleteArea(
                                                     areaId: state
-                                                        .regions[index].id)
+                                                        .areas[index].id)
                                           ),
                                       );
                                     },
@@ -115,7 +115,7 @@ class _ChiefAreasPageViewState extends State<ChiefAreasPageView> {
                                         alignment: Alignment.center,
                                         padding: EdgeInsets.all(8),
                                         child: Text(
-                                          '${state.regions[index].number}',
+                                          '${state.areas[index].number}',
                                           softWrap: true,
                                           textAlign: TextAlign.center,
                                         )),
@@ -125,12 +125,12 @@ class _ChiefAreasPageViewState extends State<ChiefAreasPageView> {
                                       showDialog(
                                         context: context,
                                         builder: (ctx) => AreasTableDialog(
-                                            area: state.regions[index],
+                                            area: state.areas[index],
                                             deleteRegion: () => context
                                                 .read<ChiefAreasCubit>()
                                                 .deleteArea(
                                                     areaId: state
-                                                        .regions[index].id),
+                                                        .areas[index].id),
                                            ),
                                       );
                                     },
@@ -138,7 +138,7 @@ class _ChiefAreasPageViewState extends State<ChiefAreasPageView> {
                                         alignment: Alignment.center,
                                         padding: EdgeInsets.all(8),
                                         child: Text(
-                                          '${state.regions[index].name}',
+                                          '${state.areas[index].name}',
                                           textAlign: TextAlign.center,
                                         )),
                                   ),
@@ -147,12 +147,12 @@ class _ChiefAreasPageViewState extends State<ChiefAreasPageView> {
                                       showDialog(
                                         context: context,
                                         builder: (ctx) => AreasTableDialog(
-                                            area: state.regions[index],
+                                            area: state.areas[index],
                                             deleteRegion: () => context
                                                 .read<ChiefAreasCubit>()
                                                 .deleteArea(
                                                     areaId: state
-                                                        .regions[index].id),
+                                                        .areas[index].id),
                                         ),
                                       );
                                     },
@@ -160,7 +160,7 @@ class _ChiefAreasPageViewState extends State<ChiefAreasPageView> {
                                         alignment: Alignment.center,
                                         padding: EdgeInsets.all(8),
                                         child: Text(
-                                          '${state.regions[index].machineListId.length}',
+                                          '${state.areas[index].machinesQuantity}',
                                           textAlign: TextAlign.center,
                                         )),
                                   )

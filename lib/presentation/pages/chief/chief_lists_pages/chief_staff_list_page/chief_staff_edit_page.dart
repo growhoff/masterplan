@@ -5,14 +5,16 @@ import 'package:image_picker/image_picker.dart';
 import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_staff_list_page/chief_staff_cubit/chief_staff_cubit.dart';
 import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_staff_list_page/chief_staff_list_widgets/edit_page_user_photo_widget.dart';
 
-import '../../../../../domain/model/staff_model.dart';
+import '../../../../../domain/model/staff.dart';
+
+
 
 class ChiefStaffEditPage extends StatelessWidget {
   const ChiefStaffEditPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final staff = ModalRoute.of(context)!.settings.arguments as StaffModel;
+    final staff = ModalRoute.of(context)!.settings.arguments as Staff;
     return BlocProvider(
       create: (context) => ChiefStaffCubit(),
       child: ChiefStaffEditPageView(
@@ -25,7 +27,7 @@ class ChiefStaffEditPage extends StatelessWidget {
 class ChiefStaffEditPageView extends StatefulWidget {
   const ChiefStaffEditPageView({required this.staff, super.key});
 
-  final StaffModel staff;
+  final Staff staff;
 
   @override
   State<ChiefStaffEditPageView> createState() => _ChiefStaffEditPageViewState();

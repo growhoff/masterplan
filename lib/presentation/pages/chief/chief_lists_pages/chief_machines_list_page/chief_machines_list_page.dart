@@ -31,7 +31,7 @@ class _ChiefMachinesListPageViewState extends State<ChiefMachinesListPageView> {
   @override
   void initState() {
     context.read<ChiefMachineCubit>().fetchAreasAndMachines();
-    print(context.read<ChiefMachineCubit>().activeAreaIndex);
+    print(context.read<ChiefMachineCubit>().activeAreaId);
     super.initState();
   }
 
@@ -47,7 +47,7 @@ class _ChiefMachinesListPageViewState extends State<ChiefMachinesListPageView> {
       body: SafeArea(
         child: Center(child: BlocBuilder<ChiefMachineCubit, ChiefMachineState>(
             builder: (context, state) {
-          if (state.machinesList.isNotEmpty && state.areasList.isNotEmpty) {
+          if (state.areasList.isNotEmpty) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -57,19 +57,19 @@ class _ChiefMachinesListPageViewState extends State<ChiefMachinesListPageView> {
                     height: 40,
                     child: ListView.separated(
                         shrinkWrap: true,
+
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) => GestureDetector(
                               onTap: () {
                                 activeIndex = index;
-                                context
-                                    .read<ChiefMachineCubit>()
-                                    .activeAreaIndex = index;
+                                context.read<ChiefMachineCubit>().activeAreaId =
+                                    state.areasList[index].id;
                                 context
                                     .read<ChiefMachineCubit>()
                                     .fetchMachinesList();
                                 print(context
                                     .read<ChiefMachineCubit>()
-                                    .activeAreaIndex);
+                                    .activeAreaId);
                                 setState(() {});
                               },
                               child: SizedBox(
@@ -143,17 +143,8 @@ class _ChiefMachinesListPageViewState extends State<ChiefMachinesListPageView> {
                                   .read<ChiefMachineCubit>()
                                   .deleteMachine(
                                       machineId: state.machinesList[index].id,
-                                      areaId: state
-                                          .areasList[context
-                                              .read<ChiefMachineCubit>()
-                                              .activeAreaIndex]
-                                          .id),
+                                      areaId: state.machinesList[index].areaId),
                               machineModel: state.machinesList[index],
-                              areaId: state
-                                  .areasList[context
-                                      .read<ChiefMachineCubit>()
-                                      .activeAreaIndex]
-                                  .id,
                             ),
                         separatorBuilder: (context, index) => const SizedBox(
                               height: 10,

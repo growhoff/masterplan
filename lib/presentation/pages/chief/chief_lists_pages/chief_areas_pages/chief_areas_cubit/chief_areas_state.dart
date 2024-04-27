@@ -9,12 +9,12 @@ class ChiefRegionsInitial extends ChiefAreasState {
 }
 
 class ChiefRegionsSuccess extends ChiefAreasState {
-  ChiefRegionsSuccess({required this.regions});
+  ChiefRegionsSuccess({required this.areas});
 
-  final List<ZArea> regions;
+  final List<Area> areas;
 
   @override
-  List<Object?> get props => [regions];
+  List<Object?> get props => [areas];
 }
 
 class ChiefRegionsFailure extends ChiefAreasState {

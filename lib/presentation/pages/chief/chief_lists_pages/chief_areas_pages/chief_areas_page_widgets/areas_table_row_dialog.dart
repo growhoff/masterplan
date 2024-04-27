@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:master_plan/domain/model/z_area.dart';
+
+import '../../../../../../domain/model/area.dart';
 
 class AreasTableDialog extends StatefulWidget {
   const AreasTableDialog(
       {required this.area, required this.deleteRegion, super.key});
 
-  final ZArea area;
+  final Area area;
   final VoidCallback deleteRegion;
 
   @override

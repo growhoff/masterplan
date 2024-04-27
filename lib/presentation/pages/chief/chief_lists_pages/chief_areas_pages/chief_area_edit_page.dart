@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:master_plan/domain/model/z_area.dart';
 
+
+import '../../../../../domain/model/area.dart';
 import 'chief_areas_cubit/chief_areas_cubit.dart';
 
 class ChiefAreaEditPage extends StatelessWidget {
@@ -10,7 +11,7 @@ class ChiefAreaEditPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final area = ModalRoute.of(context)!.settings.arguments as ZArea;
+    final area = ModalRoute.of(context)!.settings.arguments as Area;
 
     return BlocProvider(
       create: (context) => ChiefAreasCubit(),
@@ -22,7 +23,7 @@ class ChiefAreaEditPage extends StatelessWidget {
 class ChiefAreaEditPageView extends StatefulWidget {
   const ChiefAreaEditPageView({required this.area, super.key});
 
-  final ZArea area;
+  final Area area;
 
   @override
   State<ChiefAreaEditPageView> createState() =>
