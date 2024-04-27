@@ -11,7 +11,7 @@ class BatchDTO extends Dto {
   final String technology;
   final int order;
   final bool isready;
-  final int packageId;
+  final int? packageId;
   BatchDTO({
     required this.id,
     required this.number,
@@ -21,7 +21,7 @@ class BatchDTO extends Dto {
     required this.technology,
     required this.order,
     required this.isready,
-    required this.packageId,
+    this.packageId,
   });
 
   static final empty = BatchDTO(
@@ -60,7 +60,7 @@ class BatchDTO extends Dto {
       technology: map['technology'] as String,
       order: map['order'] as int,
       isready: map['isready'] as bool,
-      packageId: map['package_id'] as int,
+      packageId: map['package_id'] != null ? map['package_id'] as int : null,
     );
   }
 

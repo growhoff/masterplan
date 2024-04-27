@@ -9,7 +9,7 @@ class Batch {
   final String technology;
   final int order;
   final bool isready;
-  final int packageId;
+  final int? packageId;
   Batch({
     required this.id,
     required this.number,
