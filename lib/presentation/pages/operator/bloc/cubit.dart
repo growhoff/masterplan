@@ -4,7 +4,7 @@ import 'state.dart';
 class CubitOperator extends Cubit<StateOperator> { 
   CubitOperator() : super(const StateOperator());
 
-  void toggleBtn(bool isStart){
-    emit(state.copyWith(isStart: isStart));
+  void toggleBtn(bool isStarts){
+    emit(state.copyWith(isStart: isStarts));
   }
 }

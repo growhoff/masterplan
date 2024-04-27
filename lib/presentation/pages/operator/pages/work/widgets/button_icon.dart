@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 
 class ButtonCircleIcon extends StatelessWidget {
-  const ButtonCircleIcon(
-      {super.key, required this.onPressed, required this.icon});
+  const ButtonCircleIcon({super.key, required this.onPressed, required this.icon, required this.isActive});
+  final bool isActive;
   final VoidCallback? onPressed;
   final IconData icon;
   @override
   Widget build(BuildContext context) {
     return Ink(
-      decoration: const ShapeDecoration(
-        color: Colors.blue,
-        shape: CircleBorder(),
+      decoration:  ShapeDecoration(
+        color: isActive ? Colors.blue : Colors.black26,
+        shape: const CircleBorder(),
       ),
       child: IconButton(
-        onPressed: onPressed,
+        onPressed: isActive ? onPressed : null,
         icon: Icon(icon),
       ),
     );

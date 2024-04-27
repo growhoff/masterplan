@@ -4,9 +4,11 @@ class Machine{
   final int id;
   final int inventoryNumber;
   final String name;
+  final int areaId;
   Machine({
     required this.id,
     required this.inventoryNumber,
     required this.name,
+    required this.areaId
   });
 }

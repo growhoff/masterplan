@@ -6,16 +6,12 @@ class MachineDTO extends Dto {
   final int id;
   final int inventoryNumber;
   final String name;
+  final int areaId;
   MachineDTO({
     required this.id,
     required this.inventoryNumber,
     required this.name,
-  });
-
-    MachineDTO.init({
-     this.id = -1,
-     this.inventoryNumber = -1,
-     this.name= 'none',
+    required this.areaId,
   });
 
 
@@ -24,6 +20,7 @@ class MachineDTO extends Dto {
       'id': id,
       'inventory_number': inventoryNumber,
       'name': name,
+      'area_id': areaId,
     };
   }
 
@@ -32,6 +29,7 @@ class MachineDTO extends Dto {
       id: map['id'] as int,
       inventoryNumber: map['inventory_number'] as int,
       name: map['name'] as String,
+      areaId: map['area_id'] as int,
     );
   }
 

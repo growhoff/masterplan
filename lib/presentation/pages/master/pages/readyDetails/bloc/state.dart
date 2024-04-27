@@ -1,20 +1,33 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
+import 'package:master_plan/presentation/pages/master/pages/readyDetails/model/item_machine.dart';
 
 class StateReadyDetails extends Equatable {
-  final int id;
+  final List<ItemMachine>? listMachine;
+  final int activePage;
+  final List<List<int>> doubleList;
+  final int count;
   const StateReadyDetails({
-    this.id = 0,
+    this.listMachine,
+    this.activePage = 0,
+    this.doubleList = const [],
+    this.count = 0,
   });
 
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [listMachine ?? [], activePage, doubleList, count];
 
   StateReadyDetails copyWith({
-    int? id,
+    List<ItemMachine>? listMachine,
+    int? activePage,
+    List<List<int>>? doubleList,
+    int? count,
   }) {
     return StateReadyDetails(
-      id: id ?? this.id,
+      listMachine: listMachine ?? this.listMachine,
+      activePage: activePage ?? this.activePage,
+      doubleList: doubleList ?? this.doubleList,
+      count: count ?? this.count,
     );
   }
 

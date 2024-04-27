@@ -6,7 +6,7 @@ import 'package:master_plan/data/repositories/supabase/dto/user_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:intl/intl.dart';
 
-class ZShiftsDistributionDTO extends Dto {
+class ShiftsDistributionDTO extends Dto {
   final int id;
   final DateTime date;
   final UserDTO? user;
@@ -15,7 +15,7 @@ class ZShiftsDistributionDTO extends Dto {
   final int userId;
   final int changeId;
   final int machineId;
-  ZShiftsDistributionDTO({
+  ShiftsDistributionDTO({
     required this.id,
     required this.date,
     required this.user,
@@ -36,9 +36,9 @@ class ZShiftsDistributionDTO extends Dto {
     };
   }
 
-  factory ZShiftsDistributionDTO.fromMap(Map<String, dynamic> map) {
+  factory ShiftsDistributionDTO.fromMap(Map<String, dynamic> map) {
     final listTime = (map['date'] as String).split('-');
-    return ZShiftsDistributionDTO(
+    return ShiftsDistributionDTO(
       id: map['id'] as int,
       date: DateTime.tryParse(map['date'] as String) ?? DateTime(int.parse(listTime[0]), int.parse(listTime[1]), int.parse(listTime[2])),
       user: UserDTO.fromMap(map['z_user'] as Map<String,dynamic>),
@@ -52,5 +52,5 @@ class ZShiftsDistributionDTO extends Dto {
 
   String toJson() => json.encode(toMap());
 
-  factory ZShiftsDistributionDTO.fromJson(String source) => ZShiftsDistributionDTO.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory ShiftsDistributionDTO.fromJson(String source) => ShiftsDistributionDTO.fromMap(json.decode(source) as Map<String, dynamic>);
   }

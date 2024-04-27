@@ -78,9 +78,9 @@ class ButtomStart extends StatelessWidget {
       builder: (context, state2) => BlocBuilder<CubitOperator, StateOperator>(
             builder: (context, state) => ElevatedButton(
                   onPressed: () {
-                    if (!state.isStart && state2.zShiftsDistributionList!.isNotEmpty) {
-                      Navigator.pushNamed(context, '/workPage');
+                    if (!state.isStart && state2.zshiftsDistributionList!.isNotEmpty) {
                       context.read<CubitOperator>().toggleBtn(!state.isStart);
+                      Navigator.pushNamed(context, '/workPage');
                     }
                   },
                   child: Text(!state.isStart ? 'Начать смену' : 'Закончить смену'),

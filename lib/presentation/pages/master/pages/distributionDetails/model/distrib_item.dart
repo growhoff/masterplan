@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class DistribItem {
+  final int id;
   final String stageNumber;
   final String detailNumber;
   final String operationName;
@@ -8,6 +9,7 @@ class DistribItem {
   final int? setCount;
   final bool isSelected;
   DistribItem({
+    required this.id,
     required this.stageNumber,
     required this.detailNumber,
     required this.operationName,
@@ -18,6 +20,7 @@ class DistribItem {
   });
 
   DistribItem copyWith({
+    int? id,
     String? stageNumber,
     String? detailNumber,
     String? operationName,
@@ -27,6 +30,7 @@ class DistribItem {
     bool? isSelected,
   }) {
     return DistribItem(
+      id: id ?? this.id,
       stageNumber: stageNumber ?? this.stageNumber,
       detailNumber: detailNumber ?? this.detailNumber,
       operationName: operationName ?? this.operationName,

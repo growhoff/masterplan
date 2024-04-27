@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
 import 'state.dart';
 
 class CubitTimer extends Cubit<StateTimer> {
@@ -23,15 +24,17 @@ class CubitTimer extends Cubit<StateTimer> {
     });
   }
 
-  void start(int index){
+  void startOrStop(int index, bool isStart, int id){
+    final operatorOperTable = OperatorOperationsTable();
     List<bool> listState = [...state.listState];
-    listState[index] = true;
-    emit(state.copyWith(listState: listState));
-  }
-
-  void stop(index) {
-    List<bool> listState = [...state.listState];
-    listState[index] = false;
+    if (isStart){
+      listState[index] = true;
+      operatorOperTable.updateTimeStart(id, DateTime.now().millisecondsSinceEpoch);
+    }
+    else {
+      listState[index] = false;
+      operatorOperTable.updateTimeStop(id, DateTime.now().millisecondsSinceEpoch);
+    }
     emit(state.copyWith(listState: listState));
   }
 
@@ -58,30 +61,3 @@ class CubitTimer extends Cubit<StateTimer> {
     else {return '0$num';}
   }
 }
-
-
-
-  // String convertXX(int num){
-  //   if (num>=10) {return '$num';}
-  //   else {return '0$num';}
-  // }
-
-  // void timeToString(int time) {
-  //   if (time == 60 || time % 60 == 0) {second = 0; minute++;}
-  //   else {second++;}
-  //   if (minute == 60) {minute = 0; hour++;}
-  //   final hourString = convertXX(hour);
-  //   final minuteString = convertXX(minute);
-  //   final secondString = convertXX(second);
-  //   result = '$hourString:$minuteString:$secondString';
-  // }
-
-  // void timeToStringNow(int time) {
-  //   hour = time ~/ 3600;
-  //   minute = (time % 3600) ~/ 60;
-  //   second = (time % 3600) % 60;
-  //   final hourString = convertXX(hour);
-  //   final minuteString = convertXX(minute);
-  //   final secondString = convertXX(second);
-  //   result = '$hourString:$minuteString:$secondString';
-  // }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
-import 'package:master_plan/presentation/app/bloc/state.dart';
-import 'package:master_plan/presentation/pages/master/model/element_bar_data.dart';
+import 'package:master_plan/presentation/pages/master/pages/monitoring/bloc/cubit.dart';
+import 'package:master_plan/presentation/pages/master/pages/monitoring/bloc/state.dart';
 import 'package:master_plan/presentation/pages/master/pages/monitoring/model/item_machine.dart';
 import 'package:master_plan/presentation/pages/master/pages/monitoring/model/item_machine_monitor.dart';
 import 'package:intl/intl.dart';
@@ -10,6 +10,20 @@ import '../../../../widgets/element_bar.dart';
 
 class MonitoringPage extends StatelessWidget {
   const MonitoringPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final stateMain = context.read<CubitMain>().state;
+    return BlocProvider<CubitMonitoring>(
+      create: (context) => CubitMonitoring(stateMain.machineList, stateMain.monitorList),
+      child: const MonitoringPageContent(),
+    );
+  }
+}
+
+
+class MonitoringPageContent extends StatelessWidget {
+  const MonitoringPageContent({super.key});
   @override
   Widget build(BuildContext context) {
     return  SafeArea(
@@ -18,27 +32,7 @@ class MonitoringPage extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              BlocBuilder<CubitMain, StateMain>(builder: (context, state) {
-                List<ElementBarData> list = [];
-                List<ItemMachineMonitor> listMonitor = [];
-
-                for (var machine in state.area!.machineList) {
-                  List<ItemMachineStatus> listStatus = [];
-                  int allTime = 0;
-                  for (var operList in state.operatorOperationsList!) {
-                    if (operList.machine.id == machine.id) {
-                      listStatus.add(ItemMachineStatus(timeStart: operList.timestart, timeEnd: operList.timestop, timeWorking: operList.timeworking, status: operList.status));
-                      allTime += operList.timeworking;
-                      }
-                  }
-                  listMonitor.add(ItemMachineMonitor(machine: machine, listStatus: listStatus, allTime: allTime));
-                }
-
-                for (var machineItem in listMonitor) {
-                  list.add(ElementBarData(header: machineItem.machine.name, content: ContentListWidget(machineItem)));
-                }
-                return ElementBar(list: list);
-              }),
+              BlocBuilder<CubitMonitoring, StateMonitoring>(builder: (context, state) => ElementBar(list: state.listBar!)),
             ],
           )
         ),
@@ -58,7 +52,7 @@ class ContentListWidget extends StatelessWidget {
         children: [
           Expanded(child: Text('${monitor.machine.name} станок', textAlign: TextAlign.left)),
           Expanded(child: Text('дата: ${DateFormat('dd.MM.yyyy').format(DateTime.now())}', textAlign: TextAlign.center)),
-          const Expanded(child: Text('смена: 1,2', textAlign: TextAlign.right))
+          const Expanded(child: Text('смена: 1', textAlign: TextAlign.right))
         ],
       ),
       const SizedBox(height: 8),
@@ -99,23 +93,29 @@ class StatusItem extends StatelessWidget {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(5.0),
-        child: Row(
+        child: Column(
           children: [
-                Expanded(flex: 4, child: Row(
-                  children: [
-                    Container(
-                      color: convertColor(item.status.id),
-                      width: 10,
-                      height: 10,
-                    ),
-                    const SizedBox(width: 5),
-                    Text(item.status.name)
-                  ],
-                )),
-                Expanded(flex: 2,child: Text(convertTime(item.timeStart))),
-                Expanded(flex: 2,child: Text(convertTime(item.timeEnd))),
-                Expanded(flex: 2,child: Text(convertTime(item.timeWorking))),
-                Expanded(child: Text('${((item.timeWorking / allTime) * 100).round()}%')),
+            Row(
+              children: [
+                    Expanded(flex: 4, child: Row(
+                      children: [
+                        Container(
+                          color: convertColor(item.status.id),
+                          width: 10,
+                          height: 10,
+                        ),
+                        const SizedBox(width: 5),
+                        Text(item.status.name)
+                      ],
+                    )),
+                    Expanded(flex: 2,child: Text(convertTime(item.timeStart))),
+                    Expanded(flex: 2,child: Text(convertTime(item.timeEnd))),
+                    Expanded(flex: 2,child: Text(convertTime(item.timeWorking))),
+                    Expanded(child: Text('${((item.timeWorking / allTime) * 100).round()}%')),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(item.comment),
           ],
         ),
       ),
@@ -159,6 +159,8 @@ Color convertColor(int status){
       case 4: colorStatus = Colors.orange;
       case 5: colorStatus = Colors.purple;
       case 6: colorStatus = Colors.blue;
+      case 7: colorStatus = Colors.grey;
+      case 8: colorStatus = Colors.white;
         break;
       default: colorStatus = Colors.white;
     }

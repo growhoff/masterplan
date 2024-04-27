@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:master_plan/domain/model/operator_operations.dart';
-import 'package:master_plan/presentation/pages/operator/pages/queue/model/item_operation.dart';
 import 'widgets/line_text_spawn.dart';
 import 'widgets/row_list.dart';
 import 'widgets/table_card.dart';
@@ -9,34 +8,17 @@ import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import 'package:master_plan/presentation/app/bloc/state.dart';
 
 class QueuePage extends StatelessWidget {
-  const QueuePage(this.operList, {super.key});
-  final List<OperatorOperations> operList;
+  const QueuePage({super.key, required this.operListReady, required this.operListQueue});
+  final List<OperatorOperations> operListReady;
+  final List<OperatorOperations> operListQueue;
   @override
   Widget build(BuildContext context) {
+    //удаление первого элемента
+    if (operListQueue.isNotEmpty) operListQueue.removeAt(0);
 
-    List<ItemOperation> listNotWork = [];
-    List<ItemOperation> listWork = [];
-
-    for (var batch in operList) {
-      for (var stage in batch.batch.stageList) {
-        for (var operat in stage.operationList) {
-          int time = 0;
-          for (var transfer in operat.transferList) {
-            time += transfer.timesh;
-          }
-          //в работе
-          if (batch.status.id == 1) listWork.add(ItemOperation(detailNumber: batch.batch.number, operationName: operat.name, timeFact: time));
-          //не в работе
-          if (batch.status.id == 5) listNotWork.add(ItemOperation(detailNumber: batch.batch.number, operationName: operat.name, timeFact: time));
-        }
-      }
-    }
     int timeMachine = 0;
-    for (var element in listWork) {
-      timeMachine += element.timeFact;
-    }
-    for (var element in listNotWork) {
-      timeMachine += element.timeFact;
+    for (var element in operListQueue) {
+      timeMachine += element.timeplan;
     }
 
     return GestureDetector(
@@ -59,9 +41,17 @@ class QueuePage extends StatelessWidget {
                 children: [
                   LineTextSpawn(title: 'Загрузка станка', text: '$timeMachine'),
                   const SizedBox(height: 8),
-                  TableCard(color: Colors.amber ,list: listWork, heder: const RowList(text1: 'Деталь', text2: 'Операция', text3: 'Время обработки',)),
+                  const Divider(),
                   const SizedBox(height: 8),
-                  TableCard(color: Colors.black12 ,list: listNotWork, heder: const RowList(text1: 'Деталь', text2: 'Номер', text3: 'Время обработки',))
+                  const Text('Готовые операции'),
+                  const SizedBox(height: 8),
+                  TableCard(color: Colors.greenAccent ,list: operListReady, heder: const RowList(text1: 'Деталь', text2: 'Операция', text3: 'Время обработки',)),
+                  const SizedBox(height: 8),
+                  const Divider(),
+                  const SizedBox(height: 8),
+                  const Text('Операции в очереди'),
+                  const SizedBox(height: 8),
+                  TableCard(color: Colors.amberAccent ,list: operListQueue, heder: const RowList(text1: 'Деталь', text2: 'Номер', text3: 'Время обработки',))
                 ],
               )
         ),

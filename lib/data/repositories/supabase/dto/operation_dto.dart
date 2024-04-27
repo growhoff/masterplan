@@ -7,17 +7,15 @@ class OperationDTO extends Dto {
   final String number;
   final String name;
   final String code;
-  final bool isready;
-  final List<int> transferId;
-    final int timepz;
+  final int timepz;
+  final int stageId;
   OperationDTO({
     required this.id,
     required this.number,
     required this.name,
     required this.code,
-    required this.isready,
-    required this.transferId,
     required this.timepz,
+    required this.stageId,
   });
 
   // (map['operation_id'] as List<dynamic>).map((e) => e as int).toList(),
@@ -28,9 +26,8 @@ class OperationDTO extends Dto {
       'number': number,
       'name': name,
       'code': code,
-      'isready': isready,
       'time_pz': timepz,
-      'transfer_id': transferId,
+      'stage_id': stageId,
     };
   }
 
@@ -40,9 +37,8 @@ class OperationDTO extends Dto {
       number: map['number'] as String,
       name: map['name'] as String,
       code: map['code'] as String,
-      isready: map['isready'] as bool,
-      transferId: (map['transfer_id'] as List<dynamic>).map((e) => e as int).toList(),
       timepz: map['time_pz'] as int,
+      stageId: map['stage_id'] as int,
     );
   }
 

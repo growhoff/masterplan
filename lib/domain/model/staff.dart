@@ -2,16 +2,16 @@
 import 'package:master_plan/domain/model/user.dart';
 
 class Staff {
-  Staff(
-      {required this.id,
-      required this.login,
-      required this.user,
-      required this.userId,
-      required this.password});
-
   final int id;
   final String login;
   final String password;
   final int userId;
   final User user;
+  Staff({
+    required this.id,
+    required this.login,
+    required this.user,
+    required this.userId,
+    required this.password
+  });
 }

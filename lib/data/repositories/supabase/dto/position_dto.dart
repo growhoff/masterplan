@@ -9,10 +9,6 @@ class PositionDTO extends Dto {
     required this.id,
     required this.name,
   });
-    PositionDTO.init({
-    this.id = 0,
-    this.name = '0',
-  });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{

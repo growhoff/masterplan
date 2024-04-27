@@ -7,15 +7,15 @@ class TransferDTO extends Dto {
   final int number;
   final String name;
   final String code;
-
   final int timesh;
+  final int operationId;
   TransferDTO({
     required this.id,
     required this.number,
     required this.name,
     required this.code,
-
     required this.timesh,
+    required this.operationId,
   });
 
   Map<String, dynamic> toMap() {
@@ -24,8 +24,8 @@ class TransferDTO extends Dto {
       'number': number,
       'name': name,
       'code': code,
-
       'time_sh': timesh,
+      'operation_id': operationId,
     };
   }
 
@@ -35,8 +35,8 @@ class TransferDTO extends Dto {
       number: map['number'] as int,
       name: map['name'] as String,
       code: map['code'] as String,
-
       timesh: map['time_sh'] as int,
+      operationId: map['operation_id'] as int,
     );
   }
 

@@ -8,6 +8,6 @@ class LineTextSpawn extends StatelessWidget {
   Widget build(BuildContext context) {
     return RichText(
         text: TextSpan(
-            children: [TextSpan(text: '$title: '), TextSpan(text: text)]));
+            children: [TextSpan(text: '$title: '), TextSpan(text: text), const TextSpan(text: ' мин')]));
   }
 }

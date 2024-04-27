@@ -6,6 +6,7 @@ class ItemMachineMonitor {
   final Machine machine;
   final List<ItemMachineStatus> listStatus;
   final int allTime;
+
   ItemMachineMonitor({
     required this.machine,
     required this.listStatus,

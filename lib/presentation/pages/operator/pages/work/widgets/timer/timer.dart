@@ -9,17 +9,6 @@ import '../button_icon.dart';
 
 class Time extends StatelessWidget {
   const Time({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider<CubitTimer>(
-        create: (context) => CubitTimer(context.read<CubitWork>().state.list.length), 
-        child: const TimeContent(),
-      );
-  }
-}
-
-class TimeContent extends StatelessWidget {
-  const TimeContent({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,12 +21,18 @@ class TimeContent extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    // ButtonCircleIcon(onPressed: () => context.read<CubitTimer>().refresh(stateWork.activePage), icon: Icons.restart_alt),
                     ButtonCircleIcon(
-                      onPressed: () => !state.listState[stateWork.activePage] ? context.read<CubitTimer>().start(stateWork.activePage) : context.read<CubitTimer>().stop(stateWork.activePage), 
+                      isActive: (stateWork.statusBtn[stateWork.activePage] == 0) || (stateWork.statusBtn[stateWork.activePage] == 1),
+                      onPressed: () {
+                        context.read<CubitTimer>().startOrStop(stateWork.activePage, !state.listState[stateWork.activePage], stateWork.pageData[stateWork.activePage].operQueueList.first.id);
+                        context.read<CubitWork>().setBtnStatus(0);
+                      }, 
                       icon: !state.listState[stateWork.activePage] ? Icons.play_arrow_rounded : Icons.pause,
                       ),
-                    ButtonCircleIcon(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => QueuePage(stateWork.pageData[stateWork.activePage].operList),)), icon: Icons.list),
+                    ButtonCircleIcon(
+                      isActive: (stateWork.statusBtn[stateWork.activePage] == 0) || (stateWork.statusBtn[stateWork.activePage] == 1),
+                      onPressed: () =>  Navigator.push(context, MaterialPageRoute(builder: (context) => QueuePage(operListReady: [...stateWork.pageData[stateWork.activePage].operReadyList], operListQueue: [...stateWork.pageData[stateWork.activePage].operQueueList]))), 
+                      icon: Icons.list),
                   ],
                 ),
           ],

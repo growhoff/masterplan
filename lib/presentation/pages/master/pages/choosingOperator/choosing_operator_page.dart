@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:master_plan/data/repositories/supabase/dto/machine_dto.dart';
+// import 'package:master_plan/data/repositories/supabase/dto/machine_dto.dart';
+import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import 'package:master_plan/presentation/app/bloc/state.dart';
 import 'package:intl/intl.dart';
@@ -9,7 +10,7 @@ import 'package:master_plan/presentation/pages/master/pages/choosingOperator/blo
 
 class ChoosingOperatorPage extends StatelessWidget {
   const ChoosingOperatorPage({super.key, required this.machine, required this.change, required this.time});
-  final MachineDTO machine;
+  final Machine machine;
   final DateTime time;
   final int change;
 

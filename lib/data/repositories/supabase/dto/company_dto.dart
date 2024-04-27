@@ -6,18 +6,15 @@ class CompanyDTO extends Dto {
   final int id;
   final String name;
   final String code;
-  final List<int> unitId;
   CompanyDTO({
     required this.id,
     required this.name,
     required this.code,
-    required this.unitId,
   });
     CompanyDTO.init({
     this.id = 0,
     this.name = '0',
     this.code = '0',
-    this.unitId = const [],
   });
   
 
@@ -26,7 +23,6 @@ class CompanyDTO extends Dto {
       'id': id,
       'name': name,
       'code': code,
-      'unit_id': unitId,
     };
   }
 
@@ -35,7 +31,6 @@ class CompanyDTO extends Dto {
       id: map['id'] as int,
       name: map['name'] as String,
       code: map['code'] as String,
-      unitId: (map['unit_id'] as List<dynamic>).map((e) => e as int).toList(),
     );
   }
 

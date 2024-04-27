@@ -5,19 +5,19 @@ import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 class UnitDTO extends Dto {
   final int id;
   final String name;
-  final List<int> areaId;
+  final int companyId;
   UnitDTO({
     required this.id,
     required this.name,
-    required this.areaId,
+    required this.companyId,
   });
-
+  
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
       'name': name,
-      'areaId': areaId,
+      'company_id': companyId,
     };
   }
 
@@ -25,7 +25,7 @@ class UnitDTO extends Dto {
     return UnitDTO(
       id: map['id'] as int,
       name: map['name'] as String,
-      areaId: (map['area_id'] as List<dynamic>).map((e) => e as int).toList(),
+      companyId: map['company_id'] as int,
     );
   }
 

@@ -12,8 +12,9 @@ class RowListFour extends StatelessWidget {
       children: [
         const Spacer(),
         Expanded(flex: 2, child: Text(text1)),
-        Expanded(flex: 2, child: Text(text2)),
-        Expanded(flex: 2, child: Text(text3)),
+        Expanded(flex: 4, child: Text(text2, textAlign: TextAlign.center)),
+        Expanded(flex: 2, child: Text(text3, textAlign: TextAlign.center)),
+        const Spacer(),
         const Spacer()
       ],
     );

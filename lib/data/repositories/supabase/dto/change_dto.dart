@@ -12,12 +12,6 @@ class ChangeDTO extends Dto{
     required this.number,
   });
 
-  ChangeDTO.init(
-    {this.id = -1,
-     this.name = '', 
-     this.number = -1,
-    });
-
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,

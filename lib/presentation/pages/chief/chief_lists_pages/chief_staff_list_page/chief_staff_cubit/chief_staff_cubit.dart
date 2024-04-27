@@ -63,8 +63,7 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
           id: areaDto.id,
           name: areaDto.name,
           number: areaDto.number,
-          machineList: [],
-          machineListId: areaDto.machineId));
+          unitId: areaDto.unitId));
     }
     activeAreaId = areasList[0].id;
     emit(state.copyWith(areasList: areasList));

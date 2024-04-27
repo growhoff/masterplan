@@ -6,22 +6,20 @@ class AreaDTO extends Dto {
   final int id;
   final String name;
   final String number;
-  final List<int> machineId;
+  final int unitId;
   AreaDTO({
     required this.id,
     required this.name,
     required this.number,
-    required this.machineId,
+    required this.unitId,
   });
-  
-
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
       'name': name,
       'number': number,
-      'machineId': machineId,
+      'unit_id': unitId,
     };
   }
 
@@ -30,7 +28,7 @@ class AreaDTO extends Dto {
       id: map['id'] as int,
       name: map['name'] as String,
       number: map['number'] as String,
-      machineId: (map['machine_id'] as List<dynamic>).map((e) => e as int).toList(),
+      unitId: map['unit_id'] as int,
     );
   }
 

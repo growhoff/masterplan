@@ -1,5 +1,4 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:master_plan/domain/model/stage.dart';
 
 class Batch {
   final int id;
@@ -10,8 +9,7 @@ class Batch {
   final String technology;
   final int order;
   final bool isready;
-  final List<Stage> stageList;
-  final List<int> stageListId;
+  final int packageId;
   Batch({
     required this.id,
     required this.number,
@@ -21,7 +19,6 @@ class Batch {
     required this.technology,
     required this.order,
     required this.isready,
-    required this.stageList,
-    required this.stageListId,
+    required this.packageId,
   });
 }

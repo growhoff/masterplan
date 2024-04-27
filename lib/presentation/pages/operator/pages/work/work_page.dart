@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/bloc/cubit.dart';
+import 'package:master_plan/presentation/pages/operator/pages/work/widgets/timer/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/operator/widgets/element_bar.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
@@ -10,10 +11,11 @@ class WorkPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final stateMain = context.read<CubitMain>().state;
     return BlocProvider<CubitWork>(
-      create: (context) => CubitWork(context.read<CubitMain>().state.zShiftsDistributionList, context.read<CubitMain>().state.operatorOperationsList),
+      create: (context) => CubitWork(stateMain.zshiftsDistributionList, stateMain.operatorOperationsList),
       child: const ContentWork()
-    ); 
+    );
   }
 }
 
@@ -34,11 +36,13 @@ class ContentWork extends StatelessWidget {
             ]);
           }),
           ),
-          body: const SafeArea(
+          body:  SafeArea(
             child: SingleChildScrollView(
               child: Padding(
-                padding: EdgeInsets.all(16), 
-                child: ElementBarOperator(),
+                padding: const EdgeInsets.all(16),
+                child: BlocProvider<CubitTimer>(
+                  create: (context) => CubitTimer(context.read<CubitWork>().state.pageData.length),
+                  child: const ElementBarOperator()),
               ),
             ),
           )),

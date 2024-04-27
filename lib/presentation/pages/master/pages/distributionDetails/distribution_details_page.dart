@@ -12,7 +12,7 @@ class DetailDistribPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final stateMain = context.read<CubitMain>().state;
     return BlocProvider(
-      create: (context) => CubitDistributionDetails(stateMain.operatorOperationsList!, stateMain.user!.areaId!),
+      create: (context) => CubitDistributionDetails(stateMain.distribMasterList!, stateMain.user!.areaId!, stateMain.machineList!),
       child: const DetailDistribContent(),
     );
   }
@@ -32,10 +32,12 @@ class DetailDistribContent extends StatelessWidget {
                 builder: (context, state) {
                   List<ExpansionPanel> list = [];
                   for (var i = 0; i < state.operList.length; i++) {
+                    Color colorMain = ((state.operList[i].setCount != null) && (state.operList[i].setCount != 0) && (state.operList[i].setMachine != null) ) ? Colors.greenAccent : Colors.white;
                     list.add(ExpansionPanel(
-                      headerBuilder: (context, isExpanded) => TitleItem(state.operList[i]), 
-                      body: BodyItem(i),
-                      isExpanded: state.operList[i].isSelected
+                      headerBuilder: (context, isExpanded) => TitleItem(state.operList[i], colorMain), 
+                      body: BodyItem(i, colorMain),
+                      isExpanded: state.operList[i].isSelected,
+                      backgroundColor: colorMain,
                     ));
                   }
                   return ExpansionPanelList(
@@ -47,7 +49,7 @@ class DetailDistribContent extends StatelessWidget {
               const SizedBox(height: 8),
               SizedBox(
                 width: double.maxFinite,
-                child: ElevatedButton(onPressed: (){}, child: const Text('Отправить в работу')))
+                child: ElevatedButton(onPressed: () => context.read<CubitDistributionDetails>().updateOperation(), child: const Text('Отправить в работу')))
             ],
           )
         ),

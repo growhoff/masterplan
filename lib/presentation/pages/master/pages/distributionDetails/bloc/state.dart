@@ -1,6 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
-import 'package:master_plan/domain/model/operation.dart';
 import 'package:master_plan/presentation/pages/master/pages/distributionDetails/model/distrib_item.dart';
 
 class StateDistributionDetails extends Equatable {

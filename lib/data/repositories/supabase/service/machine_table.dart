@@ -33,6 +33,10 @@ class MachineTable extends SupabaseTable{
     return table.select().eq('id', id);
   }
 
+  Future<List<Map<String, dynamic>>> selectMachineToArea(int areaId) {
+    return table.select().eq('area_id', areaId);
+  }
+
   Future<List<Map<String, dynamic>>> selectListId(List<int> listId) {
       String filters = '';
       for (var i = 0; i < listId.length; i++) {

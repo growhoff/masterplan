@@ -1,9 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
-import 'package:master_plan/data/repositories/supabase/dto/machine_dto.dart';
+import 'package:master_plan/domain/model/machine.dart';
 
 class StateChoosingOperator extends Equatable {
-  final MachineDTO machine;
+  final Machine machine;
   final DateTime time;
   final int change;
   final int user;
@@ -15,7 +15,7 @@ class StateChoosingOperator extends Equatable {
   });
 
   StateChoosingOperator copyWith({
-    MachineDTO? machine,
+    Machine? machine,
     DateTime? time,
     int? change,
     int? user,

@@ -11,7 +11,7 @@ class BatchDTO extends Dto {
   final String technology;
   final int order;
   final bool isready;
-  final List<int> stageId;
+  final int packageId;
   BatchDTO({
     required this.id,
     required this.number,
@@ -21,7 +21,7 @@ class BatchDTO extends Dto {
     required this.technology,
     required this.order,
     required this.isready,
-    required this.stageId,
+    required this.packageId,
   });
 
   Map<String, dynamic> toMap() {
@@ -34,7 +34,7 @@ class BatchDTO extends Dto {
       'technology': technology,
       'order': order,
       'isready': isready,
-      'stage_id': stageId,
+      'package_id': packageId,
     };
   }
 
@@ -48,7 +48,7 @@ class BatchDTO extends Dto {
       technology: map['technology'] as String,
       order: map['order'] as int,
       isready: map['isready'] as bool,
-      stageId: (map['stage_id'] as List<dynamic>).map((e) => e as int).toList(),
+      packageId: map['package_id'] as int,
     );
   }
 

@@ -1,8 +1,11 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/machine_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/operation_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/status_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/user_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
@@ -11,45 +14,74 @@ class OperatorOperationsDTO extends Dto {
   final int id;
   final int timeplan;
   final int timefact;
-  final int timestart;
-  final int timestop;
-  final int timeworking;
+  final int statusId;
   final StatusDTO status;
+  final int batchId;
   final BatchDTO batch;
-  final UserDTO user;
-  final bool isuploaded;
-  final int order;
-  final MachineDTO machine;
+  final int stageId;
+  final StageDTO stage;
+  final int operationId;
+  final OperationDTO operation;
+  final int areaId;
+  final AreaDTO area;
+
+  final int? machineId;
+  final MachineDTO? machine;
+  final int? order;
+
+  final int? timestart;
+  final int? timestop;
+  final int? timeworking;
+  final int? userId;
+  final UserDTO? user;
+  
   OperatorOperationsDTO({
     required this.id,
     required this.timeplan,
     required this.timefact,
-    required this.timestart,
-    required this.timestop,
-    required this.timeworking,
+    required this.statusId,
     required this.status,
+    required this.batchId,
     required this.batch,
-    required this.user,
-    required this.isuploaded,
-    required this.order,
-    required this.machine,
+    required this.stageId,
+    required this.stage,
+    required this.operationId,
+    required this.operation,
+    required this.areaId,
+    required this.area,
+    this.machineId,
+    this.machine,
+    this.order,
+    this.timestart,
+    this.timestop,
+    this.timeworking,
+    this.userId,
+    this.user,
   });
 
-
-  Map<String, dynamic> toMap() {
+    Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
       'time_plan': timeplan,
       'time_fact': timefact,
+      'status_id': statusId,
+      'status': status.toMap(),
+      'batch_id': batchId,
+      'batch': batch.toMap(),
+      'stage_id': stageId,
+      'stage': stage.toMap(),
+      'operation_id': operationId,
+      'operation': operation.toMap(),
+      'area_id': areaId,
+      'area': area.toMap(),
+      'machine_id': machineId,
+      'machine': machine?.toMap(),
+      'order': order,
       'time_start': timestart,
       'time_stop': timestop,
       'time_working': timeworking,
-      'status_id': status.toMap(),
-      'batch_id': batch.toMap(),
-      'user_id': user.toMap(),
-      'is_uploaded': isuploaded,
-      'order': order,
-      'machine_id': machine.toMap(),
+      'user_id': userId,
+      'user': user?.toMap(),
     };
   }
 
@@ -58,15 +90,24 @@ class OperatorOperationsDTO extends Dto {
       id: map['id'] as int,
       timeplan: map['time_plan'] as int,
       timefact: map['time_fact'] as int,
-      timestart: map['time_start'] as int,
-      timestop: map['time_stop'] as int,
-      timeworking: map['time_working'] as int,
+      statusId: map['status_id'] as int,
       status: StatusDTO.fromMap(map['z_status'] as Map<String,dynamic>),
+      batchId: map['batch_id'] as int,
       batch: BatchDTO.fromMap(map['z_batch'] as Map<String,dynamic>),
-      user: UserDTO.fromMap(map['z_user'] as Map<String,dynamic>),
-      isuploaded: map['is_uploaded'] as bool,
-      order: map['order'] as int,
-      machine: MachineDTO.fromMap(map['z_machine'] as Map<String,dynamic>),
+      stageId: map['stage_id'] as int,
+      stage: StageDTO.fromMap(map['z_stage'] as Map<String,dynamic>),
+      operationId: map['operation_id'] as int,
+      operation: OperationDTO.fromMap(map['z_operation'] as Map<String,dynamic>),
+      areaId: map['area_id'] as int,
+      area: AreaDTO.fromMap(map['z_area'] as Map<String,dynamic>),
+      machineId: map['machineId'] != null ? map['machine_id'] as int : null,
+      machine: map['z_machine'] != null ? MachineDTO.fromMap(map['z_machine'] as Map<String,dynamic>) : null,
+      order: map['order'] != null ? map['order'] as int : null,
+      timestart: map['time_start'] != null ? map['time_start'] as int : null,
+      timestop: map['time_stop'] != null ? map['time_stop'] as int : null,
+      timeworking: map['time_working'] != null ? map['time_working'] as int : null,
+      userId: map['user_id'] != null ? map['user_id'] as int : null,
+      user: map['z_user'] != null ? UserDTO.fromMap(map['z_user'] as Map<String,dynamic>) : null,
     );
   }
 

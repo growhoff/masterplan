@@ -1,80 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:master_plan/domain/model/batch.dart';
 import 'package:master_plan/domain/model/machine.dart';
+import 'package:master_plan/domain/model/operator_operations.dart';
+// import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
-import 'package:master_plan/presentation/app/bloc/state.dart';
-import 'package:master_plan/presentation/pages/master/model/element_bar_data.dart';
-import 'package:master_plan/presentation/pages/master/pages/readyDetails/model/item_machine.dart';
-import 'package:master_plan/presentation/pages/master/pages/readyDetails/model/item_text_ready.dart';
+// import 'package:master_plan/presentation/pages/master/model/element_bar_data.dart';
+import 'package:master_plan/presentation/pages/master/pages/readyDetails/bloc/cubit.dart';
+// import 'package:master_plan/presentation/pages/master/pages/readyDetails/bloc/state.dart';
+// import 'package:master_plan/presentation/pages/master/pages/readyDetails/model/item_operation.dart';
+import 'package:master_plan/presentation/pages/master/pages/readyDetails/widgets/element_bar.dart';
 import 'package:master_plan/presentation/pages/master/pages/readyDetails/widgets/row_expand.dart';
 import 'package:master_plan/presentation/pages/master/pages/readyDetails/widgets/row_expand_content.dart';
-import '../../../../widgets/element_bar.dart';
+// import '../../../../widgets/element_bar.dart';
 
-class ReadyDetailsPage extends StatelessWidget {
-  const ReadyDetailsPage({super.key});
+class BrakReadyDetailsPage extends StatelessWidget {
+  const BrakReadyDetailsPage({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return  SafeArea(
+    final cubitMain = context.read<CubitMain>().state;
+    return BlocProvider<CubitReadyDetails>(
+      create: (context) => CubitReadyDetails(cubitMain.machineList, cubitMain.readyList),
+      child: const BrakReadyDetailsContent(),
+    );
+  }
+}
+
+class BrakReadyDetailsContent extends StatelessWidget {
+  const BrakReadyDetailsContent({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return  const SafeArea(
       child: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              BlocBuilder<CubitMain, StateMain>(builder: (context, state) {
-                List<ElementBarData> list = [];
-                List<ItemMachine> listMachine = [];
-
-                for (var machine in state.area!.machineList) {
-                  int idOper = 0;
-                  int timeWorking = 0;
-                  List<Batch> batchList = [];
-                  for (var operList in state.operatorOperationsList!) {
-                    //проверка на готовые детали
-                    if ((operList.status.id == 2) && (operList.machine.id == machine.id)) {
-                      batchList.add(operList.batch);
-                      timeWorking += operList.timeworking;
-                      idOper = operList.id;
-                    }
-                  }
-                  listMachine.add(ItemMachine(machine: machine, batchList: batchList, timeWorking: timeWorking, id: idOper));
-                }
-
-                for (var machineItem in listMachine) {
-                  list.add(ElementBarData(header: machineItem.machine.name, content: ContetnReady(idOper: machineItem.id, batchList: machineItem.batchList, machine: machineItem.machine, timeWorking: machineItem.timeWorking)));
-                }
-                return ElementBar(list: list);
-              }),
-            ],
-          )
+          padding: EdgeInsets.all(16),
+          child:  ElementBarReady()
         ),
       ),
     );
   }
 }
 
-class ContetnReady extends StatelessWidget {
-  const ContetnReady({super.key, required this.batchList, required this.machine, required this.timeWorking, required this.idOper});
-  final int idOper;
-  final List<Batch> batchList;
+class ContetnReadyBrak extends StatelessWidget {
+  const ContetnReadyBrak({super.key, required this.operList, required this.machine, required this.timeWorking, required this.l});
+  final List<OperatorOperations> operList;
   final Machine machine;
   final int timeWorking;
+  final List<int> l;
+
   @override
   Widget build(BuildContext context) {
-    List<ItemTextReady> listOperations = [];
-    for (var batch in batchList) {
-      for (var stage in batch.stageList) {
-        for (var operat in stage.operationList) {
-          int time = 0;
-          for (var transfer in operat.transferList) {
-            time += transfer.timesh;
-          }
-          listOperations.add(ItemTextReady(detailNumber: batch.number, operationName: operat.name, timeFact: time));
-        }
-      }
-    }
-
-    return (listOperations.isEmpty) 
+    return (operList.isEmpty) 
     ? Center(child: Text('На станке ${machine.name} нет готовых деталей'),) 
     : Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -86,20 +62,24 @@ class ContetnReady extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 8),
+              const Divider(),
+              const SizedBox(height: 8),
               const RowExpand(text1: 'Деталь', text2: 'Операция', text3: 'Время обработки'),
               const SizedBox(height: 8),
               ListView.builder(
                 shrinkWrap: true,
-                itemCount: listOperations.length,
-                itemBuilder: (context, index) => Card(child: Padding(
+                itemCount: operList.length,
+                itemBuilder: (context, index) => Card(
+                  color: l[index] == 5 ? Colors.redAccent : l[index] == 4 ? Colors.amber : Colors.white,
+                  child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: RowExpandContent(text1: '${listOperations[index].detailNumber}', text2: listOperations[index].operationName, text3: '${listOperations[index].timeFact}'),
+                  child: RowExpandContent(operation: operList[index], indexOper: index, intL: l[index]),
                 ),),),
               const SizedBox(height: 8),
               SizedBox(
                 width: double.maxFinite,
                 child: ElevatedButton(
-                  onPressed: () {}, 
+                  onPressed: () => context.read<CubitReadyDetails>().updateOperation(), 
                   child: const Text('Вызгрузить'),
                 ),
               )

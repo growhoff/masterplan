@@ -15,7 +15,7 @@ class ShiftsDistributionTable extends SupabaseTable{
 
   @override
   Future<void> insert(Dto dto) async{
-    if (dto is ZShiftsDistributionDTO){
+    if (dto is ShiftsDistributionDTO){
       await table.insert(dto.toMap());
     } 
   }
@@ -31,8 +31,8 @@ class ShiftsDistributionTable extends SupabaseTable{
     return table.select('*, z_user($selectUser), z_change(*), z_machine(*)').eq('user_id', userId).eq('date', DateTime.now());
   }
 
-  Future<List<Map<String, dynamic>>> selectList(List<int> machineListId, DateTime date) { //, DateTime date
-        String filters = 'date.eq.$date,';
+  Future<List<Map<String, dynamic>>> selectList(List<int> machineListId, DateTime date) {
+      String filters = 'date.eq.$date,';
       for (var i = 0; i < machineListId.length; i++) {
         if (i == (machineListId.length - 1)) {
           filters += 'machine_id.eq.${machineListId[i]}';
