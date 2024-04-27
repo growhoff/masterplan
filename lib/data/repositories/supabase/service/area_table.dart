@@ -14,7 +14,7 @@ class AreaTable extends SupabaseTable {
   @override
   Future<void> insert(Dto dto) async {
     if (dto is AreaDTO) {
-      await table.insert({'name': dto.name, 'number': dto.number, 'machine_id': []});
+      await table.insert({'name': dto.name, 'number': dto.number});
     }
   }
 
@@ -50,31 +50,6 @@ class AreaTable extends SupabaseTable {
     return await table.select().eq('id', areaId);
   }
 
-  Future<void> addMachine({int? areaId, required int machineId}) async {
-    if (areaId != null) {
-      var data = await table.select().eq('id', areaId);
-      List<dynamic> machinesList = data[0]['machine_id'];
-      machinesList.add(machineId);
-      await table.update({'machine_id': machinesList}).eq('id', areaId);
-    }
-  }
-
-  Future<void> removeMachine({required int areaId, required int machineId}) async {
-    print(areaId);
-    var data = await table.select().eq('id', areaId);
-    print(data[0]['machine_id']);
-    List<dynamic> machinesList = data[0]['machine_id'];
-    machinesList.remove(machineId);
-    print(machinesList);
-    await table.update({'machine_id': machinesList}).eq('id', areaId);
-  }
-
-  Future<void> changeMachineArea({required int oldAreaId, int? newAreaId, required int machineId}) async {
-    if (newAreaId != null) {
-      await removeMachine(areaId: oldAreaId, machineId: machineId);
-      await addMachine(areaId: newAreaId, machineId: machineId);
-    }
-  }
 
   stream() {
     return table.stream(primaryKey: ['id']);

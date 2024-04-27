@@ -1,23 +1,23 @@
-// part of 'chief_areas_cubit.dart';
+part of 'chief_areas_cubit.dart';
 
-// @immutable
-// abstract class ChiefAreasState extends Equatable {}
+@immutable
+abstract class ChiefAreasState extends Equatable {}
 
-// class ChiefRegionsInitial extends ChiefAreasState {
-//   @override
-//   List<Object?> get props => [];
-// }
+class ChiefRegionsInitial extends ChiefAreasState {
+  @override
+  List<Object?> get props => [];
+}
 
-// class ChiefRegionsSuccess extends ChiefAreasState {
-//   ChiefRegionsSuccess({required this.regions});
+class ChiefRegionsSuccess extends ChiefAreasState {
+  ChiefRegionsSuccess({required this.areas});
 
-//   final List<Area> regions;
+  final List<Area> areas;
 
-//   @override
-//   List<Object?> get props => [regions];
-// }
+  @override
+  List<Object?> get props => [areas];
+}
 
-// class ChiefRegionsFailure extends ChiefAreasState {
-//   @override
-//   List<Object?> get props => [];
-// }
+class ChiefRegionsFailure extends ChiefAreasState {
+  @override
+  List<Object?> get props => [];
+}

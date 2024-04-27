@@ -33,15 +33,16 @@ class UserDTO extends Dto {
   });
 
   static final  empty = UserDTO(
-      id: 0,
-      fio: '',
-      positionId: 0,
-      companyId: 0,
-      unitId: 0,
-      areaId: 0,
-      photo: '',
-      position: PositionDTO(id: 0, name: ''),
-      company: CompanyDTO.init());
+    id: 0,
+    fio: '',
+    positionId: 0,
+    companyId: 0,
+    unitId: 0,
+    areaId: 0,
+    photo: '',
+    position: PositionDTO(id: 0, name: ''),
+    company: CompanyDTO.init(),
+  );
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{

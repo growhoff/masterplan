@@ -2,7 +2,9 @@ import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class OperationTable extends SupabaseTable{
+import '../dto/operation_dto.dart';
+
+class OperationTable extends SupabaseTable {
 
   final table = Supabase.instance.client.from('z_operation');
 
@@ -12,8 +14,18 @@ class OperationTable extends SupabaseTable{
   }
 
   @override
-  Future<void> insert(Dto dto) {
-    return table.insert(dto);
+  Future<int> insert(Dto dto) async {
+    if (dto is OperationDTO) {
+      var operation = await table.insert({
+        'number': dto.number,
+        'name': dto.name,
+        'code': dto.code,
+        'time_pz': dto.timepz,
+        'stage_id': dto.stageId
+      }).select('id');
+      return operation[0]['id'];
+    }
+    return 0;
   }
 
   @override
@@ -39,7 +51,14 @@ class OperationTable extends SupabaseTable{
 
   @override
   Future<void> update(int id, Dto dto) {
-   return table.update({'name': '1'}).eq('id', id);
+    return table.update({'name': '1'}).eq('id', id);
   }
 
+
+  Future<int> fetchOperationsQuantityInStage({required int stageId}) async {
+    final res = await table.select().eq('stage_id', stageId).count(
+        CountOption.exact);
+
+    return res.count;
+  }
 }

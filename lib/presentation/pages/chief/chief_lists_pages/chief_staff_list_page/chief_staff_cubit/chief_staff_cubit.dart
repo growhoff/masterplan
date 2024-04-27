@@ -1,27 +1,25 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
-// import 'package:gpassword/gpassword.dart';
-import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto/company_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto/position_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto/staff_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto/user_dto.dart';
-// import 'package:master_plan/data/repositories/supabase/dto2/user_dto.dart';
-// import 'package:master_plan/data/repositories/supabase/service/position_table.dart';
-// import 'package:master_plan/data/repositories/supabase/service/staff_table.dart';
-// import 'package:master_plan/data/repositories/supabase/service/user_table.dart';
-import 'package:master_plan/data/repositories/supabase/service/area_table.dart';
-import 'package:master_plan/data/repositories/supabase/service/position_table.dart';
-import 'package:master_plan/data/repositories/supabase/service/staff_table.dart';
-import 'package:master_plan/data/repositories/supabase/service/user_table.dart';
-import 'package:master_plan/domain/model/user.dart';
-// import 'package:master_plan/domain/model/z_user_model.dart';
+import 'package:image_picker/image_picker.dart';
 
-// import '../../../../../../data/repositories/supabase/dto/position_dto.dart';
+import 'package:mime/mime.dart';
+
+import '../../../../../../data/repositories/supabase/dto/area_dto.dart';
+import '../../../../../../data/repositories/supabase/dto/company_dto.dart';
+import '../../../../../../data/repositories/supabase/dto/position_dto.dart';
+import '../../../../../../data/repositories/supabase/dto/staff_dto.dart';
+import '../../../../../../data/repositories/supabase/dto/user_dto.dart';
+import '../../../../../../data/repositories/supabase/service/area_table.dart';
+
+import '../../../../../../data/repositories/supabase/service/images_storage.dart';
+import '../../../../../../data/repositories/supabase/service/position_table.dart';
+import '../../../../../../data/repositories/supabase/service/staff_table.dart';
+import '../../../../../../data/repositories/supabase/service/user_table.dart';
+import '../../../../../../domain/model/area.dart';
 import '../../../../../../domain/model/position.dart';
 import '../../../../../../domain/model/staff.dart';
-import '../../../../../../domain/model/area.dart';
+import '../../../../../../domain/model/user.dart';
 
 part 'chief_staff_state.dart';
 
@@ -38,10 +36,16 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
   final UserTable _userTable = UserTable();
   final PositionTable _positionTable = PositionTable();
 
+  final ImagePicker _imagePicker = ImagePicker();
+
+  final imageStorage = ImageStorage();
+
   int activeAreaId = 0;
 
   String selectedArea = '';
   String selectedPosition = '';
+
+  XFile? loadedProfileImage;
 
   Map<String, int> areasMap = {};
   Map<String, int> positionsMap = {};
@@ -60,10 +64,11 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
     for (var area in areas) {
       final AreaDTO areaDto = AreaDTO.fromMap(area);
       areasList.add(Area(
-          id: areaDto.id,
-          name: areaDto.name,
-          number: areaDto.number,
-          unitId: areaDto.unitId));
+        id: areaDto.id,
+        name: areaDto.name,
+        number: areaDto.number,
+        unitId: areaDto.unitId,
+      ));
     }
     activeAreaId = areasList[0].id;
     emit(state.copyWith(areasList: areasList));
@@ -91,8 +96,7 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
               unitId: staffDto.user.unitId,
               positionModel: Position(
                   id: staffDto.user.position.id,
-                  name: staffDto.user.position.name))
-              ));
+                  name: staffDto.user.position.name))));
     }
 
     emit(state.copyWith(staffList: staffList));
@@ -156,32 +160,31 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
     for (int i = 0; i < positions.length; i++) {
       PositionDTO positionDto = PositionDTO.fromMap(positions[i]);
 
-      positionsList
-          .add(Position(id: positionDto.id, name: positionDto.name));
+      positionsList.add(Position(id: positionDto.id, name: positionDto.name));
     }
 
     return positionsList;
   }
 
   Future insertStaff() async {
-    // final String? imageUrl;
+    final String? imageUrl;
 
-    // if (loadedProfileImage != null) {
-    //   final imageBytes = await loadedProfileImage?.readAsBytes();
-    //
-    //   final imageExtension = lookupMimeType(loadedProfileImage!.path);
-    //
-    //   final String supabaseImagePath = '/users_photo/${numberController.text}';
-    //
-    //   await imageStorage.uploadBinary(
-    //       path: supabaseImagePath,
-    //       bytes: imageBytes,
-    //       imageExtension: imageExtension);
-    //
-    //   imageUrl = await imageStorage.getPublicUrl(path: supabaseImagePath);
-    // } else {
-    //   imageUrl = null;
-    // }
+    if (loadedProfileImage != null) {
+      final imageBytes = await loadedProfileImage?.readAsBytes();
+
+      final imageExtension = lookupMimeType(loadedProfileImage!.path);
+
+      final String supabaseImagePath = '/users_photo/${numberController.text}';
+
+      await imageStorage.uploadBinary(
+          path: supabaseImagePath,
+          bytes: imageBytes,
+          imageExtension: imageExtension);
+
+      imageUrl = await imageStorage.getPublicUrl(path: supabaseImagePath);
+    } else {
+      imageUrl = null;
+    }
 
     var userId = await _userTable.insert(UserDTO(
         id: 0,
@@ -191,7 +194,7 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
         companyId: 1,
         company: CompanyDTO.init(),
         position: PositionDTO(id: 0, name: ''),
-        photo: null,
+        photo: imageUrl,
         unitId: null));
 
     await _staffTable.insert(StaffDTO(
@@ -203,24 +206,92 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
                 ? '1111'
                 : passwordController.text,
         userId: userId,
-        user: UserDTO.empty
-        ));
+        user: UserDTO.empty));
 
     fioController.clear();
     numberController.clear();
     passwordController.clear();
+    loadedProfileImage = null;
   }
 
+  Future addPhotoFromGallery({required ImageSource imageSource}) async {
+    final XFile? image = await _imagePicker.pickImage(source: imageSource);
+    if (image == null) {
+      print('не удалось загрузить изображение из галереи');
+      return;
+    } else {
+      print(image.path);
+      loadedProfileImage = image;
+    }
+  }
+
+  Future updateProfileImageFromGallery(
+      {required String imageName,
+      required int userId,
+      required ImageSource imageSource}) async {
+    final XFile? image = await _imagePicker.pickImage(source: imageSource);
+    if (image == null) {
+      print('не удалось загрузить изображение из галереи');
+      return;
+    } else {
+      final imageBytes = await image.readAsBytes();
+
+      final String supabaseImagePath = '/users_photo/$imageName';
+
+      final imageExtension = lookupMimeType(image.path);
+
+      await imageStorage.uploadBinary(
+          path: supabaseImagePath,
+          bytes: imageBytes,
+          imageExtension: imageExtension);
+
+      final imageUrl = await imageStorage.getPublicUrl(path: supabaseImagePath);
+
+      await _userTable.updatePhoto(userId: userId, photoUrl: imageUrl);
+    }
+  }
+
+  Future updateStaff({required Staff staffModel}) async {
+    await _userTable.update(
+        staffModel.user.id,
+        UserDTO(
+            id: staffModel.user.id,
+            fio: fioController.text == ''
+                ? staffModel.user.fio
+                : fioController.text,
+            positionId: positionsMap[selectedPosition] ?? 1,
+            areaId: areasMap[selectedArea],
+            companyId: staffModel.user.companyId,
+            position: PositionDTO(id: 0, name: ''),
+            photo: '',
+            company: CompanyDTO(
+              id: 0,
+              name: '',
+              code: '',
+            )));
+
+    await _staffTable.update(
+        staffModel.id,
+        StaffDTO(
+            id: staffModel.id,
+            login: numberController.text == ''
+                ? staffModel.login
+                : numberController.text,
+            password: passwordController.text == ''
+                ? staffModel.password
+                : passwordController.text,
+            userId: staffModel.userId,
+            user: UserDTO.empty));
+  }
 
   Future deleteStaff(
       {required int staffId,
-        required int userId,
-        required String? imagePath}) async {
+      required int userId,
+      required String? imagePath}) async {
     await _staffTable.delete(staffId);
     await _userTable.delete(userId);
-    // if (imagePath != null) {
-    //   await imageStorage.remove(path: imagePath);
-    //
-    // }
+    if (imagePath != null) {
+      await imageStorage.remove(path: imagePath);
+    }
   }
 }

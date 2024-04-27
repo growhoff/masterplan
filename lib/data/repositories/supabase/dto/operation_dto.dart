@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
+// (map['operation_id'] as List<dynamic>).map((e) => e as int).toList(),
 
 class OperationDTO extends Dto {
   final int id;
@@ -18,7 +19,14 @@ class OperationDTO extends Dto {
     required this.stageId,
   });
 
-  // (map['operation_id'] as List<dynamic>).map((e) => e as int).toList(),
+  static final empty = OperationDTO(
+    id: 0, 
+    number: '', 
+    name: '', 
+    code: '', 
+    timepz: 0, 
+    stageId: 0,
+  );
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{

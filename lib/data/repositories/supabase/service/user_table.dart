@@ -40,12 +40,22 @@ class UserTable extends SupabaseTable{
     return table.select('*, z_position(*), z_company(*), z_unit(*), z_area(*)').eq('area_id', areaId).eq('company_id', companyId).eq('position_id', 4);
   }
 
-  @override
-  Future<void> update(int id, Dto dto) {
-   return table.update({'name': '1'}).eq('id', id);
-  }
+    @override
+    Future<void> update(int id, Dto dto) async {
+      if (dto is UserDTO) {
+        await table.update({
+          'fio': dto.fio,
+          'position_id': dto.positionId,
+          'area_id': dto.areaId
+        }).eq('id', id);
+      }
+    }
 
   stream(){
     return table.stream(primaryKey: ['id']);
   }
+
+    Future updatePhoto({required int userId, required String? photoUrl}) async {
+      await table.update({'photo': photoUrl}).eq('id', userId);
+    }
 }

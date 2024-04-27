@@ -1,3 +1,4 @@
+import 'package:master_plan/data/repositories/supabase/dto/transfer_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -12,8 +13,14 @@ class TransferTable extends SupabaseTable{
   }
 
   @override
-  Future<void> insert(Dto dto) {
-    return table.insert(dto);
+  Future<void> insert(Dto dto) async{
+   if (dto is TransferDTO){
+     await table.insert({
+       'name': dto.name,
+       'code': dto.code,
+       'operation_id': dto.operationId
+     });
+   }
   }
 
   @override

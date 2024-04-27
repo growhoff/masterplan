@@ -1,6 +1,7 @@
 D:/Flutter project/master-plan/master_plan/build/windows/runner/Debug/data/icudtl.dat
 D:/Flutter project/master-plan/master_plan/build/windows/runner/Debug/flutter_windows.dll
 D:/Flutter project/master-plan/master_plan/build/windows/runner/Debug/app_links_plugin.dll
+D:/Flutter project/master-plan/master_plan/build/windows/runner/Debug/file_selector_windows_plugin.dll
 D:/Flutter project/master-plan/master_plan/build/windows/runner/Debug/url_launcher_windows_plugin.dll
 D:/Flutter project/master-plan/master_plan/build/windows/runner/Debug/data/flutter_assets/AssetManifest.json
 D:/Flutter project/master-plan/master_plan/build/windows/runner/Debug/data/flutter_assets/AssetManifest.smcbin

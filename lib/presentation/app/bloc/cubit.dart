@@ -135,11 +135,11 @@ class CubitMain extends Cubit<StateMain> {
   OperatorOperations convertDto(OperatorOperationsDTO dto){
     return OperatorOperations(
           id: dto.id, 
-          area: dto.area, 
+          area: dto.area!, 
           operation: dto.operation, 
-          stage: dto.stage, 
-          timeplan: dto.timeplan, 
-          timefact: dto.timefact, 
+          stage: dto.stage!, 
+          timeplan: dto.timeplan!, 
+          timefact: dto.timefact!, 
           timestart: dto.timestart, 
           timestop: dto.timestop, 
           timeworking: dto.timeworking, 

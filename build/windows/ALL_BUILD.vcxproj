@@ -144,6 +144,10 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <Project>{209F7EFD-B5C1-3C66-B938-5EE5040792E3}</Project>
       <Name>app_links_plugin</Name>
     </ProjectReference>
+    <ProjectReference Include="D:\Flutter project\master-plan\master_plan\build\windows\plugins\file_selector_windows\file_selector_windows_plugin.vcxproj">
+      <Project>{49D7C650-383B-3426-B823-03CC610F0460}</Project>
+      <Name>file_selector_windows_plugin</Name>
+    </ProjectReference>
     <ProjectReference Include="D:\Flutter project\master-plan\master_plan\build\windows\flutter\flutter_wrapper_app.vcxproj">
       <Project>{CDB1AFA8-2DC8-3A5E-8A07-67D5ECEB66A9}</Project>
       <Name>flutter_wrapper_app</Name>

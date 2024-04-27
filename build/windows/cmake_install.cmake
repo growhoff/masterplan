@@ -49,6 +49,11 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
+  include("D:/Flutter project/master-plan/master_plan/build/windows/plugins/file_selector_windows/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
   include("D:/Flutter project/master-plan/master_plan/build/windows/plugins/url_launcher_windows/cmake_install.cmake")
 endif()
 
@@ -157,7 +162,7 @@ endif()
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Runtime" OR NOT CMAKE_INSTALL_COMPONENT)
   if(CMAKE_INSTALL_CONFIG_NAME MATCHES "^([Dd][Ee][Bb][Uu][Gg])$")
     list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-     "D:/Flutter project/master-plan/master_plan/build/windows/runner/Debug/app_links_plugin.dll;D:/Flutter project/master-plan/master_plan/build/windows/runner/Debug/url_launcher_windows_plugin.dll")
+     "D:/Flutter project/master-plan/master_plan/build/windows/runner/Debug/app_links_plugin.dll;D:/Flutter project/master-plan/master_plan/build/windows/runner/Debug/file_selector_windows_plugin.dll;D:/Flutter project/master-plan/master_plan/build/windows/runner/Debug/url_launcher_windows_plugin.dll")
     if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
       message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
     endif()
@@ -166,11 +171,12 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Runtime" OR NOT CMAKE_INSTALL_COMPONENT)
     endif()
     file(INSTALL DESTINATION "D:/Flutter project/master-plan/master_plan/build/windows/runner/Debug" TYPE FILE FILES
       "D:/Flutter project/master-plan/master_plan/build/windows/plugins/app_links/Debug/app_links_plugin.dll"
+      "D:/Flutter project/master-plan/master_plan/build/windows/plugins/file_selector_windows/Debug/file_selector_windows_plugin.dll"
       "D:/Flutter project/master-plan/master_plan/build/windows/plugins/url_launcher_windows/Debug/url_launcher_windows_plugin.dll"
       )
   elseif(CMAKE_INSTALL_CONFIG_NAME MATCHES "^([Pp][Rr][Oo][Ff][Ii][Ll][Ee])$")
     list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-     "D:/Flutter project/master-plan/master_plan/build/windows/runner/Profile/app_links_plugin.dll;D:/Flutter project/master-plan/master_plan/build/windows/runner/Profile/url_launcher_windows_plugin.dll")
+     "D:/Flutter project/master-plan/master_plan/build/windows/runner/Profile/app_links_plugin.dll;D:/Flutter project/master-plan/master_plan/build/windows/runner/Profile/file_selector_windows_plugin.dll;D:/Flutter project/master-plan/master_plan/build/windows/runner/Profile/url_launcher_windows_plugin.dll")
     if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
       message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
     endif()
@@ -179,11 +185,12 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Runtime" OR NOT CMAKE_INSTALL_COMPONENT)
     endif()
     file(INSTALL DESTINATION "D:/Flutter project/master-plan/master_plan/build/windows/runner/Profile" TYPE FILE FILES
       "D:/Flutter project/master-plan/master_plan/build/windows/plugins/app_links/Profile/app_links_plugin.dll"
+      "D:/Flutter project/master-plan/master_plan/build/windows/plugins/file_selector_windows/Profile/file_selector_windows_plugin.dll"
       "D:/Flutter project/master-plan/master_plan/build/windows/plugins/url_launcher_windows/Profile/url_launcher_windows_plugin.dll"
       )
   elseif(CMAKE_INSTALL_CONFIG_NAME MATCHES "^([Rr][Ee][Ll][Ee][Aa][Ss][Ee])$")
     list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-     "D:/Flutter project/master-plan/master_plan/build/windows/runner/Release/app_links_plugin.dll;D:/Flutter project/master-plan/master_plan/build/windows/runner/Release/url_launcher_windows_plugin.dll")
+     "D:/Flutter project/master-plan/master_plan/build/windows/runner/Release/app_links_plugin.dll;D:/Flutter project/master-plan/master_plan/build/windows/runner/Release/file_selector_windows_plugin.dll;D:/Flutter project/master-plan/master_plan/build/windows/runner/Release/url_launcher_windows_plugin.dll")
     if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
       message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
     endif()
@@ -192,6 +199,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Runtime" OR NOT CMAKE_INSTALL_COMPONENT)
     endif()
     file(INSTALL DESTINATION "D:/Flutter project/master-plan/master_plan/build/windows/runner/Release" TYPE FILE FILES
       "D:/Flutter project/master-plan/master_plan/build/windows/plugins/app_links/Release/app_links_plugin.dll"
+      "D:/Flutter project/master-plan/master_plan/build/windows/plugins/file_selector_windows/Release/file_selector_windows_plugin.dll"
       "D:/Flutter project/master-plan/master_plan/build/windows/plugins/url_launcher_windows/Release/url_launcher_windows_plugin.dll"
       )
   endif()

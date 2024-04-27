@@ -63,4 +63,9 @@ class MachineTable extends SupabaseTable{
     return table.stream(primaryKey: ['id']);
   }
 
+  Future<int> fetchMachinesQuantityOnArea({required int areaId})async{
+    var res = await  table.select('id').eq('area_id', areaId).count(CountOption.exact);
+    return res.count;
+  }
+
 }

@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_staff_list_page/chief_staff_list_widgets/staff_element_icon.dart';
 
 import '../../../../../../domain/model/staff.dart';
+
 
 class StaffListElement extends StatefulWidget {
   const StaffListElement(
@@ -70,7 +70,7 @@ class _StaffListElementState extends State<StaffListElement> {
                       height: 10,
                     ),
                     Text(
-                        'должность: ${widget.staffModel.user.positionId}'),
+                        'должность: ${widget.staffModel.user.positionModel?.name}'),
                     const SizedBox(
                       height: 10,
                     ),

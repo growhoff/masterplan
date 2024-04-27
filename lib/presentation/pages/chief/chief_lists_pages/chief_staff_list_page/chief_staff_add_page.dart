@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 // import 'package:image_picker/image_picker.dart';
 import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_staff_list_page/chief_staff_cubit/chief_staff_cubit.dart';
 import 'chief_staff_list_widgets/add_page_user_photo_widget.dart';
@@ -52,22 +53,22 @@ class _ChiefStaffAddPageViewState extends State<ChiefStaffAddPageView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // AddPageUserPhotoWidget(
-                      //   imageUrl: context
-                      //       .read<ChiefStaffListCubit>()
-                      //       .loadedProfileImage
-                      //       ?.path,
-                      //   downloadImageFromGallery: () => context
-                      //       .read<ChiefStaffListCubit>()
-                      //       .addPhotoFromGallery(
-                      //           imageSource: ImageSource.gallery)
-                      //       .then((_) => setState(() {})),
-                      //   fetchImageFromCamera: () => context
-                      //       .read<ChiefStaffListCubit>()
-                      //       .addPhotoFromGallery(
-                      //           imageSource: ImageSource.camera)
-                      //       .then((_) => setState(() {})),
-                      // ),
+                      AddPageUserPhotoWidget(
+                        imageUrl: context
+                            .read<ChiefStaffCubit>()
+                            .loadedProfileImage
+                            ?.path,
+                        downloadImageFromGallery: () => context
+                            .read<ChiefStaffCubit>()
+                            .addPhotoFromGallery(
+                                imageSource: ImageSource.gallery)
+                            .then((_) => setState(() {})),
+                        fetchImageFromCamera: () => context
+                            .read<ChiefStaffCubit>()
+                            .addPhotoFromGallery(
+                                imageSource: ImageSource.camera)
+                            .then((_) => setState(() {})),
+                      ),
                       const SizedBox(
                         height: 20,
                       ),

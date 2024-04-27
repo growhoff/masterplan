@@ -16,10 +16,6 @@ class StaffDTO extends Dto {
     required this.user,
   });
 
-  String toJson() => json.encode(toMap());
-
-  factory StaffDTO.fromJson(String source) => StaffDTO.fromMap(json.decode(source) as Map<String, dynamic>);
-
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
@@ -39,4 +35,8 @@ class StaffDTO extends Dto {
       user: UserDTO.fromMap(map['z_user'] as Map<String,dynamic>),
     );
   }
+
+  String toJson() => json.encode(toMap());
+
+  factory StaffDTO.fromJson(String source) => StaffDTO.fromMap(json.decode(source) as Map<String, dynamic>);
 }

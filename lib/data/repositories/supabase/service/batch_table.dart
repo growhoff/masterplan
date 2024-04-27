@@ -1,9 +1,9 @@
+import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class BatchTable extends SupabaseTable{
-
+class BatchTable extends SupabaseTable {
   final table = Supabase.instance.client.from('z_batch');
 
   @override
@@ -12,8 +12,21 @@ class BatchTable extends SupabaseTable{
   }
 
   @override
-  Future<void> insert(Dto dto) {
-    return table.insert(dto);
+  Future<int> insert(Dto dto) async {
+    if (dto is BatchDTO) {
+      var data = await table.insert({
+        'number': dto.number,
+        'name': dto.name,
+        'code': dto.code,
+        'technology': dto.technology,
+        'isready': false,
+        'order': 0,
+        'count': dto.count,
+      }).select('id');
+
+      return data[0]['id'];
+    }
+    return 0;
   }
 
   @override
@@ -25,21 +38,10 @@ class BatchTable extends SupabaseTable{
     return table.select().eq('id', id);
   }
 
-  Future<List<Map<String, dynamic>>> selectListId(List<int> listId) {
-    String filters = '';
-    for (var i = 0; i < listId.length; i++) {
-      if (i == (listId.length - 1)) {
-        filters += 'id.eq.${listId[i]}';
-      } else {
-        filters += 'id.eq.${listId[i]},';
-      }
-    }
-    return table.select().or(filters);
-  }
+
 
   @override
   Future<void> update(int id, Dto dto) {
-   return table.update({'name': '1'}).eq('id', id);
+    return table.update({'name': '1'}).eq('id', id);
   }
-
 }

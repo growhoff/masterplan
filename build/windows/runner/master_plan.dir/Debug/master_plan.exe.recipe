@@ -11,6 +11,9 @@
       <FullPath>D:\Flutter project\master-plan\master_plan\build\windows\plugins\app_links\Debug\app_links_plugin.dll</FullPath>
     </ProjectOutput>
     <ProjectOutput>
+      <FullPath>D:\Flutter project\master-plan\master_plan\build\windows\plugins\file_selector_windows\Debug\file_selector_windows_plugin.dll</FullPath>
+    </ProjectOutput>
+    <ProjectOutput>
       <FullPath>D:\Flutter project\master-plan\master_plan\build\windows\plugins\url_launcher_windows\Debug\url_launcher_windows_plugin.dll</FullPath>
     </ProjectOutput>
     <ProjectOutput>

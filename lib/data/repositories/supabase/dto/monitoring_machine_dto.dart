@@ -37,17 +37,12 @@ class MonitoringMachineDTO extends Dto {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      // 'id': id,
       'time_start': timeStart,
       'time_stop': timeStop,
       'status_machine_id': statusMachineId,
-      // 'statusMachine': statusMachine?.toMap(),
       'user_id': userId,
-      // 'user': user?.toMap(),
       'machine_id': machineId,
-      // 'machine': machine?.toMap(),
       'batch_id': batchId,
-      // 'batch': batch?.toMap(),
       'comment': comment,
     };
   }

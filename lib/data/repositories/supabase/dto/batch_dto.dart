@@ -24,6 +24,18 @@ class BatchDTO extends Dto {
     required this.packageId,
   });
 
+  static final empty = BatchDTO(
+    id: 0,
+    number: '',
+    name: '',
+    count: 0,
+    code: '',
+    technology: '',
+    order: 0,
+    isready: false,
+    packageId: 0,
+  );
+
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,

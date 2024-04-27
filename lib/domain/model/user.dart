@@ -10,23 +10,25 @@ class User {
   final String? photo;
   final Position? positionModel;
 
-  User(
-      {required this.id,
-      required this.fio,
-      required this.positionId,
-      required this.companyId,
-      required this.unitId,
-      required this.areaId,
-      required this.photo,
-      required this.positionModel});
+  User({
+    required this.id,
+    required this.fio,
+    required this.positionId,
+    required this.companyId,
+    required this.unitId,
+    required this.areaId,
+    required this.photo,
+    required this.positionModel,
+  });
 
   static final empty = User(
-      id: 0,
-      fio: '',
-      positionId: 0,
-      companyId: 0,
-      unitId: 0,
-      areaId: 0,
-      photo: '',
-      positionModel: Position(id: 0, name: ''));
+    id: 0,
+    fio: '',
+    positionId: 0,
+    companyId: 0,
+    unitId: 0,
+    areaId: 0,
+    photo: '',
+    positionModel: Position(id: 0, name: ''),
+  );
 }

@@ -5,10 +5,12 @@ class Area {
   final String name;
   final String number;
   final int unitId;
+  final int? machinesQuantity;
   Area({
     required this.id,
     required this.name,
     required this.number,
     required this.unitId,
+    this.machinesQuantity
   });
 }

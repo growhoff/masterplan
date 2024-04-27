@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:master_plan/domain/model/area.dart';
+
+import '../../../../../../domain/model/area.dart';
 
 class AreasTableDialog extends StatefulWidget {
   const AreasTableDialog(
