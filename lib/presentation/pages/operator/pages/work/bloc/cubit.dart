@@ -1,9 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/monitoring_machine_dto.dart';
+// import 'package:master_plan/data/repositories/supabase/dto/operation_dto.dart';
+// import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/monitoring_machine_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
+// import 'package:master_plan/domain/model/batch.dart';
 import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/domain/model/shifts_distribution.dart';
+// import 'package:master_plan/domain/model/status.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/model/page_item.dart';
 import 'state.dart';
 
@@ -33,11 +38,11 @@ class CubitWork extends Cubit<StateWork> {
     emit(state.copyWith(activePage: index));
   }
 
-  void setReady(int id, int userId, int seconds){
+  void setReady(int id, int userId, int seconds, String comment, bool isStart){
     final operatorOperTable = OperatorOperationsTable();
     operatorOperTable.updateTimeStopAndReady(id, DateTime.now().millisecondsSinceEpoch, seconds);
     //записываем в монитор
-    setMonitor(1, userId);
+    setMonitor(1, userId, comment, isStart);
     
     List<PageItem> list = [...state.pageData];
     //добавляем первую операцию в список готовых
@@ -47,10 +52,24 @@ class CubitWork extends Cubit<StateWork> {
     emit(state.copyWith(pageData: list));
   }
 
-  void setMonitor(int status, int userid){
+  void setError(int id, int userId, int seconds, String comment, bool isStart){
+    final operatorOperTable = OperatorOperationsTable();
+    //записываем время остановки
+    operatorOperTable.updateTimeStop(id, DateTime.now().millisecondsSinceEpoch);
+    //записываем в мониторинг статус
+    setMonitor(4, userId, comment, isStart);
+  }
+
+  Future<void> setMonitor(int status, int userid, String? comment, bool isStart) async{
+    if ((comment == null) || (comment == '')) comment = 'none';
     final monitorTable = MonitoringMachineTable();
-    monitorTable.insert(MonitoringMachineDTO(id: 0, timeStart: DateTime.now().millisecond, timeStop: 0, statusMachineId: status, userId: userid, machineId: state.pageData[state.activePage].machine.id, batchId: state.pageData[state.activePage].operQueueList.first.batch.id, comment: 'no'));
-    setBtnStatus(status);
+    if (isStart){
+      final id = await monitorTable.insertToInt(MonitoringMachineDTO(id: 0, timeStart: DateTime.now().millisecondsSinceEpoch, timeStop: 0, statusMachineId: status, userId: userid, machineId: state.pageData[state.activePage].machine.id, batchId: state.pageData[state.activePage].operQueueList.first.batch.id, comment: comment));
+      emit(state.copyWith(monitorId: id));
+    } else {
+      await monitorTable.updateId(state.monitorId!, DateTime.now().millisecondsSinceEpoch);
+    }
+    setBtnStatus(status); 
 
     //нужно сохранить id мониторинга, чтобы записать конец
   }

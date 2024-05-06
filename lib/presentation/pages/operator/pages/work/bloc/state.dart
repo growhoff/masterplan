@@ -7,25 +7,29 @@ class StateWork extends Equatable {
     final List<PageItem> pageData;
     final int activePage;
     final List<int> statusBtn;
+    final int? monitorId;
   const StateWork({
     this.pageData = const [],
     this.activePage = 0,
     this.statusBtn = const [],
+    this.monitorId
   });
 
   @override
-  List<Object> get props => [pageData, activePage, statusBtn];
+  List<Object> get props => [pageData, activePage, statusBtn, monitorId ?? 0];
 
   StateWork copyWith({
     List<PageItem>? pageData,
     List<Timer>? timer,
     int? activePage,
     List<int>? statusBtn,
+    int? monitorId,
   }) {
     return StateWork(
       pageData: pageData ?? this.pageData,
       activePage: activePage ?? this.activePage,
       statusBtn: statusBtn ?? this.statusBtn,
+      monitorId: monitorId ?? this.monitorId,
     );
   }
 }

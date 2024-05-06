@@ -60,4 +60,25 @@ class CubitTimer extends Cubit<StateTimer> {
     if (num>=10) {return '$num';}
     else {return '0$num';}
   }
+
+//
+  void refreshAndStartStop(int index, bool isStart){
+    //обнуляем нужный таймер
+    List<bool> listState = [...state.listState];
+    List<int> listTick = [...state.listTick];
+    List<String> listRes = [...state.listRes];
+    listState[index] = false;
+    listTick[index] = 0;
+    listRes[index] = '00:00:00';
+
+    if (isStart){
+      listState[index] = true;
+      // operatorOperTable.updateTimeStart(id, DateTime.now().millisecondsSinceEpoch);
+    }
+    else {
+      listState[index] = false;
+      // operatorOperTable.updateTimeStop(id, DateTime.now().millisecondsSinceEpoch);
+    }
+    emit(state.copyWith(listState: listState, listTick: listTick, listRes: listRes));
+  }
 }

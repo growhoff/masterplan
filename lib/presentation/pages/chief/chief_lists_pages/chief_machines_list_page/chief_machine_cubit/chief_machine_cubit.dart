@@ -32,7 +32,7 @@ class ChiefMachineCubit extends Cubit<ChiefMachineState> {
     await fetchAreas();
 
     fetchMachinesList();
-    print('area and machines');
+
   }
 
   fetchAreas() async {
@@ -102,7 +102,7 @@ class ChiefMachineCubit extends Cubit<ChiefMachineState> {
           id: 0,
           inventoryNumber: int.parse(numberController.text),
           name: nameController.text,
-          areaId: 0),
+          areaId: areasMap[selectedArea] ?? 1),
     );
 
 
@@ -117,7 +117,6 @@ class ChiefMachineCubit extends Cubit<ChiefMachineState> {
 
   Future updateMachine({
     required Machine machine,
-    required int oldAreaId,
   }) async {
 
     await _machineTable.update(
@@ -129,6 +128,6 @@ class ChiefMachineCubit extends Cubit<ChiefMachineState> {
                 : int.parse(numberController.text),
             name:
                 nameController.text == '' ? machine.name : nameController.text,
-            areaId: machine.areaId));
+            areaId: areasMap[selectedArea] ?? machine.id));
   }
 }

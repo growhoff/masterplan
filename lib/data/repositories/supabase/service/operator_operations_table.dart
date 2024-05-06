@@ -50,7 +50,7 @@ class OperatorOperationsTable extends SupabaseTable {
         .or(filters);
   }
 
-  Future<List<Map<String, dynamic>>> selectListId236(List<int> listId) {
+  Future<List<Map<String, dynamic>>> selectListId2436(List<int> listId) {
     String filters = '';
     for (var i = 0; i < listId.length; i++) {
       if (i == (listId.length - 1)) {
@@ -59,7 +59,7 @@ class OperatorOperationsTable extends SupabaseTable {
         filters += 'machine_id.eq.${listId[i]},';
       }
     }
-    return table.select('*, z_status(*), z_batch(*), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_user($selectUser)').or(filters).or('status_id.eq.2,status_id.eq.3,status_id.eq.6').order('order', ascending: true);
+    return table.select('*, z_status(*), z_batch(*), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_user($selectUser)').or(filters).or('status_id.eq.2,status_id.eq.3,status_id.eq.4,status_id.eq.6').order('order', ascending: true);
   }
 
   Future<List<Map<String, dynamic>>> selectListIdMachine3678(List<int> listId) {

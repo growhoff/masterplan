@@ -12,7 +12,7 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
   CubitDistributionDetails(this.operOperatList, this.areaIdUser, this.listMachine) : super(const StateDistributionDetails()){
       List<DistribItem> list = [];
       for (var operOperat in operOperatList) {
-        list.add(DistribItem(id: operOperat.id, stageNumber: '${operOperat.stage.number}', detailNumber: operOperat.batch.number, operationName: operOperat.operation.name, count: operOperat.batch.count, isSelected: false));
+        list.add(DistribItem(id: operOperat.id, stageNumber: '${operOperat.stage.number}', statusId: operOperat.status.id, detailNumber: operOperat.batch.number, operationName: operOperat.operation.name, count: operOperat.batch.count, isSelected: false));
       }
     emit(state.copyWith(operList: list));
   }

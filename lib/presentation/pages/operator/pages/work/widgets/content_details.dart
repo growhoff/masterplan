@@ -9,11 +9,16 @@ import 'timer/timer.dart';
 import 'elevated_button_castom.dart';
 
 class ContentDetail extends StatelessWidget {
-  const ContentDetail(this.pageData, this.statusBtn, {super.key});
+  ContentDetail(this.pageData, this.statusBtn, {super.key});
   final int statusBtn;
   final PageItem pageData;
+
+  final TextEditingController controller = TextEditingController();
+  final FocusNode focusNode = FocusNode();
+
   @override
   Widget build(BuildContext context) {
+    
     final userId = context.read<CubitMain>().state.user!.id;
     final astivePage = context.read<CubitWork>().state.activePage;
     return pageData.operQueueList.isEmpty
@@ -42,8 +47,9 @@ class ContentDetail extends StatelessWidget {
                     isActive: (statusBtn == 0) || (statusBtn == 1),
                     color: Colors.green,
                     onPressed: () => {
-                            context.read<CubitWork>().setReady(pageData.operQueueList.first.id, userId, context.read<CubitTimer>().state.listTick[astivePage]),
-                            context.read<CubitTimer>().refresh(astivePage)
+                            context.read<CubitWork>().setReady(pageData.operQueueList.first.id, userId, context.read<CubitTimer>().state.listTick[astivePage], controller.text, !(statusBtn == 1)),
+                            context.read<CubitTimer>().refresh(astivePage),
+                            controller.clear()
                           },
                   )),
               const SizedBox(height: 8),
@@ -58,7 +64,11 @@ class ContentDetail extends StatelessWidget {
                               text: 'Уборка',
                               isActive: (statusBtn == 0) || (statusBtn == 2),
                               color: const Color.fromARGB(255, 40, 115, 153),
-                              onPressed: () => context.read<CubitWork>().setMonitor(5, userId)))),
+                              onPressed: () {
+                                context.read<CubitWork>().setMonitor(5, userId, controller.text, !(statusBtn == 2));
+                                context.read<CubitTimer>().refreshAndStartStop(astivePage, !(statusBtn == 2));
+                                controller.clear();
+                              }))),
                   const Spacer(),
                   Expanded(
                       flex: 5,
@@ -68,7 +78,11 @@ class ContentDetail extends StatelessWidget {
                               text: 'Переналадка',
                               isActive: (statusBtn == 0) || (statusBtn == 3),
                               color: Colors.amber,
-                              onPressed: () => context.read<CubitWork>().setMonitor(3, userId)))),
+                              onPressed: () {
+                                context.read<CubitWork>().setMonitor(3, userId, controller.text, !(statusBtn == 3));
+                                context.read<CubitTimer>().refreshAndStartStop(astivePage, !(statusBtn == 3));
+                                controller.clear();
+                              }))),
                 ],
               ),
               const SizedBox(height: 8),
@@ -78,7 +92,16 @@ class ContentDetail extends StatelessWidget {
                       text: 'Поломка',
                       isActive: (statusBtn == 0) || (statusBtn == 1) || (statusBtn == 4),
                       color: Colors.red,
-                      onPressed: () => context.read<CubitWork>().setMonitor(4, userId))),
+                      onPressed: () {
+                        context.read<CubitWork>().setError(pageData.operQueueList.first.id, userId, context.read<CubitTimer>().state.listTick[astivePage], controller.text, !(statusBtn == 4));
+                        context.read<CubitTimer>().refreshAndStartStop(astivePage, !(statusBtn == 4));
+                        controller.clear();
+                      })),
+              const SizedBox(height: 8),
+              TextFormField(
+                  controller: controller,
+                  focusNode: focusNode,
+                  decoration: const InputDecoration(labelText: 'Комментарий')),
             ],
           );
   }

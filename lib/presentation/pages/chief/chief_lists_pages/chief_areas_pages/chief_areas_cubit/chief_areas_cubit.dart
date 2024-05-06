@@ -51,6 +51,9 @@ class ChiefAreasCubit extends Cubit<ChiefAreasState> {
       number: numberController.text,
       unitId: 0,
     ));
+
+    numberController.clear();
+    nameController.clear();
   }
 
   Future updateArea({required Area area}) async {

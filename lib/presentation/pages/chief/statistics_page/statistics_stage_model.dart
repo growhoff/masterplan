@@ -17,7 +17,7 @@ class StatisticsStageModel {
   int? defectDetailsQuantity = 0;
   num operationsQuantity = 0;
   int? readyOperationsQuantity = 0;
-  num readyOperationsPercent = 0;
+  int? readyOperationsPercent = 0;
   List<StatisticOperationModel> operationsList;
 }
 

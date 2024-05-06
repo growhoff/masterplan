@@ -5,6 +5,7 @@ class DistribItem {
   final String detailNumber;
   final String operationName;
   final int count;
+  final int statusId;
   final String? setMachine;
   final int? setCount;
   final bool isSelected;
@@ -14,6 +15,7 @@ class DistribItem {
     required this.detailNumber,
     required this.operationName,
     required this.count,
+    required this.statusId,
     this.setMachine,
     this.setCount,
     required this.isSelected,
@@ -25,6 +27,7 @@ class DistribItem {
     String? detailNumber,
     String? operationName,
     int? count,
+    int? statusId,
     String? setMachine,
     int? setCount,
     bool? isSelected,
@@ -35,6 +38,7 @@ class DistribItem {
       detailNumber: detailNumber ?? this.detailNumber,
       operationName: operationName ?? this.operationName,
       count: count ?? this.count,
+      statusId: statusId ?? this.statusId,
       setMachine: setMachine ?? this.setMachine,
       setCount: setCount ?? this.setCount,
       isSelected: isSelected ?? this.isSelected,

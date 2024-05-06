@@ -16,7 +16,6 @@ class ShiftsDTO extends Dto{
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'id': id,
       'user_id': userId,
       'time_start': timeStart.millisecondsSinceEpoch,
       'time_end': timeEnd.millisecondsSinceEpoch,

@@ -1,27 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.master_plan.app-mergeReleaseResources-11:/values-lv/values-lv.xml",
+            "outputFile": "com.example.master_plan.app-mergeReleaseResources-21:/values-lv/values-lv.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\user\\.gradle\\caches\\transforms-3\\8f0cab18daa3822ca67c2e3884a2dad9\\transformed\\browser-1.5.0\\res\\values-lv\\values-lv.xml",
-                    "from": {
-                        "startLines": "2,3,4,5",
-                        "startColumns": "4,4,4,4",
-                        "startOffsets": "55,158,257,373",
-                        "endColumns": "102,98,115,101",
-                        "endOffsets": "153,252,368,470"
-                    },
-                    "to": {
-                        "startLines": "9,10,11,12",
-                        "startColumns": "4,4,4,4",
-                        "startOffsets": "786,889,988,1104",
-                        "endColumns": "102,98,115,101",
-                        "endOffsets": "884,983,1099,1201"
-                    }
-                },
-                {
-                    "source": "C:\\Users\\user\\.gradle\\caches\\transforms-3\\28a8b8b6e4f8eba7f58c8c8c0878f58c\\transformed\\core-1.10.1\\res\\values-lv\\values-lv.xml",
+                    "source": "C:\\Users\\user\\.gradle\\caches\\transforms-3\\c4988ff80110f75080a936fc6f044848\\transformed\\core-1.10.1\\res\\values-lv\\values-lv.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9",
                         "startColumns": "4,4,4,4,4,4,4,4",
@@ -35,6 +18,23 @@
                         "startOffsets": "55,153,255,355,456,563,671,1206",
                         "endColumns": "97,101,99,100,106,107,114,100",
                         "endOffsets": "148,250,350,451,558,666,781,1302"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\user\\.gradle\\caches\\transforms-3\\d12883dde0390e08dd2a1192741cec1b\\transformed\\browser-1.5.0\\res\\values-lv\\values-lv.xml",
+                    "from": {
+                        "startLines": "2,3,4,5",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,158,257,373",
+                        "endColumns": "102,98,115,101",
+                        "endOffsets": "153,252,368,470"
+                    },
+                    "to": {
+                        "startLines": "9,10,11,12",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "786,889,988,1104",
+                        "endColumns": "102,98,115,101",
+                        "endOffsets": "884,983,1099,1201"
                     }
                 }
             ]

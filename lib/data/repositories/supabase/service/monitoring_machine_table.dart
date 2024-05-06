@@ -17,13 +17,13 @@ class MonitoringMachineTable extends SupabaseTable {
 
   @override
   Future<void> insert(Dto dto) async{
-    if (dto is MonitoringMachineDTO) await table.insert(dto.toMap());
+    if (dto is MonitoringMachineDTO) await table.insert(dto.toMap()).select();
   }
 
   Future<int?> insertToInt(Dto dto) async{
     int? id;
     if (dto is MonitoringMachineDTO) {
-      final qveru = await table.insert(dto.toMap()).select('id');
+      final qveru = await table.insert(dto.toMap()).select();
       id = qveru.first['id'] as int;
     }
     else {id = null;}
@@ -55,6 +55,10 @@ class MonitoringMachineTable extends SupabaseTable {
   @override
   Future<void> update(int id, Dto dto) {
     return table.update({'name': '1'}).eq('id', id);
+  }
+
+  Future<void> updateId(int id, int time) async{
+    return table.update({'time_stop': time}).eq('id', id);
   }
 
   stream() {

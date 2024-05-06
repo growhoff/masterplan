@@ -24,6 +24,19 @@ class ExcelService {
   final _chiefOperationsTable = ChiefOperationsTable();
   final _transferTable = TransferTable();
 
+  final CellStyle _cellHeaderStyle = CellStyle(
+    textWrapping: TextWrapping.WrapText,
+    bold: true,
+    horizontalAlign: HorizontalAlign.Center,
+    verticalAlign: VerticalAlign.Center,
+  );
+
+  final CellStyle _cellTextStyle = CellStyle(
+    textWrapping: TextWrapping.WrapText,
+    horizontalAlign: HorizontalAlign.Center,
+    verticalAlign: VerticalAlign.Center,
+  );
+
   static const List<String> stagesHeaderList = [
     '№ п/п',
     '№ Этапа',
@@ -40,6 +53,21 @@ class ExcelService {
     'Кол-во выполненных операций (в этапе)',
     'Общее кол-во операций (в этапе)',
     '% вып.',
+  ];
+
+  static const List<String> operationsHeaderList = [
+    '№ п/п',
+    '№ Этапа',
+    '№ чертежа, наименование',
+    'Общее кол-во деталей',
+    'Код детали',
+    'Наименование операции',
+    '№ оп.',
+    'Кол-во выпыполненных деталей',
+    '% выполнено',
+    'В работе',
+    'Брак',
+    'Доработка'
   ];
 
   Future<void> stageExcelFunction() async {
@@ -81,7 +109,8 @@ class ExcelService {
           packageId: 0,
         ));
 
-        String? stageNumber = excel.tables[table]!.rows[1][4]?.value.toString();
+        String? stageNumber =
+            excel.tables[table]!.rows[1][14]?.value.toString();
         String? stageName = excel.tables[table]!.rows[1][5]?.value.toString();
 
         int stageId = await _stageTable.insert(StageDTO(
@@ -144,7 +173,7 @@ class ExcelService {
           var row = excel.tables[table]!.rows;
 
           if (row[i][4]?.value != null) {
-            stageNumber = row[i][4]?.value.toString();
+            stageNumber = row[i][14]?.value.toString();
             stageName = row[i][5]?.value.toString();
             stageId = await _stageTable.insert(StageDTO(
                 id: 0,
@@ -208,46 +237,160 @@ class ExcelService {
     excel.rename('Sheet1', 'Этапы');
 
     Sheet stageExcel = excel['Этапы'];
+    Sheet operationsExcel = excel['Ход выполнения операций'];
+    Sheet readyOperationsExcel = excel['Выполненные операции'];
+
+    List<CellValue> headerList = [];
 
     stageExcel.merge(
         CellIndex.indexByString('J1'), CellIndex.indexByString('L1'),
         customValue: TextCellValue('детали'));
 
     (stageExcel.cell(CellIndex.indexByString('J1'))).cellStyle =
-        CellStyle(bold: true, horizontalAlign: HorizontalAlign.Center);
+        _cellHeaderStyle;
 
     stageExcel.merge(
         CellIndex.indexByString('M1'), CellIndex.indexByString('O1'),
         customValue: TextCellValue('операции'));
 
     (stageExcel.cell(CellIndex.indexByString('M1'))).cellStyle =
-        CellStyle(bold: true, horizontalAlign: HorizontalAlign.Center);
+        _cellHeaderStyle;
 
-    List<CellValue> headerList = [];
-    for (int rowIndex = 0; rowIndex < stagesList.length; rowIndex++) {
-      for (int columnIndex = 0;
-          columnIndex < stagesHeaderList.length;
-          columnIndex++) {
-        final cell = stageExcel.cell(
-            CellIndex.indexByColumnRow(columnIndex: columnIndex, rowIndex: 1));
-        cell.value = TextCellValue(stagesHeaderList[columnIndex]);
-        cell.cellStyle = CellStyle(
-          textWrapping: TextWrapping.WrapText,
-          bold: true,
-          horizontalAlign: HorizontalAlign.Center,
-          verticalAlign: VerticalAlign.Center,
-        );
+    int operationRowIndex = 0;
+    for (int stageRowIndex = 0;
+        stageRowIndex < stagesList.length;
+        stageRowIndex++) {
+      for (int stageColumnIndex = 0;
+          stageColumnIndex < stagesHeaderList.length;
+          stageColumnIndex++) {
+        if (stageRowIndex == 1) {
+          final cell = stageExcel.cell(CellIndex.indexByColumnRow(
+              columnIndex: stageColumnIndex, rowIndex: stageRowIndex));
+          cell.value = TextCellValue(stagesHeaderList[stageColumnIndex]);
+          cell.cellStyle = _cellHeaderStyle;
+        }
+        final cell = stageExcel.cell(CellIndex.indexByColumnRow(
+            columnIndex: stageColumnIndex, rowIndex: stageRowIndex + 2));
+
+        final operationCell = operationsExcel.cell(CellIndex.indexByColumnRow(
+            columnIndex: stageColumnIndex, rowIndex: operationRowIndex));
+
+        switch (stageColumnIndex) {
+          case 0:
+            cell.value = IntCellValue(stageRowIndex + 1);
+
+
+            operationCell.value = IntCellValue(stageRowIndex + 1);
+
+          case 1:
+            cell.value =
+                TextCellValue('${stagesList[stageRowIndex].stage.number}');
+            
+            operationCell.value =  TextCellValue('${stagesList[stageRowIndex].stage.number}');
+         //   cell.cellStyle = _cellTextStyle;
+          case 2:
+            cell.value = TextCellValue(
+                '${stagesList[stageRowIndex].stage.batch?.number} ${stagesList[stageRowIndex].stage.name}');
+            operationCell.value = TextCellValue(
+                '${stagesList[stageRowIndex].stage.batch?.number} ${stagesList[stageRowIndex].stage.name}');
+        //    cell.cellStyle = _cellTextStyle;
+          case 3:
+            cell.value =
+                TextCellValue('${stagesList[stageRowIndex].stage.batch?.code}');
+            operationCell.value  = TextCellValue(
+                '${stagesList[stageRowIndex].stage.batch?.count}');
+         //   cell.cellStyle = _cellTextStyle;
+          case 4:
+            cell.value = TextCellValue(
+                '${stagesList[stageRowIndex].stage.batch?.count}');
+
+            operationCell.value  =  TextCellValue('${stagesList[stageRowIndex].stage.batch?.code}');
+        //    cell.cellStyle = _cellTextStyle;
+          //case 5:
+          case 6:
+            cell.value = TextCellValue(
+                '${stagesList[stageRowIndex].stage.batch?.count}');
+          //  cell.cellStyle = _cellTextStyle;
+          //case 7:
+          //case 8:
+          case 9:
+            cell.value = IntCellValue(
+                stagesList[stageRowIndex].readyDetailsQuantity ?? 0);
+           // cell.cellStyle = _cellTextStyle;
+          case 10:
+            cell.value = IntCellValue(
+                stagesList[stageRowIndex].readyDetailsPercent ?? 0);
+         //   cell.cellStyle = _cellTextStyle;
+          case 11:
+            cell.value = IntCellValue(
+                stagesList[stageRowIndex].defectDetailsQuantity ?? 0);
+          //  cell.cellStyle = _cellTextStyle;
+          case 12:
+            cell.value = IntCellValue(
+                stagesList[stageRowIndex].readyOperationsQuantity ?? 0);
+          //  cell.cellStyle = _cellTextStyle;
+          case 13:
+            cell.value = IntCellValue(
+                stagesList[stageRowIndex].operationsList.length ?? 0);
+           // cell.cellStyle = _cellTextStyle;
+          case 14:
+            cell.value = IntCellValue(
+                stagesList[stageRowIndex].readyOperationsPercent ?? 0);
+            //cell.cellStyle = _cellTextStyle;
+        }
+        cell.cellStyle = _cellTextStyle;
+        operationCell.cellStyle = _cellTextStyle;
       }
 
-      var fileBytes = excel.save();
-      var directory = await getDownloadsDirectory();
-
-      print(directory?.path);
-      final fileName = '${directory?.path}/Отчет о производстве.xlsx';
-
-      File(fileName).writeAsBytes(fileBytes!);
-
-      print('вывелось');
+      for (var operation in stagesList[stageRowIndex].operationsList) {
+        for (int operationColumnIndex = 0;
+            operationColumnIndex < operationsHeaderList.length;
+            operationColumnIndex++) {
+          if (operationRowIndex == 0) {
+            final cell = operationsExcel.cell(CellIndex.indexByColumnRow(
+                columnIndex: operationColumnIndex,
+                rowIndex: operationRowIndex));
+            cell.value =
+                TextCellValue(operationsHeaderList[operationColumnIndex]);
+            cell.cellStyle = _cellHeaderStyle;
+          } else {
+            final cell = operationsExcel.cell(CellIndex.indexByColumnRow(
+                columnIndex: operationColumnIndex,
+                rowIndex: operationRowIndex));
+            switch (operationColumnIndex) {
+              case 6:
+                cell.value = TextCellValue(
+                    '${operation.operation.number} ${operation.operation.name}');
+                cell.cellStyle = _cellTextStyle;
+              case 7:
+                cell.value = TextCellValue(operation.operation.code);
+                cell.cellStyle = _cellTextStyle;
+              case 8:
+                cell.value = IntCellValue(operation.statusMap[6]!);
+                cell.cellStyle = _cellTextStyle;
+              case 9:
+                cell.value = IntCellValue(operation.statusMap[7]!);
+                cell.cellStyle = _cellTextStyle;
+              case 10:
+                cell.value = IntCellValue(operation.statusMap[5]!);
+                cell.cellStyle = _cellTextStyle;
+              case 11:
+                cell.value = IntCellValue(operation.statusMap[4]!);
+                cell.cellStyle = _cellTextStyle;
+            }
+          }
+        }
+        operationRowIndex++;
+      }
     }
+    var fileBytes = excel.save();
+    var directory = await getDownloadsDirectory();
+
+    print(directory?.path);
+    final fileName = '${directory?.path}/Отчет о производстве.xlsx';
+
+    File(fileName).writeAsBytes(fileBytes!);
+
+    print('вывелось');
   }
 }

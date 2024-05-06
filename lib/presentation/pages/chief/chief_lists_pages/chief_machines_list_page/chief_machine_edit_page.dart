@@ -120,7 +120,7 @@ class _ChiefMachineEditPageViewState extends State<ChiefMachineEditPageView> {
                         onPressed: () {
                           context
                               .read<ChiefMachineCubit>()
-                              .updateMachine(machine: widget.machine, oldAreaId: widget.areaId);
+                              .updateMachine(machine: widget.machine);
                           Navigator.pop(context, false);
                           showModalBottomSheet(
                               context: context,

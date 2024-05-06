@@ -1,27 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.master_plan.app-mergeReleaseResources-11:/values-bs/values-bs.xml",
+            "outputFile": "com.example.master_plan.app-mergeReleaseResources-21:/values-bs/values-bs.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\user\\.gradle\\caches\\transforms-3\\8f0cab18daa3822ca67c2e3884a2dad9\\transformed\\browser-1.5.0\\res\\values-bs\\values-bs.xml",
-                    "from": {
-                        "startLines": "2,3,4,5",
-                        "startColumns": "4,4,4,4",
-                        "startOffsets": "55,159,259,373",
-                        "endColumns": "103,99,113,99",
-                        "endOffsets": "154,254,368,468"
-                    },
-                    "to": {
-                        "startLines": "9,10,11,12",
-                        "startColumns": "4,4,4,4",
-                        "startOffsets": "780,884,984,1098",
-                        "endColumns": "103,99,113,99",
-                        "endOffsets": "879,979,1093,1193"
-                    }
-                },
-                {
-                    "source": "C:\\Users\\user\\.gradle\\caches\\transforms-3\\28a8b8b6e4f8eba7f58c8c8c0878f58c\\transformed\\core-1.10.1\\res\\values-bs\\values-bs.xml",
+                    "source": "C:\\Users\\user\\.gradle\\caches\\transforms-3\\c4988ff80110f75080a936fc6f044848\\transformed\\core-1.10.1\\res\\values-bs\\values-bs.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9",
                         "startColumns": "4,4,4,4,4,4,4,4",
@@ -35,6 +18,23 @@
                         "startOffsets": "55,153,255,353,457,561,663,1198",
                         "endColumns": "97,101,97,103,103,101,116,100",
                         "endOffsets": "148,250,348,452,556,658,775,1294"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\user\\.gradle\\caches\\transforms-3\\d12883dde0390e08dd2a1192741cec1b\\transformed\\browser-1.5.0\\res\\values-bs\\values-bs.xml",
+                    "from": {
+                        "startLines": "2,3,4,5",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,159,259,373",
+                        "endColumns": "103,99,113,99",
+                        "endOffsets": "154,254,368,468"
+                    },
+                    "to": {
+                        "startLines": "9,10,11,12",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "780,884,984,1098",
+                        "endColumns": "103,99,113,99",
+                        "endOffsets": "879,979,1093,1193"
                     }
                 }
             ]

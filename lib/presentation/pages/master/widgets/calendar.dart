@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/master/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/master/bloc/state.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -17,6 +18,7 @@ class Calendar extends StatelessWidget {
               selectedDayPredicate: (day) => isSameDay(day, state.days),
               onDaySelected: (selectedDay, focusedDay) {
                 context.read<CubitMaster>().setDate(selectedDay);
+                // context.read<CubitMain>().getShiftsDistribution(selectedDay);
               },
             ));
   }

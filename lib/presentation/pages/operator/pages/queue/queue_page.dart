@@ -13,8 +13,12 @@ class QueuePage extends StatelessWidget {
   final List<OperatorOperations> operListQueue;
   @override
   Widget build(BuildContext context) {
+    OperatorOperations? operJob;
     //удаление первого элемента
-    if (operListQueue.isNotEmpty) operListQueue.removeAt(0);
+    if (operListQueue.isNotEmpty) {
+      operJob = operListQueue.first;
+      operListQueue.removeAt(0);
+      }
 
     int timeMachine = 0;
     for (var element in operListQueue) {
@@ -43,6 +47,11 @@ class QueuePage extends StatelessWidget {
                   const SizedBox(height: 8),
                   const Divider(),
                   const SizedBox(height: 8),
+                  const Text('Операция в работе'),
+                  ActiveOperationCard(operJob: operJob),
+                  const SizedBox(height: 8),
+                  const Divider(),
+                  const SizedBox(height: 8),
                   const Text('Готовые операции'),
                   const SizedBox(height: 8),
                   TableCard(color: Colors.greenAccent ,list: operListReady, heder: const RowList(text1: 'Деталь', text2: 'Операция', text3: 'Время обработки',)),
@@ -57,6 +66,25 @@ class QueuePage extends StatelessWidget {
         ),
       ),
     ),
+      ),
+    );
+  }
+}
+
+class ActiveOperationCard extends StatelessWidget {
+  const ActiveOperationCard({super.key, required this.operJob});
+  final OperatorOperations? operJob;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: Colors.grey,
+      child: Column(
+        children: [
+          const RowList(text1: 'Деталь', text2: 'Операция', text3: 'Время обработки',),
+          const SizedBox(height: 8),
+          RowList(text1: operJob != null ? operJob!.batch.name : 'none', text2: operJob != null ? operJob!.operation.name : 'none', text3: '${operJob != null ? operJob!.timeplan : 'none'}',),
+        ],
       ),
     );
   }

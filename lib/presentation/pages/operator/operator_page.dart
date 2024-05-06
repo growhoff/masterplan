@@ -4,6 +4,7 @@ import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import 'package:master_plan/presentation/app/bloc/state.dart';
 import 'package:master_plan/presentation/pages/operator/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/operator/bloc/state.dart';
+// import 'package:master_plan/presentation/pages/operator/pages/work/widgets/timer/bloc/cubit.dart';
 
 
 class OperatorPage extends StatelessWidget {
@@ -13,7 +14,7 @@ class OperatorPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<CubitOperator>(
       create: (context) => CubitOperator(),
-      child: const ContentOperator(),
+      child: const ContentOperator() 
     );
   }
 }
@@ -78,10 +79,10 @@ class ButtomStart extends StatelessWidget {
       builder: (context, state2) => BlocBuilder<CubitOperator, StateOperator>(
             builder: (context, state) => ElevatedButton(
                   onPressed: () {
-                    if (!state.isStart && state2.zshiftsDistributionList!.isNotEmpty) {
-                      context.read<CubitOperator>().toggleBtn(!state.isStart);
+                    if (!state.isStart && state2.zshiftsDistributionList != null) {
                       Navigator.pushNamed(context, '/workPage');
                     }
+                    context.read<CubitOperator>().toggleBtn(state2.user!.id);
                   },
                   child: Text(!state.isStart ? 'Начать смену' : 'Закончить смену'),
                 )),

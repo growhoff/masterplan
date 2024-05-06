@@ -57,24 +57,33 @@ class ContetnQueue extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 8),
-        Row(
-          children: [
-            Expanded(
-              flex: 6,
-              child: ElevatedButton(
-                onPressed: () => Navigator.pushNamed(context, '/addOperationPage'),
-                child: const Text('Добавить операцию'),
+        SizedBox(
+          // height: 120,
+          child: Row(
+            children: [
+              Expanded(
+                flex: 6,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 8, horizontal: 16)),
+                  ),
+                  onPressed: () => Navigator.pushNamed(context, '/addOperationPage'),
+                  child: const Text('Добавить операцию', textAlign: TextAlign.center),
+                ),
               ),
-            ),
-            const Spacer(),
-            Expanded(
-              flex: 6,
-              child: ElevatedButton(
-                onPressed: () => context.read<CubitQueueMaster>().saveDate(),
-                child: const Text('Сохранить изменения'),
+              const Spacer(),
+              Expanded(
+                flex: 6,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 8, horizontal: 16)),
+                  ),
+                  onPressed: () => context.read<CubitQueueMaster>().saveDate(),
+                  child: const Text('Сохранить изменения', textAlign: TextAlign.center),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         const SizedBox(height: 8),
         const Divider(),

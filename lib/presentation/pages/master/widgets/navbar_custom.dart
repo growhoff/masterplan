@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import 'package:master_plan/presentation/app/bloc/state.dart';
+// import 'package:master_plan/presentation/pages/login/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/master/data/data_master.dart';
 
 class NavBarCustomMaster extends StatefulWidget {
@@ -17,6 +18,7 @@ class _NavBarCustomMasterState extends State<NavBarCustomMaster> {
 
   @override
   Widget build(BuildContext context) {
+    // context.read<CubitLogin>().setBtn();
     return GestureDetector(
       child: Scaffold(
         appBar: AppBar(

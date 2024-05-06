@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/login/bloc/cubit.dart';
+import 'package:master_plan/presentation/pages/login/bloc/state.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -29,7 +30,7 @@ class ContentLogin extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('MasterPlan'),
-          actions: const [Center(child: Text('version'))],
+          actions: const [Center(child: Text('v2.0.0'))],
         ),
         body: SafeArea(
           child: Container(
@@ -52,23 +53,24 @@ class ContentLogin extends StatelessWidget {
                   decoration: const InputDecoration(labelText: 'Ввод')),
                 const SizedBox(height: 8),
                 SizedBox(
-                  width: double.maxFinite,
-                  child: ElevatedButton(
-                      onPressed: () async{
-                        final isResult = await context.read<CubitMain>().save(numberController.text, passwordController.text);
-                        // showDialog
-                        switch(isResult){
-                          case 'Директор': break;
-                          case 'Начальник': if (context.mounted) Navigator.pushNamed(context, '/chiefPage');
-                          case 'Мастер': if (context.mounted) Navigator.pushNamed(context, '/masterPage');
-                          case 'Оператор': if (context.mounted) Navigator.pushNamed(context, '/operatorPage');
-                        }
-                        
-                        numberController.clear();
-                        passwordController.clear();
-                      }, 
-                      child: const Text('Войти')),
-                )
+                    width: double.maxFinite,
+                    child: ElevatedButton(
+                        onPressed: () async{
+                          context.read<CubitLogin>().setBtn();
+                          final isResult = await context.read<CubitMain>().save(numberController.text, passwordController.text);
+                          // showDialog
+                          switch(isResult){
+                            case 'Директор': break;
+                            case 'Начальник': if (context.mounted) Navigator.pushNamed(context, '/chiefPage');
+                            case 'Мастер': if (context.mounted) Navigator.pushNamed(context, '/masterPage');
+                            case 'Оператор': if (context.mounted) Navigator.pushNamed(context, '/operatorPage');
+                          }
+                          numberController.clear();
+                          passwordController.clear();
+                        }, 
+                        child:  BlocBuilder<CubitLogin, StateLogin>(builder:(context, state) => !state.isSelect ? const Text('Войти') : const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white)))),
+                        ),
+                  ),
               ],
             ),
           ),

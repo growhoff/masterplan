@@ -39,7 +39,7 @@ class ShiftsDistributionTable extends SupabaseTable{
         filters += 'machine_id.eq.${machineListId[i]},';
       }
     }
-    return table.select('*, z_user($selectUser), z_change(*), z_machine(*)').or(filters);
+    return table.select('*, z_user($selectUser), z_change(*), z_machine(*)').or(filters).eq('date', date);
   }
 
   @override

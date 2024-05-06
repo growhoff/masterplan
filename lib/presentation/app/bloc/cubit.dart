@@ -42,8 +42,8 @@ class CubitMain extends Cubit<StateMain> {
           //мастер
           case 3:
             await getMachineToArea(state.user!.area!.id);
-            emit(state.copyWith(shiftsList:  await getShiftsDistribution(state.machineIdList!, DateTime.now())));
-            await getOperatorOperations(state.machineIdList!);
+            await getShiftsDistribution(DateTime.now());
+            await getOperatorOperations();
             await getOperators();
             await getMonitoring();
             break;
@@ -87,9 +87,9 @@ class CubitMain extends Cubit<StateMain> {
   }
 
   // master
-  Future<List<ShiftsMachine>> getShiftsDistribution(List<int> machineIdList, DateTime date) async{
+  Future<void> getShiftsDistribution(DateTime date) async{
     final zshiftsDistributionTable = ShiftsDistributionTable();
-    final zshiftsDistributionQuery = await zshiftsDistributionTable.selectList(machineIdList, date);
+    final zshiftsDistributionQuery = await zshiftsDistributionTable.selectList(state.machineIdList!, date);
     
     List<ShiftsDistributionDTO> listDto = [];
     for (var shiftsDistr in zshiftsDistributionQuery) {
@@ -108,27 +108,27 @@ class CubitMain extends Cubit<StateMain> {
       }
       list.add(ShiftsMachine(machine: machine, changeOne: changeOne, changeTwo: changeTwo));
     }
-    return list;
+    return emit(state.copyWith(shiftsList: list));
   }
 
   //master
-  Future<void> getOperatorOperations(List<int> machineListId) async{
+  Future<void> getOperatorOperations() async{
     final operatorOperationsTable = OperatorOperationsTable();
-    final operatorOperationsQuery = await operatorOperationsTable.selectListId236(machineListId);
-    List<OperatorOperations> operOperListSt2 = [];
+    final operatorOperationsQuery = await operatorOperationsTable.selectListId2436(state.machineIdList!);
+    List<OperatorOperations> operOperListSt24 = [];
     List<OperatorOperations> operOperListSt3 = [];
     List<OperatorOperations> operOperListSt6 = [];
     for (var operatorOper in operatorOperationsQuery) {
       final model = OperatorOperationsDTO.fromMap(operatorOper);
       //Распределение мастер
-      if (model.status.id == 2) operOperListSt2.add(convertDto(model));
+      if (model.status.id == 2 || model.status.id == 4) operOperListSt24.add(convertDto(model));
       //Очередь
       if (model.status.id == 3) operOperListSt3.add(convertDto(model));
       //Готово
       if (model.status.id == 6) operOperListSt6.add(convertDto(model));
     }
 
-    emit(state.copyWith(distribMasterList: operOperListSt2, queueList: operOperListSt3, readyList: operOperListSt6));
+    emit(state.copyWith(distribMasterList: operOperListSt24, queueList: operOperListSt3, readyList: operOperListSt6));
   }
   
   //master

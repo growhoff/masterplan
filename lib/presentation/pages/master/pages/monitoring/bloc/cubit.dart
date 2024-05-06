@@ -21,7 +21,7 @@ class CubitMonitoring extends Cubit<StateMonitoring> {
           listStatus.add(ItemMachineStatus(
               timeStart: monitor.timeStart,
               timeEnd: monitor.timeStop,
-              timeWorking: monitor.timeStop - monitor.timeStart,
+              timeWorking: (monitor.timeStop < monitor.timeStart) ? 0 : monitor.timeStop - monitor.timeStart,
               status: monitor.statusMachine!,
               comment: monitor.comment));
           allTime += (monitor.timeStop - monitor.timeStart);

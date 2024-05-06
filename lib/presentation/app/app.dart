@@ -7,7 +7,9 @@ import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_mac
 import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_machines_list_page/chief_machine_edit_page.dart';
 import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_machines_list_page/chief_machines_list_page.dart';
 import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_staff_list_page/chief_staff_add_page.dart';
+import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_staff_list_page/chief_staff_edit_page.dart';
 import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_staff_list_page/chief_staff_list_page.dart';
+import 'package:master_plan/presentation/pages/chief/statistics_page/operations_statistics_page.dart';
 import 'package:master_plan/presentation/pages/chief/widgets/custom_navbar.dart';
 import 'package:master_plan/presentation/pages/login/login_page.dart';
 import 'package:master_plan/presentation/pages/master/pages/addOperation/add_operation_page.dart';
@@ -41,6 +43,8 @@ class MyApp extends StatelessWidget {
           '/chiefMachineEditPage': (BuildContext context) => const ChiefMachineEditPage(),
           '/chiefStaffListPage': (BuildContext context) => const ChiefStaffListPage(),
           '/chiefStaffAddPage': (BuildContext context) => const ChiefStaffAddPage(),
+          '/chiefStaffEditPage': (BuildContext context) => const ChiefStaffEditPage(),
+          '/chiefOperationsStatisticsPage': (BuildContext context) => const OperationsStatisticsPage(),
         },
         home: const LoginPage(),
       ),

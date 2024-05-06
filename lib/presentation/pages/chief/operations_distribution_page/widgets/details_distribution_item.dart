@@ -24,7 +24,10 @@ class ChiefOperationDistributionTitleItem extends StatelessWidget {
             Text(
                 'Деталь № ${operation.batch.technology}\n${operation.batch.name}'),
             const SizedBox(height: 8),
-            Text('Кол-во операций: ${operation.quantity}'),
+            Text(
+                'Операция: ${operation.operation.number} ${operation.operation.name}'),
+            const SizedBox(height: 8),
+            Text('Кол-во деталей: ${operation.quantity}'),
           ],
         ),
       ),

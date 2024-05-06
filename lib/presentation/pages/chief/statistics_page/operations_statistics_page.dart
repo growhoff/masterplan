@@ -63,7 +63,7 @@ class _OperationsStatisticsPageViewState
                                 height: 5,
                               ),
                               Text(
-                                  '№ этапа: ${widget.statisticsStage.stage.batch?.code}.${widget.statisticsStage.stage.number}'),
+                                  '№ этапа: ${widget.statisticsStage.stage.number}'),
                               const SizedBox(
                                 height: 5,
                               ),
