@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:master_plan/data/repositories/local/service/excel_service.dart';
 import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto/chief_operations_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/chief_distribution_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operation_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
@@ -11,11 +11,11 @@ import 'package:master_plan/data/repositories/supabase/dto/status_dto.dart';
 
 import 'package:master_plan/data/repositories/supabase/service/area_table.dart';
 
-import 'package:master_plan/data/repositories/supabase/service/chief_operations_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/chief_distribution_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
 import 'package:master_plan/presentation/pages/chief/model/distribution_operation_model.dart';
 
-import '../../../../../domain/model/chief_operations_model.dart';
+import '../../../../../domain/model/chief_distribution_operations_model.dart';
 
 part 'chief_distribution_state.dart';
 
@@ -27,7 +27,7 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
 
   final AreaTable _areaTable = AreaTable();
 
-  final ChiefOperationsTable _chiefOperationsTable = ChiefOperationsTable();
+  final ChiefDistributionOperationsTable _chiefOperationsTable = ChiefDistributionOperationsTable();
 
   List<bool> isElementOpenList = [];
 
@@ -42,12 +42,12 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
 
   Future<void> fetchChiefOperations() async {
     isElementOpenList = [];
-    List<ChiefOperation> chiefOperationsList = [];
+    List<ChiefDistributionOperation> chiefOperationsList = [];
     var fetchedChiefOperationsList = await _chiefOperationsTable.selectNotDistributed();
 
     for (var operation in fetchedChiefOperationsList) {
-      final chiefOperationDto = ChiefOperationsDTO.fromMap(operation);
-      chiefOperationsList.add(ChiefOperation(
+      final chiefOperationDto = ChiefDistributionOperationsDTO.fromMap(operation);
+      chiefOperationsList.add(ChiefDistributionOperation(
           operationId: chiefOperationDto.operationId,
           stageId: chiefOperationDto.stageId,
           stage: chiefOperationDto.stage,

@@ -160,6 +160,10 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <Project>{FA0E9A7B-31D2-33FA-ACCB-5E2C301E7EF8}</Project>
       <Name>master_plan</Name>
     </ProjectReference>
+    <ProjectReference Include="D:\Flutter project\master-plan\master_plan\build\windows\plugins\permission_handler_windows\permission_handler_windows_plugin.vcxproj">
+      <Project>{BC3707FD-B7B3-3F56-9AF3-058370145C92}</Project>
+      <Name>permission_handler_windows_plugin</Name>
+    </ProjectReference>
     <ProjectReference Include="D:\Flutter project\master-plan\master_plan\build\windows\plugins\url_launcher_windows\url_launcher_windows_plugin.vcxproj">
       <Project>{9F55CD74-ED23-3D5D-88E6-B2C09634E94D}</Project>
       <Name>url_launcher_windows_plugin</Name>

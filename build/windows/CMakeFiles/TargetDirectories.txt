@@ -14,6 +14,9 @@ D:/Flutter project/master-plan/master_plan/build/windows/plugins/app_links/CMake
 D:/Flutter project/master-plan/master_plan/build/windows/plugins/file_selector_windows/CMakeFiles/file_selector_windows_plugin.dir
 D:/Flutter project/master-plan/master_plan/build/windows/plugins/file_selector_windows/CMakeFiles/INSTALL.dir
 D:/Flutter project/master-plan/master_plan/build/windows/plugins/file_selector_windows/CMakeFiles/ALL_BUILD.dir
+D:/Flutter project/master-plan/master_plan/build/windows/plugins/permission_handler_windows/CMakeFiles/permission_handler_windows_plugin.dir
+D:/Flutter project/master-plan/master_plan/build/windows/plugins/permission_handler_windows/CMakeFiles/INSTALL.dir
+D:/Flutter project/master-plan/master_plan/build/windows/plugins/permission_handler_windows/CMakeFiles/ALL_BUILD.dir
 D:/Flutter project/master-plan/master_plan/build/windows/plugins/url_launcher_windows/CMakeFiles/url_launcher_windows_plugin.dir
 D:/Flutter project/master-plan/master_plan/build/windows/plugins/url_launcher_windows/CMakeFiles/INSTALL.dir
 D:/Flutter project/master-plan/master_plan/build/windows/plugins/url_launcher_windows/CMakeFiles/ALL_BUILD.dir

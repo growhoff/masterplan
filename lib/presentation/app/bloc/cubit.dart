@@ -43,7 +43,7 @@ class CubitMain extends Cubit<StateMain> {
           case 3:
             await getMachineToArea(state.user!.area!.id);
             await getShiftsDistribution(DateTime.now());
-            // await getOperatorOperations();
+           // await getOperatorOperations();
             await getOperators();
             await getMonitoring();
             break;
@@ -112,24 +112,24 @@ class CubitMain extends Cubit<StateMain> {
   }
 
   //master
-  // Future<void> getOperatorOperations() async{
-  //   final operatorOperationsTable = OperatorOperationsTable();
-  //   final operatorOperationsQuery = await operatorOperationsTable.selectListId2436(state.machineIdList!);
-  //   List<OperatorOperations> operOperListSt24 = [];
-  //   List<OperatorOperations> operOperListSt3 = [];
-  //   List<OperatorOperations> operOperListSt6 = [];
-  //   for (var operatorOper in operatorOperationsQuery) {
-  //     final model = OperatorOperationsDTO.fromMap(operatorOper);
-  //     //Распределение мастер
-  //     if (model.status.id == 2 || model.status.id == 4) operOperListSt24.add(convertDto(model));
-  //     //Очередь
-  //     if (model.status.id == 3) operOperListSt3.add(convertDto(model));
-  //     //Готово
-  //     if (model.status.id == 6) operOperListSt6.add(convertDto(model));
-  //   }
+  Future<void> getOperatorOperations() async{
+    final operatorOperationsTable = OperatorOperationsTable();
+    final operatorOperationsQuery = await operatorOperationsTable.selectListId2436(state.machineIdList!);
+    List<OperatorOperations> operOperListSt24 = [];
+    List<OperatorOperations> operOperListSt3 = [];
+    List<OperatorOperations> operOperListSt6 = [];
+    for (var operatorOper in operatorOperationsQuery) {
+      final model = OperatorOperationsDTO.fromMap(operatorOper);
+      //Распределение мастер
+      if (model.status.id == 2 || model.status.id == 4) operOperListSt24.add(convertDto(model));
+      //Очередь
+      if (model.status.id == 3) operOperListSt3.add(convertDto(model));
+      //Готово
+      if (model.status.id == 6) operOperListSt6.add(convertDto(model));
+    }
 
-  //   emit(state.copyWith(distribMasterList: operOperListSt24, queueList: operOperListSt3, readyList: operOperListSt6));
-  // }
+    emit(state.copyWith(distribMasterList: operOperListSt24, queueList: operOperListSt3, readyList: operOperListSt6));
+  }
   
   //master
   OperatorOperations convertDto(OperatorOperationsDTO dto){

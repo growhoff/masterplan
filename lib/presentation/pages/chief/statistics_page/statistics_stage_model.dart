@@ -3,6 +3,7 @@ import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
 import '../../../../data/repositories/supabase/dto/batch_dto.dart';
 import '../../../../data/repositories/supabase/dto/operation_dto.dart';
 
+import '../../../../data/repositories/supabase/dto/user_dto.dart';
 import '../../../../domain/model/area.dart';
 import '../../../../domain/model/machine.dart';
 
@@ -32,6 +33,9 @@ class StatisticOperationModel {
   final int quantity;
   Area? area;
 
+  List<ReadyOperationModel> readyOperationsList;
+
+  num? readyPercent;
 
   //ключ - айди статуса, значение - кол-во
   Map<int, int> statusMap = {
@@ -46,10 +50,6 @@ class StatisticOperationModel {
     9: 0
   };
 
-  List<StatisticsOperatorOperationsModel> operatorOperationsList;
-
-  num? readyPercent;
-
   StatisticOperationModel(
       {required this.id,
       required this.operationId,
@@ -59,12 +59,12 @@ class StatisticOperationModel {
       required this.batchId,
       required this.batch,
       required this.quantity,
-      required this.operatorOperationsList,
+      required this.readyOperationsList,
         this.area
       });
 }
 
-class StatisticsOperatorOperationsModel {
+class ReadyOperationModel {
   final int? timePlan;
   final int? timeFact;
   final Status? status;
@@ -72,8 +72,9 @@ class StatisticsOperatorOperationsModel {
   final int? timeStart;
   final int? timeStop;
   final int? timeWorking;
+  final UserDTO? user;
 
-  StatisticsOperatorOperationsModel(
+  ReadyOperationModel(
       {this.status,
       this.timeFact,
       this.timePlan,
@@ -81,5 +82,6 @@ class StatisticsOperatorOperationsModel {
       this.timeStart,
       this.timeStop,
       this.timeWorking,
+        this.user,
       });
 }

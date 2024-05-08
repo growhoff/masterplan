@@ -8,7 +8,7 @@ class ChiefDistributionState extends Equatable {
       this.areasList = const [],
       this.status = DistributionPageStatus.initial});
 
-  final List<ChiefOperation> chiefOperationsList;
+  final List<ChiefDistributionOperation> chiefOperationsList;
   final List<String> areasList;
   final DistributionPageStatus status;
 
@@ -17,7 +17,7 @@ class ChiefDistributionState extends Equatable {
 
   ChiefDistributionState copyWith({
     List<String>? areasList,
-    List<ChiefOperation>? chiefOperationsList,
+    List<ChiefDistributionOperation>? chiefOperationsList,
     DistributionPageStatus? status,
   }) {
     return ChiefDistributionState(

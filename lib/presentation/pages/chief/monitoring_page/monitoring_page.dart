@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:master_plan/presentation/app/bloc/cubit.dart';
-
 import 'package:intl/intl.dart';
 
 import '../widgets/element_bar_widget.dart';
@@ -41,7 +39,7 @@ class _MonitoringPageContentState extends State<MonitoringPageContent> {
     return SafeArea(
       child: BlocBuilder<MonitoringCubit, MonitoringState>(
         builder: (context, state) {
-          if (state.listBar != []) {
+          if (state.listBar!.isNotEmpty) {
             return SingleChildScrollView(
               child: Padding(
                   padding: const EdgeInsets.all(16),
@@ -52,7 +50,7 @@ class _MonitoringPageContentState extends State<MonitoringPageContent> {
                   )),
             );
           } else {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
         },
       ),

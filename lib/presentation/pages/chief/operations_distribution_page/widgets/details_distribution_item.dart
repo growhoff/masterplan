@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:master_plan/domain/model/chief_operations_model.dart';
+import 'package:master_plan/domain/model/chief_distribution_operations_model.dart';
 import 'package:master_plan/presentation/pages/chief/model/distribution_operation_model.dart';
 
 import '../chief_distribution_cubit/chief_distribution_cubit.dart';
@@ -9,7 +9,7 @@ import '../chief_distribution_cubit/chief_distribution_cubit.dart';
 class ChiefOperationDistributionTitleItem extends StatelessWidget {
   const ChiefOperationDistributionTitleItem(this.operation, {super.key});
 
-  final ChiefOperation operation;
+  final ChiefDistributionOperation operation;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +39,7 @@ class ChiefOperationDistributionBodyItem extends StatefulWidget {
   const ChiefOperationDistributionBodyItem(
       {required this.operation, super.key});
 
-  final ChiefOperation operation;
+  final ChiefDistributionOperation operation;
 
   @override
   State<ChiefOperationDistributionBodyItem> createState() =>

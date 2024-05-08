@@ -1,16 +1,18 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:master_plan/data/repositories/local/service/excel_service.dart';
+import 'package:master_plan/data/repositories/local/service/notification_service.dart';
 import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto/chief_operations_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/chief_distribution_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
-import 'package:master_plan/data/repositories/supabase/service/chief_operations_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/chief_distribution_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
 
-import 'package:master_plan/domain/model/chief_operations_model.dart';
+import 'package:master_plan/domain/model/chief_distribution_operations_model.dart';
 
 import 'package:master_plan/presentation/pages/chief/statistics_page/statistics_stage_model.dart';
+import 'package:open_filex/open_filex.dart';
 
 import '../../../../../data/repositories/supabase/service/area_table.dart';
 import '../../../../../domain/model/area.dart';
@@ -20,11 +22,11 @@ part 'statistics_state.dart';
 class StatisticsCubit extends Cubit<ChiefStatisticsState> {
   StatisticsCubit() : super(ChiefStatisticsState());
 
-
   final ExcelService _excelService = ExcelService();
+  final NotificationService _notificationService = NotificationService();
 
   final AreaTable _areaTable = AreaTable();
-  final ChiefOperationsTable _chiefOperationsTable = ChiefOperationsTable();
+  final ChiefDistributionOperationsTable _chiefOperationsTable = ChiefDistributionOperationsTable();
   final OperatorOperationsTable _operatorOperationsTable =
       OperatorOperationsTable();
   int activeAreaId = 0;
@@ -54,8 +56,8 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
     var fetchedChiefOperationsList = await _chiefOperationsTable.select();
 
     for (var operation in fetchedChiefOperationsList) {
-      final chiefOperationDto = ChiefOperationsDTO.fromMap(operation);
-      final chiefOperation = ChiefOperation(
+      final chiefOperationDto = ChiefDistributionOperationsDTO.fromMap(operation);
+      final chiefOperation = ChiefDistributionOperation(
           id: chiefOperationDto.id,
           operationId: chiefOperationDto.operationId,
           stageId: chiefOperationDto.stageId,
@@ -78,7 +80,7 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
           batchId: chiefOperation.batchId,
           batch: chiefOperation.batch,
           quantity: chiefOperation.quantity,
-          operatorOperationsList: [],
+          readyOperationsList: [],
         ));
         // заменяем список в модели на новый
         stagesMap[chiefOperation.stageId]?.operationsList = newOperationsList;
@@ -103,7 +105,7 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
                 batchId: chiefOperation.batchId,
                 batch: chiefOperation.batch,
                 quantity: chiefOperation.quantity,
-                operatorOperationsList: [],
+                readyOperationsList: [],
               )
             ]);
       }
@@ -114,6 +116,7 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
     for (var operatorOperation in fetchedOperatorOperationsList) {
       final operatorOperationDto =
           OperatorOperationsDTO.fromMap(operatorOperation);
+
       var oldOperation = stagesMap[operatorOperationDto.stageId]
           ?.operationsList
           .firstWhere((element) =>
@@ -150,6 +153,20 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
                   number: operatorOperationDto.area?.number ?? '',
                   unitId: operatorOperationDto.area?.unitId ?? 0);
         }
+
+        if (operatorOperationDto.statusId == 9) {
+          stagesMap[operatorOperationDto.stageId]
+              ?.operationsList[index]
+              .readyOperationsList
+              .add(ReadyOperationModel(
+                  timeFact: operatorOperationDto.timefact,
+                  timePlan: operatorOperationDto.timeplan,
+                  timeStart: operatorOperationDto.timestart,
+                  timeStop: operatorOperationDto.timestop,
+                  timeWorking: operatorOperationDto.timeworking,
+            user: operatorOperationDto.user,
+          ));
+        }
       }
     }
 
@@ -175,7 +192,22 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
     }
   }
 
-  Future<void> uploadReportToExcel()async{
-    _excelService.uploadReport(stagesList: state.stagesList);
+  Future<void> uploadReportToExcel() async {
+    String filePath =
+        await _excelService.uploadReport(stagesList: state.stagesList);
+    if (filePath == '') {
+      filePath = 'что-то пошло не так';
+    } else {
+      filePath = '$filePath/Отчет о производстве.xlsx';
+    }
+    NotificationService.showNotification(
+        title: 'Отчет о производстве загружен',
+        body: 'путь: $filePath',
+        payload: filePath);
+
+    NotificationService.onClickNotification.stream.listen((event) {
+      print(event);
+      OpenFilex.open(event);
+    });
   }
 }

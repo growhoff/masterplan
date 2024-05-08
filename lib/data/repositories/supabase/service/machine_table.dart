@@ -17,7 +17,8 @@ class MachineTable extends SupabaseTable{
     if (dto is MachineDTO) {
       var data = await table.insert({
         'name': dto.name,
-        'inventory_number': dto.inventoryNumber
+        'inventory_number': dto.inventoryNumber,
+        'area_id': dto.areaId
       }).select('id');
       return data[0]['id'];
     }

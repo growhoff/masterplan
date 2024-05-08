@@ -56,6 +56,9 @@ class _EditPageUserPhotoWidgetState extends State<EditPageUserPhotoWidget> {
                         onPressed: () {
                           widget.fetchImageFromCamera();
                           Navigator.pop(context, false);
+                          setState(() {
+
+                          });
                         },
                         child: const Row(
                           crossAxisAlignment: CrossAxisAlignment.center,

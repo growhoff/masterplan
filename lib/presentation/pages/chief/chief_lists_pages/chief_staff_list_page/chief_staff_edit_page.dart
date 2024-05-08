@@ -7,8 +7,6 @@ import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_sta
 
 import '../../../../../domain/model/staff.dart';
 
-
-
 class ChiefStaffEditPage extends StatelessWidget {
   const ChiefStaffEditPage({super.key});
 
@@ -68,14 +66,19 @@ class _ChiefStaffEditPageViewState extends State<ChiefStaffEditPageView> {
                               .read<ChiefStaffCubit>()
                               .updateProfileImageFromGallery(
                                   imageName: widget.staff.login,
-                                  userId: widget.staff.userId, imageSource: ImageSource.gallery)
+                                  userId: widget.staff.userId,
+                                  imageSource: ImageSource.gallery);
+                               setState(() {});
+                        },
+                        fetchImageFromCamera: () {
+                          context
+                              .read<ChiefStaffCubit>()
+                              .updateProfileImageFromGallery(
+                                  imageName: widget.staff.login,
+                                  userId: widget.staff.userId,
+                                  imageSource: ImageSource.camera)
                               .then((_) => setState(() {}));
-                        }, fetchImageFromCamera: () { context
-                          .read<ChiefStaffCubit>()
-                          .updateProfileImageFromGallery(
-                          imageName: widget.staff.login,
-                          userId: widget.staff.userId, imageSource: ImageSource.camera)
-                          .then((_) => setState(() {})); },
+                        },
                       ),
                       const SizedBox(
                         height: 20,
@@ -88,8 +91,8 @@ class _ChiefStaffEditPageViewState extends State<ChiefStaffEditPageView> {
                         height: 5,
                       ),
                       TextField(
-                        decoration: InputDecoration(
-                            hintText: widget.staff.user.fio),
+                        decoration:
+                            InputDecoration(hintText: widget.staff.user.fio),
                         controller:
                             context.read<ChiefStaffCubit>().fioController,
                       ),
@@ -106,9 +109,8 @@ class _ChiefStaffEditPageViewState extends State<ChiefStaffEditPageView> {
                       TextField(
                         decoration:
                             InputDecoration(hintText: widget.staff.login),
-                        controller: context
-                            .read<ChiefStaffCubit>()
-                            .numberController,
+                        controller:
+                            context.read<ChiefStaffCubit>().numberController,
                       ),
                       const SizedBox(
                         height: 20,
@@ -121,9 +123,8 @@ class _ChiefStaffEditPageViewState extends State<ChiefStaffEditPageView> {
                         height: 5,
                       ),
                       TextField(
-                        controller: context
-                            .read<ChiefStaffCubit>()
-                            .passwordController,
+                        controller:
+                            context.read<ChiefStaffCubit>().passwordController,
                         decoration: InputDecoration(
                             hintText: widget.staff.password,
                             helperText:
@@ -140,16 +141,13 @@ class _ChiefStaffEditPageViewState extends State<ChiefStaffEditPageView> {
                         height: 5,
                       ),
                       DropdownButton<String>(
-                        value: context
-                            .read<ChiefStaffCubit>()
-                            .selectedPosition,
-                        onChanged: (String? value) => setState(() => context
-                                .read<ChiefStaffCubit>()
-                                .selectedPosition =
-                            value ??
-                                context
-                                    .read<ChiefStaffCubit>()
-                                    .selectedPosition),
+                        value: context.read<ChiefStaffCubit>().selectedPosition,
+                        onChanged: (String? value) => setState(() =>
+                            context.read<ChiefStaffCubit>().selectedPosition =
+                                value ??
+                                    context
+                                        .read<ChiefStaffCubit>()
+                                        .selectedPosition),
                         items: state.positionsNamesList
                             .map((String region) => DropdownMenuItem(
                                   value: region,
@@ -165,14 +163,12 @@ class _ChiefStaffEditPageViewState extends State<ChiefStaffEditPageView> {
                         style: TextStyle(fontSize: 18),
                       ),
                       DropdownButton<String>(
-                        value:
-                            context.read<ChiefStaffCubit>().selectedArea,
-                        onChanged: (String? value) => setState( () =>
-                            context.read<ChiefStaffCubit>().selectedArea =
-                                value ??
-                                    context
-                                        .read<ChiefStaffCubit>()
-                                        .selectedArea),
+                        value: context.read<ChiefStaffCubit>().selectedArea,
+                        onChanged: (String? value) => setState(() => context
+                                .read<ChiefStaffCubit>()
+                                .selectedArea =
+                            value ??
+                                context.read<ChiefStaffCubit>().selectedArea),
                         items: state.areasNamesList
                             .map((String region) => DropdownMenuItem(
                                   value: region,

@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:gpassword/gpassword.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:mime/mime.dart';
@@ -50,7 +51,7 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
   Map<String, int> areasMap = {};
   Map<String, int> positionsMap = {};
 
-  // final GPassword _gPassword = GPassword(); // генератор пароля (библиотека)
+   final GPassword _gPassword = GPassword(); // генератор пароля (библиотека)
 
   Future<void> fetchAreasAndStaff() async {
     await fetchAreas();
@@ -202,8 +203,8 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
         login: numberController.text,
         password:
             passwordController.text == '' || passwordController.text == ' '
-                // ? _gPassword.generate(passwordLength: 4)
-                ? '1111'
+                 ? _gPassword.generate(passwordLength: 4)
+
                 : passwordController.text,
         userId: userId,
         user: UserDTO.empty));

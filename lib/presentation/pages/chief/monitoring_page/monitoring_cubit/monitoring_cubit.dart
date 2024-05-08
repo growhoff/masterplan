@@ -18,12 +18,11 @@ import '../monitoring_page.dart';
 part 'monitoring_state.dart';
 
 class MonitoringCubit extends Cubit<MonitoringState> {
-  MonitoringCubit() : super(MonitoringState());
+  MonitoringCubit() : super(const MonitoringState());
 
   final MachineTable _machineTable = MachineTable();
   final AreaTable _areaTable = AreaTable();
-  final MonitoringMachineTable _monitoringMachineTable =
-      MonitoringMachineTable();
+  final MonitoringMachineTable _monitoringMachineTable = MonitoringMachineTable();
 
   final _monitoringStream = MonitoringMachineTable().stream();
 

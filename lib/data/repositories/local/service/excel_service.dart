@@ -1,13 +1,13 @@
 import 'dart:io';
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:master_plan/data/repositories/supabase/dto/chief_operations_dto.dart';
+import 'package:lecle_downloads_path_provider/lecle_downloads_path_provider.dart';
+import 'package:master_plan/data/repositories/supabase/dto/chief_distribution_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/transfer_dto.dart';
-import 'package:master_plan/data/repositories/supabase/service/chief_operations_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/chief_distribution_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/transfer_table.dart';
-import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:rxdart/streams.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../presentation/pages/chief/statistics_page/statistics_stage_model.dart';
 import '../../supabase/dto/batch_dto.dart';
@@ -21,7 +21,7 @@ class ExcelService {
   final _batchTable = BatchTable();
   final _stageTable = StageTable();
   final _operationTable = OperationTable();
-  final _chiefOperationsTable = ChiefOperationsTable();
+  final _chiefOperationsTable = ChiefDistributionOperationsTable();
   final _transferTable = TransferTable();
 
   final CellStyle _cellHeaderStyle = CellStyle(
@@ -68,6 +68,28 @@ class ExcelService {
     'В работе',
     'Брак',
     'Доработка'
+  ];
+
+  static const List<String> readyOperationsHeaderList = [
+    'код операции',
+    '№ детали',
+    'наименование операции',
+    '1',
+    '2',
+    'наименование перехода',
+    '4',
+    'T план',
+    'Т факт',
+    'Оборудование',
+    'Инв. №',
+    'ФИО оператора',
+    'Код',
+    'Дата',
+    'Смена',
+    '№ участка',
+    'Брак',
+    'Доработка',
+    'Кол-во'
   ];
 
   Future<void> stageExcelFunction() async {
@@ -144,7 +166,7 @@ class ExcelService {
         print(
             'инсерт операцию: $operationCode, $operationNumber, $operationName');
 
-        await _chiefOperationsTable.insert(ChiefOperationsDTO(
+        await _chiefOperationsTable.insert(ChiefDistributionOperationsDTO(
             id: 0,
             operationId: operationId,
             stageId: stageId,
@@ -203,7 +225,7 @@ class ExcelService {
               timepz: timepz,
               stageId: stageId,
             ));
-            await _chiefOperationsTable.insert(ChiefOperationsDTO(
+            await _chiefOperationsTable.insert(ChiefDistributionOperationsDTO(
                 operationId: operationId,
                 stageId: stageId,
                 stage: StageDTO.empty,
@@ -231,7 +253,7 @@ class ExcelService {
     }
   }
 
-  Future<void> uploadReport(
+  Future<String> uploadReport(
       {required List<StatisticsStageModel> stagesList}) async {
     var excel = Excel.createExcel();
     excel.rename('Sheet1', 'Этапы');
@@ -257,6 +279,8 @@ class ExcelService {
         _cellHeaderStyle;
 
     int operationRowIndex = 0;
+    int readyOperationRowIndex = 0;
+
     for (int stageRowIndex = 0;
         stageRowIndex < stagesList.length;
         stageRowIndex++) {
@@ -279,33 +303,34 @@ class ExcelService {
           case 0:
             cell.value = IntCellValue(stageRowIndex + 1);
 
-
             operationCell.value = IntCellValue(stageRowIndex + 1);
 
           case 1:
             cell.value =
                 TextCellValue('${stagesList[stageRowIndex].stage.number}');
-            
-            operationCell.value =  TextCellValue('${stagesList[stageRowIndex].stage.number}');
-         //   cell.cellStyle = _cellTextStyle;
+
+            operationCell.value =
+                TextCellValue('${stagesList[stageRowIndex].stage.number}');
+          //   cell.cellStyle = _cellTextStyle;
           case 2:
             cell.value = TextCellValue(
                 '${stagesList[stageRowIndex].stage.batch?.number} ${stagesList[stageRowIndex].stage.name}');
             operationCell.value = TextCellValue(
                 '${stagesList[stageRowIndex].stage.batch?.number} ${stagesList[stageRowIndex].stage.name}');
-        //    cell.cellStyle = _cellTextStyle;
+          //    cell.cellStyle = _cellTextStyle;
           case 3:
             cell.value =
                 TextCellValue('${stagesList[stageRowIndex].stage.batch?.code}');
-            operationCell.value  = TextCellValue(
+            operationCell.value = TextCellValue(
                 '${stagesList[stageRowIndex].stage.batch?.count}');
-         //   cell.cellStyle = _cellTextStyle;
+          //   cell.cellStyle = _cellTextStyle;
           case 4:
             cell.value = TextCellValue(
                 '${stagesList[stageRowIndex].stage.batch?.count}');
 
-            operationCell.value  =  TextCellValue('${stagesList[stageRowIndex].stage.batch?.code}');
-        //    cell.cellStyle = _cellTextStyle;
+            operationCell.value =
+                TextCellValue('${stagesList[stageRowIndex].stage.batch?.code}');
+          //    cell.cellStyle = _cellTextStyle;
           //case 5:
           case 6:
             cell.value = TextCellValue(
@@ -316,11 +341,11 @@ class ExcelService {
           case 9:
             cell.value = IntCellValue(
                 stagesList[stageRowIndex].readyDetailsQuantity ?? 0);
-           // cell.cellStyle = _cellTextStyle;
+          // cell.cellStyle = _cellTextStyle;
           case 10:
             cell.value = IntCellValue(
                 stagesList[stageRowIndex].readyDetailsPercent ?? 0);
-         //   cell.cellStyle = _cellTextStyle;
+          //   cell.cellStyle = _cellTextStyle;
           case 11:
             cell.value = IntCellValue(
                 stagesList[stageRowIndex].defectDetailsQuantity ?? 0);
@@ -332,11 +357,11 @@ class ExcelService {
           case 13:
             cell.value = IntCellValue(
                 stagesList[stageRowIndex].operationsList.length ?? 0);
-           // cell.cellStyle = _cellTextStyle;
+          // cell.cellStyle = _cellTextStyle;
           case 14:
             cell.value = IntCellValue(
                 stagesList[stageRowIndex].readyOperationsPercent ?? 0);
-            //cell.cellStyle = _cellTextStyle;
+          //cell.cellStyle = _cellTextStyle;
         }
         cell.cellStyle = _cellTextStyle;
         operationCell.cellStyle = _cellTextStyle;
@@ -381,16 +406,98 @@ class ExcelService {
           }
         }
         operationRowIndex++;
+        print('readyOperationsList: ${operation.readyOperationsList.length}');
+        for (var readyOperation in operation.readyOperationsList) {
+          print('readyOperationRowIndex: ${readyOperationRowIndex}');
+          for (int readyOperationsColumnIndex = 0;
+              readyOperationsColumnIndex < readyOperationsHeaderList.length;
+              readyOperationsColumnIndex++) {
+            if (readyOperationRowIndex == 0) {
+              final cell = readyOperationsExcel.cell(CellIndex.indexByColumnRow(
+                  columnIndex: readyOperationsColumnIndex,
+                  rowIndex: readyOperationRowIndex));
+              cell.value = TextCellValue(
+                  readyOperationsHeaderList[readyOperationsColumnIndex]);
+              cell.cellStyle = _cellHeaderStyle;
+            } else {
+              final cell = readyOperationsExcel.cell(CellIndex.indexByColumnRow(
+                  columnIndex: readyOperationsColumnIndex,
+                  rowIndex: readyOperationRowIndex));
+              switch (readyOperationsColumnIndex) {
+                case 0:
+                  cell.value = TextCellValue(operation.operation.code);
+                  cell.cellStyle = _cellTextStyle;
+                case 2:
+                  cell.value = TextCellValue(
+                      '${operation.operation.number} ${operation.operation.name}');
+                  cell.cellStyle = _cellTextStyle;
+                case 7:
+                  cell.value = IntCellValue(operation
+                          .readyOperationsList[readyOperationRowIndex]
+                          .timePlan ??
+                      0);
+                  cell.cellStyle = _cellTextStyle;
+                case 8:
+                  cell.value = IntCellValue(operation
+                          .readyOperationsList[readyOperationRowIndex]
+                          .timeFact ??
+                      0);
+                  cell.cellStyle = _cellTextStyle;
+                case 9:
+                  cell.value = TextCellValue(operation
+                          .readyOperationsList[readyOperationRowIndex]
+                          .machine
+                          ?.name ??
+                      'нет данных');
+                  cell.cellStyle = _cellTextStyle;
+                case 10:
+                  cell.value = IntCellValue(operation
+                          .readyOperationsList[readyOperationRowIndex]
+                          .machine
+                          ?.inventoryNumber ??
+                      0);
+                  cell.cellStyle = _cellTextStyle;
+
+                case 11:
+                  cell.value = TextCellValue(operation
+                          .readyOperationsList[readyOperationRowIndex]
+                          .user
+                          ?.fio ??
+                      'нет данных');
+                  cell.cellStyle = _cellTextStyle;
+              }
+            }
+          }
+        }
       }
     }
     var fileBytes = excel.save();
     var directory = await getDownloadsDirectory();
 
-    print(directory?.path);
-    final fileName = '${directory?.path}/Отчет о производстве.xlsx';
+    final granted = await requestPermissions();
+    if (granted) {
+      Directory? downloadsDirectory = await DownloadsPath.downloadsDirectory();
+      String? downloadsDirectoryPath =
+          (await DownloadsPath.downloadsDirectory())?.path;
+      print(downloadsDirectoryPath);
+      final fileName = '${downloadsDirectoryPath}/Отчет о производстве.xlsx';
 
-    File(fileName).writeAsBytes(fileBytes!);
+      File(fileName).writeAsBytes(fileBytes!);
 
-    print('вывелось');
+      print('вывелось');
+      return downloadsDirectoryPath ?? '';
+    }
+
+    return '';
+  }
+
+  Future<bool> requestPermissions() async {
+    var status = await Permission.storage.status;
+    print("=> storage permission satus: $status");
+    if (!status.isGranted) {
+      status = await Permission.storage.request();
+    }
+
+    return status == PermissionStatus.granted;
   }
 }
