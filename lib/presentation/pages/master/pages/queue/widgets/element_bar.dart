@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/pages/master/pages/queue/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/master/pages/queue/bloc/state.dart';
-import 'package:master_plan/presentation/pages/master/pages/queue/queue_page.dart';
-// import 'package:master_plan/presentation/pages/master/model/element_bar_data.dart';
-// import 'package:master_plan/presentation/pages/master/pages/readyDetails/bloc/cubit.dart';
-// import 'package:master_plan/presentation/pages/master/pages/readyDetails/bloc/state.dart';
-// import 'package:master_plan/presentation/pages/master/pages/readyDetails/ready_details.dart';
+import 'contetn_queue.dart';
 
 class ElementBarQueue extends StatelessWidget {
   const ElementBarQueue({super.key});
@@ -14,7 +10,8 @@ class ElementBarQueue extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CubitQueueMaster, StateQueueMaster>(
-      builder:(context, state) => Column(
+      builder:(context, state) => state.listMachine!.isNotEmpty 
+      ? Column(
         children: [
           SizedBox(
             height: 40,
@@ -31,7 +28,8 @@ class ElementBarQueue extends StatelessWidget {
             const SizedBox(height: 18),
             ContetnQueue(batchListQueue: state.listMachine![state.activePage].listOper, machine: state.listMachine![state.activePage].machine, timeWorking: state.listMachine![state.activePage].time)
         ],
-      ),
+      )
+      : const Center(child: CircularProgressIndicator()),
     );
   }
 }

@@ -8,7 +8,7 @@ class StateReadyDetails extends Equatable {
   final List<List<int>> doubleList;
   final int count;
   const StateReadyDetails({
-    this.listMachine,
+    this.listMachine = const [],
     this.activePage = 0,
     this.doubleList = const [],
     this.count = 0,

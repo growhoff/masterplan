@@ -11,7 +11,7 @@ class CubitMonitoring extends Cubit<StateMonitoring> {
   final List<Machine>? machineList;
   List<MonitoringMachineDTO>? monitorList;
   CubitMonitoring(this.machineList, this.monitorList)
-      : super(const StateMonitoring()) {
+      : super(StateMonitoring(days: DateTime.now())) {
     List<ElementBarData> list = [];
     for (var machine in machineList!) {
       List<ItemMachineStatus> listStatus = [];
@@ -35,5 +35,11 @@ class CubitMonitoring extends Cubit<StateMonitoring> {
     emit(state.copyWith(listBar: list));
   }
 
-  
+  void setDate(DateTime date){
+    emit(state.copyWith(days: date));
+  }
+
+  void setChange(int change){
+    emit(state.copyWith(change: change));
+  }
 }

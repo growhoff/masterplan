@@ -28,12 +28,15 @@ class OperatorOperationsTable extends SupabaseTable {
 
   @override
   Future<List<Map<String, dynamic>>> select() {
-    return table.select(
-        '*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*), z_user($selectUser), z_machine(*), z_area(*)');
+    return table.select('*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*), z_user($selectUser), z_machine(*), z_area(*)');
   }
 
   Future<List<Map<String, dynamic>>> selectId(int machineId) {
     return table.select().eq('machine_id', machineId);
+  }
+
+  Future<List<Map<String, dynamic>>> selectListIdNew(List<int> listId) {
+    return table.select('*, z_status(*), z_batch(*), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_user($selectUser)').inFilter('id',listId);
   }
 
   Future<List<Map<String, dynamic>>> selectListId(List<int> listId) {
@@ -45,9 +48,7 @@ class OperatorOperationsTable extends SupabaseTable {
         filters += 'machine_id.eq.${listId[i]},';
       }
     }
-    return table
-        .select('*, z_status(*), z_batch(*), z_user($selectUser), z_machine(*)')
-        .or(filters);
+    return table.select('*, z_status(*), z_batch(*), z_user($selectUser), z_machine(*)').or(filters);
   }
 
   Future<List<Map<String, dynamic>>> selectListId2436(List<int> listId) {

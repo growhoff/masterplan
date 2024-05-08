@@ -12,7 +12,7 @@ class DetailDistribPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final stateMain = context.read<CubitMain>().state;
     return BlocProvider(
-      create: (context) => CubitDistributionDetails(stateMain.distribMasterList!, stateMain.user!.areaId!, stateMain.machineList!),
+      create: (context) => CubitDistributionDetails(stateMain.user!.areaId!, stateMain.machineList!, stateMain.machineIdList!),
       child: const DetailDistribContent(),
     );
   }
@@ -30,20 +30,21 @@ class DetailDistribContent extends StatelessWidget {
             children: [
               BlocBuilder<CubitDistributionDetails, StateDistributionDetails>(
                 builder: (context, state) {
-                  List<ExpansionPanel> list = [];
-                  for (var i = 0; i < state.operList.length; i++) {
-                    Color colorMain = ((state.operList[i].setCount != null) && (state.operList[i].setCount != 0) && (state.operList[i].setMachine != null) ) ? Colors.greenAccent : Colors.white;
-                    list.add(ExpansionPanel(
-                      headerBuilder: (context, isExpanded) => TitleItem(state.operList[i], state.operList[i].statusId == 4 ? Colors.amberAccent : colorMain), 
-                      body: BodyItem(i, colorMain),
-                      isExpanded: state.operList[i].isSelected,
-                      backgroundColor: colorMain,
-                    ));
-                  }
-                  return ExpansionPanelList(
-                  children: list,
-                  expansionCallback: (index, isExpanded) => context.read<CubitDistributionDetails>().toggleSelect(index),
-                );
+                    List<ExpansionPanel> list = [];
+                    for (var i = 0; i < state.operList.length; i++) {
+                      Color colorMain = ((state.operList[i].setCount != null) && (state.operList[i].setCount != 0) && (state.operList[i].setMachine != null) ) ? Colors.greenAccent : Colors.white;
+                      list.add(
+                        ExpansionPanel(
+                          headerBuilder: (context, isExpanded) => TitleItem(state.operList[i], state.operList[i].statusId == 4 ? Colors.amberAccent : colorMain), 
+                          body: BodyItem(i, colorMain),
+                          isExpanded: state.operList[i].isSelected,
+                          backgroundColor: colorMain,
+                        ));
+                    }
+                    return ExpansionPanelList(
+                      children: list,
+                      expansionCallback: (index, isExpanded) => context.read<CubitDistributionDetails>().toggleSelect(index),
+                    );
                 }
               ),
               const SizedBox(height: 8),

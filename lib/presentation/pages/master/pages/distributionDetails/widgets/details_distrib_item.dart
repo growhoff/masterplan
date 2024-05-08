@@ -25,7 +25,7 @@ class TitleItem extends StatelessWidget {
             const SizedBox(height: 2),
             Text('Операция: ${oper.operationName}'),
             const SizedBox(height: 2),
-            Text('Кол-во на участке: ${oper.count}'),
+            const Text('Кол-во на участке: 1'),//${oper.count}
           ],
         ),
       ),

@@ -5,7 +5,9 @@ import 'package:master_plan/presentation/pages/master/pages/monitoring/bloc/cubi
 import 'package:master_plan/presentation/pages/master/pages/monitoring/bloc/state.dart';
 import 'package:master_plan/presentation/pages/master/pages/monitoring/model/item_machine.dart';
 import 'package:master_plan/presentation/pages/master/pages/monitoring/model/item_machine_monitor.dart';
-import 'package:intl/intl.dart';
+import './widgets/calendar.dart';
+// import 'package:intl/intl.dart';
+// import 'package:master_plan/presentation/pages/master/widgets/calendar.dart';
 import '../../../../widgets/element_bar.dart';
 
 class MonitoringPage extends StatelessWidget {
@@ -48,13 +50,25 @@ class ContentListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-      Row(
-        children: [
-          Expanded(child: Text('${monitor.machine.name} станок', textAlign: TextAlign.left)),
-          Expanded(child: Text('дата: ${DateFormat('dd.MM.yyyy').format(DateTime.now())}', textAlign: TextAlign.center)),
-          const Expanded(child: Text('смена: 1', textAlign: TextAlign.right))
-        ],
-      ),
+        Text('${monitor.machine.name} станок', textAlign: TextAlign.left),
+        const SizedBox(height: 8),
+        const Card(child: Calendar()),
+        const SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            BlocBuilder<CubitMonitoring, StateMonitoring>(builder: (context, state) => Expanded(flex: 5, child: ElevatedButton(onPressed: () => context.read<CubitMonitoring>().setChange(1), style: ElevatedButton.styleFrom(backgroundColor: state.change == 1 ? Colors.blue : Colors.blueGrey, padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 5)), child: const Text('1 смена')))),
+            const Spacer(),
+            BlocBuilder<CubitMonitoring, StateMonitoring>(builder: (context, state) => Expanded(flex: 5,child: ElevatedButton(onPressed: () => context.read<CubitMonitoring>().setChange(2), style: ElevatedButton.styleFrom(backgroundColor: state.change == 2 ? Colors.blue : Colors.blueGrey, padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 5)), child: const Text('2 смена'))))
+          ],
+        ),
+        // Row(
+        //   children: [
+        //     Expanded(child: Text('${monitor.machine.name} станок', textAlign: TextAlign.left)),
+        //     Expanded(child: Text('дата: ${DateFormat('dd.MM.yyyy').format(DateTime.now())}', textAlign: TextAlign.center)),
+        //     const Expanded(child: Text('смена: 1', textAlign: TextAlign.right))
+        //   ],
+        // ),
       const SizedBox(height: 8),
       const Divider(),
       const SizedBox(height: 8),

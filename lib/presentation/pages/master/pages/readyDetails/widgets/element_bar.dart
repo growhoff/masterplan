@@ -11,7 +11,8 @@ class ElementBarReady extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CubitReadyDetails, StateReadyDetails>(
-      builder:(context, state) => Column(
+      builder:(context, state) => state.listMachine!.isNotEmpty && state.doubleList.isNotEmpty
+      ? Column(
         children: [
           SizedBox(
             height: 40,
@@ -28,7 +29,8 @@ class ElementBarReady extends StatelessWidget {
             const SizedBox(height: 18),
             ContetnReadyBrak(l: state.doubleList[state.activePage], operList: state.listMachine![state.activePage].listOper, machine: state.listMachine![state.activePage].machine, timeWorking: state.listMachine![state.activePage].time)
         ],
-      ),
+      )
+      : const Center(child: CircularProgressIndicator()),
     );
   }
 }

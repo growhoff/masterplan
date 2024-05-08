@@ -20,7 +20,7 @@ class BrakReadyDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final cubitMain = context.read<CubitMain>().state;
     return BlocProvider<CubitReadyDetails>(
-      create: (context) => CubitReadyDetails(cubitMain.machineList, cubitMain.readyList),
+      create: (context) => CubitReadyDetails(cubitMain.machineList, cubitMain.machineIdList!),
       child: const BrakReadyDetailsContent(),
     );
   }

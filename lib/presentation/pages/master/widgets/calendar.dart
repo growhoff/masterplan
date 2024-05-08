@@ -11,6 +11,8 @@ class Calendar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CubitMaster, StateMaster>(builder: (context, state) => TableCalendar(
+              calendarFormat: CalendarFormat.month,
+              headerStyle: const HeaderStyle(formatButtonVisible: false, titleCentered: true),
               rowHeight: 43,
               firstDay: DateTime.now(),
               lastDay: DateTime.utc(2030, 3, 14),
