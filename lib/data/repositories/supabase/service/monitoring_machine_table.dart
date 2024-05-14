@@ -13,8 +13,6 @@ class MonitoringMachineTable extends SupabaseTable {
     return table.delete().eq('id', id);
   }
 
-
-
   @override
   Future<void> insert(Dto dto) async{
     if (dto is MonitoringMachineDTO) await table.insert(dto.toMap()).select();
@@ -32,9 +30,12 @@ class MonitoringMachineTable extends SupabaseTable {
 
   @override
   Future<List<Map<String, dynamic>>> select() async {
-    var res = await table.select(
-        '*, z_status_machine(*), z_user($userSelect), z_machine(*), z_batch(*)');
+    var res = await table.select('*, z_status_machine(*), z_user($userSelect), z_machine(*), z_batch(*)');
     return res;
+  }
+
+  Future<List<Map<String, dynamic>>> selectListIdNew(List<int> listId) {
+    return table.select('*, z_status_machine(*), z_user($userSelect), z_machine(*), z_batch(*)').inFilter('id',listId);
   }
 
   Future<List<Map<String, dynamic>>> selectList(List<int> listId) {

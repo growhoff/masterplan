@@ -20,4 +20,28 @@ class ChiefOperationDto extends Dto {
   final ChiefBatchDTO chiefBatch;
   final StageDTO stage;
   final OperationDTO operation;
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'id': id,
+      'chiefBatchId': chiefBatchId,
+      'stageId': stageId,
+      'operationId': operationId,
+      'chiefBatch': chiefBatch,
+      'stage': stage,
+      'operation': operation
+    };
+  }
+
+  factory ChiefOperationDto.fromMap(Map<String, dynamic> map) {
+    return ChiefOperationDto(
+      id: map['id'] as int,
+      operation: OperationDTO.fromMap(map['z_operation']),
+      stage: StageDTO.fromMap(map['z_stage']),
+      operationId: map['operation_id'],
+      stageId: map['stage_id'],
+      chiefBatch: ChiefBatchDTO.fromMap(map['z_chief_batch']),
+      chiefBatchId: map['chief_batch_id'],
+    );
+  }
 }

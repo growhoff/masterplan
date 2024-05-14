@@ -64,7 +64,7 @@ class CubitWork extends Cubit<StateWork> {
     if ((comment == null) || (comment == '')) comment = 'none';
     final monitorTable = MonitoringMachineTable();
     if (isStart){
-      final id = await monitorTable.insertToInt(MonitoringMachineDTO(id: 0, timeStart: DateTime.now().millisecondsSinceEpoch, timeStop: 0, statusMachineId: status, userId: userid, machineId: state.pageData[state.activePage].machine.id, batchId: state.pageData[state.activePage].operQueueList.first.batch.id, comment: comment));
+      final id = await monitorTable.insertToInt(MonitoringMachineDTO(id: 0, date: DateTime.now().millisecondsSinceEpoch, changeId: (DateTime.now().hour > 8) && ( DateTime.now().hour <= 20) ? 1 : 2, timeStart: DateTime.now().millisecondsSinceEpoch, timeStop: 0, statusMachineId: status, userId: userid, machineId: state.pageData[state.activePage].machine.id, batchId: state.pageData[state.activePage].operQueueList.first.batch.id, comment: comment));
       emit(state.copyWith(monitorId: id));
     } else {
       await monitorTable.updateId(state.monitorId!, DateTime.now().millisecondsSinceEpoch);

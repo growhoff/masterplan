@@ -7,12 +7,14 @@ class ItemMachineStatus {
   final int timeWorking;
   final StatusMachineDTO status;
   final String comment;
+  final int changeId;
   ItemMachineStatus({
     required this.timeStart,
     required this.timeEnd,
     required this.timeWorking,
     required this.status,
     required this.comment,
+    required this.changeId,
   });
 
 }

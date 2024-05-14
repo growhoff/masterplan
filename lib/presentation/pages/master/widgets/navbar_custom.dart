@@ -27,7 +27,7 @@ class _NavBarCustomMasterState extends State<NavBarCustomMaster> {
             final user = state.user!;
             return Column(children: [
               Text(DataMaster.listPage[selectedIndex].title), 
-              Text('${user.id} / ${user.fio} / ${user.position.name} / ${user.area!.name}', style: const TextStyle(fontSize: 12)),
+              Text('${user.fio} / ${user.position.name} / ${user.area!.name}', style: const TextStyle(fontSize: 12)),
             ]);
             }
             ),

@@ -137,7 +137,7 @@ class ExcelService {
 
         int stageId = await _stageTable.insert(StageDTO(
             id: 0,
-            number: int.parse(stageNumber!),
+            number: stageNumber!,
             name: stageName ?? '',
             isdistributed: false,
             areaId: 0,
@@ -199,7 +199,7 @@ class ExcelService {
             stageName = row[i][5]?.value.toString();
             stageId = await _stageTable.insert(StageDTO(
                 id: 0,
-                number: int.parse(stageNumber!),
+                number: stageNumber!,
                 name: stageName ?? '',
                 isdistributed: false,
                 areaId: 0,

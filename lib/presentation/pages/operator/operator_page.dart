@@ -4,7 +4,6 @@ import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import 'package:master_plan/presentation/app/bloc/state.dart';
 import 'package:master_plan/presentation/pages/operator/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/operator/bloc/state.dart';
-// import 'package:master_plan/presentation/pages/operator/pages/work/widgets/timer/bloc/cubit.dart';
 
 
 class OperatorPage extends StatelessWidget {
@@ -32,7 +31,7 @@ class ContentOperator extends StatelessWidget {
             return Column(
             children: [
               const Text('Оператор'),
-              Text('${user.id} / ${user.fio} / ${user.position.name}', style: const TextStyle(fontSize: 12)),//${user.areaId!.name}//нужно ли выводить отношение к участку?
+              Text('${user.fio} / ${user.position.name}', style: const TextStyle(fontSize: 12)),
             ]);
             }),
           actions: const [],

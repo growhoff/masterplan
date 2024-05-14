@@ -26,17 +26,14 @@ class ChiefDistributionOperationsTable extends SupabaseTable {
 
   @override
   Future<List<Map<String, dynamic>>> select() async {
-    var res = await table
-        .select(
-            '*, z_batch:batch_id(*), z_stage:stage_id(*, z_area(*)), z_operation:operation_id(*)');
+    var res = await table.select('*, z_batch:batch_id(*), z_stage:stage_id(*, z_area(*)), z_operation:operation_id(*)');
     print(res);
     return res;
   }
 
   Future<List<Map<String, dynamic>>> selectNotDistributed() async {
     var res = await table
-        .select(
-        '*, z_batch:batch_id(*), z_stage:stage_id(*), z_operation:operation_id(*)')
+        .select('*, z_batch:batch_id(*), z_stage:stage_id(*), z_operation:operation_id(*)')
         .gt('quantity', 0);
     print(res);
     return res;

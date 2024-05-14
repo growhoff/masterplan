@@ -18,7 +18,9 @@ class MonitoringMachineDTO extends Dto {
   final MachineDTO? machine;
   final int batchId;
   final BatchDTO? batch;
-  final String comment;  
+  final String comment;
+  final int date;
+  final int changeId;
   MonitoringMachineDTO({
     required this.id,
     required this.timeStart,
@@ -32,6 +34,8 @@ class MonitoringMachineDTO extends Dto {
     required this.batchId,
     this.batch,
     required this.comment,
+    required this.date,
+    required this.changeId,
   });
   
 
@@ -44,6 +48,8 @@ class MonitoringMachineDTO extends Dto {
       'machine_id': machineId,
       'batch_id': batchId,
       'comment': comment,
+      'date': date,
+      'change_id': changeId,
     };
   }
 
@@ -61,6 +67,8 @@ class MonitoringMachineDTO extends Dto {
       batchId: map['batch_id'] as int,
       batch: map['z_batch'] != null ? BatchDTO.fromMap(map['z_batch'] as Map<String,dynamic>) : null,
       comment: map['comment'] as String,
+      date: map['date'] as int,
+      changeId: map['change_id'] as int,
     );
   }
 

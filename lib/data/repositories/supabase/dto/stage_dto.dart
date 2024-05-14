@@ -6,7 +6,7 @@ import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 
 class StageDTO extends Dto {
   final int id;
-  final int number;
+  final String number;
   final String name;
   final int areaId;
   final AreaDTO? area;
@@ -26,7 +26,7 @@ class StageDTO extends Dto {
   
   static final empty = StageDTO(
     id: 0, 
-    number: 0, 
+    number: '', 
     name: '', 
     areaId: 0, 
     isdistributed: false, 
@@ -48,7 +48,7 @@ class StageDTO extends Dto {
   factory StageDTO.fromMap(Map<String, dynamic> map) {
     return StageDTO(
       id: map['id'] as int,
-      number: map['number'] as int,
+      number: map['number'] as String,
       name: map['name'] as String,
       areaId: map['area_id'] as int,
       isdistributed: map['is_distributed'] as bool,

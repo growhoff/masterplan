@@ -5,10 +5,10 @@ import 'package:master_plan/presentation/pages/master/pages/monitoring/bloc/cubi
 import 'package:master_plan/presentation/pages/master/pages/monitoring/bloc/state.dart';
 import 'package:master_plan/presentation/pages/master/pages/monitoring/model/item_machine.dart';
 import 'package:master_plan/presentation/pages/master/pages/monitoring/model/item_machine_monitor.dart';
+import 'package:master_plan/presentation/pages/master/pages/monitoring/widgets/element_bar.dart';
 import './widgets/calendar.dart';
-// import 'package:intl/intl.dart';
-// import 'package:master_plan/presentation/pages/master/widgets/calendar.dart';
-import '../../../../widgets/element_bar.dart';
+import 'widgets/status_item.dart';
+import 'widgets/status_line.dart';
 
 class MonitoringPage extends StatelessWidget {
   const MonitoringPage({super.key});
@@ -17,7 +17,7 @@ class MonitoringPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final stateMain = context.read<CubitMain>().state;
     return BlocProvider<CubitMonitoring>(
-      create: (context) => CubitMonitoring(stateMain.machineList, stateMain.monitorList),
+      create: (context) => CubitMonitoring(stateMain.machineList,  stateMain.machineIdList!),
       child: const MonitoringPageContent(),
     );
   }
@@ -28,26 +28,27 @@ class MonitoringPageContent extends StatelessWidget {
   const MonitoringPageContent({super.key});
   @override
   Widget build(BuildContext context) {
-    return  SafeArea(
+    return const SafeArea(
       child: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              BlocBuilder<CubitMonitoring, StateMonitoring>(builder: (context, state) => ElementBar(list: state.listBar!)),
-            ],
-          )
+          padding: EdgeInsets.all(16),
+          child: ElementBarMonitor(),
         ),
       ),
     );
   }
 }
 
-class ContentListWidget extends StatelessWidget {
-  const ContentListWidget(this.monitor, {super.key});
-  final ItemMachineMonitor monitor;
+class ContentListWidgetMaster extends StatelessWidget {
+  const ContentListWidgetMaster(this.monitor, this.changeId, {super.key});
+  final ItemMachineMonitorMaster monitor;
+  final int changeId;
   @override
   Widget build(BuildContext context) {
+    List<ItemMachineStatus> listStatus = [];
+    for (var element in monitor.listStatus) {
+      if (element.changeId == changeId) listStatus.add(element);
+    }
     return Column(
       children: [
         Text('${monitor.machine.name} станок', textAlign: TextAlign.left),
@@ -62,17 +63,10 @@ class ContentListWidget extends StatelessWidget {
             BlocBuilder<CubitMonitoring, StateMonitoring>(builder: (context, state) => Expanded(flex: 5,child: ElevatedButton(onPressed: () => context.read<CubitMonitoring>().setChange(2), style: ElevatedButton.styleFrom(backgroundColor: state.change == 2 ? Colors.blue : Colors.blueGrey, padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 5)), child: const Text('2 смена'))))
           ],
         ),
-        // Row(
-        //   children: [
-        //     Expanded(child: Text('${monitor.machine.name} станок', textAlign: TextAlign.left)),
-        //     Expanded(child: Text('дата: ${DateFormat('dd.MM.yyyy').format(DateTime.now())}', textAlign: TextAlign.center)),
-        //     const Expanded(child: Text('смена: 1', textAlign: TextAlign.right))
-        //   ],
-        // ),
       const SizedBox(height: 8),
       const Divider(),
       const SizedBox(height: 8),
-      StatusLine(monitor.listStatus),
+      StatusLine(listStatus),
       const SizedBox(height: 8),
       const Divider(),
       const SizedBox(height: 8),
@@ -89,94 +83,11 @@ class ContentListWidget extends StatelessWidget {
         const SizedBox(height: 8),
        ListView.separated(
           shrinkWrap: true,
-          itemCount: monitor.listStatus.length,
-          itemBuilder: (context, index) => StatusItem(item: monitor.listStatus[index], allTime: monitor.allTime),
+          itemCount: listStatus.length,
+          itemBuilder: (context, index) => StatusItem(item: listStatus[index], allTime: monitor.allTime),
           separatorBuilder: (context, index) => const SizedBox(height: 3),
           )
       ],
     );
   }
-}
-
-class StatusItem extends StatelessWidget {
-  const StatusItem({super.key, required this.item, required this.allTime});
-  final ItemMachineStatus item;
-  final int allTime;
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(5.0),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                    Expanded(flex: 4, child: Row(
-                      children: [
-                        Container(
-                          color: convertColor(item.status.id),
-                          width: 10,
-                          height: 10,
-                        ),
-                        const SizedBox(width: 5),
-                        Text(item.status.name)
-                      ],
-                    )),
-                    Expanded(flex: 2,child: Text(convertTime(item.timeStart))),
-                    Expanded(flex: 2,child: Text(convertTime(item.timeEnd))),
-                    Expanded(flex: 2,child: Text(convertTime(item.timeWorking))),
-                    Expanded(child: Text('${((item.timeWorking / allTime) * 100).round()}%')),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(item.comment),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class StatusLine extends StatelessWidget {
-  const StatusLine(this.list, {super.key});
-  final List<ItemMachineStatus> list; 
-  @override
-  Widget build(BuildContext context) {
-    
-    return SizedBox(
-      height: 25,
-      child: Row(
-        children: list.map((e) => Expanded(
-          flex: e.timeWorking, 
-          child: Container(decoration: BoxDecoration(border: Border.all(width: 1, color: Colors.black), color: convertColor(e.status.id)))
-          )
-        ).toList(),
-      ),
-    );
-  }
-}
-
-String convertTime(int time){
-  final h = time ~/ 60;
-  final min = time - h * 60;
-  final minStr = min > 9 ? '$min' : '0$min';
-  final hStr = h > 9 ? '$h' : '0$h';
-return '$hStr:$minStr';
-}
-
-Color convertColor(int status){
-  Color colorStatus;
-  switch (status) {
-      case 1: colorStatus = Colors.green;
-      case 2: colorStatus = Colors.yellow;
-      case 3: colorStatus = Colors.red;
-      case 4: colorStatus = Colors.orange;
-      case 5: colorStatus = Colors.purple;
-      case 6: colorStatus = Colors.blue;
-      case 7: colorStatus = Colors.grey;
-      case 8: colorStatus = Colors.white;
-        break;
-      default: colorStatus = Colors.white;
-    }
-    return colorStatus;
 }

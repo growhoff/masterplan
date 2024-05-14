@@ -2,12 +2,12 @@
 import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/presentation/pages/master/pages/monitoring/model/item_machine.dart';
 
-class ItemMachineMonitor {
+class ItemMachineMonitorMaster {
   final Machine machine;
   final List<ItemMachineStatus> listStatus;
   final int allTime;
 
-  ItemMachineMonitor({
+  ItemMachineMonitorMaster({
     required this.machine,
     required this.listStatus,
     required this.allTime,
