@@ -21,7 +21,8 @@ class OperatorOperationsTable extends SupabaseTable {
         'stage_id': dto.stageId,
         'operation_id': dto.operationId,
         'area_id': dto.areaId,
-        'order': dto.order
+        'order': dto.order,
+        'chief_operation_id': dto.chiefOperationId
       });
     }
   }

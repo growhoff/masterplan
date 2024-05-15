@@ -2,13 +2,14 @@
     name="release"
     package="com.example.master_plan"
     minSdkVersion="16"
-    targetSdkVersion="33"
+    targetSdkVersion="16"
     shrinking="true"
     mergedManifest="D:\Flutter project\master-plan\master_plan\build\app\intermediates\merged_manifest\release\AndroidManifest.xml"
     manifestMergeReport="D:\Flutter project\master-plan\master_plan\build\app\outputs\logs\manifest-merger-release-report.txt"
-    proguardFiles="D:\Flutter project\master-plan\master_plan\build\app\intermediates\default_proguard_files\global\proguard-android.txt-7.3.0;C:\src\packages\flutter_tools\gradle\flutter_proguard_rules.pro;proguard-rules.pro"
+    proguardFiles="D:\Flutter project\master-plan\master_plan\build\app\intermediates\default_proguard_files\global\proguard-android.txt-7.3.1;C:\src\packages\flutter_tools\gradle\flutter_proguard_rules.pro;proguard-rules.pro"
     partialResultsDir="D:\Flutter project\master-plan\master_plan\build\app\intermediates\lint_vital_partial_results\release\out">
   <buildFeatures
+      coreLibraryDesugaring="true"
       namespacing="REQUIRED"/>
   <sourceProviders>
     <sourceProvider

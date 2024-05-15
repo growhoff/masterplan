@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "com.lecle.path.downloads.lecle_downloads_path_provider-merged_res-10:/layout/notification_template_part_time.xml",
+        "source": "com.lecle.path.downloads.lecle_downloads_path_provider-core-1.6.0-0:/layout/notification_template_part_time.xml"
+    },
+    {
+        "merged": "com.lecle.path.downloads.lecle_downloads_path_provider-merged_res-10:/layout/notification_action_tombstone.xml",
+        "source": "com.lecle.path.downloads.lecle_downloads_path_provider-core-1.6.0-0:/layout/notification_action_tombstone.xml"
+    },
+    {
+        "merged": "com.lecle.path.downloads.lecle_downloads_path_provider-merged_res-10:/layout/notification_action.xml",
+        "source": "com.lecle.path.downloads.lecle_downloads_path_provider-core-1.6.0-0:/layout/notification_action.xml"
+    },
+    {
+        "merged": "com.lecle.path.downloads.lecle_downloads_path_provider-merged_res-10:/layout/notification_template_icon_group.xml",
+        "source": "com.lecle.path.downloads.lecle_downloads_path_provider-core-1.6.0-0:/layout/notification_template_icon_group.xml"
+    },
+    {
+        "merged": "com.lecle.path.downloads.lecle_downloads_path_provider-merged_res-10:/layout/custom_dialog.xml",
+        "source": "com.lecle.path.downloads.lecle_downloads_path_provider-core-1.6.0-0:/layout/custom_dialog.xml"
+    },
+    {
+        "merged": "com.lecle.path.downloads.lecle_downloads_path_provider-merged_res-10:/layout/notification_template_part_chronometer.xml",
+        "source": "com.lecle.path.downloads.lecle_downloads_path_provider-core-1.6.0-0:/layout/notification_template_part_chronometer.xml"
+    }
+]

@@ -336,14 +336,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.5.1"
-  gpassword:
-    dependency: "direct main"
-    description:
-      name: gpassword
-      sha256: "923d20f9deda98909cc3ce43a38defe992dd8520860b858f69618f069e884787"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.1"
   gtk:
     dependency: transitive
     description:

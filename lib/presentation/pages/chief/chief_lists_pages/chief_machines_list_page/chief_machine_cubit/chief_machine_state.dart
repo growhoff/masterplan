@@ -16,7 +16,7 @@ final class ChiefMachineState extends Equatable {
       {List<Machine>? machinesList,
       List<Area>? areasList,
       List<String>? areasNamesList,
-      bool isNeedUpdate = false}) {
+      bool isNeedUpdate = false}){
     return ChiefMachineState(
       machinesList: machinesList ?? this.machinesList,
       areasList: areasList ?? this.areasList,

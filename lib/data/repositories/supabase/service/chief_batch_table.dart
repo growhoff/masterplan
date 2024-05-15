@@ -1,3 +1,4 @@
+import 'package:master_plan/data/repositories/supabase/dto/chief_batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -12,9 +13,12 @@ class ChiefBatchTable extends SupabaseTable {
   }
 
   @override
-  Future<void> insert(Dto dto) {
-    // TODO: implement insert
-    throw UnimplementedError();
+  Future<int> insert(Dto dto) async{
+    if (dto is ChiefBatchDTO){
+      var chiefBatch = await table.insert({'batch_id': dto.batchId}).select('id');
+      return chiefBatch[0]['id'];
+    }
+    return 0;
   }
 
   @override

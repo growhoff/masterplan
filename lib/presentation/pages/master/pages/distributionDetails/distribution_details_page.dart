@@ -12,7 +12,7 @@ class DetailDistribPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final stateMain = context.read<CubitMain>().state;
     return BlocProvider(
-      create: (context) => CubitDistributionDetails(stateMain.user!.areaId!, stateMain.machineList!, stateMain.machineIdList!),
+      create: (context) => CubitDistributionDetails(stateMain.user!.areaId!, stateMain.machineList!),
       child: const DetailDistribContent(),
     );
   }

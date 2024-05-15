@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "com.crazecoder.openfile.open_filex-merged_res-24:/drawable-v21/notification_action_background.xml",
+        "source": "com.crazecoder.openfile.open_filex-core-1.9.0-6:/drawable-v21/notification_action_background.xml"
+    },
+    {
+        "merged": "com.crazecoder.openfile.open_filex-merged_res-24:/drawable-v21/abc_btn_colored_material.xml",
+        "source": "com.crazecoder.openfile.open_filex-appcompat-1.6.1-2:/drawable-v21/abc_btn_colored_material.xml"
+    },
+    {
+        "merged": "com.crazecoder.openfile.open_filex-merged_res-24:/drawable-v21/abc_list_divider_material.xml",
+        "source": "com.crazecoder.openfile.open_filex-appcompat-1.6.1-2:/drawable-v21/abc_list_divider_material.xml"
+    },
+    {
+        "merged": "com.crazecoder.openfile.open_filex-merged_res-24:/drawable-v21/abc_edit_text_material.xml",
+        "source": "com.crazecoder.openfile.open_filex-appcompat-1.6.1-2:/drawable-v21/abc_edit_text_material.xml"
+    },
+    {
+        "merged": "com.crazecoder.openfile.open_filex-merged_res-24:/drawable-v21/abc_action_bar_item_background_material.xml",
+        "source": "com.crazecoder.openfile.open_filex-appcompat-1.6.1-2:/drawable-v21/abc_action_bar_item_background_material.xml"
+    },
+    {
+        "merged": "com.crazecoder.openfile.open_filex-merged_res-24:/drawable-v21/abc_dialog_material_background.xml",
+        "source": "com.crazecoder.openfile.open_filex-appcompat-1.6.1-2:/drawable-v21/abc_dialog_material_background.xml"
+    }
+]

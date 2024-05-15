@@ -59,31 +59,33 @@ class _ChiefDistributionPageViewState extends State<ChiefDistributionPageView> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  ExpansionPanelList(
-                    children: [
-                      ...List.generate(
-                          state.chiefOperationsList.length,
-                          (index) => ExpansionPanel(
-                              isExpanded: context
-                                  .read<ChiefDistributionCubit>()
-                                  .isElementOpenList[index],
-                              headerBuilder: (context, isOpen) =>
-                                  ChiefOperationDistributionTitleItem(
-                                      state.chiefOperationsList[index]),
-                              body: ChiefOperationDistributionBodyItem(
-                                operation: state.chiefOperationsList[index],
-                              )))
-                    ],
-                    expansionCallback: (i, isOpen) => setState(() {
-                      context
-                          .read<ChiefDistributionCubit>()
-                          .isElementOpenList[i] = isOpen;
-                    }),
-                  ),
+                  state.status == DistributionPageStatus.success
+                      ? ExpansionPanelList(
+          children: [
+          ...List.generate(
+          state.chiefOperationsList.length,
+          (index) => ExpansionPanel(
+          isExpanded: context
+              .read<ChiefDistributionCubit>()
+              .isElementOpenList[index],
+          headerBuilder: (context, isOpen) =>
+          ChiefOperationDistributionTitleItem(
+          state.chiefOperationsList[index]),
+          body: ChiefOperationDistributionBodyItem(
+          operation:
+          state.chiefOperationsList[index],
+          )))
+          ],
+          expansionCallback: (i, isOpen) => setState(() {
+          context
+              .read<ChiefDistributionCubit>()
+              .isElementOpenList[i] = isOpen;
+          }),
+          )
+                      : Center(child: CircularProgressIndicator(),),
                   const SizedBox(
                     height: 50,
                   ),
-
                 ],
               ),
             ),
@@ -97,8 +99,8 @@ class _ChiefDistributionPageViewState extends State<ChiefDistributionPageView> {
                     .sendOperationsToDistribution();
               },
               style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 10, horizontal: 15)),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 15)),
               child: const Text('отправить в работу',
                   style: TextStyle(fontSize: 18)),
             ),

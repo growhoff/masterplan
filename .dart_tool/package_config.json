@@ -260,12 +260,6 @@
       "languageVersion": "3.0"
     },
     {
-      "name": "gpassword",
-      "rootUri": "file:///C:/Users/user/AppData/Local/Pub/Cache/hosted/pub.dev/gpassword-0.0.1",
-      "packageUri": "lib/",
-      "languageVersion": "2.15"
-    },
-    {
       "name": "gtk",
       "rootUri": "file:///C:/Users/user/AppData/Local/Pub/Cache/hosted/pub.dev/gtk-2.1.0",
       "packageUri": "lib/",
@@ -800,7 +794,7 @@
       "languageVersion": "3.0"
     }
   ],
-  "generated": "2024-05-08T18:47:38.274872Z",
+  "generated": "2024-05-14T17:37:23.118440Z",
   "generator": "pub",
   "generatorVersion": "3.0.3"
 }

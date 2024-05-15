@@ -26,7 +26,7 @@ class StageDTO extends Dto {
   
   static final empty = StageDTO(
     id: 0, 
-    number: '', 
+    number: '',
     name: '', 
     areaId: 0, 
     isdistributed: false, 

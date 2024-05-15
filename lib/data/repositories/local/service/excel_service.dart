@@ -2,15 +2,19 @@ import 'dart:io';
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:lecle_downloads_path_provider/lecle_downloads_path_provider.dart';
+import 'package:master_plan/data/repositories/supabase/dto/chief_batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/chief_distribution_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/transfer_dto.dart';
+import 'package:master_plan/data/repositories/supabase/service/chief_batch_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/chief_distribution_operations_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/chief_operation_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/transfer_table.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../presentation/pages/chief/statistics_page/statistics_stage_model.dart';
 import '../../supabase/dto/batch_dto.dart';
+import '../../supabase/dto/chief_operation_dto.dart';
 import '../../supabase/dto/operation_dto.dart';
 import '../../supabase/dto/stage_dto.dart';
 import '../../supabase/service/batch_table.dart';
@@ -21,8 +25,14 @@ class ExcelService {
   final _batchTable = BatchTable();
   final _stageTable = StageTable();
   final _operationTable = OperationTable();
-  final _chiefOperationsTable = ChiefDistributionOperationsTable();
+  final _chiefDistributionOperationsTable = ChiefDistributionOperationsTable();
+  final _chiefBatchTable = ChiefBatchTable();
+  final _chiefOperationTable = ChiefOperationTable();
   final _transferTable = TransferTable();
+
+  List<ChiefOperationDto> chiefOperationsList = [];
+  int serviceBatchId = 0;
+  int serviceQuantity = 0;
 
   final CellStyle _cellHeaderStyle = CellStyle(
     textWrapping: TextWrapping.WrapText,
@@ -92,7 +102,7 @@ class ExcelService {
     'Кол-во'
   ];
 
-  Future<void> stageExcelFunction() async {
+  Future<int> stageExcelFunction() async {
     FilePickerResult? pickedFile = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['xlsx'],
@@ -106,6 +116,11 @@ class ExcelService {
       var excel = Excel.decodeBytes(bytes);
 
       for (var table in excel.tables.keys) {
+        int quantity =
+            int.parse(excel.tables[table]!.rows[1][13]!.value.toString());
+
+        serviceQuantity = quantity;
+
         String code = excel.tables[table]!.rows[1][0]!.value
             .toString(); // присваивается значение первой ячейки столбца номер чертежа
 
@@ -115,9 +130,6 @@ class ExcelService {
         String planNumber = excel.tables[table]!.rows[1][2]!.value.toString();
 
         String planName = excel.tables[table]!.rows[1][3]!.value.toString();
-
-        int quantity =
-            int.parse(excel.tables[table]!.rows[1][13]!.value.toString());
 
         int batchId = await _batchTable.insert(BatchDTO(
           id: 0,
@@ -131,13 +143,15 @@ class ExcelService {
           packageId: 0,
         ));
 
+        serviceBatchId = batchId;
+
         String? stageNumber =
             excel.tables[table]!.rows[1][14]?.value.toString();
         String? stageName = excel.tables[table]!.rows[1][5]?.value.toString();
 
         int stageId = await _stageTable.insert(StageDTO(
             id: 0,
-            number: stageNumber!,
+            number: stageNumber ?? '',
             name: stageName ?? '',
             isdistributed: false,
             areaId: 0,
@@ -166,15 +180,25 @@ class ExcelService {
         print(
             'инсерт операцию: $operationCode, $operationNumber, $operationName');
 
-        await _chiefOperationsTable.insert(ChiefDistributionOperationsDTO(
+        int distributionOperationId = await _chiefDistributionOperationsTable
+            .insert(ChiefDistributionOperationsDTO(
+                id: 0,
+                operationId: operationId,
+                stageId: stageId,
+                stage: StageDTO.empty,
+                operation: OperationDTO.empty,
+                batchId: batchId,
+                batch: BatchDTO.empty,
+                quantity: quantity));
+
+        chiefOperationsList.add(ChiefOperationDto(
             id: 0,
+            operation: OperationDTO.empty,
+            stage: StageDTO.empty,
             operationId: operationId,
             stageId: stageId,
-            stage: StageDTO.empty,
-            operation: OperationDTO.empty,
-            batchId: batchId,
-            batch: BatchDTO.empty,
-            quantity: quantity));
+            chiefBatch: ChiefBatchDTO(id: 0, batchId: 0, batch: BatchDTO.empty),
+            chiefBatchId: 0));
 
         String? transferCode;
         String? transferName;
@@ -199,7 +223,7 @@ class ExcelService {
             stageName = row[i][5]?.value.toString();
             stageId = await _stageTable.insert(StageDTO(
                 id: 0,
-                number: stageNumber!,
+                number: stageNumber ?? '',
                 name: stageName ?? '',
                 isdistributed: false,
                 areaId: 0,
@@ -225,15 +249,25 @@ class ExcelService {
               timepz: timepz,
               stageId: stageId,
             ));
-            await _chiefOperationsTable.insert(ChiefDistributionOperationsDTO(
+            distributionOperationId = await _chiefDistributionOperationsTable
+                .insert(ChiefDistributionOperationsDTO(
+                    operationId: operationId,
+                    stageId: stageId,
+                    stage: StageDTO.empty,
+                    operation: OperationDTO.empty,
+                    batchId: batchId,
+                    batch: BatchDTO.empty,
+                    quantity: quantity,
+                    id: 0));
+
+            chiefOperationsList.add(ChiefOperationDto(
+                id: 0,
+                operation: OperationDTO.empty,
+                stage: StageDTO.empty,
                 operationId: operationId,
                 stageId: stageId,
-                stage: StageDTO.empty,
-                operation: OperationDTO.empty,
-                batchId: batchId,
-                batch: BatchDTO.empty,
-                quantity: quantity,
-                id: 0));
+                chiefBatch: ChiefBatchDTO(id: 0, batchId: 0, batch: BatchDTO.empty),
+                chiefBatchId: 0));
           }
 
           if (row[i][9]?.value != null) {
@@ -251,6 +285,29 @@ class ExcelService {
         }
       }
     }
+    return 1;
+  }
+
+  Future<void> finishLoading() async {
+    for (int i = 0; i < serviceQuantity; i++) {
+      int chiefBatchId = await _chiefBatchTable.insert(
+          ChiefBatchDTO(id: 0, batchId: serviceBatchId, batch: BatchDTO.empty));
+
+      for (var operation in chiefOperationsList) {
+        _chiefOperationTable.insert(ChiefOperationDto(
+            id: 0,
+            operation: OperationDTO.empty,
+            stage: StageDTO.empty,
+            operationId: operation.operationId,
+            stageId: operation.stageId,
+            chiefBatch: ChiefBatchDTO(id: 0, batchId: 0, batch: BatchDTO.empty),
+            chiefBatchId: chiefBatchId));
+      }
+    }
+
+    serviceBatchId = 0;
+    chiefOperationsList = [];
+    serviceQuantity = 0;
   }
 
   Future<String> uploadReport(

@@ -1,8 +1,9 @@
+import 'package:master_plan/data/repositories/supabase/dto/chief_operation_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class ChiefOperationTabel extends SupabaseTable {
+class ChiefOperationTable extends SupabaseTable {
   final table = Supabase.instance.client.from('z_chief_operation');
 
   @override
@@ -12,9 +13,14 @@ class ChiefOperationTabel extends SupabaseTable {
   }
 
   @override
-  Future<void> insert(Dto dto) {
-    // TODO: implement insert
-    throw UnimplementedError();
+  Future<void> insert(Dto dto) async {
+    if (dto is ChiefOperationDto) {
+      await table.insert({
+        'chief_batch_id': dto.chiefBatchId,
+        'stage_id': dto.stageId,
+        'operation_id': dto.operationId
+      });
+    }
   }
 
   @override
@@ -27,5 +33,21 @@ class ChiefOperationTabel extends SupabaseTable {
   Future<void> update(int id, Dto dto) {
     // TODO: implement update
     throw UnimplementedError();
+  }
+
+  Future<List<Map<String, dynamic>>> fetchOperationsByOperationIdWithLimit(
+      {required int limit, required int operationId}) async {
+    return await table
+        .select('id')
+        .eq('operation_id', operationId)
+        .eq('is_distributed', false)
+        .limit(limit);
+  }
+
+  Future<void> changeIsDistributed(
+      {required List<int> operationsIdList}) async {
+    for (var id in operationsIdList) {
+      await table.update({'is_distributed': true}).eq('id', id);
+    }
   }
 }

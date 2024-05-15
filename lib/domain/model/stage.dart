@@ -3,7 +3,7 @@ import 'batch.dart';
 
 class Stage {
   final int id;
-  final String number;
+  final int number;
   final String name;
   final int areaId;
   final bool isdistributed;

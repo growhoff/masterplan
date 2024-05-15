@@ -24,6 +24,7 @@ class OperatorOperationsDTO extends Dto {
   final OperationDTO operation;
   final int areaId;
   final AreaDTO? area;
+  final int? chiefOperationId;
 
   final int? machineId;
   final MachineDTO? machine;
@@ -57,6 +58,7 @@ class OperatorOperationsDTO extends Dto {
     this.timeworking,
     this.userId,
     this.user,
+    this.chiefOperationId,
   });
 
     Map<String, dynamic> toMap() {

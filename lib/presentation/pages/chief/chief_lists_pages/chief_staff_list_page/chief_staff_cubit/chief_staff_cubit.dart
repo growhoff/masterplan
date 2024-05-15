@@ -1,11 +1,12 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:gpassword/gpassword.dart';
+// import 'package:gpassword/gpassword.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:mime/mime.dart';
 
+import '../../../../../../domain/usecase/generate_password_service.dart';
 import '../../../../../../data/repositories/supabase/dto/area_dto.dart';
 import '../../../../../../data/repositories/supabase/dto/company_dto.dart';
 import '../../../../../../data/repositories/supabase/dto/position_dto.dart';
@@ -51,7 +52,8 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
   Map<String, int> areasMap = {};
   Map<String, int> positionsMap = {};
 
-   final GPassword _gPassword = GPassword(); // генератор пароля (библиотека)
+  // final GPassword _gPassword = GPassword(); // генератор пароля (библиотека)
+  final Password _password = Password(length: 4);
 
   Future<void> fetchAreasAndStaff() async {
     await fetchAreas();
@@ -203,7 +205,7 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
         login: numberController.text,
         password:
             passwordController.text == '' || passwordController.text == ' '
-                 ? _gPassword.generate(passwordLength: 4)
+                 ? _password.generatePassword()
 
                 : passwordController.text,
         userId: userId,

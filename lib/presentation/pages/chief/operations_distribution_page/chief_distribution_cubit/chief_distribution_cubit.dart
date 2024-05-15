@@ -4,6 +4,7 @@ import 'package:master_plan/data/repositories/local/service/excel_service.dart';
 import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/chief_distribution_operations_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/chief_operation_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operation_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
@@ -12,6 +13,7 @@ import 'package:master_plan/data/repositories/supabase/dto/status_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/area_table.dart';
 
 import 'package:master_plan/data/repositories/supabase/service/chief_distribution_operations_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/chief_operation_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
 import 'package:master_plan/presentation/pages/chief/model/distribution_operation_model.dart';
 
@@ -26,8 +28,10 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
       OperatorOperationsTable();
 
   final AreaTable _areaTable = AreaTable();
+  final ChiefOperationTable _chiefOperationTable = ChiefOperationTable();
 
-  final ChiefDistributionOperationsTable _chiefOperationsTable = ChiefDistributionOperationsTable();
+  final ChiefDistributionOperationsTable _chiefDistributionOperationsTable =
+      ChiefDistributionOperationsTable();
 
   List<bool> isElementOpenList = [];
 
@@ -43,10 +47,12 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
   Future<void> fetchChiefOperations() async {
     isElementOpenList = [];
     List<ChiefDistributionOperation> chiefOperationsList = [];
-    var fetchedChiefOperationsList = await _chiefOperationsTable.selectNotDistributed();
+    var fetchedChiefOperationsList =
+        await _chiefDistributionOperationsTable.selectNotDistributed();
 
     for (var operation in fetchedChiefOperationsList) {
-      final chiefOperationDto = ChiefDistributionOperationsDTO.fromMap(operation);
+      final chiefOperationDto =
+          ChiefDistributionOperationsDTO.fromMap(operation);
       chiefOperationsList.add(ChiefDistributionOperation(
           operationId: chiefOperationDto.operationId,
           stageId: chiefOperationDto.stageId,
@@ -58,7 +64,11 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
           id: chiefOperationDto.id));
       isElementOpenList.add(false);
     }
-    emit(state.copyWith(chiefOperationsList: chiefOperationsList, status: DistributionPageStatus.success));
+    emit(state.copyWith(
+        chiefOperationsList: chiefOperationsList,
+        status: DistributionPageStatus.success));
+
+    print('STATE fetch: ${state.status}');
   }
 
   Future<void> fetchAreas() async {
@@ -74,13 +84,26 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
   }
 
   Future<void> loadStageFromExcel() async {
-    await _excelStageLoadService.stageExcelFunction();
-    fetchChiefOperations();
+    emit(state.copyWith(status: DistributionPageStatus.loading));
+    print('STATE load: ${state.status}');
+    await _excelStageLoadService
+        .stageExcelFunction()
+        .then((value) => fetchChiefOperations());
+
+    _excelStageLoadService.finishLoading();
   }
 
   Future<void> sendOperationsToDistribution() async {
+    List<int> chiefOperationsIdList = [];
     for (var operation in operationsForDistributionList) {
       final quantity = operation.quantity;
+      var fetchedChiefOperationsList = await _chiefOperationTable.fetchOperationsByOperationIdWithLimit(
+          limit: quantity, operationId: operation.operationId);
+
+      for (var chiefOperation in fetchedChiefOperationsList){
+        chiefOperationsIdList.add(chiefOperation['id']);
+      }
+
       for (int i = 0; i < quantity; i++) {
         await _operatorOperationsTable.insert(OperatorOperationsDTO(
             id: 0,
@@ -96,13 +119,17 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
             operation: OperationDTO.empty,
             areaId: operation.areaId,
             order: i + 1,
+            chiefOperationId: fetchedChiefOperationsList[i]['id'],
             area: AreaDTO(id: 0, name: '', number: '', unitId: 0)));
       }
-      _chiefOperationsTable.updateQuantity(
+      _chiefDistributionOperationsTable.updateQuantity(
           chiefOperationId: operation.chiefOperationId,
           newQuantity: operation.oldQuantity - quantity);
     }
-    emit(state.copyWith(chiefOperationsList: [], status: DistributionPageStatus.loading));
+    emit(state.copyWith(
+        chiefOperationsList: [], status: DistributionPageStatus.loading));
     fetchChiefOperations();
+
+    _chiefOperationTable.changeIsDistributed(operationsIdList: chiefOperationsIdList);
   }
 }

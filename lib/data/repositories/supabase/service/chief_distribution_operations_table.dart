@@ -13,29 +13,33 @@ class ChiefDistributionOperationsTable extends SupabaseTable {
   }
 
   @override
-  Future<void> insert(Dto dto) async {
+  Future<int> insert(Dto dto) async {
     if (dto is ChiefDistributionOperationsDTO) {
-      await table.insert({
+      var operation = await table.insert({
         'batch_id': dto.batchId,
         'stage_id': dto.stageId,
         'operation_id': dto.operationId,
         'quantity': dto.quantity
-      });
+      }).select('id');
+      return operation[0]['id'];
     }
+    return 0;
   }
 
   @override
   Future<List<Map<String, dynamic>>> select() async {
-    var res = await table.select('*, z_batch:batch_id(*), z_stage:stage_id(*, z_area(*)), z_operation:operation_id(*)');
+    var res = await table
+        .select(
+            '*, z_batch:batch_id(*), z_stage:stage_id(*, z_area(*)), z_operation:operation_id(*)');
     print(res);
     return res;
   }
 
   Future<List<Map<String, dynamic>>> selectNotDistributed() async {
     var res = await table
-        .select('*, z_batch:batch_id(*), z_stage:stage_id(*), z_operation:operation_id(*)')
-        .gt('quantity', 0);
-    print(res);
+        .select(
+        '*, z_batch:batch_id(*), z_stage:stage_id(*), z_operation:operation_id(*)')
+        .gt('quantity', 0).order('id', ascending: true);
     return res;
   }
 

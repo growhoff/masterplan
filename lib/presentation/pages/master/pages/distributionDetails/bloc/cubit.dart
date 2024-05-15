@@ -8,14 +8,11 @@ import 'state.dart';
 class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
   final int areaIdUser;
   final List<Machine> listMachine;
-  final List<int> machineIdList;
   final tableOperations = OperatorOperationsTable();
-  CubitDistributionDetails(this.areaIdUser, this.listMachine, this.machineIdList) : super(const StateDistributionDetails()){
-      tableOperations.table.stream(primaryKey: ['id']).inFilter('machine_id', machineIdList).listen((event) {
+  CubitDistributionDetails(this.areaIdUser, this.listMachine) : super(const StateDistributionDetails()){
+      tableOperations.table.stream(primaryKey: ['id']).inFilter('area_id', [areaIdUser]).listen((event){
       }).onData((data)async {
-          List<DistribItem> res = [];
-          res = [...await getQuere(data)];
-          emit(state.copyWith(operList: res));
+          await getQuere(data);
       });
   }
 
@@ -60,7 +57,7 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
     }
   }
 
-  Future<List<DistribItem>> getQuere (List<Map<String, dynamic>>? data)async{
+  Future<void> getQuere (List<Map<String, dynamic>>? data)async{
     List<int> listId = [];
     for (var element in data!) {
       if ((element['status_id'] as int == 2) || (element['status_id'] as int == 4)) listId.add(element['id']);
@@ -73,8 +70,8 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
     }
     List<DistribItem> listItem = [];
       for (var operOperat in list) {
-        listItem.add(DistribItem(id: operOperat.id, stageNumber: '${operOperat.stage!.number}', statusId: operOperat.status.id, detailNumber: operOperat.batch.number, operationName: operOperat.operation.name, count: operOperat.batch.count, isSelected: false));
+        listItem.add(DistribItem(id: operOperat.id, stageNumber: operOperat.stage!.number, statusId: operOperat.status.id, detailNumber: operOperat.batch.number, operationName: operOperat.operation.name, count: operOperat.batch.count, isSelected: false));
       }
-    return listItem;
+    emit(state.copyWith(operList: listItem));
   }
 }

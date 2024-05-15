@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "com.crazecoder.openfile.open_filex-merged_res-24:/animator/fragment_fade_exit.xml",
+        "source": "com.crazecoder.openfile.open_filex-fragment-1.3.6-7:/animator/fragment_fade_exit.xml"
+    },
+    {
+        "merged": "com.crazecoder.openfile.open_filex-merged_res-24:/animator/fragment_open_enter.xml",
+        "source": "com.crazecoder.openfile.open_filex-fragment-1.3.6-7:/animator/fragment_open_enter.xml"
+    },
+    {
+        "merged": "com.crazecoder.openfile.open_filex-merged_res-24:/animator/fragment_close_enter.xml",
+        "source": "com.crazecoder.openfile.open_filex-fragment-1.3.6-7:/animator/fragment_close_enter.xml"
+    },
+    {
+        "merged": "com.crazecoder.openfile.open_filex-merged_res-24:/animator/fragment_open_exit.xml",
+        "source": "com.crazecoder.openfile.open_filex-fragment-1.3.6-7:/animator/fragment_open_exit.xml"
+    },
+    {
+        "merged": "com.crazecoder.openfile.open_filex-merged_res-24:/animator/fragment_fade_enter.xml",
+        "source": "com.crazecoder.openfile.open_filex-fragment-1.3.6-7:/animator/fragment_fade_enter.xml"
+    },
+    {
+        "merged": "com.crazecoder.openfile.open_filex-merged_res-24:/animator/fragment_close_exit.xml",
+        "source": "com.crazecoder.openfile.open_filex-fragment-1.3.6-7:/animator/fragment_close_exit.xml"
+    }
+]

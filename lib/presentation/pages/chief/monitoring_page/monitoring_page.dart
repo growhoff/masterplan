@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/presentation/app/bloc/cubit.dart';
+
 import 'package:intl/intl.dart';
 
 import '../widgets/element_bar_widget.dart';
@@ -50,7 +52,7 @@ class _MonitoringPageContentState extends State<MonitoringPageContent> {
                   )),
             );
           } else {
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator());
           }
         },
       ),

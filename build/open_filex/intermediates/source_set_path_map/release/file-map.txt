@@ -1,0 +1,26 @@
+com.crazecoder.openfile.open_filex-lifecycle-livedata-core-2.5.1-0 C:\Users\user\.gradle\caches\transforms-3\06f5aaf5b70d150af78a38cf4107ad4c\transformed\lifecycle-livedata-core-2.5.1\res
+com.crazecoder.openfile.open_filex-jetified-emoji2-views-helper-1.2.0-1 C:\Users\user\.gradle\caches\transforms-3\2117098b60d45ee3ef399f65f1a5cade\transformed\jetified-emoji2-views-helper-1.2.0\res
+com.crazecoder.openfile.open_filex-appcompat-1.6.1-2 C:\Users\user\.gradle\caches\transforms-3\226ba0f93c2c315a294c49e9db2ca9af\transformed\appcompat-1.6.1\res
+com.crazecoder.openfile.open_filex-jetified-emoji2-1.2.0-3 C:\Users\user\.gradle\caches\transforms-3\30f488e3c19dc9a44cbe2cb593211152\transformed\jetified-emoji2-1.2.0\res
+com.crazecoder.openfile.open_filex-jetified-activity-1.6.0-4 C:\Users\user\.gradle\caches\transforms-3\476349f480e599bfeef7717fb7910dd0\transformed\jetified-activity-1.6.0\res
+com.crazecoder.openfile.open_filex-jetified-lifecycle-viewmodel-savedstate-2.5.1-5 C:\Users\user\.gradle\caches\transforms-3\483154796c0d892396c28bed3a16fab8\transformed\jetified-lifecycle-viewmodel-savedstate-2.5.1\res
+com.crazecoder.openfile.open_filex-core-1.9.0-6 C:\Users\user\.gradle\caches\transforms-3\4dd3635bbed82c605b02fe61f947c24c\transformed\core-1.9.0\res
+com.crazecoder.openfile.open_filex-fragment-1.3.6-7 C:\Users\user\.gradle\caches\transforms-3\5c7c8a4ad57e268c3eb9d21468202c0a\transformed\fragment-1.3.6\res
+com.crazecoder.openfile.open_filex-jetified-window-java-1.0.0-beta04-8 C:\Users\user\.gradle\caches\transforms-3\5ddc55be9a1f9ca3021e908092377266\transformed\jetified-window-java-1.0.0-beta04\res
+com.crazecoder.openfile.open_filex-lifecycle-runtime-2.5.1-9 C:\Users\user\.gradle\caches\transforms-3\8d646ea66bf1432a7618c0d48d933679\transformed\lifecycle-runtime-2.5.1\res
+com.crazecoder.openfile.open_filex-jetified-startup-runtime-1.1.1-10 C:\Users\user\.gradle\caches\transforms-3\a82fc0c2c652b7206977a33252383412\transformed\jetified-startup-runtime-1.1.1\res
+com.crazecoder.openfile.open_filex-jetified-core-ktx-1.9.0-11 C:\Users\user\.gradle\caches\transforms-3\ad4292ac58899fb3322e4d5cc82a1413\transformed\jetified-core-ktx-1.9.0\res
+com.crazecoder.openfile.open_filex-lifecycle-viewmodel-2.5.1-12 C:\Users\user\.gradle\caches\transforms-3\b47b97f1cfc26b030157c5c8aba8cca6\transformed\lifecycle-viewmodel-2.5.1\res
+com.crazecoder.openfile.open_filex-jetified-window-1.0.0-beta04-13 C:\Users\user\.gradle\caches\transforms-3\beb1df14a36789fd46f1fa73f36b9595\transformed\jetified-window-1.0.0-beta04\res
+com.crazecoder.openfile.open_filex-jetified-lifecycle-process-2.4.1-14 C:\Users\user\.gradle\caches\transforms-3\cfd44795089ddcb24c5c20ce02ce3e3a\transformed\jetified-lifecycle-process-2.4.1\res
+com.crazecoder.openfile.open_filex-jetified-savedstate-1.2.0-15 C:\Users\user\.gradle\caches\transforms-3\da2d56632c80a0ba1aeefac031e4757e\transformed\jetified-savedstate-1.2.0\res
+com.crazecoder.openfile.open_filex-jetified-appcompat-resources-1.6.1-16 C:\Users\user\.gradle\caches\transforms-3\ef760acb1a77088dae2be4faadc64199\transformed\jetified-appcompat-resources-1.6.1\res
+com.crazecoder.openfile.open_filex-jetified-annotation-experimental-1.3.0-17 C:\Users\user\.gradle\caches\transforms-3\f4165d65e7c1fbf8fa60889e1dccc94b\transformed\jetified-annotation-experimental-1.3.0\res
+com.crazecoder.openfile.open_filex-main-18 C:\Users\user\AppData\Local\Pub\Cache\hosted\pub.dev\open_filex-4.4.0\android\src\main\res
+com.crazecoder.openfile.open_filex-release-19 C:\Users\user\AppData\Local\Pub\Cache\hosted\pub.dev\open_filex-4.4.0\android\src\release\res
+com.crazecoder.openfile.open_filex-pngs-20 D:\Flutter project\master-plan\master_plan\build\open_filex\generated\res\pngs\release
+com.crazecoder.openfile.open_filex-resValues-21 D:\Flutter project\master-plan\master_plan\build\open_filex\generated\res\resValues\release
+com.crazecoder.openfile.open_filex-rs-22 D:\Flutter project\master-plan\master_plan\build\open_filex\generated\res\rs\release
+com.crazecoder.openfile.open_filex-mergeReleaseResources-23 D:\Flutter project\master-plan\master_plan\build\open_filex\intermediates\incremental\release\mergeReleaseResources\merged.dir
+com.crazecoder.openfile.open_filex-mergeReleaseResources-24 D:\Flutter project\master-plan\master_plan\build\open_filex\intermediates\incremental\release\mergeReleaseResources\stripped.dir
+com.crazecoder.openfile.open_filex-merged_res-25 D:\Flutter project\master-plan\master_plan\build\open_filex\intermediates\merged_res\release
