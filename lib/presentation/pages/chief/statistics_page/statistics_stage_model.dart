@@ -30,7 +30,7 @@ class StatisticOperationModel {
   final OperationDTO operation;
   final int batchId;
   final BatchDTO batch;
-  final int quantity;
+  final int? quantity;
   Area? area;
 
   List<ReadyOperationModel> readyOperationsList;
@@ -58,7 +58,7 @@ class StatisticOperationModel {
       required this.operation,
       required this.batchId,
       required this.batch,
-      required this.quantity,
+       this.quantity,
       required this.readyOperationsList,
         this.area
       });

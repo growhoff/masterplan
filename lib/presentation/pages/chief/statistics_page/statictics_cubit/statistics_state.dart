@@ -1,19 +1,14 @@
 part of 'statistics_cubit.dart';
 
 class ChiefStatisticsState extends Equatable {
-  const ChiefStatisticsState(
-      {this.areasList = const [], this.stagesList = const []});
+  const ChiefStatisticsState({this.stagesList = const []});
 
-  final List<Area> areasList;
   final List<StatisticsStageModel> stagesList;
 
   @override
-  List<Object?> get props => [areasList, stagesList];
+  List<Object?> get props => [stagesList];
 
-  ChiefStatisticsState copyWith(
-      {List<Area>? areasList, List<StatisticsStageModel>? stagesList}) {
-    return ChiefStatisticsState(
-        areasList: areasList ?? this.areasList,
-        stagesList: stagesList ?? this.stagesList);
+  ChiefStatisticsState copyWith({List<StatisticsStageModel>? stagesList}) {
+    return ChiefStatisticsState(stagesList: stagesList ?? this.stagesList);
   }
 }

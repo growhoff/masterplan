@@ -4,18 +4,22 @@ import 'package:master_plan/data/repositories/local/service/excel_service.dart';
 import 'package:master_plan/data/repositories/local/service/notification_service.dart';
 import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/chief_distribution_operations_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/chief_operation_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/chief_distribution_operations_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/chief_operation_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
 
 import 'package:master_plan/domain/model/chief_distribution_operations_model.dart';
+import 'package:master_plan/domain/model/status.dart';
 
-import 'package:master_plan/presentation/pages/chief/statistics_page/statistics_stage_model.dart';
 import 'package:open_filex/open_filex.dart';
 
 import '../../../../../data/repositories/supabase/service/area_table.dart';
 import '../../../../../domain/model/area.dart';
+import '../stage_model.dart';
+import '../statistics_stage_model.dart';
 
 part 'statistics_state.dart';
 
@@ -23,40 +27,124 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
   StatisticsCubit() : super(ChiefStatisticsState());
 
   final ExcelService _excelService = ExcelService();
-  final NotificationService _notificationService = NotificationService();
 
-  final AreaTable _areaTable = AreaTable();
-  final ChiefDistributionOperationsTable _chiefOperationsTable = ChiefDistributionOperationsTable();
+  final ChiefDistributionOperationsTable _chiefDistributionOperationsTable =
+      ChiefDistributionOperationsTable();
+
+  final ChiefOperationTable _chiefOperationTable = ChiefOperationTable();
+
   final OperatorOperationsTable _operatorOperationsTable =
       OperatorOperationsTable();
   int activeAreaId = 0;
 
-  Future<void> fetchAreas() async {
-    List<Area> areasList = [];
-    var fetchedAreasList = await _areaTable.select();
-    for (var area in fetchedAreasList) {
-      final areaDto = AreaDTO.fromMap(area);
-      areasList.add(Area(
-          id: areaDto.id,
-          name: areaDto.name,
-          number: areaDto.number,
-          unitId: areaDto.unitId));
-    }
-    activeAreaId = areasList.first.id;
-    print('activeareadId: $activeAreaId ');
-    emit(state.copyWith(areasList: areasList));
-  }
+  // Future<void> fetchStagesNew() async {
+  //   List<StatisticsStageModel2> stagesList = [];
+  //   Map<int, StatisticsBatchModel> batchesMap = {};
+  //   Map<int, List<int>> stagesInBatchesMap = {};
+  //
+  //   var fetchedChiefOperations = await _chiefOperationTable.select();
+  //
+  //   for (var chiefOperation in fetchedChiefOperations) {
+  //     final chiefOperationDto = ChiefOperationDto.fromMap(chiefOperation);
+  //
+  //     if (batchesMap.containsKey(chiefOperationDto.chiefBatchId)) {
+  //       if (stagesInBatchesMap[chiefOperationDto.chiefBatchId]!
+  //           .contains(chiefOperationDto.stage.id)) {
+  //         batchesMap[chiefOperationDto.chiefBatchId]
+  //             ?.stagesList
+  //             ?.firstWhere(
+  //                 (element) => element.stage.id == chiefOperationDto.stage.id)
+  //             .operationsList
+  //             ?.add(StatisticsOperationModel2(
+  //                 operation: chiefOperationDto.operation));
+  //       } else {
+  //         batchesMap[chiefOperationDto.chiefBatchId]?.stagesList?.add(
+  //                 StatisticsStageModel2(
+  //                     stage: chiefOperationDto.stage,
+  //                     operationsList: [
+  //                   StatisticsOperationModel2(
+  //                       operation: chiefOperationDto.operation)
+  //                 ]));
+  //
+  //         List<int> newList =
+  //             stagesInBatchesMap[chiefOperationDto.chiefBatchId]!;
+  //
+  //         newList.add(chiefOperationDto.stage.id);
+  //
+  //         stagesInBatchesMap[chiefOperationDto.chiefBatchId] = newList;
+  //       }
+  //     } else {
+  //       batchesMap[chiefOperationDto.chiefBatchId] = StatisticsBatchModel(
+  //           chiefBatchId: chiefOperationDto.chiefBatchId,
+  //           name: chiefOperationDto.chiefBatch.batch.name,
+  //           number: chiefOperationDto.chiefBatch.batch.number,
+  //           stagesList: [
+  //             StatisticsStageModel2(
+  //                 stage: chiefOperationDto.stage,
+  //                 operationsList: [
+  //                   StatisticsOperationModel2(
+  //                       operation: chiefOperationDto.operation)
+  //                 ])
+  //           ]);
+  //
+  //       stagesInBatchesMap[chiefOperationDto.chiefBatchId] = [
+  //         chiefOperationDto.stage.id
+  //       ];
+  //     }
+  //   }
+  //
+  //   var fetchedOperatorOperations = await _operatorOperationsTable.select();
+  //
+  //   for (var operatorOperation in fetchedOperatorOperations) {
+  //     print(operatorOperation);
+  //     final operatorOperationsDto =
+  //         OperatorOperationsDTO.fromMap(operatorOperation);
+  //     var stage = batchesMap[operatorOperationsDto.chiefBatchId]
+  //         ?.stagesList
+  //         ?.firstWhere((element) =>
+  //             element.stage.id ==
+  //             operatorOperationsDto.chiefOperation?.stageId);
+  //
+  //     var operation = stage?.operationsList?.firstWhere((element) =>
+  //         element.operation.id == operatorOperationsDto.operation.id);
+  //
+  //     operation?.status = Status(
+  //         id: operatorOperationsDto.status.id,
+  //         name: operatorOperationsDto.status.name);
+  //
+  //     operation?.timeFact = operatorOperationsDto.timefact;
+  //
+  //     operation?.timePlan = operatorOperationsDto.timeplan;
+  //
+  //     operation?.timeWorking = operatorOperationsDto.timeworking;
+  //
+  //     operation?.timeStop = operatorOperationsDto.timestop;
+  //
+  //     operation?.timeStart = operatorOperationsDto.timestart;
+  //
+  //     operation?.machine = operatorOperationsDto.machine;
+  //
+  //     operation?.user = operatorOperationsDto.user;
+  //
+  //     if (operation?.status?.id == 6) {
+  //       stage?.readyOperationsQuantity++;
+  //       stage?.readyOperationsPercent = int.parse(
+  //           ((stage.readyOperationsQuantity / stage.operationsList!.length) *
+  //                   100)
+  //               .toString());
+  //     }
+  //   }
+  // }
 
   Future<void> fetchStages() async {
-    if (activeAreaId == 0) {
-      await fetchAreas();
-    }
     List<StatisticsStageModel> stagesList = [];
     Map<int, StatisticsStageModel> stagesMap = {};
-    var fetchedChiefOperationsList = await _chiefOperationsTable.select();
+    var fetchedChiefOperationsList =
+        await _chiefDistributionOperationsTable.select();
 
     for (var operation in fetchedChiefOperationsList) {
-      final chiefOperationDto = ChiefDistributionOperationsDTO.fromMap(operation);
+      final chiefOperationDto =
+          ChiefDistributionOperationsDTO.fromMap(operation);
       final chiefOperation = ChiefDistributionOperation(
           id: chiefOperationDto.id,
           operationId: chiefOperationDto.operationId,
@@ -159,13 +247,13 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
               ?.operationsList[index]
               .readyOperationsList
               .add(ReadyOperationModel(
-                  timeFact: operatorOperationDto.timefact,
-                  timePlan: operatorOperationDto.timeplan,
-                  timeStart: operatorOperationDto.timestart,
-                  timeStop: operatorOperationDto.timestop,
-                  timeWorking: operatorOperationDto.timeworking,
-            user: operatorOperationDto.user,
-          ));
+                timeFact: operatorOperationDto.timefact,
+                timePlan: operatorOperationDto.timeplan,
+                timeStart: operatorOperationDto.timestart,
+                timeStop: operatorOperationDto.timestop,
+                timeWorking: operatorOperationDto.timeworking,
+                user: operatorOperationDto.user,
+              ));
         }
       }
     }
@@ -182,15 +270,15 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
     emit(state.copyWith(stagesList: stagesList));
   }
 
-  Future<void> fetchReadyPercent({required StatisticsStageModel stage}) async {
-    for (var operation in stage.operationsList) {
-      if (operation.statusMap[6] != null) {
-        operation.readyPercent = operation.statusMap[6]! == 0
-            ? 0
-            : (((operation.statusMap[6]! / operation.quantity) * 100)).toInt();
-      }
-    }
-  }
+  // Future<void> fetchReadyPercent({required StatisticsStageModel stage}) async {
+  //   for (var operation in stage.operationsList) {
+  //     if (operation.statusMap[6] != null) {
+  //       operation.readyPercent = operation.statusMap[6]! == 0
+  //           ? 0
+  //           : (((operation.statusMap[6]! / operation.quantity) * 100)).toInt();
+  //     }
+  //   }
+  // }
 
   Future<void> uploadReportToExcel() async {
     String filePath =

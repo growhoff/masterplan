@@ -45,7 +45,7 @@ class CubitMain extends Cubit<StateMain> {
             await getShiftsDistribution(DateTime.now());
            // await getOperatorOperations();
             await getOperators();
-            await getMonitoring();
+           // await getMonitoring();
             break;
           //оператор
           case 4: await getMachineOperatorZ(state.user!.id); 
@@ -145,7 +145,7 @@ class CubitMain extends Cubit<StateMain> {
           timeworking: dto.timeworking, 
           status: Status(id: dto.status.id, name: dto.status.name), 
           batch: Batch(id: dto.batch.id, number: dto.batch.number, name: dto.batch.name, count: dto.batch.count, code: dto.batch.code, packageId: dto.batch.packageId, technology: dto.batch.technology, order: dto.batch.order, isready: dto.batch.isready),
-          user: User(id: dto.user!.id, fio: dto.user!.fio, positionId: dto.user!.positionId, companyId: dto.user!.companyId, unitId: dto.user!.unitId, areaId: dto.user!.areaId, photo: dto.user!.photo, positionModel: Position(id: dto.user!.position.id, name: dto.user!.position.name)), 
+          //user: User(id: dto.user!.id, fio: dto.user!.fio, positionId: dto.user!.positionId, companyId: dto.user!.companyId, unitId: dto.user!.unitId, areaId: dto.user!.areaId, photo: dto.user!.photo, positionModel: Position(id: dto.user!.position.id, name: dto.user!.position.name)),
           order: dto.order, 
           machine: Machine(id: dto.machine!.id, inventoryNumber: dto.machine!.inventoryNumber, name: dto.machine!.name, areaId: dto.areaId),
           );

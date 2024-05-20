@@ -15,7 +15,7 @@ class ChiefBatchDTO extends Dto {
   factory ChiefBatchDTO.fromMap(Map<String, dynamic> map) {
     return ChiefBatchDTO(
         id: map['id'] as int,
-        batchId: map['batchId'],
+        batchId: map['batch_id'] ?? 0,
         batch: BatchDTO.fromMap(map['z_batch']));
   }
 }

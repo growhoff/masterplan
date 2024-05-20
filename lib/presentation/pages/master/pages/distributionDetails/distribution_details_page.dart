@@ -41,10 +41,12 @@ class DetailDistribContent extends StatelessWidget {
                           backgroundColor: colorMain,
                         ));
                     }
-                    return ExpansionPanelList(
+                    return state.operList.isNotEmpty 
+                    ? ExpansionPanelList(
                       children: list,
                       expansionCallback: (index, isExpanded) => context.read<CubitDistributionDetails>().toggleSelect(index),
-                    );
+                    )
+                    : const Center(child: CircularProgressIndicator());
                 }
               ),
               const SizedBox(height: 8),

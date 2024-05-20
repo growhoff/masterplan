@@ -25,8 +25,15 @@ class ChiefOperationTable extends SupabaseTable {
 
   @override
   Future<List<Map<String, dynamic>>> select() async {
-    return await table
-        .select('*, z_chief_batch(*, z_batch(*)), z_stage(*), z_operation(*)');
+
+    var res = await table
+        .select('*, z_chief_batch(*, z_batch(*)), z_stage(*), z_operation(*)').order('id', ascending: true);
+    print(res);
+    return res;
+  }
+
+  Future<List<Map<String, dynamic>>> selectId(int batchId, int stageId) async {
+    return await table.select('*, z_chief_batch(*, z_batch(*)), z_stage(*), z_operation(*)').eq('chief_batch_id', batchId).eq('stage_id', stageId);
   }
 
   @override
@@ -38,7 +45,7 @@ class ChiefOperationTable extends SupabaseTable {
   Future<List<Map<String, dynamic>>> fetchOperationsByOperationIdWithLimit(
       {required int limit, required int operationId}) async {
     return await table
-        .select('id')
+        .select()
         .eq('operation_id', operationId)
         .eq('is_distributed', false)
         .limit(limit);

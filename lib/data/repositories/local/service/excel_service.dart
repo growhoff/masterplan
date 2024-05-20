@@ -166,7 +166,7 @@ class ExcelService {
         String? operationName =
             excel.tables[table]!.rows[1][8]?.value.toString();
         int timepz =
-            int.parse(excel.tables[table]!.rows[1][11]!.value.toString());
+            int.parse((excel.tables[table]!.rows[1][11]!.value ?? 0).toString() ) ;
 
         int operationId = await _operationTable.insert(OperationDTO(
           id: 0,

@@ -36,7 +36,7 @@ class _OperationsStatisticsPageViewState
 
   @override
   void initState() {
-    context.read<StatisticsCubit>().fetchReadyPercent(stage: widget.statisticsStage);
+   // context.read<StatisticsCubit>().fetchReadyPercent(stage: widget.statisticsStage);
     super.initState();
   }
 

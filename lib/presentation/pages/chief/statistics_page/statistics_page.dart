@@ -30,6 +30,7 @@ class _ChiefMonitoringPageViewState extends State<ChiefStatisticsPageView> {
   @override
   void initState() {
     context.read<StatisticsCubit>().fetchStages();
+   // context.read<StatisticsCubit>().fetchStagesNew();
     super.initState();
   }
 

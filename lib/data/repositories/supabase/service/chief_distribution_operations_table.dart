@@ -31,7 +31,7 @@ class ChiefDistributionOperationsTable extends SupabaseTable {
     var res = await table
         .select(
             '*, z_batch:batch_id(*), z_stage:stage_id(*, z_area(*)), z_operation:operation_id(*)');
-    print(res);
+   // print(res);
     return res;
   }
 

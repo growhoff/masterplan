@@ -1,4 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
+
 class DistribItem {
   final int id;
   final String stageNumber;
@@ -9,6 +11,7 @@ class DistribItem {
   final String? setMachine;
   final int? setCount;
   final bool isSelected;
+  final List<OperatorOperationsDTO> listOperat;
   DistribItem({
     required this.id,
     required this.stageNumber,
@@ -19,6 +22,7 @@ class DistribItem {
     this.setMachine,
     this.setCount,
     required this.isSelected,
+    required this.listOperat,
   });
 
   DistribItem copyWith({
@@ -31,6 +35,7 @@ class DistribItem {
     String? setMachine,
     int? setCount,
     bool? isSelected,
+    List<OperatorOperationsDTO>? listOperat,
   }) {
     return DistribItem(
       id: id ?? this.id,
@@ -42,6 +47,7 @@ class DistribItem {
       setMachine: setMachine ?? this.setMachine,
       setCount: setCount ?? this.setCount,
       isSelected: isSelected ?? this.isSelected,
+      listOperat: listOperat ?? this.listOperat,
     );
   }
 }

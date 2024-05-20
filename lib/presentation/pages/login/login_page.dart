@@ -30,7 +30,7 @@ class ContentLogin extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('MasterPlan'),
-          actions: const [Center(child: Text('v2.2.0'))],
+          actions: const [Center(child: Text('v2.2.4'))],
         ),
         body: SafeArea(
           child: Container(

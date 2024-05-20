@@ -120,6 +120,7 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
             areaId: operation.areaId,
             order: i + 1,
             chiefOperationId: fetchedChiefOperationsList[i]['id'],
+            chiefBatchId: fetchedChiefOperationsList[i]['chief_batch_id'],
             area: AreaDTO(id: 0, name: '', number: '', unitId: 0)));
       }
       _chiefDistributionOperationsTable.updateQuantity(

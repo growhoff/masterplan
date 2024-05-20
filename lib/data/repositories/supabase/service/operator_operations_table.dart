@@ -22,14 +22,15 @@ class OperatorOperationsTable extends SupabaseTable {
         'operation_id': dto.operationId,
         'area_id': dto.areaId,
         'order': dto.order,
-        'chief_operation_id': dto.chiefOperationId
+        'chief_operation_id': dto.chiefOperationId,
+        'chief_batch_id': dto.chiefBatchId
       });
     }
   }
 
   @override
   Future<List<Map<String, dynamic>>> select() {
-    return table.select('*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*), z_user($selectUser), z_machine(*), z_area(*)');
+    return table.select('*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*), z_user($selectUser), z_machine(*), z_area(*), z_chief_operation(*)');
   }
 
   Future<List<Map<String, dynamic>>> selectId(int machineId) {
@@ -99,6 +100,11 @@ class OperatorOperationsTable extends SupabaseTable {
   //выбор машины и статус "очередь"
   Future<void> updateMasterQueue(int id, int machineId) async{
     await table.update({'machine_id': machineId, 'status_id': 3}).eq('id', id);
+  }
+
+  //выбор машины и статус "очередь"
+  Future<void> updateMasterQueueList(List<int> listId, int machineId) async{
+    await table.update({'machine_id': machineId, 'status_id': 3}).inFilter('id', listId);
   }
 
   //статус доработка
