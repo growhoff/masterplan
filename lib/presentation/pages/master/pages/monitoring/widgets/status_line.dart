@@ -8,15 +8,21 @@ class StatusLine extends StatelessWidget {
   final List<ItemMachineStatus> list; 
   @override
   Widget build(BuildContext context) {
-    
+    int lastTime = 720;
+    for (var element in list) {
+      lastTime -= element.timeWorking;
+    }
     return SizedBox(
       height: 25,
       child: Row(
-        children: list.map((e) => Expanded(
+        children: [...list.map((e) => Expanded(
           flex: e.timeWorking,
           child: Container(decoration: BoxDecoration(border: Border.all(width: 1, color: Colors.black), color: context.read<CubitMonitoring>().convertColor(e.status.id)))
           )
         ).toList(),
+        Expanded(flex: lastTime,
+          child: Container(decoration: BoxDecoration(border: Border.all(width: 1, color: Colors.black), color: Colors.white))
+          )]
       ),
     );
   }

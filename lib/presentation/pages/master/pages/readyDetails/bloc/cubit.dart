@@ -4,9 +4,9 @@ import 'package:master_plan/data/repositories/supabase/service/operator_operatio
 import 'package:master_plan/domain/model/batch.dart';
 import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/operator_operations.dart';
-import 'package:master_plan/domain/model/position.dart';
+// import 'package:master_plan/domain/model/position.dart';
 import 'package:master_plan/domain/model/status.dart';
-import 'package:master_plan/domain/model/user.dart';
+// import 'package:master_plan/domain/model/user.dart';
 import 'package:master_plan/presentation/pages/master/pages/readyDetails/model/item_machine.dart';
 import 'state.dart';
 

@@ -47,10 +47,31 @@ class MonitoringMachineTable extends SupabaseTable {
         filters += 'machine_id.eq.${listId[i]},';
       }
     }
-    return table
-        .select(
-            '*, z_status_machine(*), z_user($userSelect), z_machine(*), z_batch(*)')
-        .or(filters);
+    return table.select('*, z_status_machine(*), z_user($userSelect), z_machine(*), z_batch(*)').or(filters);
+  }
+
+  Future<List<Map<String, dynamic>>> selectListIdMachine(List<int> listId, DateTime date) {
+     String filters = '';
+    for (var i = 0; i < listId.length; i++) {
+      if (i == (listId.length - 1)) {
+        filters += 'machine_id.eq.${listId[i]}';
+      } else {
+        filters += 'machine_id.eq.${listId[i]},';
+      }
+    }
+    return table.select('*, z_status_machine(*), z_user($userSelect), z_machine(*), z_batch(*)').or(filters).eq('date', date);
+  }
+
+  Future<List<Map<String, dynamic>>> selectListId(List<int> listId, DateTime date) {
+    String filters = '';
+    for (var i = 0; i < listId.length; i++) {
+      if (i == (listId.length - 1)) {
+        filters += 'id.eq.${listId[i]}';
+      } else {
+        filters += 'id.eq.${listId[i]},';
+      }
+    }
+    return table.select('*, z_status_machine(*), z_user($userSelect), z_machine(*), z_batch(*)').or(filters).eq('date', date);
   }
 
   @override

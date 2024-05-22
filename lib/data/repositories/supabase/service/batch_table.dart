@@ -1,10 +1,13 @@
 import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
+import 'package:master_plan/domain/usecase/company_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class BatchTable extends SupabaseTable {
   final table = Supabase.instance.client.from('z_batch');
+
+  final int? _companyId = CompanyService.instance.companyId;
 
   @override
   Future<void> delete(int id) {
@@ -22,6 +25,7 @@ class BatchTable extends SupabaseTable {
         'isready': false,
         'order': 0,
         'count': dto.count,
+        'company_id': _companyId,
       }).select('id');
 
       return data[0]['id'];
@@ -31,7 +35,7 @@ class BatchTable extends SupabaseTable {
 
   @override
   Future<List<Map<String, dynamic>>> select() {
-    return table.select();
+    return table.select().eq('company_id', _companyId ?? 1);
   }
 
   Future<List<Map<String, dynamic>>> selectId(int id) {

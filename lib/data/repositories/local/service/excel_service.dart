@@ -166,7 +166,9 @@ class ExcelService {
         String? operationName =
             excel.tables[table]!.rows[1][8]?.value.toString();
         int timepz =
-            int.parse((excel.tables[table]!.rows[1][11]!.value ?? 0).toString() ) ;
+            int.parse((excel.tables[table]!.rows[1][11]!.value ?? 0).toString()) ;
+        int timeSH =
+        int.parse((excel.tables[table]!.rows[1][12]!.value ?? 0).toString()) ;
 
         int operationId = await _operationTable.insert(OperationDTO(
           id: 0,
@@ -174,6 +176,7 @@ class ExcelService {
           name: operationName ?? '',
           code: operationCode ?? '',
           timepz: timepz,
+          timeSH: timeSH,
           stageId: stageId,
         ));
 
@@ -238,6 +241,7 @@ class ExcelService {
             operationName = row[i][8]?.value.toString();
             if (row[i][11]?.value != null) {
               timepz = int.parse(row[i][11]!.value.toString());
+              timeSH = int.parse(row[i][12]!.value.toString());
             }
             print(
                 'добавляю операцию: $operationCode, $operationNumber, $operationName');
@@ -247,6 +251,7 @@ class ExcelService {
               name: operationName ?? '',
               code: operationCode ?? '',
               timepz: timepz,
+              timeSH: timeSH,
               stageId: stageId,
             ));
             distributionOperationId = await _chiefDistributionOperationsTable

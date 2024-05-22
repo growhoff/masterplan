@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:master_plan/data/repositories/supabase/service/machine_table.dart';
+import 'package:master_plan/domain/usecase/company_service.dart';
 
 import '../../../../../../data/repositories/supabase/dto/area_dto.dart';
 import '../../../../../../data/repositories/supabase/service/area_table.dart';
@@ -25,15 +26,15 @@ class ChiefAreasCubit extends Cubit<ChiefAreasState> {
       List<Area> newAreasList = [];
       for (var item in list) {
         final areaDTO = AreaDTO.fromMap(item);
+
         final int machinesQuantity =
             await _machineTable.fetchMachinesQuantityOnArea(areaId: areaDTO.id);
         newAreasList.add(Area(
-          id: areaDTO.id,
-          name: areaDTO.name,
-          number: areaDTO.number,
-          unitId: areaDTO.unitId,
-          machinesQuantity: machinesQuantity
-        ));
+            id: areaDTO.id,
+            name: areaDTO.name,
+            number: areaDTO.number,
+            unitId: areaDTO.unitId,
+            machinesQuantity: machinesQuantity));
       }
 
       emit(ChiefRegionsSuccess(areas: newAreasList));

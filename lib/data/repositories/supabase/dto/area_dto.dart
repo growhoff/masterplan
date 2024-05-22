@@ -7,11 +7,15 @@ class AreaDTO extends Dto {
   final String name;
   final String number;
   final int unitId;
+  final int? companyId;
+
   AreaDTO({
     required this.id,
     required this.name,
     required this.number,
-    required this.unitId,
+     required this.unitId,
+   this.companyId
+
   });
 
   Map<String, dynamic> toMap() {
@@ -29,6 +33,8 @@ class AreaDTO extends Dto {
       name: map['name'] as String,
       number: map['number'] as String,
       unitId: map['unit_id'] as int,
+      companyId: map['company_id'] != null ? map['company_id'] : null
+
     );
   }
 

@@ -68,7 +68,6 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
         chiefOperationsList: chiefOperationsList,
         status: DistributionPageStatus.success));
 
-    print('STATE fetch: ${state.status}');
   }
 
   Future<void> fetchAreas() async {
@@ -123,7 +122,7 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
             chiefBatchId: fetchedChiefOperationsList[i]['chief_batch_id'],
             area: AreaDTO(id: 0, name: '', number: '', unitId: 0)));
       }
-      _chiefDistributionOperationsTable.updateQuantity(
+      await _chiefDistributionOperationsTable.updateQuantity(
           chiefOperationId: operation.chiefOperationId,
           newQuantity: operation.oldQuantity - quantity);
     }

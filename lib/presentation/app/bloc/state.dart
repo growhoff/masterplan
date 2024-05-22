@@ -10,18 +10,21 @@ import 'package:master_plan/domain/model/shifts_machine.dart';
 import 'package:master_plan/domain/model/user.dart';
 
 class StateMain extends Equatable {
-    final UserDTO? user;
-    final List<Machine>? machineList;
-    final List<int>? machineIdList;
-    final List<ShiftsMachine>? shiftsList;
-    final List<OperatorOperations>? distribMasterList;
-    final List<OperatorOperations>? queueList;
-    final List<OperatorOperations>? readyList;
-    final List<User>? operatorList;
-    final List<MonitoringMachineDTO>? monitorList;
-    final List<ShiftsDistribution>? zshiftsDistributionList;
-    final List<OperatorOperations>? operatorOperationsList;
+  final String version;
+  final UserDTO? user;
+  final List<Machine>? machineList;
+  final List<int>? machineIdList;
+  final List<ShiftsMachine>? shiftsList;
+  final List<OperatorOperations>? distribMasterList;
+  final List<OperatorOperations>? queueList;
+  final List<OperatorOperations>? readyList;
+  final List<User>? operatorList;
+  final List<MonitoringMachineDTO>? monitorList;
+  final List<ShiftsDistribution>? zshiftsDistributionList;
+  final List<OperatorOperations>? operatorOperationsList;
+  final String link;
   const StateMain({
+    this.version = 'v2.3.0',
     this.user,
     this.machineList,
     this.machineIdList,
@@ -33,6 +36,7 @@ class StateMain extends Equatable {
     this.monitorList,
     this.zshiftsDistributionList,
     this.operatorOperationsList,
+    this.link = '',
   });
 
   @override
@@ -49,11 +53,13 @@ class StateMain extends Equatable {
       monitorList ?? [],
       zshiftsDistributionList ?? [],
       operatorOperationsList ?? [],
+      version,
+      link,
     ];
   }
 
 
-  StateMain copyWith({  
+  StateMain copyWith({
     UserDTO? user,
     List<Machine>? machineList,
     List<int>? machineIdList,
@@ -65,6 +71,7 @@ class StateMain extends Equatable {
     List<MonitoringMachineDTO>? monitorList,
     List<ShiftsDistribution>? zshiftsDistributionList,
     List<OperatorOperations>? operatorOperationsList,
+    String? link,
   }) {
     return StateMain(
       user: user ?? this.user,
@@ -78,6 +85,7 @@ class StateMain extends Equatable {
       monitorList: monitorList ?? this.monitorList,
       zshiftsDistributionList: zshiftsDistributionList ?? this.zshiftsDistributionList,
       operatorOperationsList:  operatorOperationsList ?? this.operatorOperationsList,
+      link: link ?? this.link,
     );
   }
 

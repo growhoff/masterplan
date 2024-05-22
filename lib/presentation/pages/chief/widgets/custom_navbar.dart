@@ -13,7 +13,6 @@ class NavBarCustomChief extends StatefulWidget {
 }
 
 class _NavBarCustomChiefState extends State<NavBarCustomChief> {
-
   int selectedIndex = 0;
 
   @override
@@ -23,10 +22,14 @@ class _NavBarCustomChiefState extends State<NavBarCustomChief> {
         appBar: AppBar(
           title: BlocBuilder<CubitMain, StateMain>(builder: (context, state) {
             final user = state.user!;
-            return Column(children: [
-            const Text('Начальник'),
-            Text('${user.id} / ${user.fio} / ${user.position.name} / ${user.unit!.name}', style: const TextStyle(fontSize: 12)),
-          ],);
+            return Column(
+              children: [
+                Text(DataChief.listPage[selectedIndex].title),
+                Text(
+                    ' ${user.fio} / ${user.position.name} / ${user.unit!.name}',
+                    style: const TextStyle(fontSize: 12)),
+              ],
+            );
           }),
           actions: DataChief.listPage[selectedIndex].actions,
         ),
@@ -35,7 +38,12 @@ class _NavBarCustomChiefState extends State<NavBarCustomChief> {
           labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
           selectedIndex: selectedIndex,
           height: 50,
-          destinations: DataChief.listPage.map((e) => NavigationDestination(icon: Icon(e.icon, color: Colors.black),label: e.title,)).toList(),
+          destinations: DataChief.listPage
+              .map((e) => NavigationDestination(
+                    icon: Icon(e.icon, color: Colors.black),
+                    label: e.title,
+                  ))
+              .toList(),
           onDestinationSelected: (value) {
             selectedIndex = value;
             setState(() {});

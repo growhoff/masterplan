@@ -36,7 +36,7 @@ class ContentOperator extends StatelessWidget {
             }),
           actions: const [],
         ),
-        body:  SafeArea(
+        body:  const SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Center(
@@ -46,10 +46,10 @@ class ContentOperator extends StatelessWidget {
                   const ButtomStart(),
                   const SizedBox(height: 16),
                   const ButtomBack(),
-                  const SizedBox(height: 8),
-                  ElevatedButton(onPressed: (){}, child: const Text('Календарь смен')),
-                  const SizedBox(height: 8),
-                  ElevatedButton(onPressed: (){}, child: const Text('Очередь деталей')),
+                  // const SizedBox(height: 8),
+                  // ElevatedButton(onPressed: (){}, child: const Text('Календарь смен')),
+                  // const SizedBox(height: 8),
+                  // ElevatedButton(onPressed: (){}, child: const Text('Очередь деталей')),
                 ],
               ),
             )

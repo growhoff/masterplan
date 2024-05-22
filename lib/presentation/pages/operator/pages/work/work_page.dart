@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/widgets/timer/bloc/cubit.dart';
-// import 'package:master_plan/presentation/pages/operator/pages/work/widgets/timer/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/operator/widgets/element_bar.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
@@ -16,8 +15,8 @@ class WorkPage extends StatelessWidget {
     return BlocProvider<CubitWork>(
       create: (context) => CubitWork(stateMain.zshiftsDistributionList, stateMain.operatorOperationsList),
       child: BlocProvider<CubitTimer>(
-                  create: (context) => CubitTimer(context.read<CubitMain>().state.zshiftsDistributionList!.length),
-                  child: const ContentWork()) 
+        create: (context) => CubitTimer(context.read<CubitMain>().state.zshiftsDistributionList!.length),
+        child: const ContentWork()) 
     );
   }
 }
@@ -35,7 +34,7 @@ class ContentWork extends StatelessWidget {
                 return Column(
                 children: [
                   const Text('Оператор'),
-                  Text('${user.id} / ${user.fio} / ${user.position.name}', style: const TextStyle(fontSize: 12)),//${user.area!.name}
+                  Text('${user.fio} / ${user.position.name}', style: const TextStyle(fontSize: 12)),
             ]);
           }),
           ),

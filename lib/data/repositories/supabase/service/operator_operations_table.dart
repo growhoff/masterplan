@@ -3,9 +3,14 @@ import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../domain/usecase/company_service.dart';
+
 class OperatorOperationsTable extends SupabaseTable {
   final table = Supabase.instance.client.from('z_operator_operations');
-  static const selectUser = '*, z_position(*), z_company(*), z_unit(*), z_area(*)';
+  static const selectUser =
+      '*, z_position(*), z_company(*), z_unit(*), z_area(*)';
+
+  final _companyId = CompanyService.instance.companyId ?? 1;
 
   @override
   Future<void> delete(int id) {
@@ -30,7 +35,10 @@ class OperatorOperationsTable extends SupabaseTable {
 
   @override
   Future<List<Map<String, dynamic>>> select() {
-    return table.select('*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*), z_user($selectUser), z_machine(*), z_area(*), z_chief_operation(*)');
+    return table
+        .select(
+            '*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*), z_user($selectUser), z_machine(*), z_area(*), z_chief_operation(*)')
+        .order('id', ascending: true);
   }
 
   Future<List<Map<String, dynamic>>> selectId(int machineId) {
@@ -38,7 +46,10 @@ class OperatorOperationsTable extends SupabaseTable {
   }
 
   Future<List<Map<String, dynamic>>> selectListIdNew(List<int> listId) {
-    return table.select('*, z_status(*), z_batch(*), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_user($selectUser)').inFilter('id',listId);
+    return table
+        .select(
+            '*, z_status(*), z_batch(*), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_user($selectUser)')
+        .inFilter('id', listId);
   }
 
   Future<List<Map<String, dynamic>>> selectListId(List<int> listId) {
@@ -50,7 +61,9 @@ class OperatorOperationsTable extends SupabaseTable {
         filters += 'machine_id.eq.${listId[i]},';
       }
     }
-    return table.select('*, z_status(*), z_batch(*), z_user($selectUser), z_machine(*)').or(filters);
+    return table
+        .select('*, z_status(*), z_batch(*), z_user($selectUser), z_machine(*)')
+        .or(filters);
   }
 
   Future<List<Map<String, dynamic>>> selectListId2436(List<int> listId) {
@@ -62,7 +75,12 @@ class OperatorOperationsTable extends SupabaseTable {
         filters += 'machine_id.eq.${listId[i]},';
       }
     }
-    return table.select('*, z_status(*), z_batch(*), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_user($selectUser)').or(filters).or('status_id.eq.2,status_id.eq.3,status_id.eq.4,status_id.eq.6').order('order', ascending: true);
+    return table
+        .select(
+            '*, z_status(*), z_batch(*), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_user($selectUser)')
+        .or(filters)
+        .or('status_id.eq.2,status_id.eq.3,status_id.eq.4,status_id.eq.6')
+        .order('order', ascending: true);
   }
 
   Future<List<Map<String, dynamic>>> selectListIdMachine3678(List<int> listId) {
@@ -74,7 +92,12 @@ class OperatorOperationsTable extends SupabaseTable {
         filters += 'machine_id.eq.${listId[i]},';
       }
     }
-    return table.select('*, z_status(*), z_batch(*), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_user($selectUser)').or(filters).or('status_id.eq.3,status_id.eq.6,status_id.eq.7,status_id.eq.8').order('order', ascending: true);
+    return table
+        .select(
+            '*, z_status(*), z_batch(*), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_user($selectUser)')
+        .or(filters)
+        .or('status_id.eq.3,status_id.eq.6,status_id.eq.7,status_id.eq.8')
+        .order('order', ascending: true);
   }
 
   Future<List<Map<String, dynamic>>> selectByAreaId(
@@ -93,53 +116,58 @@ class OperatorOperationsTable extends SupabaseTable {
   }
 
   //статус распределение мастер
-  Future<void> updateMasterDistribMaster(int id) async{
+  Future<void> updateMasterDistribMaster(int id) async {
     await table.update({'status_id': 2}).eq('id', id);
   }
 
   //выбор машины и статус "очередь"
-  Future<void> updateMasterQueue(int id, int machineId) async{
+  Future<void> updateMasterQueue(int id, int machineId) async {
     await table.update({'machine_id': machineId, 'status_id': 3}).eq('id', id);
   }
 
   //выбор машины и статус "очередь"
-  Future<void> updateMasterQueueList(List<int> listId, int machineId) async{
-    await table.update({'machine_id': machineId, 'status_id': 3}).inFilter('id', listId);
+  Future<void> updateMasterQueueList(List<int> listId, int machineId) async {
+    await table.update({'machine_id': machineId, 'status_id': 3}).inFilter(
+        'id', listId);
   }
 
   //статус доработка
-  Future<void> updateMasterModificate(int id) async{
+  Future<void> updateMasterModificate(int id) async {
     await table.update({'status_id': 4}).eq('id', id);
   }
 
   //статус брак
-  Future<void> updateMasterBrak(int id) async{
+  Future<void> updateMasterBrak(int id) async {
     await table.update({'status_id': 5}).eq('id', id);
   }
 
   //статус готово
-  Future<void> updateMasterReady(int id) async{
+  Future<void> updateMasterReady(int id) async {
     await table.update({'status_id': 6}).eq('id', id);
   }
 
   //статус Статистика готовых
-  Future<void> updateMasterStatisticReady(int id) async{
+  Future<void> updateMasterStatisticReady(int id) async {
     await table.update({'status_id': 9}).eq('id', id);
   }
 
-  Future<void> updateOrder(int id, int order) async{
+  Future<void> updateOrder(int id, int order) async {
     await table.update({'order': order}).eq('id', id);
   }
 
-  Future<void> updateTimeStart(int id, int timeStart) async{
+  Future<void> updateTimeStart(int id, int timeStart) async {
     await table.update({'time_start': timeStart}).eq('id', id);
   }
 
-  Future<void> updateTimeStop(int id, int timeStop) async{
+  Future<void> updateTimeStop(int id, int timeStop) async {
     await table.update({'time_stop': timeStop}).eq('id', id);
   }
 
-  Future<void> updateTimeStopAndReady(int id, int timeStop, int seconds) async{
-    await table.update({'time_stop': timeStop, 'status_id': 6, 'time_working': seconds}).eq('id', id);
+  Future<void> updateTimeStopAndReady(int id, int timeStop, int seconds) async {
+    await table.update({
+      'time_stop': timeStop,
+      'status_id': 6,
+      'time_working': seconds
+    }).eq('id', id);
   }
 }

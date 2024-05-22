@@ -20,6 +20,21 @@ class ShiftsDistributionTable extends SupabaseTable{
     } 
   }
 
+  Future<List<Map<String, dynamic>>> selectListIdNew(List<int> listId, DateTime date) {
+    return table.select('*, z_user($selectUser), z_change(*), z_machine(*)').inFilter('id',listId).eq('date', date);
+  }
+
+    Future<List<Map<String, dynamic>>> selectListId(List<int> listId, DateTime date) {
+    String filters = '';
+    for (var i = 0; i < listId.length; i++) {
+      if (i == (listId.length - 1)) {
+        filters += 'id.eq.${listId[i]}';
+      } else {
+        filters += 'id.eq.${listId[i]},';
+      }
+    }
+    return table.select('*, z_user($selectUser), z_change(*), z_machine(*)').or(filters).eq('date', date);
+  }
 
   @override
   Future<List<Map<String, dynamic>>> select() {
@@ -30,8 +45,8 @@ class ShiftsDistributionTable extends SupabaseTable{
     return table.select('*, z_user($selectUser), z_change(*), z_machine(*)').eq('user_id', userId).eq('date', DateTime.now());
   }
 
-  Future<List<Map<String, dynamic>>> selectList(List<int> machineListId, DateTime date) {
-    String filters = 'date.eq.$date,';
+  Future<List<Map<String, dynamic>>> selectListIdMachine(List<int> machineListId, DateTime date) {
+    String filters = '';
     for (var i = 0; i < machineListId.length; i++) {
       if (i == (machineListId.length - 1)) {
         filters += 'machine_id.eq.${machineListId[i]}';

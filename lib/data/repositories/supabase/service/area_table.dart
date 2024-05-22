@@ -3,8 +3,11 @@ import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../domain/usecase/company_service.dart';
+
 class AreaTable extends SupabaseTable {
   final table = Supabase.instance.client.from('z_area');
+  final _companyId = CompanyService.instance.companyId ?? 1;
 
   @override
   Future<void> delete(int id) {
@@ -14,13 +17,18 @@ class AreaTable extends SupabaseTable {
   @override
   Future<void> insert(Dto dto) async {
     if (dto is AreaDTO) {
-      await table.insert({'name': dto.name, 'number': dto.number, 'unit_id': 1});
+      await table.insert({
+        'name': dto.name,
+        'number': dto.number,
+        'unit_id': _companyId == 1 ? 1 : 7,
+        'company_id': _companyId
+      });
     }
   }
 
   @override
   Future<List<Map<String, dynamic>>> select() {
-    return table.select();
+    return table.select('*, z_unit!inner(*)').eq('z_unit.company_id', _companyId);
   }
 
   Future<List<Map<String, dynamic>>> selectId(int id) {
@@ -50,8 +58,7 @@ class AreaTable extends SupabaseTable {
     return await table.select().eq('id', areaId);
   }
 
-
   stream() {
-    return table.stream(primaryKey: ['id']);
+    return table.stream(primaryKey: ['id']).eq('company_id', _companyId);
   }
 }

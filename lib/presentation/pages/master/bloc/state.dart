@@ -2,23 +2,19 @@
 import 'package:equatable/equatable.dart';
 
 class StateMaster extends Equatable {
-  final int change;
-  final DateTime days;
+  final int activePage;
   const StateMaster({
-    this.change = 1,
-    required this.days,
+    this.activePage = 0,
   });
 
   @override
-  List<Object> get props => [change, days];
+  List<Object> get props => [activePage];
 
   StateMaster copyWith({
-    int? change,
-    DateTime? days,
+    int? activePage,
   }) {
     return StateMaster(
-      change: change ?? this.change,
-      days: days ?? this.days
+      activePage: activePage ?? this.activePage,
     );
   }
 

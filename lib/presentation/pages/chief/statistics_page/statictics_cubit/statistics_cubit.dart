@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:master_plan/domain/usecase/company_service.dart';
 import 'package:master_plan/data/repositories/local/service/excel_service.dart';
 import 'package:master_plan/data/repositories/local/service/notification_service.dart';
 import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
@@ -37,104 +38,105 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
       OperatorOperationsTable();
   int activeAreaId = 0;
 
-  // Future<void> fetchStagesNew() async {
-  //   List<StatisticsStageModel2> stagesList = [];
-  //   Map<int, StatisticsBatchModel> batchesMap = {};
-  //   Map<int, List<int>> stagesInBatchesMap = {};
-  //
-  //   var fetchedChiefOperations = await _chiefOperationTable.select();
-  //
-  //   for (var chiefOperation in fetchedChiefOperations) {
-  //     final chiefOperationDto = ChiefOperationDto.fromMap(chiefOperation);
-  //
-  //     if (batchesMap.containsKey(chiefOperationDto.chiefBatchId)) {
-  //       if (stagesInBatchesMap[chiefOperationDto.chiefBatchId]!
-  //           .contains(chiefOperationDto.stage.id)) {
-  //         batchesMap[chiefOperationDto.chiefBatchId]
-  //             ?.stagesList
-  //             ?.firstWhere(
-  //                 (element) => element.stage.id == chiefOperationDto.stage.id)
-  //             .operationsList
-  //             ?.add(StatisticsOperationModel2(
-  //                 operation: chiefOperationDto.operation));
-  //       } else {
-  //         batchesMap[chiefOperationDto.chiefBatchId]?.stagesList?.add(
-  //                 StatisticsStageModel2(
-  //                     stage: chiefOperationDto.stage,
-  //                     operationsList: [
-  //                   StatisticsOperationModel2(
-  //                       operation: chiefOperationDto.operation)
-  //                 ]));
-  //
-  //         List<int> newList =
-  //             stagesInBatchesMap[chiefOperationDto.chiefBatchId]!;
-  //
-  //         newList.add(chiefOperationDto.stage.id);
-  //
-  //         stagesInBatchesMap[chiefOperationDto.chiefBatchId] = newList;
-  //       }
-  //     } else {
-  //       batchesMap[chiefOperationDto.chiefBatchId] = StatisticsBatchModel(
-  //           chiefBatchId: chiefOperationDto.chiefBatchId,
-  //           name: chiefOperationDto.chiefBatch.batch.name,
-  //           number: chiefOperationDto.chiefBatch.batch.number,
-  //           stagesList: [
-  //             StatisticsStageModel2(
-  //                 stage: chiefOperationDto.stage,
-  //                 operationsList: [
-  //                   StatisticsOperationModel2(
-  //                       operation: chiefOperationDto.operation)
-  //                 ])
-  //           ]);
-  //
-  //       stagesInBatchesMap[chiefOperationDto.chiefBatchId] = [
-  //         chiefOperationDto.stage.id
-  //       ];
-  //     }
-  //   }
-  //
-  //   var fetchedOperatorOperations = await _operatorOperationsTable.select();
-  //
-  //   for (var operatorOperation in fetchedOperatorOperations) {
-  //     print(operatorOperation);
-  //     final operatorOperationsDto =
-  //         OperatorOperationsDTO.fromMap(operatorOperation);
-  //     var stage = batchesMap[operatorOperationsDto.chiefBatchId]
-  //         ?.stagesList
-  //         ?.firstWhere((element) =>
-  //             element.stage.id ==
-  //             operatorOperationsDto.chiefOperation?.stageId);
-  //
-  //     var operation = stage?.operationsList?.firstWhere((element) =>
-  //         element.operation.id == operatorOperationsDto.operation.id);
-  //
-  //     operation?.status = Status(
-  //         id: operatorOperationsDto.status.id,
-  //         name: operatorOperationsDto.status.name);
-  //
-  //     operation?.timeFact = operatorOperationsDto.timefact;
-  //
-  //     operation?.timePlan = operatorOperationsDto.timeplan;
-  //
-  //     operation?.timeWorking = operatorOperationsDto.timeworking;
-  //
-  //     operation?.timeStop = operatorOperationsDto.timestop;
-  //
-  //     operation?.timeStart = operatorOperationsDto.timestart;
-  //
-  //     operation?.machine = operatorOperationsDto.machine;
-  //
-  //     operation?.user = operatorOperationsDto.user;
-  //
-  //     if (operation?.status?.id == 6) {
-  //       stage?.readyOperationsQuantity++;
-  //       stage?.readyOperationsPercent = int.parse(
-  //           ((stage.readyOperationsQuantity / stage.operationsList!.length) *
-  //                   100)
-  //               .toString());
-  //     }
-  //   }
-  // }
+  Future<void> fetchStagesNew() async {
+    int? companyId = CompanyService.instance.companyId;
+    print('companyId: $companyId');
+    List<StatisticsStageModel2> stagesList = [];
+    Map<int, StatisticsBatchModel> batchesMap = {};
+    Map<int, List<int>> stagesInBatchesMap = {};
+
+    var fetchedChiefOperations = await _chiefOperationTable.select();
+
+    for (var chiefOperation in fetchedChiefOperations) {
+      final chiefOperationDto = ChiefOperationDto.fromMap(chiefOperation);
+
+      if (batchesMap.containsKey(chiefOperationDto.chiefBatchId)) {
+        if (stagesInBatchesMap[chiefOperationDto.chiefBatchId]!
+            .contains(chiefOperationDto.stage?.id)) {
+          batchesMap[chiefOperationDto.chiefBatchId]
+              ?.stagesList
+              ?.firstWhere(
+                  (element) => element.stage?.id == chiefOperationDto.stage?.id)
+              .operationsList
+              ?.add(StatisticsOperationModel2(
+                  operation: chiefOperationDto.operation, chiefOperationId: chiefOperationDto.id));
+        } else {
+          batchesMap[chiefOperationDto.chiefBatchId]?.stagesList?.add(
+                  StatisticsStageModel2(
+                      stage: chiefOperationDto.stage,
+                      operationsList: [
+                    StatisticsOperationModel2(
+                        operation: chiefOperationDto.operation, chiefOperationId: chiefOperationDto.id)
+                  ]));
+
+          List<int> newList =
+              stagesInBatchesMap[chiefOperationDto.chiefBatchId]!;
+
+          newList.add(chiefOperationDto.stage!.id);
+
+          stagesInBatchesMap[chiefOperationDto.chiefBatchId] = newList;
+        }
+      } else {
+        batchesMap[chiefOperationDto.chiefBatchId] = StatisticsBatchModel(
+            chiefBatchId: chiefOperationDto.chiefBatchId,
+            name: chiefOperationDto.chiefBatch!.batch.name,
+            number: chiefOperationDto.chiefBatch!.batch.number,
+            stagesList: [
+              StatisticsStageModel2(
+                  stage: chiefOperationDto.stage,
+                  operationsList: [
+                    StatisticsOperationModel2(
+                        operation: chiefOperationDto.operation, chiefOperationId: chiefOperationDto.id)
+                  ])
+            ]);
+
+        stagesInBatchesMap[chiefOperationDto.chiefBatchId] = [
+          chiefOperationDto.stage?.id ?? 0
+        ];
+      }
+    }
+
+    var fetchedOperatorOperations = await _operatorOperationsTable.select();
+
+    for (var operatorOperation in fetchedOperatorOperations) {
+      final operatorOperationsDto =
+          OperatorOperationsDTO.fromMap(operatorOperation);
+      var stage = batchesMap[operatorOperationsDto.chiefBatchId]
+          ?.stagesList
+          ?.firstWhere((element) =>
+              element.stage?.id ==
+              operatorOperationsDto.chiefOperation?.stageId);
+
+      var operation = stage?.operationsList?.firstWhere((element) =>
+          element.operation?.id == operatorOperationsDto.operation.id);
+
+      operation?.status = Status(
+          id: operatorOperationsDto.status.id,
+          name: operatorOperationsDto.status.name);
+
+      operation?.timeFact = operatorOperationsDto.timefact;
+
+      operation?.timePlan = operatorOperationsDto.timeplan;
+
+      operation?.timeWorking = operatorOperationsDto.timeworking;
+
+      operation?.timeStop = operatorOperationsDto.timestop;
+
+      operation?.timeStart = operatorOperationsDto.timestart;
+
+      operation?.machine = operatorOperationsDto.machine;
+
+      operation?.user = operatorOperationsDto.user;
+
+      if (operation?.status?.id == 6) {
+        stage?.readyOperationsQuantity++;
+        stage?.readyOperationsPercent =
+            ((stage.readyOperationsQuantity / stage.operationsList!.length) *
+                    100)
+                .toInt();
+      }
+    }
+  }
 
   Future<void> fetchStages() async {
     List<StatisticsStageModel> stagesList = [];

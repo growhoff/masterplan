@@ -5,6 +5,7 @@ import 'package:master_plan/data/repositories/supabase/dto/machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/status_machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/user_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
+import 'package:intl/intl.dart';
 
 class MonitoringMachineDTO extends Dto {
   final int id;
@@ -19,7 +20,7 @@ class MonitoringMachineDTO extends Dto {
   final int batchId;
   final BatchDTO? batch;
   final String comment;
-  final int date;
+  final DateTime date;
   final int changeId;
   MonitoringMachineDTO({
     required this.id,
@@ -48,12 +49,13 @@ class MonitoringMachineDTO extends Dto {
       'machine_id': machineId,
       'batch_id': batchId,
       'comment': comment,
-      'date': date,
+      'date': DateFormat('yyyy-MM-dd').format(date),
       'change_id': changeId,
     };
   }
 
   factory MonitoringMachineDTO.fromMap(Map<String, dynamic> map) {
+    final listTime = (map['date'] as String).split('-');
     return MonitoringMachineDTO(
       id: map['id'] as int,
       timeStart: map['time_start'] as int,
@@ -67,7 +69,7 @@ class MonitoringMachineDTO extends Dto {
       batchId: map['batch_id'] as int,
       batch: map['z_batch'] != null ? BatchDTO.fromMap(map['z_batch'] as Map<String,dynamic>) : null,
       comment: map['comment'] as String,
-      date: map['date'] as int,
+      date: DateTime.tryParse(map['date'] as String) ?? DateTime(int.parse(listTime[0]), int.parse(listTime[1]), int.parse(listTime[2])),
       changeId: map['change_id'] as int,
     );
   }

@@ -13,10 +13,10 @@ import 'package:master_plan/presentation/pages/chief/statistics_page/operations_
 import 'package:master_plan/presentation/pages/chief/widgets/custom_navbar.dart';
 import 'package:master_plan/presentation/pages/login/login_page.dart';
 import 'package:master_plan/presentation/pages/master/pages/addOperation/add_operation_page.dart';
-import 'package:master_plan/presentation/pages/master/widgets/navbar_custom.dart';
 import 'package:master_plan/presentation/pages/operator/operator_page.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/work_page.dart';
 import '../../theme/theme.dart';
+import '../pages/master/maste_page.dart';
 import 'bloc/cubit.dart';
 
 class MyApp extends StatelessWidget {
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
         routes: {
           '/loginPage':(BuildContext context) => const LoginPage(),
           '/operatorPage':(BuildContext context) => const OperatorPage(),
-          '/masterPage':(BuildContext context) => const NavBarCustomMaster(),
+          '/masterPage':(BuildContext context) => const MasterPage(),
           '/chiefPage':(BuildContext context) => const NavBarCustomChief(),
           '/workPage':(BuildContext context) => const WorkPage(),
           '/addOperationPage':(BuildContext context) => const AddOperationPage(),
