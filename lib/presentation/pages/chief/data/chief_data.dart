@@ -7,6 +7,7 @@ import 'package:master_plan/presentation/pages/chief/monitoring_page.dart';
 
 import '../model/tab_bar_model.dart';
 import '../monitoring_page/monitoring_page.dart';
+import '../statistics_page/choose_report_page.dart';
 
 abstract class DataChief {
   static List<TabBarModel> listPage = [
@@ -28,7 +29,7 @@ abstract class DataChief {
     TabBarModel(
         title: 'Аналитика',
         actions: [],
-        page: const ChiefStatisticsPage(),
+        page: const ChooseReportPage(),
         icon: Icons.stacked_bar_chart_sharp),
   ];
 }

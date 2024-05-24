@@ -21,7 +21,8 @@ class OperationTable extends SupabaseTable {
         'name': dto.name,
         'code': dto.code,
         'time_pz': dto.timepz,
-        'stage_id': dto.stageId
+        'stage_id': dto.stageId,
+        'time_sh': dto.timeSH,
       }).select('id');
       return operation[0]['id'];
     }
@@ -52,6 +53,10 @@ class OperationTable extends SupabaseTable {
   @override
   Future<void> update(int id, Dto dto) {
     return table.update({'name': '1'}).eq('id', id);
+  }
+
+  Future<void> updateTimeSH(int id, int operationTimeSH) async{
+    return await table.update({'time_sh': operationTimeSH}).eq('id', id);
   }
 
 

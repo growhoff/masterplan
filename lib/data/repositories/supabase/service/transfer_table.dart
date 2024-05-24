@@ -18,7 +18,8 @@ class TransferTable extends SupabaseTable{
      await table.insert({
        'name': dto.name,
        'code': dto.code,
-       'operation_id': dto.operationId
+       'operation_id': dto.operationId,
+       'time_sh': dto.timesh
      });
    }
   }

@@ -3,8 +3,11 @@ import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../domain/usecase/company_service.dart';
+
 class ChiefBatchTable extends SupabaseTable {
   final table = Supabase.instance.client.from('z_chief_batch');
+  final _companyId = CompanyService.instance.companyId ?? 1;
 
   @override
   Future<void> delete(int id) {
@@ -13,9 +16,10 @@ class ChiefBatchTable extends SupabaseTable {
   }
 
   @override
-  Future<int> insert(Dto dto) async{
-    if (dto is ChiefBatchDTO){
-      var chiefBatch = await table.insert({'batch_id': dto.batchId}).select('id');
+  Future<int> insert(Dto dto) async {
+    if (dto is ChiefBatchDTO) {
+      var chiefBatch =
+          await table.insert({'batch_id': dto.batchId}).select('id');
       return chiefBatch[0]['id'];
     }
     return 0;
@@ -24,6 +28,26 @@ class ChiefBatchTable extends SupabaseTable {
   @override
   Future<List<Map<String, dynamic>>> select() async {
     return await table.select('*, z_batch(*)');
+  }
+
+  Future<int> fetchReadyDetailsCount({required int batchId}) async {
+    final res = await table
+        .select('*, z_batch!inner(*)')
+        .eq('batch_id', batchId)
+        .eq('batch_status_id', 2)
+        .eq('z_batch.company_id', _companyId)
+        .count();
+    return res.count;
+  }
+
+  Future<int> fetchDefectDetailsCount({required int batchId}) async {
+    final res = await table
+        .select('*, z_batch!inner(*)')
+        .eq('batch_id', batchId)
+        .eq('batch_status_id', 3)
+        .eq('z_batch.company_id', _companyId)
+        .count();
+    return res.count;
   }
 
   @override

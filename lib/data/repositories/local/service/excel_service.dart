@@ -12,6 +12,8 @@ import 'package:master_plan/data/repositories/supabase/service/transfer_table.da
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../../../presentation/pages/chief/statistics_page/chief_stage_report_model.dart';
+import '../../../../presentation/pages/chief/statistics_page/stage_model.dart';
 import '../../../../presentation/pages/chief/statistics_page/statistics_stage_model.dart';
 import '../../supabase/dto/batch_dto.dart';
 import '../../supabase/dto/chief_operation_dto.dart';
@@ -165,10 +167,12 @@ class ExcelService {
             excel.tables[table]!.rows[1][7]?.value.toString();
         String? operationName =
             excel.tables[table]!.rows[1][8]?.value.toString();
-        int timepz =
-            int.parse((excel.tables[table]!.rows[1][11]!.value ?? 0).toString()) ;
-        int timeSH =
-        int.parse((excel.tables[table]!.rows[1][12]!.value ?? 0).toString()) ;
+        int timepz = int.parse(
+            (excel.tables[table]!.rows[1][11]!.value ?? 0).toString());
+        int transferTimeSH = int.parse(
+            (excel.tables[table]!.rows[1][12]!.value ?? 0).toString());
+
+        int operationTimeSH = transferTimeSH;
 
         int operationId = await _operationTable.insert(OperationDTO(
           id: 0,
@@ -176,12 +180,12 @@ class ExcelService {
           name: operationName ?? '',
           code: operationCode ?? '',
           timepz: timepz,
-          timeSH: timeSH,
+          timeSH: operationTimeSH,
           stageId: stageId,
         ));
 
         print(
-            'инсерт операцию: $operationCode, $operationNumber, $operationName');
+            'инсерт операцию: $operationCode, $operationNumber, $operationName, transferTimeSH: ${operationTimeSH}');
 
         int distributionOperationId = await _chiefDistributionOperationsTable
             .insert(ChiefDistributionOperationsDTO(
@@ -241,17 +245,17 @@ class ExcelService {
             operationName = row[i][8]?.value.toString();
             if (row[i][11]?.value != null) {
               timepz = int.parse(row[i][11]!.value.toString());
-              timeSH = int.parse(row[i][12]!.value.toString());
             }
+            operationTimeSH = int.parse(row[i][12]!.value.toString());
             print(
-                'добавляю операцию: $operationCode, $operationNumber, $operationName');
+                'добавляю операцию: $operationCode, $operationNumber, $operationName, operationTimeSH: $operationTimeSH');
             operationId = await _operationTable.insert(OperationDTO(
               id: 0,
               number: operationNumber ?? '',
               name: operationName ?? '',
               code: operationCode ?? '',
               timepz: timepz,
-              timeSH: timeSH,
+              timeSH: operationTimeSH,
               stageId: stageId,
             ));
             distributionOperationId = await _chiefDistributionOperationsTable
@@ -271,20 +275,27 @@ class ExcelService {
                 stage: StageDTO.empty,
                 operationId: operationId,
                 stageId: stageId,
-                chiefBatch: ChiefBatchDTO(id: 0, batchId: 0, batch: BatchDTO.empty),
+                chiefBatch:
+                    ChiefBatchDTO(id: 0, batchId: 0, batch: BatchDTO.empty),
                 chiefBatchId: 0));
           }
 
           if (row[i][9]?.value != null) {
             transferCode = row[i][9]!.value.toString();
             transferName = row[i][10]?.value.toString();
+            transferTimeSH = int.parse(row[i][12]!.value.toString());
+            operationTimeSH = operationTimeSH + transferTimeSH;
+            print('operationTimeSH : $operationTimeSH');
             _transferTable.insert(TransferDTO(
                 id: 0,
                 number: 0,
                 name: transferName ?? '',
                 code: transferCode,
-                timesh: 0,
+                timesh: transferTimeSH,
                 operationId: operationId));
+            print(
+                'сейчас буду обновлять  operationId: $operationId,  operationTimeSH : $operationTimeSH');
+            _operationTable.updateTimeSH(operationId, operationTimeSH);
             print('инсерт переход для операции $operationId : $transferName');
           }
         }
@@ -561,5 +572,117 @@ class ExcelService {
     }
 
     return status == PermissionStatus.granted;
+  }
+
+  Future<String> uploadChiefStagesReport(
+      {required List<ChiefStageForReportModel> stagesList}) async {
+    var excel = Excel.createExcel();
+    excel.rename('Sheet1', 'Этапы');
+
+    Sheet stageExcel = excel['Этапы'];
+
+    stageExcel.merge(
+        CellIndex.indexByString('J1'), CellIndex.indexByString('L1'),
+        customValue: TextCellValue('детали'));
+
+    (stageExcel.cell(CellIndex.indexByString('J1'))).cellStyle =
+        _cellHeaderStyle;
+
+    stageExcel.merge(
+        CellIndex.indexByString('M1'), CellIndex.indexByString('O1'),
+        customValue: TextCellValue('операции'));
+
+    (stageExcel.cell(CellIndex.indexByString('M1'))).cellStyle =
+        _cellHeaderStyle;
+
+    for (int stageRowIndex = 0;
+        stageRowIndex < stagesList.length;
+        stageRowIndex++) {
+      for (int stageColumnIndex = 0;
+          stageColumnIndex < stagesHeaderList.length;
+          stageColumnIndex++) {
+        if (stageRowIndex == 1) {
+          final cell = stageExcel.cell(CellIndex.indexByColumnRow(
+              columnIndex: stageColumnIndex, rowIndex: stageRowIndex));
+          cell.value = TextCellValue(stagesHeaderList[stageColumnIndex]);
+          cell.cellStyle = _cellHeaderStyle;
+        }
+        final cell = stageExcel.cell(CellIndex.indexByColumnRow(
+            columnIndex: stageColumnIndex, rowIndex: stageRowIndex + 2));
+
+        switch (stageColumnIndex) {
+          case 0:
+            cell.value = IntCellValue(stageRowIndex + 1);
+
+          case 1:
+            cell.value = TextCellValue(stagesList[stageRowIndex].stageNumber);
+
+          //   cell.cellStyle = _cellTextStyle;
+          case 2:
+            cell.value = TextCellValue(
+                '${stagesList[stageRowIndex].batchNumber} ${stagesList[stageRowIndex].batchName}');
+
+          //    cell.cellStyle = _cellTextStyle;
+          case 3:
+            cell.value = TextCellValue(stagesList[stageRowIndex].batchCode);
+
+          //   cell.cellStyle = _cellTextStyle;
+          case 4:
+            cell.value =
+                TextCellValue('${stagesList[stageRowIndex].detailsQuantity}');
+
+          //    cell.cellStyle = _cellTextStyle;
+          //case 5:
+          case 6:
+            cell.value =
+                TextCellValue('${stagesList[stageRowIndex].detailsQuantity}');
+          //  cell.cellStyle = _cellTextStyle;
+          //case 7:
+          //case 8:
+          case 9:
+            cell.value =
+                IntCellValue(stagesList[stageRowIndex].readyDetailsQuantity);
+          // cell.cellStyle = _cellTextStyle;
+          case 10:
+            cell.value =
+                IntCellValue(stagesList[stageRowIndex].readyDetailsPercent);
+          //   cell.cellStyle = _cellTextStyle;
+          case 11:
+            cell.value =
+                IntCellValue(stagesList[stageRowIndex].defectDetailsQuantity);
+          //  cell.cellStyle = _cellTextStyle;
+          case 12:
+            cell.value =
+                IntCellValue(stagesList[stageRowIndex].readyOperationsQuantity);
+          //  cell.cellStyle = _cellTextStyle;
+          case 13:
+            cell.value =
+                IntCellValue(stagesList[stageRowIndex].operationsQuantity);
+          // cell.cellStyle = _cellTextStyle;
+          case 14:
+            cell.value =
+                IntCellValue(stagesList[stageRowIndex].readyOperationsPercent);
+          //cell.cellStyle = _cellTextStyle;
+        }
+        cell.cellStyle = _cellTextStyle;
+      }
+    }
+
+    var fileBytes = excel.save();
+
+    final granted = await requestPermissions();
+    if (granted) {
+      String? downloadsDirectoryPath =
+          (await DownloadsPath.downloadsDirectory())?.path;
+      print(downloadsDirectoryPath);
+      final fileName = '${downloadsDirectoryPath}/Отчет о производстве.xlsx';
+
+      File(fileName).writeAsBytes(fileBytes!);
+
+      print('вывелось');
+      return downloadsDirectoryPath ?? '';
+    }
+
+    return '';
   }
 }

@@ -1,9 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:master_plan/data/repositories/supabase/service/chief_batch_table.dart';
 import 'package:master_plan/domain/usecase/company_service.dart';
 import 'package:master_plan/data/repositories/local/service/excel_service.dart';
 import 'package:master_plan/data/repositories/local/service/notification_service.dart';
-import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
+
 import 'package:master_plan/data/repositories/supabase/dto/chief_distribution_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/chief_operation_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
@@ -14,10 +15,10 @@ import 'package:master_plan/data/repositories/supabase/service/operator_operatio
 
 import 'package:master_plan/domain/model/chief_distribution_operations_model.dart';
 import 'package:master_plan/domain/model/status.dart';
+import 'package:master_plan/presentation/pages/chief/statistics_page/chief_stage_report_model.dart';
 
 import 'package:open_filex/open_filex.dart';
 
-import '../../../../../data/repositories/supabase/service/area_table.dart';
 import '../../../../../domain/model/area.dart';
 import '../stage_model.dart';
 import '../statistics_stage_model.dart';
@@ -30,12 +31,15 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
   final ExcelService _excelService = ExcelService();
 
   final ChiefDistributionOperationsTable _chiefDistributionOperationsTable =
-      ChiefDistributionOperationsTable();
+  ChiefDistributionOperationsTable();
 
   final ChiefOperationTable _chiefOperationTable = ChiefOperationTable();
 
   final OperatorOperationsTable _operatorOperationsTable =
-      OperatorOperationsTable();
+  OperatorOperationsTable();
+
+  final ChiefBatchTable _chiefBatchTable = ChiefBatchTable();
+
   int activeAreaId = 0;
 
   Future<void> fetchStagesNew() async {
@@ -59,18 +63,20 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
                   (element) => element.stage?.id == chiefOperationDto.stage?.id)
               .operationsList
               ?.add(StatisticsOperationModel2(
-                  operation: chiefOperationDto.operation, chiefOperationId: chiefOperationDto.id));
+              operation: chiefOperationDto.operation,
+              chiefOperationId: chiefOperationDto.id));
         } else {
           batchesMap[chiefOperationDto.chiefBatchId]?.stagesList?.add(
-                  StatisticsStageModel2(
-                      stage: chiefOperationDto.stage,
-                      operationsList: [
+              StatisticsStageModel2(
+                  stage: chiefOperationDto.stage,
+                  operationsList: [
                     StatisticsOperationModel2(
-                        operation: chiefOperationDto.operation, chiefOperationId: chiefOperationDto.id)
+                        operation: chiefOperationDto.operation,
+                        chiefOperationId: chiefOperationDto.id)
                   ]));
 
           List<int> newList =
-              stagesInBatchesMap[chiefOperationDto.chiefBatchId]!;
+          stagesInBatchesMap[chiefOperationDto.chiefBatchId]!;
 
           newList.add(chiefOperationDto.stage!.id);
 
@@ -86,7 +92,8 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
                   stage: chiefOperationDto.stage,
                   operationsList: [
                     StatisticsOperationModel2(
-                        operation: chiefOperationDto.operation, chiefOperationId: chiefOperationDto.id)
+                        operation: chiefOperationDto.operation,
+                        chiefOperationId: chiefOperationDto.id)
                   ])
             ]);
 
@@ -100,15 +107,15 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
 
     for (var operatorOperation in fetchedOperatorOperations) {
       final operatorOperationsDto =
-          OperatorOperationsDTO.fromMap(operatorOperation);
+      OperatorOperationsDTO.fromMap(operatorOperation);
       var stage = batchesMap[operatorOperationsDto.chiefBatchId]
           ?.stagesList
           ?.firstWhere((element) =>
-              element.stage?.id ==
-              operatorOperationsDto.chiefOperation?.stageId);
+      element.stage?.id ==
+          operatorOperationsDto.chiefOperation?.stageId);
 
       var operation = stage?.operationsList?.firstWhere((element) =>
-          element.operation?.id == operatorOperationsDto.operation.id);
+      element.operation?.id == operatorOperationsDto.operation.id);
 
       operation?.status = Status(
           id: operatorOperationsDto.status.id,
@@ -132,7 +139,7 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
         stage?.readyOperationsQuantity++;
         stage?.readyOperationsPercent =
             ((stage.readyOperationsQuantity / stage.operationsList!.length) *
-                    100)
+                100)
                 .toInt();
       }
     }
@@ -142,11 +149,11 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
     List<StatisticsStageModel> stagesList = [];
     Map<int, StatisticsStageModel> stagesMap = {};
     var fetchedChiefOperationsList =
-        await _chiefDistributionOperationsTable.select();
+    await _chiefDistributionOperationsTable.select();
 
     for (var operation in fetchedChiefOperationsList) {
       final chiefOperationDto =
-          ChiefDistributionOperationsDTO.fromMap(operation);
+      ChiefDistributionOperationsDTO.fromMap(operation);
       final chiefOperation = ChiefDistributionOperation(
           id: chiefOperationDto.id,
           operationId: chiefOperationDto.operationId,
@@ -205,12 +212,12 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
 
     for (var operatorOperation in fetchedOperatorOperationsList) {
       final operatorOperationDto =
-          OperatorOperationsDTO.fromMap(operatorOperation);
+      OperatorOperationsDTO.fromMap(operatorOperation);
 
       var oldOperation = stagesMap[operatorOperationDto.stageId]
           ?.operationsList
           .firstWhere((element) =>
-              element.operationId == operatorOperationDto.operationId);
+      element.operationId == operatorOperationDto.operationId);
 
       int? index = stagesMap[operatorOperationDto.stageId]
           ?.operationsList
@@ -223,12 +230,12 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
         if (statusMap != null) {
           if (statusMap.containsKey(operatorOperationDto.statusId)) {
             statusMap[operatorOperationDto.statusId] =
-                (statusMap[operatorOperationDto.statusId]! + 1);
+            (statusMap[operatorOperationDto.statusId]! + 1);
             if (operatorOperationDto.statusId == 6) {
               stagesMap[operatorOperationDto.stageId]?.readyOperationsQuantity =
-                  (stagesMap[operatorOperationDto.stageId]!
-                          .readyOperationsQuantity! +
-                      1);
+              (stagesMap[operatorOperationDto.stageId]!
+                  .readyOperationsQuantity! +
+                  1);
             }
           } else {
             statusMap[operatorOperationDto.statusId] = 1;
@@ -249,27 +256,27 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
               ?.operationsList[index]
               .readyOperationsList
               .add(ReadyOperationModel(
-                timeFact: operatorOperationDto.timefact,
-                timePlan: operatorOperationDto.timeplan,
-                timeStart: operatorOperationDto.timestart,
-                timeStop: operatorOperationDto.timestop,
-                timeWorking: operatorOperationDto.timeworking,
-                user: operatorOperationDto.user,
-              ));
+            timeFact: operatorOperationDto.timefact,
+            timePlan: operatorOperationDto.timeplan,
+            timeStart: operatorOperationDto.timestart,
+            timeStop: operatorOperationDto.timestop,
+            timeWorking: operatorOperationDto.timeworking,
+            user: operatorOperationDto.user,
+          ));
         }
       }
     }
 
     stagesMap.forEach((key, value) {
       value.operationsQuantity =
-          (value.stage.batch!.count * value.operationsList.length);
+      (value.stage.batch!.count * value.operationsList.length);
       value.readyOperationsPercent =
           ((value.readyOperationsQuantity! / value.operationsQuantity) * 100)
               .toInt();
       stagesList.add(value);
     });
 
-    emit(state.copyWith(stagesList: stagesList));
+    // emit(state.copyWith(stagesList: stagesList));
   }
 
   // Future<void> fetchReadyPercent({required StatisticsStageModel stage}) async {
@@ -283,8 +290,106 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
   // }
 
   Future<void> uploadReportToExcel() async {
+    // String filePath =
+    //     await _excelService.uploadReport(stagesList: state.stagesList);
+    // if (filePath == '') {
+    //   filePath = 'что-то пошло не так';
+    // } else {
+    //   filePath = '$filePath/Отчет о производстве.xlsx';
+    // }
+    // NotificationService.showNotification(
+    //     title: 'Отчет о производстве загружен',
+    //     body: 'путь: $filePath',
+    //     payload: filePath);
+    //
+    // NotificationService.onClickNotification.stream.listen((event) {
+    //   print(event);
+    //   OpenFilex.open(event);
+    // });
+  }
+
+  Future<void> fetchStagesForReport() async {
+    Map<int, ChiefStageForReportModel> stagesMap = {};
+    List<ChiefStageForReportModel> stagesList = [];
+
+    var fetchedChiefOperationsList =
+    await _chiefDistributionOperationsTable.select();
+
+    for (var operation in fetchedChiefOperationsList) {
+      final chiefOperationDto =
+      ChiefDistributionOperationsDTO.fromMap(operation);
+
+      final chiefOperation = ChiefDistributionOperation(
+          id: chiefOperationDto.id,
+          operationId: chiefOperationDto.operationId,
+          stageId: chiefOperationDto.stageId,
+          stage: chiefOperationDto.stage,
+          operation: chiefOperationDto.operation,
+          batchId: chiefOperationDto.batchId,
+          batch: chiefOperationDto.batch,
+          quantity: chiefOperationDto.quantity);
+
+      if (!stagesMap.containsKey(chiefOperation.stageId)) {
+        stagesMap[chiefOperation.stageId] = ChiefStageForReportModel(
+            batchId: chiefOperation.batchId,
+            batchNumber: chiefOperation.batch.number,
+            batchName: chiefOperation.batch.name,
+            batchCode: chiefOperation.batch.code,
+            stageNumber: chiefOperation.stage.number);
+
+        stagesMap[chiefOperation.stageId]?.detailsQuantity =
+            chiefOperation.batch.count;
+
+        // stagesMap[chiefOperation.stageId]?.readyDetailsQuantity =
+        //     await _chiefBatchTable.fetchReadyDetailsCount(
+        //         batchId: stagesMap[chiefOperation.stageId]!.batchId);
+        // print('был запрос');
+        // stagesMap[chiefOperation.stageId]?.defectDetailsQuantity =
+        //     await _chiefBatchTable.fetchDefectDetailsCount(
+        //         batchId: stagesMap[chiefOperation.stageId]!.batchId);
+      }
+      stagesMap[chiefOperation.stageId]?.operationsQuantity++;
+    }
+
+    var fetchedOperatorOperationsList = await _operatorOperationsTable.select();
+
+    for (var operation in fetchedOperatorOperationsList) {
+      final operatorOperationsDto = OperatorOperationsDTO.fromMap(operation);
+
+      if (operatorOperationsDto.statusId == 6) {
+        stagesMap[operatorOperationsDto.stageId]?.readyOperationsQuantity++;
+      }
+    }
+
+    stagesMap.forEach((key, value) async {
+      print(value.stageNumber);
+      value.operationsQuantity =
+          value.operationsQuantity * value.detailsQuantity;
+
+      value.readyOperationsPercent =
+          (value.readyOperationsQuantity / value.detailsQuantity).round() * 100;
+
+      value.defectDetailsQuantity =
+          (value.defectDetailsQuantity / value.detailsQuantity).round() * 100;
+
+      value.readyDetailsQuantity =
+      await _chiefBatchTable.fetchReadyDetailsCount(
+          batchId: value.batchId);
+      value.defectDetailsQuantity =
+      await _chiefBatchTable.fetchDefectDetailsCount(
+          batchId: value.batchId);
+    });
+
+    stagesMap.forEach((key, value) {
+      stagesList.add(value);
+    });
+        print(stagesList.length);
+    emit(state.copyWith(stagesList: stagesList));
+  }
+
+  Future<void> uploadStagesReportToExcel() async {
     String filePath =
-        await _excelService.uploadReport(stagesList: state.stagesList);
+        await _excelService.uploadChiefStagesReport(stagesList: state.stagesList);
     if (filePath == '') {
       filePath = 'что-то пошло не так';
     } else {

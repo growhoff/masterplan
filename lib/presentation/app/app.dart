@@ -10,6 +10,7 @@ import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_sta
 import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_staff_list_page/chief_staff_edit_page.dart';
 import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_staff_list_page/chief_staff_list_page.dart';
 import 'package:master_plan/presentation/pages/chief/statistics_page/operations_statistics_page.dart';
+import 'package:master_plan/presentation/pages/chief/statistics_page/statistics_page.dart';
 import 'package:master_plan/presentation/pages/chief/widgets/custom_navbar.dart';
 import 'package:master_plan/presentation/pages/login/login_page.dart';
 import 'package:master_plan/presentation/pages/master/pages/addOperation/add_operation_page.dart';
@@ -45,6 +46,7 @@ class MyApp extends StatelessWidget {
           '/chiefStaffAddPage': (BuildContext context) => const ChiefStaffAddPage(),
           '/chiefStaffEditPage': (BuildContext context) => const ChiefStaffEditPage(),
           '/chiefOperationsStatisticsPage': (BuildContext context) => const OperationsStatisticsPage(),
+          '/chiefStageReport': (BuildContext context) => const ChiefStatisticsPage()
         },
         home: const LoginPage(),
       ),

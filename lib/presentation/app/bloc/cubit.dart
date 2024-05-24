@@ -39,16 +39,16 @@ class CubitMain extends Cubit<StateMain> {
           await getUserNew(query.first['user_id']); //ошибка. неверный пароль
 
           switch (state.user!.position.id) {
-            //начальник
+          //начальник
             case 2:
-              // emit(state.copyWith(unit: await getUnitZ(state.user!.unit!.id)));
+            // emit(state.copyWith(unit: await getUnitZ(state.user!.unit!.id)));
               break;
-            //мастер
+          //мастер
             case 3:
               await getMachineToArea(state.user!.area!.id);
               await getOperators();
               break;
-            //оператор
+          //оператор
             case 4:
               await getMachineOperatorZ(state.user!.id);
               break;
@@ -152,7 +152,7 @@ class CubitMain extends Cubit<StateMain> {
           areaId: user.areaId,
           photo: user.photo,
           positionModel:
-              Position(id: user.position.id, name: user.position.name)));
+          Position(id: user.position.id, name: user.position.name)));
     }
     emit(state.copyWith(operatorList: userList));
   }
@@ -184,25 +184,25 @@ class CubitMain extends Cubit<StateMain> {
 
   ShiftsDistribution convertToShiftsDistribution(ShiftsDistributionDTO model){
     return ShiftsDistribution(
-          id: model.id,
-          date: model.date,
-          machine: Machine(
-              id: model.machine!.id,
-              inventoryNumber: model.machine!.inventoryNumber,
-              name: model.machine!.name,
-              areaId: model.machine!.areaId),
-          user: User(
-              id: model.user!.id,
-              fio: model.user!.fio,
-              positionId: model.user!.positionId,
-              companyId: model.user!.companyId,
-              unitId: model.user!.unitId,
-              areaId: model.user!.areaId,
-              photo: model.user!.photo,
-              positionModel: Position(
-                  id: model.user!.position.id,
-                  name: model.user!.position.name)),
-          change: model.change!);
+        id: model.id,
+        date: model.date,
+        machine: Machine(
+            id: model.machine!.id,
+            inventoryNumber: model.machine!.inventoryNumber,
+            name: model.machine!.name,
+            areaId: model.machine!.areaId),
+        user: User(
+            id: model.user!.id,
+            fio: model.user!.fio,
+            positionId: model.user!.positionId,
+            companyId: model.user!.companyId,
+            unitId: model.user!.unitId,
+            areaId: model.user!.areaId,
+            photo: model.user!.photo,
+            positionModel: Position(
+                id: model.user!.position.id,
+                name: model.user!.position.name)),
+        change: model.change!);
   }
 
   Future<void> goToLink() async {
