@@ -10,7 +10,7 @@ class ElementBarOperator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CubitWork, StateWork>(
-      builder: (context, state) => Column(
+      builder: (context, state) => state.pageData.isNotEmpty ? Column(
         children: [
           SizedBox(
             height: 40,
@@ -34,7 +34,8 @@ class ElementBarOperator extends StatelessWidget {
           const SizedBox(height: 16),
           ContentDetail(state.pageData[state.activePage], state.statusBtn[state.activePage])
         ],
-      ),
+      )
+      : const Center(child: CircularProgressIndicator()),
     );
   }
 }

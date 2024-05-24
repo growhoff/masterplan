@@ -4,7 +4,6 @@ import 'package:master_plan/data/repositories/supabase/dto/operator_operations_d
 import 'package:master_plan/data/repositories/supabase/dto/shifts_distribution_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/user_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/machine_table.dart';
-import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/shifts_distribution.dart';
 import 'package:master_plan/data/repositories/supabase/service/user_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/staff_table.dart';
@@ -161,12 +160,30 @@ class CubitMain extends Cubit<StateMain> {
   //оператор
   Future<void> getMachineOperatorZ(int userId) async {
     final zshiftsDistributionTable = ShiftsDistributionTable();
-    final zshiftsDistributionQuery =
-        await zshiftsDistributionTable.selectEqUser(userId);
+    final zshiftsDistributionQuery = await zshiftsDistributionTable.selectEqUser(userId);
     List<ShiftsDistribution> zshiftsDistributionList = [];
+    List<int> machineListId = [];
     for (var shiftsDistr in zshiftsDistributionQuery) {
       final model = ShiftsDistributionDTO.fromMap(shiftsDistr);
-      zshiftsDistributionList.add(ShiftsDistribution(
+      zshiftsDistributionList.add(convertToShiftsDistribution(model));
+      machineListId.add(model.machine!.id);
+    }
+
+    // List<OperatorOperations> operatorOperationsList = [];
+    // if (machineListId.isNotEmpty) {
+    //   final zOperatorOperationsTable = OperatorOperationsTable();
+    //   final zOperatorOperationsQuery = await zOperatorOperationsTable.selectListIdMachine3678(machineListId);
+    //   for (var operatorOper in zOperatorOperationsQuery) {
+    //     final model = OperatorOperationsDTO.fromMap(operatorOper);
+    //     operatorOperationsList.add(convertDto(model));
+    //   }
+    // }
+
+    emit(state.copyWith(zshiftsDistributionList: zshiftsDistributionList,  machineIdList: machineListId));
+  }
+
+  ShiftsDistribution convertToShiftsDistribution(ShiftsDistributionDTO model){
+    return ShiftsDistribution(
           id: model.id,
           date: model.date,
           machine: Machine(
@@ -185,28 +202,7 @@ class CubitMain extends Cubit<StateMain> {
               positionModel: Position(
                   id: model.user!.position.id,
                   name: model.user!.position.name)),
-          change: model.change!));
-    }
-
-    List<int> machineListId = [];
-    for (var element in zshiftsDistributionList) {
-      machineListId.add(element.machine.id);
-    }
-
-    List<OperatorOperations> operatorOperationsList = [];
-    if (machineListId.isNotEmpty) {
-      final zOperatorOperationsTable = OperatorOperationsTable();
-      final zOperatorOperationsQuery =
-          await zOperatorOperationsTable.selectListIdMachine3678(machineListId);
-      for (var operatorOper in zOperatorOperationsQuery) {
-        final model = OperatorOperationsDTO.fromMap(operatorOper);
-        operatorOperationsList.add(convertDto(model));
-      }
-    }
-
-    emit(state.copyWith(
-        zshiftsDistributionList: zshiftsDistributionList,
-        operatorOperationsList: operatorOperationsList));
+          change: model.change!);
   }
 
   Future<void> goToLink() async {

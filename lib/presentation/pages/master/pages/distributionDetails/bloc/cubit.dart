@@ -13,6 +13,7 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
   CubitDistributionDetails(this.areaIdUser, this.listMachine) : super(const StateDistributionDetails()){
       tableOperations.table.stream(primaryKey: ['id']).inFilter('area_id', [areaIdUser]).listen((event){
       }).onData((data)async {
+          emit(state.copyWith(isLoading: true));
           await getQuere(data);
       });
   }
@@ -75,11 +76,11 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
     //   for (var operOperat in list) {
     //     listItem.add(DistribItem(id: operOperat.id, stageNumber: operOperat.stage!.number, statusId: operOperat.status.id, detailNumber: operOperat.batch.number, operationName: operOperat.operation.name, count: operOperat.batch.count, isSelected: false));
     //   }
-    emit(state.copyWith(operList: listRes));
+    emit(state.copyWith(operList: listRes, isLoading: false));
   }
 
   DistribItem convertToDistrib(List<OperatorOperationsDTO> operOperat){
-    return DistribItem(id: operOperat.first.id, stageNumber: operOperat.first.stage!.number, statusId: operOperat.first.status.id, detailNumber: operOperat.first.batch.number, operationName: operOperat.first.operation.name, count: operOperat.first.batch.count, isSelected: false, listOperat: operOperat);
+    return DistribItem(id: operOperat.first.id, stageNumber: operOperat.first.stage!.number, statusId: operOperat.first.status.id, detailNumber: operOperat.first.batch.number, operationName: operOperat.first.operation.name, count: operOperat.first.batch.count, isSelected: false, listOperat: operOperat, timeSh: operOperat.first.operation.timeSH ?? 0, timePZ: operOperat.first.operation.timepz, setOptPart: 1);
   }
 
   void toggleSelect(int index){
@@ -108,6 +109,18 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
       List<DistribItem> list = [...state.operList];
       DistribItem item = state.operList[index];
       final newitem = item.copyWith(setCount: count);
+      list.removeAt(index);
+      list.insert(index,newitem);
+      emit(state.copyWith(operList: list));
+  }
+
+  void setOptPath(int index, String countStr){
+      if (countStr == '') {countStr = '1';}
+      int count = int.parse(countStr);
+      // if (count > state.operList[index].listOperat.length) {count = state.operList[index].listOperat.length;}
+      List<DistribItem> list = [...state.operList];
+      DistribItem item = state.operList[index];
+      final newitem = item.copyWith(setOptPart: count);
       list.removeAt(index);
       list.insert(index,newitem);
       emit(state.copyWith(operList: list));

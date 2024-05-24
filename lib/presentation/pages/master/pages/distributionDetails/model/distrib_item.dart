@@ -10,8 +10,11 @@ class DistribItem {
   final int statusId;
   final String? setMachine;
   final int? setCount;
+  final int? setOptPart;
   final bool isSelected;
   final List<OperatorOperationsDTO> listOperat;
+  final int timeSh;
+  final int timePZ;
   DistribItem({
     required this.id,
     required this.stageNumber,
@@ -21,8 +24,11 @@ class DistribItem {
     required this.statusId,
     this.setMachine,
     this.setCount,
+    this.setOptPart,
     required this.isSelected,
     required this.listOperat,
+    required this.timeSh,
+    required this.timePZ,
   });
 
   DistribItem copyWith({
@@ -34,8 +40,11 @@ class DistribItem {
     int? statusId,
     String? setMachine,
     int? setCount,
+    int? setOptPart,
     bool? isSelected,
     List<OperatorOperationsDTO>? listOperat,
+    int? timeSh,
+    int? timePZ,
   }) {
     return DistribItem(
       id: id ?? this.id,
@@ -46,8 +55,11 @@ class DistribItem {
       statusId: statusId ?? this.statusId,
       setMachine: setMachine ?? this.setMachine,
       setCount: setCount ?? this.setCount,
+      setOptPart: setOptPart ?? this.setOptPart,
       isSelected: isSelected ?? this.isSelected,
       listOperat: listOperat ?? this.listOperat,
+      timeSh: timeSh ?? this.timeSh,
+      timePZ: timePZ ?? this.timePZ,
     );
   }
 }

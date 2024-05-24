@@ -1,28 +1,63 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/monitoring_machine_dto.dart';
-// import 'package:master_plan/data/repositories/supabase/dto/operation_dto.dart';
-// import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/monitoring_machine_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
-// import 'package:master_plan/domain/model/batch.dart';
+import 'package:master_plan/domain/model/batch.dart';
+import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/domain/model/shifts_distribution.dart';
-// import 'package:master_plan/domain/model/status.dart';
+import 'package:master_plan/domain/model/status.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/model/page_item.dart';
 import 'state.dart';
 
 class CubitWork extends Cubit<StateWork> {
   final List<ShiftsDistribution>? zShiftsDistributionList;
-  final List<OperatorOperations>? operatorOperationsList;
+  // final List<OperatorOperations>? operatorOperationsList;
+  final List<int> machineListId;
+  final operatorOperationsTable = OperatorOperationsTable();
+  CubitWork(this.zShiftsDistributionList, this.machineListId) : super(const StateWork()) {
+    //
+    operatorOperationsTable.table.stream(primaryKey: ['id']).inFilter('machine_id', machineListId).listen((event) {
+      }).onData((data)async {
+          await getQuere(data);
+      });
+    
+    //
 
-  CubitWork(this.zShiftsDistributionList, this.operatorOperationsList) : super(const StateWork()) {
+    // List<PageItem> pageData = [];
+    // List<int> btn = [];
+    // for (var shiftsDistr in zShiftsDistributionList!) {
+    //   List<OperatorOperations> listOperReady = [];
+    //   List<OperatorOperations> listOperQueue = [];
+    //   for (var operList in operatorOperationsList!) {
+    //     if (shiftsDistr.machine.id == operList.machine!.id) {
+    //       if (operList.status.id == 6) listOperReady.add(operList);
+    //       if (operList.status.id == 3) listOperQueue.add(operList);
+    //     }
+    //   }
+    //   btn.add(0);
+    //   pageData.add(PageItem(machine: shiftsDistr.machine, operReadyList: listOperReady, operQueueList: listOperQueue, time: 0));
+    // }
+    // emit(state.copyWith(pageData: pageData, statusBtn: btn));
+  }
+
+    Future<void> getQuere (List<Map<String, dynamic>>? data)async{
+    List<int> listId = [];
+    for (var element in data!) {if (element['status_id'] == 3 || element['status_id'] == 6 || element['status_id'] == 7 || element['status_id'] == 8) listId.add(element['id']);}
+    final quere = await operatorOperationsTable.selectIdListNew(listId);
+    List<OperatorOperations> operatorOperationsList = [];
+      for (var operatorOper in quere) {
+        final model = OperatorOperationsDTO.fromMap(operatorOper);
+        operatorOperationsList.add(convertDto(model));
+      }
+
     List<PageItem> pageData = [];
     List<int> btn = [];
     for (var shiftsDistr in zShiftsDistributionList!) {
       List<OperatorOperations> listOperReady = [];
       List<OperatorOperations> listOperQueue = [];
-      for (var operList in operatorOperationsList!) {
+      for (var operList in operatorOperationsList) {
         if (shiftsDistr.machine.id == operList.machine!.id) {
           if (operList.status.id == 6) listOperReady.add(operList);
           if (operList.status.id == 3) listOperQueue.add(operList);
@@ -98,5 +133,36 @@ class CubitWork extends Cubit<StateWork> {
     list.removeAt(index);
     list.insert(index, st);
     emit(state.copyWith(statusBtn: list));
+  }
+
+  OperatorOperations convertDto(OperatorOperationsDTO dto) {
+    return OperatorOperations(
+      id: dto.id,
+      area: dto.area!,
+      operation: dto.operation,
+      stage: dto.stage!,
+      timeplan: dto.timeplan ?? 0,
+      timefact: dto.timefact ?? 0,
+      timestart: dto.timestart,
+      timestop: dto.timestop,
+      timeworking: dto.timeworking,
+      status: Status(id: dto.status.id, name: dto.status.name),
+      batch: Batch(
+          id: dto.batch.id,
+          number: dto.batch.number,
+          name: dto.batch.name,
+          count: dto.batch.count,
+          code: dto.batch.code,
+          packageId: dto.batch.packageId,
+          technology: dto.batch.technology,
+          order: dto.batch.order,
+          isready: dto.batch.isready),
+      order: dto.order,
+      machine: Machine(
+          id: dto.machine!.id,
+          inventoryNumber: dto.machine!.inventoryNumber,
+          name: dto.machine!.name,
+          areaId: dto.areaId),
+    );
   }
 }

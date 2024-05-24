@@ -2,15 +2,13 @@ import 'package:master_plan/data/repositories/supabase/dto/operator_operations_d
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
 import '../../../../domain/usecase/company_service.dart';
 
 class OperatorOperationsTable extends SupabaseTable {
   final table = Supabase.instance.client.from('z_operator_operations');
-  static const selectUser =
-      '*, z_position(*), z_company(*), z_unit(*), z_area(*)';
+  static const selectUser = '*, z_position(*), z_company(*), z_unit(*), z_area(*)';
 
-  final _companyId = CompanyService.instance.companyId ?? 1;
+  final companyId = CompanyService.instance.companyId ?? 1;
 
   @override
   Future<void> delete(int id) {
@@ -36,8 +34,7 @@ class OperatorOperationsTable extends SupabaseTable {
   @override
   Future<List<Map<String, dynamic>>> select() {
     return table
-        .select(
-            '*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*), z_user($selectUser), z_machine(*), z_area(*), z_chief_operation(*)')
+        .select('*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*), z_user($selectUser), z_machine(*), z_area(*), z_chief_operation(*)')
         .order('id', ascending: true);
   }
 
@@ -46,10 +43,10 @@ class OperatorOperationsTable extends SupabaseTable {
   }
 
   Future<List<Map<String, dynamic>>> selectListIdNew(List<int> listId) {
-    return table
-        .select(
-            '*, z_status(*), z_batch(*), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_user($selectUser)')
-        .inFilter('id', listId);
+    return table.select('*, z_status(*), z_batch(*), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_user($selectUser)').inFilter('id', listId);
+  }
+  Future<List<Map<String, dynamic>>> selectIdListNew(List<int> machineIdList) {
+    return table.select('*, z_status(*), z_batch(*), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_user($selectUser)').inFilter('id', machineIdList);
   }
 
   Future<List<Map<String, dynamic>>> selectListId(List<int> listId) {
@@ -76,8 +73,7 @@ class OperatorOperationsTable extends SupabaseTable {
       }
     }
     return table
-        .select(
-            '*, z_status(*), z_batch(*), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_user($selectUser)')
+        .select('*, z_status(*), z_batch(*), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_user($selectUser)')
         .or(filters)
         .or('status_id.eq.2,status_id.eq.3,status_id.eq.4,status_id.eq.6')
         .order('order', ascending: true);
@@ -93,8 +89,7 @@ class OperatorOperationsTable extends SupabaseTable {
       }
     }
     return table
-        .select(
-            '*, z_status(*), z_batch(*), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_user($selectUser)')
+        .select('*, z_status(*), z_batch(*), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_user($selectUser)')
         .or(filters)
         .or('status_id.eq.3,status_id.eq.6,status_id.eq.7,status_id.eq.8')
         .order('order', ascending: true);
@@ -103,8 +98,7 @@ class OperatorOperationsTable extends SupabaseTable {
   Future<List<Map<String, dynamic>>> selectByAreaId(
       {required int areaId}) async {
     var res = await table
-        .select(
-            '*, z_status(*), z_batch(*), z_stage(*), z_operation(*),z_user($selectUser), z_machine(*)')
+        .select('*, z_status(*), z_batch(*), z_stage(*), z_operation(*),z_user($selectUser), z_machine(*)')
         .eq('area_id', areaId);
     print(res);
     return res;

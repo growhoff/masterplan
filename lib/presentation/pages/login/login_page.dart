@@ -5,6 +5,7 @@ import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/login/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/login/bloc/state.dart';
 import 'package:master_plan/presentation/pages/login/widgets/dialog_auth.dart';
+import 'package:master_plan/presentation/pages/login/widgets/dialog_pay.dart';
 import 'package:master_plan/presentation/pages/login/widgets/dialog_version.dart';
 
 class LoginPage extends StatelessWidget {
@@ -31,8 +32,9 @@ class ContentLogin extends StatelessWidget {
     return GestureDetector(
       child: Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           title: const Text('MasterPlan'),
-          actions: const [Center(child: Text('v2.3.0'))],
+          actions: [Center(child: Text(context.read<CubitMain>().state.version)), const SizedBox(width: 10)],
         ),
         body: SafeArea(
           child: Container(
@@ -59,56 +61,24 @@ class ContentLogin extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () async {
                       context.read<CubitLogin>().setBtn();
-                      final isResult = await context
-                          .read<CubitMain>()
-                          .save(numberController.text, passwordController.text);
-                      // showDialog
+                      final isResult = await context.read<CubitMain>().save(numberController.text, passwordController.text);
                       switch (isResult) {
                         case 'не оплачено':
-                          showDialog(
-                              context: context,
-                              builder: (ctx) => AlertDialog(
-                                    title: Text('Приложение не оплачено'),
-                                    contentPadding: const EdgeInsets.all(5),
-                                    actions: [
-                                      MaterialButton(
-                                          child: Text(
-                                            'ОК',
-                                            style: TextStyle(fontSize: 18),
-                                          ),
-                                          onPressed: () =>
-                                              Navigator.pop(context, false))
-                                    ],
-                                  ));
+                          if (context.mounted)  showDialog(context: context,builder: (ctx) => const DialogPay());
                         case 'Директор':
                           break;
                         case 'Начальник':
-                          if (context.mounted)
-                            Navigator.pushNamed(context, '/chiefPage');
+                          if (context.mounted) Navigator.pushNamed(context, '/chiefPage');
                         case 'Мастер':
-                          if (context.mounted)
-                            Navigator.pushNamed(context, '/masterPage');
+                          if (context.mounted) Navigator.pushNamed(context, '/masterPage');
                         case 'Оператор':
-                          if (context.mounted)
-                            Navigator.pushNamed(context, '/operatorPage');
+                          if (context.mounted) Navigator.pushNamed(context, '/operatorPage');
                         case 'Ошибка_версий':
-                          if (context.mounted)
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) =>
-                                    const DialogVersion());
+                          if (context.mounted) showDialog(context: context, builder: (BuildContext context) => const DialogVersion());
                         case 'Ошибка_авторизации_1':
-                          if (context.mounted)
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) =>
-                                    const DialogAuth(1));
+                          if (context.mounted) showDialog(context: context, builder: (BuildContext context) => const DialogAuth(1));
                         case 'Ошибка_авторизации_2':
-                          if (context.mounted)
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) =>
-                                    const DialogAuth(2));
+                          if (context.mounted) showDialog( context: context, builder: (BuildContext context) => const DialogAuth(2));
                       }
                       numberController.clear();
                       passwordController.clear();
@@ -116,12 +86,7 @@ class ContentLogin extends StatelessWidget {
                     child: BlocBuilder<CubitLogin, StateLogin>(
                         builder: (context, state) => !state.isSelect
                             ? const Text('Войти')
-                            : const SizedBox(
-                                width: 12,
-                                height: 12,
-                                child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.white)))),
+                            : const SizedBox(width: 12,height: 12,child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white)))),
                   ),
                 ),
               ],

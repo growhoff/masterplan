@@ -81,11 +81,13 @@ class ContentListWidgetMaster extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 8),
-       ListView.separated(
-          shrinkWrap: true,
-          itemCount: listStatus.length,
-          itemBuilder: (context, index) => StatusItem(item: listStatus[index], allTime: monitor.allTime),
-          separatorBuilder: (context, index) => const SizedBox(height: 3),
+        listStatus.isEmpty 
+        ? const Center(child: Text('Список пуст')) 
+        : ListView.separated(
+            shrinkWrap: true,
+            itemCount: listStatus.length,
+            itemBuilder: (context, index) => StatusItem(item: listStatus[index], allTime: monitor.allTime),
+            separatorBuilder: (context, index) => const SizedBox(height: 3),
           )
       ],
     );

@@ -26,12 +26,8 @@ class TitleItem extends StatelessWidget {
             Text('Операция: ${oper.operationName}'),
             const SizedBox(height: 2),
             Text('Кол-во на участке: ${oper.listOperat.length}'),
-            // const SizedBox(height: 2),
-            // const Row(children: [
-            //   Text('T п.з.: 0'),
-            //   SizedBox(width: 10),
-            //   Text('T шт.к.: 0')
-            // ],)
+            const SizedBox(height: 2),
+            Text('T п.з.: ${oper.timePZ} / T шт.к.: ${oper.timeSh + (oper.timePZ / oper.count).round()}'),//T шт. + Т п. з./кол-во
           ],
         ),
       ),
@@ -68,6 +64,18 @@ class BodyItem extends StatelessWidget {
                   width: 100, 
                   child: TextFormField(
                     onChanged: (value) => context.read<CubitDistributionDetails>().setCount(index, value),
+                )))
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Expanded(child:  Text('Введите объем оптимальной партии:')),
+                Expanded(child: SizedBox(
+                  width: 100, 
+                  child: TextFormField(
+                    onChanged: (value) => context.read<CubitDistributionDetails>().setOptPath(index, value),
                 )))
               ],
             )

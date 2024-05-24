@@ -3,7 +3,7 @@ import 'package:master_plan/data/repositories/supabase/dto/shifts_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/shifts_table.dart';
 import 'state.dart';
 
-class CubitOperator extends Cubit<StateOperator> { 
+class CubitOperator extends Cubit<StateOperator> {
   CubitOperator() : super(const StateOperator());
 
   void toggleBtn(int userId){

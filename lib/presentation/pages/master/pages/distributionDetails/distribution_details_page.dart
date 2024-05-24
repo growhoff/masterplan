@@ -23,39 +23,50 @@ class DetailDistribContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return  SafeArea(
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              BlocBuilder<CubitDistributionDetails, StateDistributionDetails>(
-                builder: (context, state) {
-                    List<ExpansionPanel> list = [];
-                    for (var i = 0; i < state.operList.length; i++) {
-                      Color colorMain = ((state.operList[i].setCount != null) && (state.operList[i].setCount != 0) && (state.operList[i].setMachine != null) ) ? Colors.greenAccent : Colors.white;
-                      list.add(
-                        ExpansionPanel(
-                          headerBuilder: (context, isExpanded) => TitleItem(state.operList[i], state.operList[i].statusId == 4 ? Colors.amberAccent : colorMain), 
-                          body: BodyItem(i, colorMain),
-                          isExpanded: state.operList[i].isSelected,
-                          backgroundColor: colorMain,
-                        ));
-                    }
-                    return state.operList.isNotEmpty 
-                    ? ExpansionPanelList(
-                      children: list,
-                      expansionCallback: (index, isExpanded) => context.read<CubitDistributionDetails>().toggleSelect(index),
-                    )
-                    : const Center(child: CircularProgressIndicator());
-                }
-              ),
-              const SizedBox(height: 8),
-              SizedBox(
-                width: double.maxFinite,
-                child: ElevatedButton(onPressed: () => context.read<CubitDistributionDetails>().updateOperation(), child: const Text('Отправить в работу')))
-            ],
-          )
+      child: Stack(
+        children:[ 
+          SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                BlocBuilder<CubitDistributionDetails, StateDistributionDetails>(
+                  builder: (context, state) {
+                      List<ExpansionPanel> list = [];
+                      for (var i = 0; i < state.operList.length; i++) {
+                        Color colorMain = ((state.operList[i].setCount != null) && (state.operList[i].setCount != 0) && (state.operList[i].setMachine != null) ) ? Colors.greenAccent : Colors.white;
+                        list.add(
+                          ExpansionPanel(
+                            headerBuilder: (context, isExpanded) => TitleItem(state.operList[i], state.operList[i].statusId == 4 ? Colors.amberAccent : colorMain), 
+                            body: BodyItem(i, colorMain),
+                            isExpanded: state.operList[i].isSelected,
+                            backgroundColor: colorMain,
+                          ));
+                      }
+                      return state.isLoading 
+                      ?  const Center(child: CircularProgressIndicator()) 
+                      : state.operList.isNotEmpty 
+                      ? ExpansionPanelList(
+                        children: list,
+                        expansionCallback: (index, isExpanded) => context.read<CubitDistributionDetails>().toggleSelect(index),
+                      )
+                      : const Center(child: Text('Список пуст'));
+                  }
+                ),
+                const SizedBox(height: 8),
+                
+              ],
+            )
+          ),
         ),
+        Container(
+            alignment: Alignment.bottomCenter,
+            child: ElevatedButton(
+                onPressed: () =>
+                    context.read<CubitDistributionDetails>().updateOperation(),
+                child: const Text('Отправить в работу')),
+        )
+        ]
       ),
     );
   }
