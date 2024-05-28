@@ -23,12 +23,14 @@ class CubitMonitoring extends Cubit<StateMonitoring> {
   Future<void> getQuere (List<Map<String, dynamic>>? data)async{
     List<int> listId = [];
     for (var element in data!) {listId.add(element['id']);}
-    final quere = await tableMonitoring.selectListId(listId, state.days);
     List<MonitoringMachineDTO> queueList = [];
-    for (var item in quere) {
-      queueList.add(MonitoringMachineDTO.fromMap(item));
+    if (listId.isNotEmpty) {
+      final quere = await tableMonitoring.selectListId(listId, state.days);
+      for (var item in quere) {
+        queueList.add(MonitoringMachineDTO.fromMap(item));
+      }
     }
-
+    
     List<ItemMachineMonitorMaster> listMonitor = [];
     for (var machine in machineList!) {
       List<ItemMachineStatus> listStatus = [];

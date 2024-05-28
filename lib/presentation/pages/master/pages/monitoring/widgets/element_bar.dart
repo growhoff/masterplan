@@ -14,13 +14,13 @@ class ElementBarMonitor extends StatelessWidget {
       ? Column(
         children: [
           SizedBox(
-            height: 40,
+            height: 60,
             child: ListView.separated(
               shrinkWrap: true,
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) => GestureDetector(
                 onTap: () => context.read<CubitMonitoring>().setActivePage(index),
-                child: SizedBox(width: 200, child: Card(color: state.activePage == index ? Colors.blueGrey : const Color.fromARGB(0, 0, 0, 0), child: Center(child: Text(state.listBar![index].machine.name)))),
+                child: SizedBox(width: 200, child: Card(color: state.activePage == index ? Colors.blueGrey : const Color.fromARGB(0, 0, 0, 0), child: Center(child: Text(state.listBar![index].machine.name, textAlign: TextAlign.center)))),
               ), 
               separatorBuilder: (context, index) => const SizedBox(width: 5),
               itemCount: state.listBar!.length),

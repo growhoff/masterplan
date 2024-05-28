@@ -6,11 +6,11 @@ class PageItem {
   final Machine machine;
   final List<OperatorOperations> operReadyList;
   final List<OperatorOperations> operQueueList;
-  final int time;
+  final OperatorOperations? operActive;
   PageItem({
     required this.machine,
     required this.operReadyList,
     required this.operQueueList,    
-    required this.time,
+    this.operActive,
   });
 }

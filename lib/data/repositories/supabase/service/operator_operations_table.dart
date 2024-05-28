@@ -43,7 +43,7 @@ class OperatorOperationsTable extends SupabaseTable {
   }
 
   Future<List<Map<String, dynamic>>> selectListIdNew(List<int> listId) {
-    return table.select('*, z_status(*), z_batch(*), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_user($selectUser)').inFilter('id', listId);
+    return table.select('*, z_status(*), z_batch(*), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_user($selectUser)').inFilter('id', listId).order('id', ascending: true);
   }
   Future<List<Map<String, dynamic>>> selectIdListNew(List<int> machineIdList) {
     return table.select('*, z_status(*), z_batch(*), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_user($selectUser)').inFilter('id', machineIdList);
@@ -150,7 +150,7 @@ class OperatorOperationsTable extends SupabaseTable {
   }
 
   Future<void> updateTimeStart(int id, int timeStart) async {
-    await table.update({'time_start': timeStart}).eq('id', id);
+    await table.update({'time_start': timeStart, 'status_id': 7}).eq('id', id);
   }
 
   Future<void> updateTimeStop(int id, int timeStop) async {

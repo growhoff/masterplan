@@ -1,5 +1,4 @@
 class ChiefStageForReportModel {
-
   final int batchId;
   final String stageNumber;
   final String batchNumber;
@@ -17,10 +16,30 @@ class ChiefStageForReportModel {
   int operationsQuantity = 0;
   int readyOperationsPercent = 0;
 
+  List<ChiefOperationModel> operationsList = [];
+
   ChiefStageForReportModel(
       {required this.batchId,
-        required this.batchNumber,
+      required this.batchNumber,
       required this.batchName,
       required this.batchCode,
       required this.stageNumber});
+}
+
+class ChiefOperationModel {
+  ChiefOperationModel(
+      {required this.name, required this.number, required this.operationId, required this.code});
+
+  final int operationId;
+  final String name;
+  final String number;
+  final String code;
+
+  String areaNumber = '';
+
+  int readyQuantity = 0;
+  int readyPercent = 0;
+  int inWorkQuantity = 0;
+  int defectQuantity = 0;
+  int modificationQuantity = 0;
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/operator/pages/queue/queue_page.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/bloc/state.dart';
@@ -24,14 +25,16 @@ class Time extends StatelessWidget {
                     ButtonCircleIcon(
                       isActive: (stateWork.statusBtn[stateWork.activePage] == 0) || (stateWork.statusBtn[stateWork.activePage] == 1),
                       onPressed: () {
-                        context.read<CubitTimer>().startOrStop(stateWork.activePage, !state.listState[stateWork.activePage], stateWork.pageData[stateWork.activePage].operQueueList.first.id);
-                        context.read<CubitWork>().setBtnStatus(0);
+                        context.read<CubitTimer>().startOrStop(stateWork.activePage, !state.listState[stateWork.activePage], stateWork.pageData[stateWork.activePage].operActive!.id);
+                        // context.read<CubitWork>().setMonitor(0, context.read<CubitMain>().state.user!.id, 'start time', !state.listState[stateWork.activePage]);//доработать старт стоп
+                        // context.read<CubitWork>().setBtnStatus(0);
+                        context.read<CubitWork>().setStartMonitor(0,context.read<CubitMain>().state.user!.id, 'start time');
                       }, 
                       icon: !state.listState[stateWork.activePage] ? Icons.play_arrow_rounded : Icons.pause,
                       ),
                     ButtonCircleIcon(
                       isActive: (stateWork.statusBtn[stateWork.activePage] == 0) || (stateWork.statusBtn[stateWork.activePage] == 1),
-                      onPressed: () =>  Navigator.push(context, MaterialPageRoute(builder: (context) => QueuePage(operListReady: [...stateWork.pageData[stateWork.activePage].operReadyList], operListQueue: [...stateWork.pageData[stateWork.activePage].operQueueList]))), 
+                      onPressed: () =>  Navigator.push(context, MaterialPageRoute(builder: (context) => QueuePage(dataPage: stateWork.pageData[stateWork.activePage]))), 
                       icon: Icons.list),
                   ],
                 ),

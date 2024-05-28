@@ -31,10 +31,9 @@ class ChangeOperatorContent extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [  
-                  
-                  const Card(child: Calendar()),
+                  const Text('Распределение на станки', style: TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
-                  const Text('Распределение на станки'),
+                  const Card(child: Calendar()),
                   const SizedBox(height: 8),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:master_plan/domain/model/operator_operations.dart';
+import 'package:master_plan/presentation/pages/operator/pages/work/model/page_item.dart';
 import 'widgets/line_text_spawn.dart';
 import 'widgets/row_list.dart';
 import 'widgets/table_card.dart';
@@ -8,20 +9,13 @@ import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import 'package:master_plan/presentation/app/bloc/state.dart';
 
 class QueuePage extends StatelessWidget {
-  const QueuePage({super.key, required this.operListReady, required this.operListQueue});
-  final List<OperatorOperations> operListReady;
-  final List<OperatorOperations> operListQueue;
+  const QueuePage({super.key, required this.dataPage});
+  final PageItem dataPage;
+  
   @override
   Widget build(BuildContext context) {
-    OperatorOperations? operJob;
-    //удаление первого элемента
-    if (operListQueue.isNotEmpty) {
-      operJob = operListQueue.first;
-      operListQueue.removeAt(0);
-      }
-
     int timeMachine = 0;
-    for (var element in operListQueue) {
+    for (var element in dataPage.operQueueList) {
       timeMachine += element.timeplan;
     }
 
@@ -33,7 +27,7 @@ class QueuePage extends StatelessWidget {
             return Column(
             children: [
               const Text('Оператор'),
-              Text('${user.id} / ${user.fio} / ${user.position.name}', style: const TextStyle(fontSize: 12)),// ${user.area!.name}
+              Text('${user.fio} / ${user.position.name}', style: const TextStyle(fontSize: 12)),
             ]);
           }),
         ),
@@ -48,19 +42,19 @@ class QueuePage extends StatelessWidget {
                   const Divider(),
                   const SizedBox(height: 8),
                   const Text('Операция в работе'),
-                  ActiveOperationCard(operJob: operJob),
+                  ActiveOperationCard(operJob: dataPage.operActive),
                   const SizedBox(height: 8),
                   const Divider(),
                   const SizedBox(height: 8),
                   const Text('Готовые операции'),
                   const SizedBox(height: 8),
-                  TableCard(color: Colors.greenAccent ,list: operListReady, heder: const RowList(text1: 'Деталь', text2: 'Операция', text3: 'Время обработки',)),
+                  TableCard(color: Colors.greenAccent ,list: dataPage.operReadyList, heder: const RowList(text1: 'Деталь', text2: 'Операция', text3: 'Время обработки',)),
                   const SizedBox(height: 8),
                   const Divider(),
                   const SizedBox(height: 8),
                   const Text('Операции в очереди'),
                   const SizedBox(height: 8),
-                  TableCard(color: Colors.amberAccent ,list: operListQueue, heder: const RowList(text1: 'Деталь', text2: 'Номер', text3: 'Время обработки',))
+                  TableCard(color: Colors.amberAccent ,list: dataPage.operQueueList, heder: const RowList(text1: 'Деталь', text2: 'Номер', text3: 'Время обработки',))
                 ],
               )
         ),
@@ -83,7 +77,7 @@ class ActiveOperationCard extends StatelessWidget {
         children: [
           const RowList(text1: 'Деталь', text2: 'Операция', text3: 'Время обработки',),
           const SizedBox(height: 8),
-          RowList(text1: operJob != null ? operJob!.batch.name : 'none', text2: operJob != null ? operJob!.operation.name : 'none', text3: '${operJob != null ? operJob!.timeplan : 'none'}',),
+          RowList(text1: operJob != null ? operJob!.batch.number : 'none', text2: operJob != null ? operJob!.operation.name : 'none', text3: '${operJob != null ? operJob!.timeplan : 'none'}',),
         ],
       ),
     );

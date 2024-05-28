@@ -21,20 +21,17 @@ class ContentDetail extends StatelessWidget {
     
     final userId = context.read<CubitMain>().state.user!.id;
     final astivePage = context.read<CubitWork>().state.activePage;
-    return pageData.operQueueList.isEmpty
+    final operation = pageData.operActive;
+    return  operation == null //pageData.operQueueList.isEmpty &&
         ? const Center(
             child: Text('Нет деталей/операций на станке'),
           )
         : Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              LineTextSpawn(
-                  title: 'Деталь',
-                  text: pageData.operQueueList.first.batch.name),
+              LineTextSpawn(title: 'Деталь', text: operation.batch.name),
               const SizedBox(height: 8),
-              LineTextSpawn(
-                  title: 'Операция',
-                  text: pageData.operQueueList.first.operation.name),
+              LineTextSpawn(title: 'Операция', text: operation.operation.name),
               const SizedBox(height: 20),
               const Time(),
               const SizedBox(height: 30),
@@ -47,7 +44,7 @@ class ContentDetail extends StatelessWidget {
                     isActive: (statusBtn == 0) || (statusBtn == 1),
                     color: Colors.green,
                     onPressed: () => {
-                            context.read<CubitWork>().setReady(pageData.operQueueList.first.id, userId, context.read<CubitTimer>().state.listTick[astivePage], controller.text, !(statusBtn == 1)),
+                            context.read<CubitWork>().setReady(operation.id, userId, context.read<CubitTimer>().state.listTick[astivePage], controller.text, !(statusBtn == 1)),
                             context.read<CubitTimer>().refresh(astivePage),
                             controller.clear()
                           },
@@ -75,6 +72,20 @@ class ContentDetail extends StatelessWidget {
                       child: SizedBox(
                           width: double.maxFinite,
                           child: ElevatedButtonCastom(
+                              text: 'Брак',
+                              isActive: true,
+                              color: const Color.fromARGB(255, 115, 16, 222),
+                              onPressed: () {
+                                // context.read<CubitWork>().setMonitor(5, userId, controller.text, !(statusBtn == 2));
+                                // context.read<CubitTimer>().refreshAndStartStop(astivePage, !(statusBtn == 2));
+                                // controller.clear();
+                              }))),
+                  const Spacer(),
+                  Expanded(
+                      flex: 5,
+                      child: SizedBox(
+                          width: double.maxFinite,
+                          child: ElevatedButtonCastom(
                               text: 'Переналадка',
                               isActive: (statusBtn == 0) || (statusBtn == 3),
                               color: Colors.amber,
@@ -93,7 +104,7 @@ class ContentDetail extends StatelessWidget {
                       isActive: (statusBtn == 0) || (statusBtn == 1) || (statusBtn == 4),
                       color: Colors.red,
                       onPressed: () {
-                        context.read<CubitWork>().setError(pageData.operQueueList.first.id, userId, context.read<CubitTimer>().state.listTick[astivePage], controller.text, !(statusBtn == 4));
+                        context.read<CubitWork>().setError(operation.id, userId, context.read<CubitTimer>().state.listTick[astivePage], controller.text, !(statusBtn == 4));
                         context.read<CubitTimer>().refreshAndStartStop(astivePage, !(statusBtn == 4));
                         controller.clear();
                       })),

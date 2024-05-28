@@ -55,4 +55,9 @@ class ChiefBatchTable extends SupabaseTable {
     // TODO: implement update
     throw UnimplementedError();
   }
+
+  Future<void> updateChiefBatchStatusToDefect(
+      {required int chiefBatchId}) async {
+    await table.update({'batch_status_id': 3}).eq('id', chiefBatchId);
+  }
 }

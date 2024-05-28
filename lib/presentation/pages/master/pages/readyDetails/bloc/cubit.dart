@@ -8,6 +8,7 @@ import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/domain/model/status.dart';
 // import 'package:master_plan/domain/model/user.dart';
 import 'package:master_plan/presentation/pages/master/pages/readyDetails/model/item_machine.dart';
+import '../../../../../../data/repositories/supabase/service/chief_batch_table.dart';
 import 'state.dart';
 
 class CubitReadyDetails extends Cubit<StateReadyDetails> { 
@@ -128,15 +129,21 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
     emit(state.copyWith(doubleList: l, count: state.count+1));
   }
 
-  void updateOperation(){
+  void updateOperation() {
     final table = OperatorOperationsTable();
+    final chiefBatchTable = ChiefBatchTable();
     final listOper = state.listMachine![state.activePage].listOper;
-    if (listOper.isNotEmpty){
+    if (listOper.isNotEmpty) {
       final listStatus = state.doubleList[state.activePage];
       for (var i = 0; i < listOper.length; i++) {
         if (listStatus[i] == 4) table.updateMasterModificate(listOper[i].id);
-        if (listStatus[i] == 5) table.updateMasterBrak(listOper[i].id); 
-        if (listStatus[i] == 6) table.updateMasterStatisticReady(listOper[i].id); 
+        if (listStatus[i] == 5) {
+          table.updateMasterBrak(listOper[i].id);
+          chiefBatchTable.updateChiefBatchStatusToDefect(
+              chiefBatchId: listOper[i].chiefBatchId ?? 0);
+        }
+        if (listStatus[i] == 6)
+          table.updateMasterStatisticReady(listOper[i].id);
       }
     }
   }

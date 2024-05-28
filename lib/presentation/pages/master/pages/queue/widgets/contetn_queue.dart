@@ -17,12 +17,7 @@ class ContetnQueue extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Row(
-          children: [
-            Text('Время работы станка ${machine.name}: '),
-            Text('$timeWorking минут')
-          ],
-        ),
+        Text('Время работы станка: $timeWorking минут', style: const TextStyle(fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         SizedBox(
           child: Row(

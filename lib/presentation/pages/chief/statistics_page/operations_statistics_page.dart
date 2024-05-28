@@ -1,9 +1,10 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:master_plan/presentation/pages/chief/statistics_page/statictics_cubit/statistics_cubit.dart';
 import 'package:master_plan/presentation/pages/chief/statistics_page/statistics_stage_model.dart';
+
+import 'chief_stage_report_model.dart';
 
 class OperationsStatisticsPage extends StatelessWidget {
   const OperationsStatisticsPage({super.key});
@@ -11,7 +12,7 @@ class OperationsStatisticsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final statisticsStage =
-        ModalRoute.of(context)!.settings.arguments as StatisticsStageModel;
+        ModalRoute.of(context)!.settings.arguments as ChiefStageForReportModel;
     return BlocProvider(
         create: (context) => StatisticsCubit(),
         child: OperationsStatisticsPageView(
@@ -24,7 +25,7 @@ class OperationsStatisticsPageView extends StatefulWidget {
   const OperationsStatisticsPageView(
       {required this.statisticsStage, super.key});
 
-  final StatisticsStageModel statisticsStage;
+  final ChiefStageForReportModel statisticsStage;
 
   @override
   State<OperationsStatisticsPageView> createState() =>
@@ -33,10 +34,9 @@ class OperationsStatisticsPageView extends StatefulWidget {
 
 class _OperationsStatisticsPageViewState
     extends State<OperationsStatisticsPageView> {
-
   @override
   void initState() {
-   // context.read<StatisticsCubit>().fetchReadyPercent(stage: widget.statisticsStage);
+    // context.read<StatisticsCubit>().fetchReadyPercent(stage: widget.statisticsStage);
     super.initState();
   }
 
@@ -58,17 +58,17 @@ class _OperationsStatisticsPageViewState
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                  'Номер чертежа: ${widget.statisticsStage.stage.batch!.name}'),
+                                  'Номер чертежа: ${widget.statisticsStage.batchName}'),
                               const SizedBox(
                                 height: 5,
                               ),
                               Text(
-                                  '№ этапа: ${widget.statisticsStage.stage.number}'),
+                                  '№ этапа: ${widget.statisticsStage.stageNumber}'),
                               const SizedBox(
                                 height: 5,
                               ),
                               Text(
-                                  'Кол-во деталей: ${widget.statisticsStage.stage.batch?.count}')
+                                  'Кол-во деталей: ${widget.statisticsStage.detailsQuantity}')
                             ],
                           )),
                     ),
@@ -93,7 +93,8 @@ class _OperationsStatisticsPageViewState
                             TableCellVerticalAlignment.middle,
                         children: [
                           TableRow(
-                              decoration: const BoxDecoration(color: Colors.grey),
+                              decoration:
+                                  const BoxDecoration(color: Colors.grey),
                               children: [
                                 TableCell(
                                   child: Container(
@@ -155,7 +156,8 @@ class _OperationsStatisticsPageViewState
                                 TableCell(
                                   child: Container(
                                       alignment: Alignment.center,
-                                      padding: const EdgeInsets.symmetric(vertical: 8),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8),
                                       child: const FittedBox(
                                         fit: BoxFit.fill,
                                         child: RotatedBox(
@@ -170,7 +172,8 @@ class _OperationsStatisticsPageViewState
                                 TableCell(
                                   child: Container(
                                       alignment: Alignment.center,
-                                      padding: const EdgeInsets.symmetric(vertical: 8),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8),
                                       child: const FittedBox(
                                         fit: BoxFit.fill,
                                         child: RotatedBox(
@@ -185,7 +188,8 @@ class _OperationsStatisticsPageViewState
                                 TableCell(
                                   child: Container(
                                       alignment: Alignment.center,
-                                      padding: const EdgeInsets.symmetric(vertical: 8),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8),
                                       child: const FittedBox(
                                         fit: BoxFit.fill,
                                         child: RotatedBox(
@@ -197,55 +201,54 @@ class _OperationsStatisticsPageViewState
                                         ),
                                       )),
                                 ),
-
                               ]),
                           ...List.generate(
                               widget.statisticsStage.operationsList.length,
                               (index) => TableRow(children: [
                                     TableRowInkWell(
                                       child: Container(
-                                        padding:
-                                            const EdgeInsets.symmetric(vertical: 5),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 5),
                                         child: Text(
-                                          widget.statisticsStage.operationsList[index].operation.name,
+                                          '${widget.statisticsStage.operationsList[index].number} ${widget.statisticsStage.operationsList[index].name}',
                                           textAlign: TextAlign.center,
                                         ),
                                       ),
                                     ),
                                     TableRowInkWell(
                                       child: Container(
-                                        padding:
-                                            const EdgeInsets.symmetric(vertical: 5),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 5),
                                         child: Text(
-                                          widget.statisticsStage.operationsList[index].operation.code,
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    ),
-                                TableRowInkWell(
-                                  child: Container(
-                                    padding:
-                                    const EdgeInsets.symmetric(vertical: 5),
-                                    child: Text(
-                                      widget.statisticsStage.operationsList[index].area?.number ?? '',
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                ),
-                                    TableRowInkWell(
-                                      child: Container(
-                                        padding:
-                                            const EdgeInsets.symmetric(vertical: 5),
-                                        child: Text(
-                                          '${widget.statisticsStage.operationsList[index].statusMap[6]}',
+                                          widget.statisticsStage.operationsList[index].code,
                                           textAlign: TextAlign.center,
                                         ),
                                       ),
                                     ),
                                     TableRowInkWell(
                                       child: Container(
-                                        padding:
-                                            const EdgeInsets.symmetric(vertical: 5),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 5),
+                                        child: Text(
+                                          '${widget.statisticsStage.operationsList[index].areaNumber}',
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ),
+                                    TableRowInkWell(
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 5),
+                                        child: Text(
+                                          '${widget.statisticsStage.operationsList[index].readyQuantity}',
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ),
+                                    TableRowInkWell(
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 5),
                                         child: Text(
                                           '${widget.statisticsStage.operationsList[index].readyPercent}',
                                           textAlign: TextAlign.center,
@@ -254,30 +257,30 @@ class _OperationsStatisticsPageViewState
                                     ),
                                     TableRowInkWell(
                                       child: Container(
-                                        padding:
-                                            const EdgeInsets.symmetric(vertical: 5),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 5),
                                         child: Text(
-                                          '${widget.statisticsStage.operationsList[index].statusMap[7]}',
+                                          '${widget.statisticsStage.operationsList[index].inWorkQuantity}',
                                           textAlign: TextAlign.center,
                                         ),
                                       ),
                                     ),
                                     TableRowInkWell(
                                       child: Container(
-                                        padding:
-                                            const EdgeInsets.symmetric(vertical: 5),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 5),
                                         child: Text(
-                                          '${widget.statisticsStage.operationsList[index].statusMap[5]}',
+                                          '${widget.statisticsStage.operationsList[index].defectQuantity}',
                                           textAlign: TextAlign.center,
                                         ),
                                       ),
                                     ),
                                     TableRowInkWell(
                                       child: Container(
-                                        padding:
-                                            const EdgeInsets.symmetric(vertical: 5),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 5),
                                         child: Text(
-                                          '${widget.statisticsStage.operationsList[index].statusMap[4]}',
+                                          '${widget.statisticsStage.operationsList[index].modificationQuantity}',
                                           textAlign: TextAlign.center,
                                         ),
                                       ),

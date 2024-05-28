@@ -51,7 +51,7 @@ class ContentListWidgetMaster extends StatelessWidget {
     }
     return Column(
       children: [
-        Text('${monitor.machine.name} станок', textAlign: TextAlign.left),
+        Text('${monitor.machine.name} станок', textAlign: TextAlign.left, style: const TextStyle(fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         const Card(child: Calendar()),
         const SizedBox(height: 8),

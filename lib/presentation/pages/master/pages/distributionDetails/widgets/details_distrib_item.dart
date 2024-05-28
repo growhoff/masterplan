@@ -27,7 +27,7 @@ class TitleItem extends StatelessWidget {
             const SizedBox(height: 2),
             Text('Кол-во на участке: ${oper.listOperat.length}'),
             const SizedBox(height: 2),
-            Text('T п.з.: ${oper.timePZ} / T шт.к.: ${oper.timeSh + (oper.timePZ / oper.count).round()}'),//T шт. + Т п. з./кол-во
+            Text('T п.з.: ${oper.timePZ} / T шт.: ${oper.timeSh} / T шт.к.: ${(oper.timeSh + (oper.timePZ / oper.count)).toStringAsFixed(2)}'),//T шт. + Т п. з./кол-во
           ],
         ),
       ),
@@ -71,7 +71,7 @@ class BodyItem extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Expanded(child:  Text('Введите объем оптимальной партии:')),
+                const Expanded(child:  Text('Введите оптимальный объем операционной партии:')),
                 Expanded(child: SizedBox(
                   width: 100, 
                   child: TextFormField(

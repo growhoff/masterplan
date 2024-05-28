@@ -51,16 +51,11 @@ class ContetnReadyBrak extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return (operList.isEmpty) 
-    ? Center(child: Text('На станке ${machine.name} нет готовых деталей'),) 
+    ? const Center(child: Text('Нет готовых деталей', style: TextStyle(fontWeight: FontWeight.bold)),) 
     : Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-              Row(
-                children: [
-                  Text('Время работы станка - ${machine.name}: '),
-                  Text('$timeWorking минут')
-                ],
-              ),
+              Text('Время работы станка - ${machine.name}: $timeWorking минут', style: const TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               const Divider(),
               const SizedBox(height: 8),

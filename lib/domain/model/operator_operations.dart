@@ -22,6 +22,7 @@ class OperatorOperations {
   final int? timestop;
   final int? timeworking;
   final User? user;
+  final int? chiefBatchId;
   OperatorOperations({
     required this.id,
     required this.timeplan,
@@ -37,6 +38,7 @@ class OperatorOperations {
     this.timestop,
     this.timeworking,
     this.user,
+    this.chiefBatchId
   });
 
 
@@ -55,6 +57,7 @@ class OperatorOperations {
     int? timestop,
     int? timeworking,
     User? user,
+    int? chiefBatchId
   }) {
     return OperatorOperations(
       id: id ?? this.id,
@@ -71,6 +74,7 @@ class OperatorOperations {
       timestop: timestop ?? this.timestop,
       timeworking: timeworking ?? this.timeworking,
       user: user ?? this.user,
+      chiefBatchId: chiefBatchId ?? this.chiefBatchId
     );
   }
 }

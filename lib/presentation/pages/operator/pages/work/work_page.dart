@@ -42,7 +42,7 @@ class ContentWork extends StatelessWidget {
             child: SingleChildScrollView(
               child: Padding(
                 padding: EdgeInsets.all(16),
-                child:  ElementBarOperator() ,
+                child:  ElementBarOperator(),
               ),
             ),
           )),

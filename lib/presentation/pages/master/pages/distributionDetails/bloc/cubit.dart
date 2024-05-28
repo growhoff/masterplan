@@ -49,8 +49,11 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
             //если элементы ещё есть, идём дальше и проверяем на готовый, иначе записываем 
       for (var itemQuery in queryOper) {
         List<OperatorOperationsDTO> listTrue = list.where((item) => itemQuery['id'] == item.chiefOperationId).toList();
+        // listTrue.sort((a, b) => a.id.compareTo(b.id),);
         for (var itemTrue in listTrue) {
           if (itemTrue.statusId == 2 || itemTrue.statusId == 4) {listOperate.add(itemTrue); break;}
+
+
           // if (itemTrue.statusId == 6) break;
           //
           //Доработать по остальным статусам
@@ -66,7 +69,8 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
     for (var sets in setListRes) {
       List<String> idSets = sets.split('_');
       List<OperatorOperationsDTO> listTrue = listOperate.where((el) => (int.parse(idSets[0]) == el.batchId) && (int.parse(idSets[1]) == el.stageId)).toList();
-      listRes.add(convertToDistrib(listTrue));
+      listTrue.sort((a, b) => b.order!.compareTo(a.order!));
+      if (listTrue.isNotEmpty) listRes.add(convertToDistrib(listTrue));
     }
 
     //
@@ -80,7 +84,7 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
   }
 
   DistribItem convertToDistrib(List<OperatorOperationsDTO> operOperat){
-    return DistribItem(id: operOperat.first.id, stageNumber: operOperat.first.stage!.number, statusId: operOperat.first.status.id, detailNumber: operOperat.first.batch.number, operationName: operOperat.first.operation.name, count: operOperat.first.batch.count, isSelected: false, listOperat: operOperat, timeSh: operOperat.first.operation.timeSH ?? 0, timePZ: operOperat.first.operation.timepz, setOptPart: 1);
+    return  DistribItem(id: operOperat.first.id, stageNumber: operOperat.first.stage!.number, statusId: operOperat.first.status.id, detailNumber: operOperat.first.batch.number, operationName: operOperat.first.operation.name, count: operOperat.first.batch.count, isSelected: false, listOperat: operOperat, timeSh: operOperat.first.operation.timeSH ?? 0, timePZ: operOperat.first.operation.timepz, setOptPart: 1);
   }
 
   void toggleSelect(int index){
