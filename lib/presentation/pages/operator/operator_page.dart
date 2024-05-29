@@ -14,7 +14,7 @@ class OperatorPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<CubitOperator>(
       create: (context) => CubitOperator(),
-      child: const ContentOperator() 
+      child: const ContentOperator()
     );
   }
 }

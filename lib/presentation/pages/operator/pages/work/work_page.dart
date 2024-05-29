@@ -15,7 +15,7 @@ class WorkPage extends StatelessWidget {
     return BlocProvider<CubitWork>(
       create: (context) => CubitWork(stateMain.zshiftsDistributionList,  stateMain.machineIdList!),
       child: BlocProvider<CubitTimer>(
-        create: (context) => CubitTimer(stateMain.zshiftsDistributionList!.length),
+        create: (context) => CubitTimer(stateMain.zshiftsDistributionList!.length, context.read<CubitWork>().state.timeActive),
         child: const ContentWork()) 
     );
   }

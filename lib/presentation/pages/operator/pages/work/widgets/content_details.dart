@@ -44,7 +44,7 @@ class ContentDetail extends StatelessWidget {
                     isActive: (statusBtn == 0) || (statusBtn == 1),
                     color: Colors.green,
                     onPressed: () => {
-                            context.read<CubitWork>().setReady(operation.id, userId, context.read<CubitTimer>().state.listTick[astivePage], controller.text, !(statusBtn == 1)),
+                            context.read<CubitWork>().setReady(operation, userId, context.read<CubitTimer>().state.listTick[astivePage], controller.text, !(statusBtn == 1)),
                             context.read<CubitTimer>().refresh(astivePage),
                             controller.clear()
                           },
@@ -62,7 +62,7 @@ class ContentDetail extends StatelessWidget {
                               isActive: (statusBtn == 0) || (statusBtn == 2),
                               color: const Color.fromARGB(255, 40, 115, 153),
                               onPressed: () {
-                                context.read<CubitWork>().setMonitor(5, userId, controller.text, !(statusBtn == 2));
+                                context.read<CubitWork>().setMonitor(5, userId, controller.text, !(statusBtn == 2), operation.id);
                                 context.read<CubitTimer>().refreshAndStartStop(astivePage, !(statusBtn == 2));
                                 controller.clear();
                               }))),
@@ -90,7 +90,7 @@ class ContentDetail extends StatelessWidget {
                               isActive: (statusBtn == 0) || (statusBtn == 3),
                               color: Colors.amber,
                               onPressed: () {
-                                context.read<CubitWork>().setMonitor(3, userId, controller.text, !(statusBtn == 3));
+                                context.read<CubitWork>().setMonitor(3, userId, controller.text, !(statusBtn == 3), operation.id);
                                 context.read<CubitTimer>().refreshAndStartStop(astivePage, !(statusBtn == 3));
                                 controller.clear();
                               }))),
@@ -104,7 +104,7 @@ class ContentDetail extends StatelessWidget {
                       isActive: (statusBtn == 0) || (statusBtn == 1) || (statusBtn == 4),
                       color: Colors.red,
                       onPressed: () {
-                        context.read<CubitWork>().setError(operation.id, userId, context.read<CubitTimer>().state.listTick[astivePage], controller.text, !(statusBtn == 4));
+                        context.read<CubitWork>().setError(operation.id, userId, context.read<CubitTimer>().state.listTick[astivePage], controller.text, !(statusBtn == 4), operation.id);
                         context.read<CubitTimer>().refreshAndStartStop(astivePage, !(statusBtn == 4));
                         controller.clear();
                       })),

@@ -60,4 +60,9 @@ class ChiefBatchTable extends SupabaseTable {
       {required int chiefBatchId}) async {
     await table.update({'batch_status_id': 3}).eq('id', chiefBatchId);
   }
+
+  Future<void> updateChiefBatchStatusToReady(
+      {required int chiefBatchId}) async {
+    await table.update({'batch_status_id': 2}).eq('id', chiefBatchId);
+  }
 }

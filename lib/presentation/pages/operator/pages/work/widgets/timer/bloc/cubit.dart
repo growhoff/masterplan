@@ -5,12 +5,31 @@ import 'state.dart';
 
 class CubitTimer extends Cubit<StateTimer> {
   final int length;
-  CubitTimer(this.length) : super(const StateTimer()){
+  final List<int> timeActive;
+  CubitTimer(this.length, this.timeActive) : super(const StateTimer()){
     init();
   }
 
   void init(){
-      emit(state.copyWith(listTick: List.filled(length, 0), listState: List.filled(length, false), listRes: List.filled(length, '00:00:00')));
+      // emit(state.copyWith(listTick: List.filled(length, 0), listState: List.filled(length, false), listRes: List.filled(length, '00:00:00')));
+      List<int> listTick = [];
+      List<String> listRes = [];
+      List<bool> listState = [];
+      for (var tick in timeActive) {
+        if (tick == 0){
+          listTick.add(0);
+          listRes.add('00:00:00');
+          listState.add(false);
+        } else {
+          final date1 = DateTime.fromMillisecondsSinceEpoch(tick).toUtc();
+          final date2 = DateTime.now().toUtc();
+          final difference = (date2.difference(date1)).inSeconds;
+          listTick.add(difference);
+          listRes.add(convertTime(difference));
+          listState.add(true);
+        }
+      }
+      emit(state.copyWith(listTick: listTick, listState: listState, listRes: listRes));
       Timer.periodic(const Duration(seconds: 1), (timer) {
       List<int> listTick = [...state.listTick];
       List<String> listRes = [...state.listRes];

@@ -8,7 +8,7 @@ class OperatorOperationsTable extends SupabaseTable {
   final table = Supabase.instance.client.from('z_operator_operations');
   static const selectUser = '*, z_position(*), z_company(*), z_unit(*), z_area(*)';
 
-  final companyId = CompanyService.instance.companyId ?? 1;
+  final _companyId = CompanyService.instance.companyId ?? 1;
 
   @override
   Future<void> delete(int id) {
@@ -34,7 +34,7 @@ class OperatorOperationsTable extends SupabaseTable {
   @override
   Future<List<Map<String, dynamic>>> select() {
     return table
-        .select('*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*), z_user($selectUser), z_machine(*), z_area(*), z_chief_operation(*)')
+        .select('*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*), z_user($selectUser), z_machine(*), z_area!inner(*), z_chief_operation(*)').eq('z_area.company_id', _companyId)
         .order('id', ascending: true);
   }
 

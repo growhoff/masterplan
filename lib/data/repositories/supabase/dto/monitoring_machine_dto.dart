@@ -22,6 +22,7 @@ class MonitoringMachineDTO extends Dto {
   final String comment;
   final DateTime date;
   final int changeId;
+  final int operationId;
   MonitoringMachineDTO({
     required this.id,
     required this.timeStart,
@@ -37,8 +38,9 @@ class MonitoringMachineDTO extends Dto {
     required this.comment,
     required this.date,
     required this.changeId,
+    required this.operationId,
   });
-  
+
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -51,6 +53,7 @@ class MonitoringMachineDTO extends Dto {
       'comment': comment,
       'date': DateFormat('yyyy-MM-dd').format(date),
       'change_id': changeId,
+      'operation_id':operationId,
     };
   }
 
@@ -71,6 +74,7 @@ class MonitoringMachineDTO extends Dto {
       comment: map['comment'] as String,
       date: DateTime.tryParse(map['date'] as String) ?? DateTime(int.parse(listTime[0]), int.parse(listTime[1]), int.parse(listTime[2])),
       changeId: map['change_id'] as int,
+      operationId: map['operation_id'] as int,
     );
   }
 

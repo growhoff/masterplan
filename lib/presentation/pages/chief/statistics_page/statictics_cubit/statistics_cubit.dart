@@ -383,9 +383,8 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
               stagesMap[operatorOperationsDto.stageId]!.detailsQuantity;
 
       operationInList?.readyPercent =
-      ((operationInList.readyQuantity / totalOperationsQuantity) *
-              100).round();
-
+          ((operationInList.readyQuantity / totalOperationsQuantity) * 100)
+              .round();
     }
 
     stagesMap.forEach((key, value) async {
@@ -393,11 +392,16 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
           value.operationsQuantity * value.detailsQuantity;
 
       value.readyOperationsPercent =
-      ((value.readyOperationsQuantity / value.operationsQuantity)*
-          100).round();
+          ((value.readyOperationsQuantity / value.operationsQuantity) * 100)
+              .round();
 
       value.readyDetailsQuantity =
           await _chiefBatchTable.fetchReadyDetailsCount(batchId: value.batchId);
+
+      value.readyDetailsPercent =
+          (value.readyDetailsQuantity / value.detailsQuantity * 100).round();
+
+      
       value.defectDetailsQuantity = await _chiefBatchTable
           .fetchDefectDetailsCount(batchId: value.batchId);
     });

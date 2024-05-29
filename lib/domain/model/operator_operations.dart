@@ -23,6 +23,7 @@ class OperatorOperations {
   final int? timeworking;
   final User? user;
   final int? chiefBatchId;
+  final int? chiefOperationId;
   OperatorOperations({
     required this.id,
     required this.timeplan,
@@ -38,7 +39,8 @@ class OperatorOperations {
     this.timestop,
     this.timeworking,
     this.user,
-    this.chiefBatchId
+    this.chiefBatchId,
+    this.chiefOperationId,
   });
 
 
@@ -57,7 +59,8 @@ class OperatorOperations {
     int? timestop,
     int? timeworking,
     User? user,
-    int? chiefBatchId
+    int? chiefBatchId,
+    int? chiefOperationId,
   }) {
     return OperatorOperations(
       id: id ?? this.id,
@@ -74,7 +77,8 @@ class OperatorOperations {
       timestop: timestop ?? this.timestop,
       timeworking: timeworking ?? this.timeworking,
       user: user ?? this.user,
-      chiefBatchId: chiefBatchId ?? this.chiefBatchId
+      chiefBatchId: chiefBatchId ?? this.chiefBatchId,
+      chiefOperationId: chiefOperationId ?? this.chiefOperationId
     );
   }
 }

@@ -79,8 +79,10 @@ class _ChiefMonitoringPageViewState extends State<ChiefStatisticsPageView> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
-                                          'Чертеж ${state.stagesList[index].batchNumber}\n${state.stagesList[index].batchName}'),
+                                      Flexible(
+                                        child: Text(
+                                            'Чертеж ${state.stagesList[index].batchNumber}\n${state.stagesList[index].batchName}'),
+                                      ),
                                       Text(
                                           'Код детали: ${state.stagesList[index].batchCode}'),
                                     ],

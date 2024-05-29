@@ -9,17 +9,22 @@ import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/domain/model/shifts_distribution.dart';
 import 'package:master_plan/domain/model/status.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/model/page_item.dart';
+import '../../../../../../data/repositories/supabase/dto/chief_operation_dto.dart';
+import '../../../../../../data/repositories/supabase/service/chief_batch_table.dart';
+import '../../../../../../data/repositories/supabase/service/chief_operation_table.dart';
 import 'state.dart';
 
 class CubitWork extends Cubit<StateWork> {
   final List<ShiftsDistribution>? zShiftsDistributionList;
   final List<int> machineListId;
   final operatorOperationsTable = OperatorOperationsTable();
+  final monitorTable = MonitoringMachineTable();
   CubitWork(this.zShiftsDistributionList, this.machineListId) : super(const StateWork()) {
 
     List<int> btn = [];
-    for (var i = 0; i < zShiftsDistributionList!.length; i++) {btn.add(0);}
-    emit(state.copyWith(statusBtn: btn));
+    List<bool> setStart = [];
+    for (var i = 0; i < zShiftsDistributionList!.length; i++) {btn.add(0);setStart.add(false);}
+    emit(state.copyWith(statusBtn: btn, setStart: setStart));
 
     operatorOperationsTable.table.stream(primaryKey: ['id']).inFilter('machine_id', machineListId).listen((event) {
       }).onData((data)async {
@@ -36,8 +41,10 @@ class CubitWork extends Cubit<StateWork> {
         final model = OperatorOperationsDTO.fromMap(operatorOper);
         operatorOperationsList.add(convertDto(model));
       }
-
+    List<int> timeActive = [];
     List<PageItem> pageData = [];
+    List<int> statusBtn1 = [...state.statusBtn];
+    List<bool> setStart1 = [...state.setStart];
     for (var shiftsDistr in zShiftsDistributionList!) {
       List<OperatorOperations> listOperReady = [];
       List<OperatorOperations> listOperQueue = [];
@@ -55,50 +62,73 @@ class CubitWork extends Cubit<StateWork> {
         listOperQueue.removeAt(0);
       }
       pageData.add(PageItem(machine: shiftsDistr.machine, operReadyList: listOperReady, operQueueList: listOperQueue, operActive: operActive));
+      timeActive.add(operActive == null ? 0 : operActive.timestart ?? 0);
+
+      for (var i = 0; i < timeActive.length; i++) {
+        if (timeActive[i] !=0) {statusBtn1[i] = 1;setStart1[i]=true;}
+      }
     }
-    emit(state.copyWith(pageData: pageData));
+    emit(state.copyWith(pageData: pageData, timeActive: timeActive, statusBtn: statusBtn1));
   }
 
   void setActivePage(int index){
     emit(state.copyWith(activePage: index));
   }
 
-  void setReady(int id, int userId, int seconds, String comment, bool isStart){
-    operatorOperationsTable.updateTimeStopAndReady(id, DateTime.now().millisecondsSinceEpoch, seconds);
-    //записываем в монитор
-    setStopMonitor(1);
+  Future<void> setReady(OperatorOperations oper, int userId, int seconds, String comment, bool isStart)async{
+    final quereMon = await monitorTable.selectIdMonitor(userId, oper, state.pageData[state.activePage].machine.id);
+    final idMon = quereMon.first['id'];
+    operatorOperationsTable.updateTimeStopAndReady(oper.id, DateTime.now().millisecondsSinceEpoch, seconds);
+    setStopMonitor(1, idMon);
     setIsStart(false);
+
+    checkIsDetailReady(chiefBatchId: oper.chiefBatchId ?? 0, chiefOperationId: oper.chiefOperationId ?? 0);
   }
 
-  Future<void> setStartMonitor(int status, int userid, String? comment) async{
-    if (!state.setStart){
+  // проверка на готовность детали
+  Future<void> checkIsDetailReady({required int chiefBatchId, required int chiefOperationId})async
+  {
+    final chiefOperationTable = ChiefOperationTable();
+    final chiefBatchTable = ChiefBatchTable();
+
+    // получает последнюю операцию в детали
+    final fetchedLastOperationInBatch = await chiefOperationTable.fetchLastOperationInBatch(chiefBatchId: chiefBatchId);
+
+    final lastOperationInBatchDto = ChiefOperationDto.fromMap(fetchedLastOperationInBatch);
+
+    // если id последней операции в детали равен chiefOperationId у операции из operator_operations, то меняет статус детали на готово(2)
+    if (lastOperationInBatchDto.id == chiefOperationId){
+      chiefBatchTable.updateChiefBatchStatusToReady(chiefBatchId: chiefBatchId);
+    }
+  }
+
+
+
+  Future<void> setStartMonitor(int status, int userid, String? comment, int operId) async{
+    if (!state.setStart[state.activePage]){
       if ((comment == null) || (comment == '')) comment = 'none';
-      final monitorTable = MonitoringMachineTable();
-      final id = await monitorTable.insertToInt(MonitoringMachineDTO(id: 0, date: DateTime.now(), changeId: (DateTime.now().hour > 8) && ( DateTime.now().hour <= 20) ? 1 : 2, timeStart: DateTime.now().millisecondsSinceEpoch, timeStop: 0, statusMachineId: 1, userId: userid, machineId: state.pageData[state.activePage].machine.id, batchId: state.pageData[state.activePage].operActive!.batch.id, comment: comment));
-      emit(state.copyWith(monitorId: id, setStart: true));
+      final id = await monitorTable.insertToInt(MonitoringMachineDTO(id: 0, operationId: operId, date: DateTime.now(), changeId: (DateTime.now().hour > 8) && ( DateTime.now().hour <= 20) ? 1 : 2, timeStart: DateTime.now().millisecondsSinceEpoch, timeStop: 0, statusMachineId: 1, userId: userid, machineId: state.pageData[state.activePage].machine.id, batchId: state.pageData[state.activePage].operActive!.batch.id, comment: comment));
+      List<bool> list = [...state.setStart];
+      list[state.activePage] = true;
+      emit(state.copyWith(monitorId: id, setStart: list));
     }
     setBtnStatus(status);
   }
 
-  Future<void> setStopMonitor(int status) async{
-    final monitorTable = MonitoringMachineTable();
-    await monitorTable.updateId(state.monitorId!, DateTime.now().millisecondsSinceEpoch);
+  Future<void> setStopMonitor(int status, int id) async{
+    await monitorTable.updateId(id, DateTime.now().millisecondsSinceEpoch);
     setBtnStatus(status); 
   }
 
-  void setError(int id, int userId, int seconds, String comment, bool isStart){
-    
-    //записываем время остановки
+  void setError(int id, int userId, int seconds, String comment, bool isStart, int operId){
     operatorOperationsTable.updateTimeStop(id, DateTime.now().millisecondsSinceEpoch);
-    //записываем в мониторинг статус
-    setMonitor(4, userId, comment, isStart);
+    setMonitor(4, userId, comment, isStart, operId);
   }
 
-  Future<void> setMonitor(int status, int userid, String? comment, bool isStart) async{
+  Future<void> setMonitor(int status, int userid, String? comment, bool isStart, int operId) async{
     if ((comment == null) || (comment == '')) comment = 'none';
-    final monitorTable = MonitoringMachineTable();
     if (isStart){
-      final id = await monitorTable.insertToInt(MonitoringMachineDTO(id: 0, date: DateTime.now(), changeId: (DateTime.now().hour > 8) && ( DateTime.now().hour <= 20) ? 1 : 2, timeStart: DateTime.now().millisecondsSinceEpoch, timeStop: 0, statusMachineId: status, userId: userid, machineId: state.pageData[state.activePage].machine.id, batchId: state.pageData[state.activePage].operActive!.batch.id, comment: comment));
+      final id = await monitorTable.insertToInt(MonitoringMachineDTO(id: 0, operationId: operId, date: DateTime.now(), changeId: (DateTime.now().hour > 8) && ( DateTime.now().hour <= 20) ? 1 : 2, timeStart: DateTime.now().millisecondsSinceEpoch, timeStop: 0, statusMachineId: status, userId: userid, machineId: state.pageData[state.activePage].machine.id, batchId: state.pageData[state.activePage].operActive!.batch.id, comment: comment));
       emit(state.copyWith(monitorId: id));
     } else {
       await monitorTable.updateId(state.monitorId!, DateTime.now().millisecondsSinceEpoch);
@@ -133,7 +163,9 @@ class CubitWork extends Cubit<StateWork> {
   }
 
   void setIsStart(bool b){
-    emit(state.copyWith(setStart: b));
+    List<bool> list = [...state.setStart];
+    list[state.activePage] = b;
+    emit(state.copyWith(setStart: list));
   }
 
   OperatorOperations convertDto(OperatorOperationsDTO dto) {

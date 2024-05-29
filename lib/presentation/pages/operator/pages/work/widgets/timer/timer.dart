@@ -28,7 +28,7 @@ class Time extends StatelessWidget {
                         context.read<CubitTimer>().startOrStop(stateWork.activePage, !state.listState[stateWork.activePage], stateWork.pageData[stateWork.activePage].operActive!.id);
                         // context.read<CubitWork>().setMonitor(0, context.read<CubitMain>().state.user!.id, 'start time', !state.listState[stateWork.activePage]);//доработать старт стоп
                         // context.read<CubitWork>().setBtnStatus(0);
-                        context.read<CubitWork>().setStartMonitor(0,context.read<CubitMain>().state.user!.id, 'start time');
+                        context.read<CubitWork>().setStartMonitor(0,context.read<CubitMain>().state.user!.id, 'start time', stateWork.pageData[stateWork.activePage].operActive!.id);
                       }, 
                       icon: !state.listState[stateWork.activePage] ? Icons.play_arrow_rounded : Icons.pause,
                       ),

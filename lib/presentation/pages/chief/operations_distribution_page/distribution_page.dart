@@ -38,56 +38,79 @@ class _ChiefDistributionPageViewState extends State<ChiefDistributionPageView> {
         builder: (context, state) {
       return Stack(
         children: [
-          SingleChildScrollView(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Container(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        context
-                            .read<ChiefDistributionCubit>()
-                            .loadStageFromExcel();
-                      },
-                      style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 15, vertical: 10)),
-                      child: const Text('Загрузить этапы (excel)',
-                          style: TextStyle(fontSize: 18)),
-                    ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      context
+                          .read<ChiefDistributionCubit>()
+                          .loadStageFromExcel();
+                    },
+                    style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 15, vertical: 10)),
+                    child: const Text('Загрузить этапы (excel)',
+                        style: TextStyle(fontSize: 18)),
                   ),
-                  const SizedBox(height: 10),
-                  state.status == DistributionPageStatus.success
-                      ? ExpansionPanelList(
-          children: [
-          ...List.generate(
-          state.chiefOperationsList.length,
-          (index) => ExpansionPanel(
-          isExpanded: context
-              .read<ChiefDistributionCubit>()
-              .isElementOpenList[index],
-          headerBuilder: (context, isOpen) =>
-          ChiefOperationDistributionTitleItem(
-          state.chiefOperationsList[index]),
-          body: ChiefOperationDistributionBodyItem(
-          operation:
-          state.chiefOperationsList[index],
-          )))
-          ],
-          expansionCallback: (i, isOpen) => setState(() {
-          context
-              .read<ChiefDistributionCubit>()
-              .isElementOpenList[i] = isOpen;
-          }),
-          )
-                      : Center(child: CircularProgressIndicator(),),
-                  const SizedBox(
-                    height: 50,
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 10),
+                state.status == DistributionPageStatus.success
+                    ? ExpansionPanelList(
+                        children: [
+                          ...List.generate(
+                              3,
+                              (index) => ExpansionPanel(
+                                  isExpanded: context
+                                      .read<ChiefDistributionCubit>()
+                                      .isElementOpenList[index],
+                                  headerBuilder: (context, isOpen) =>
+                                      ChiefOperationDistributionTitleItem(
+                                          state.chiefOperationsList[index]),
+                                  body: ChiefOperationDistributionBodyItem(
+                                    operation:
+                                        state.chiefOperationsList[index],
+                                  )))
+                        ],
+                        expansionCallback: (i, isOpen) => setState(() {
+                          context
+                              .read<ChiefDistributionCubit>()
+                              .isElementOpenList[i] = isOpen;
+                        }),
+                      )
+
+                   /* Expanded(
+                        child: ListView.separated(
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) => ExpansionTile(
+                                  tilePadding: EdgeInsets.all(0),
+                                  title: ChiefOperationDistributionTitleItem(
+                                      state.chiefOperationsList[index]),
+                                  childrenPadding:
+                                      EdgeInsets.fromLTRB(20, 0, 20, 10),
+                                  expandedAlignment: Alignment.topLeft,
+                                  children: [
+                                    ChiefOperationDistributionBodyItem(
+                                      operation:
+                                          state.chiefOperationsList[index],
+                                    )
+                                  ],
+                                ),
+                            separatorBuilder: (ctx, i) => SizedBox(
+                                  height: 5,
+                                ),
+                            itemCount: state.chiefOperationsList.length),
+                      )*/
+                    : Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                const SizedBox(
+                  height: 50,
+                ),
+              ],
             ),
           ),
           Container(
