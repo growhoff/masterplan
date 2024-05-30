@@ -1,9 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
-import 'package:master_plan/data/repositories/supabase/service/chief_operation_table.dart';
+// import 'package:master_plan/data/repositories/supabase/service/chief_operation_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
 import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/presentation/pages/master/pages/distributionDetails/model/distrib_item.dart';
+import 'package:master_plan/presentation/pages/master/pages/distributionDetails/model/set_model.dart';
 import 'state.dart';
 
 class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
@@ -17,7 +18,7 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
           await getQuere(data);
       });
   }
-
+/*
     Future<void> getQuere (List<Map<String, dynamic>>? data)async{
     List<int> listId = [];
     for (var element in data!) {
@@ -82,9 +83,73 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
     //   }
     emit(state.copyWith(operList: listRes, isLoading: false));
   }
+*/
 
-  DistribItem convertToDistrib(List<OperatorOperationsDTO> operOperat){
-    return  DistribItem(id: operOperat.first.id, stageNumber: operOperat.first.stage!.number, statusId: operOperat.first.status.id, detailNumber: operOperat.first.batch.number, operationName: operOperat.first.operation.name, count: operOperat.first.batch.count, isSelected: false, listOperat: operOperat, timeSh: operOperat.first.operation.timeSH ?? 0, timePZ: operOperat.first.operation.timepz, setOptPart: 1);
+
+    Future<void> getQuere (List<Map<String, dynamic>>? data)async{
+    List<int> listId = [];
+    for (var element in data!) {
+      if ((element['status_id'] as int == 2) || (element['status_id'] as int == 4) || (element['status_id'] as int == 6)) listId.add(element['id']);
+    }
+    final table = OperatorOperationsTable();
+    final quere = await table.selectListIdNew(listId);
+    List<OperatorOperationsDTO> list = [];
+    Set<int> setIdBatch = {};
+    Set<String> setAllId = {};
+    for (var item in quere) {
+      final model = OperatorOperationsDTO.fromMap(item);
+      setIdBatch.add(model.chiefBatchId!);
+      setAllId.add('${model.batchId}_${model.stageId}_${model.operationId}'); 
+      list.add(model);
+    }
+
+    //группировка по деталям
+    List<SetModelBatch> listModelBatch = [];
+    for (var eSet in setIdBatch) {
+      List<OperatorOperationsDTO> listCash = [];
+      for (var eOper in list) {
+        if (eSet == eOper.chiefBatchId) listCash.add(eOper);
+      }
+      listModelBatch.add(SetModelBatch(batchId: eSet, list: listCash));
+    }
+
+    //создание списка операций
+    List<OperatorOperationsDTO> listReady = [];
+    for (var iModBatch in listModelBatch) {
+      for (var item in iModBatch.list) {
+         if (item.statusId == 2 || item.statusId == 4) {listReady.add(item); break;}
+      }
+    }
+
+    //группировка по операциям
+    List<DistribItem> listResOper = [];
+    for (var setI in setAllId) {
+      final listName = setI.split('_');
+      final batchId = listName[0];
+      final stageId = listName[1];
+      final operId = listName[2];
+      List<OperatorOperationsDTO> listTrue = listReady.where((el) => (int.parse(batchId) == el.batchId) && (int.parse(stageId) == el.stageId) && (int.parse(operId) == el.operationId)).toList();
+      if (listTrue.isNotEmpty) listResOper.add(convertToDistrib(listTrue));
+    }
+
+    emit(state.copyWith(operList: listResOper, isLoading: false));
+  }
+
+
+
+  DistribItem convertToDistrib(List<OperatorOperationsDTO> operOperat) {
+    return DistribItem(
+        id: operOperat.first.id,
+        stageNumber: operOperat.first.stage!.number,
+        statusId: operOperat.first.status.id,
+        detailNumber: '${operOperat.first.batch.number} ${operOperat.first.batch.name}',
+        operationName: '${operOperat.first.operation.number} ${operOperat.first.operation.name}',
+        count: operOperat.length,
+        isSelected: false,
+        listOperat: operOperat,
+        timeSh: operOperat.first.operation.timeSH ?? 0,
+        timePZ: operOperat.first.operation.timepz,
+        setOptPart: 1);
   }
 
   void toggleSelect(int index){

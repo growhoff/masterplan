@@ -15,9 +15,9 @@ class RowExpandContent extends StatelessWidget {
     return Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(flex: 2, child: Text(operation.batch.number, textAlign: TextAlign.start)),
-                Expanded(flex: 2, child: Text(operation.operation.name, textAlign: TextAlign.center)),
-                Expanded(flex: 2, child: Text('${operation.timefact}', textAlign: TextAlign.center)),
+                Expanded(flex: 2, child: Text('${operation.batch.number} ${operation.batch.name} --TECH-- : ${operation.chiefBatchId}', textAlign: TextAlign.start)),
+                Expanded(flex: 2, child: Text('${operation.operation.number} ${operation.operation.name}', textAlign: TextAlign.center)),
+                Expanded(flex: 2, child: Text('${operation.timeplan}', textAlign: TextAlign.center)),
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 5),
                   child: ElevatedButton(

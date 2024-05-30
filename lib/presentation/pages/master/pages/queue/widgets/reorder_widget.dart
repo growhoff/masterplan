@@ -25,9 +25,9 @@ class Reorder extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(child: ReorderableIconWidget(index)),
-            Expanded(flex: 2, child: Text(list[index].batch.number, textAlign: TextAlign.center)),
-            Expanded(flex: 4, child: Text(list[index].operation.name, textAlign: TextAlign.center)),
-            Expanded(flex: 2, child: Text('${list[index].timefact}', textAlign: TextAlign.center)),
+            Expanded(flex: 2, child: Text('${list[index].batch.number} ${list[index].batch.name}', textAlign: TextAlign.center)),
+            Expanded(flex: 4, child: Text('${list[index].operation.number} ${list[index].operation.name}', textAlign: TextAlign.center)),
+            Expanded(flex: 2, child: Text('${list[index].timeplan}', textAlign: TextAlign.center)),
             //передать на готовые детали
             Expanded(child: IconButton(onPressed: () => context.read<CubitQueueMaster>().updateOperationReady(list[index].id), icon: const Icon(Icons.check_rounded))),
             //передать на распределение
