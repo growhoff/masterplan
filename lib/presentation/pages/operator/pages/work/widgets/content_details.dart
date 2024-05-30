@@ -29,9 +29,9 @@ class ContentDetail extends StatelessWidget {
         : Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              LineTextSpawn(title: 'Деталь', text: operation.batch.name),
+              LineTextSpawn(title: 'Деталь', text: '${operation.batch.number} ${operation.batch.name}'),
               const SizedBox(height: 8),
-              LineTextSpawn(title: 'Операция', text: operation.operation.name),
+              LineTextSpawn(title: 'Операция', text: '${operation.operation.number} ${operation.operation.name}'),
               const SizedBox(height: 20),
               const Time(),
               const SizedBox(height: 30),

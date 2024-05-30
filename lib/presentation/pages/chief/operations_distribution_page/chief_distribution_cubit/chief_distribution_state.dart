@@ -13,7 +13,7 @@ class ChiefDistributionState extends Equatable {
   final DistributionPageStatus status;
 
   @override
-  List<Object?> get props => [chiefOperationsList, areasList];
+  List<Object?> get props => [chiefOperationsList, areasList, status];
 
   ChiefDistributionState copyWith({
     List<String>? areasList,

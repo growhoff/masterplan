@@ -13,8 +13,8 @@ class Calendar extends StatelessWidget {
               calendarFormat: CalendarFormat.week,
               headerStyle: const HeaderStyle(formatButtonVisible: false, titleCentered: true),
               rowHeight: 43,
-              firstDay: DateTime.now(),
-              lastDay: DateTime.utc(2030, 3, 14),
+              firstDay: DateTime.utc(2024, 1, 1),
+              lastDay: DateTime.utc(2030, 12, 30),
               focusedDay: state.days,
               selectedDayPredicate: (day) => isSameDay(day, state.days),
               onDaySelected: (selectedDay, focusedDay) {

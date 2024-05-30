@@ -33,7 +33,7 @@ class ContentWork extends StatelessWidget {
                 final user = state.user!;
                 return Column(
                 children: [
-                  const Text('Оператор'),
+                  const Text('Монитор'),
                   Text('${user.fio} / ${user.position.name}', style: const TextStyle(fontSize: 12)),
             ]);
           }),

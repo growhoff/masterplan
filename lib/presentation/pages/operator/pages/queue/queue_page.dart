@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:master_plan/domain/model/operator_operations.dart';
+import 'package:master_plan/presentation/pages/operator/pages/queue/widgets/active_item.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/model/page_item.dart';
 import 'widgets/line_text_spawn.dart';
 import 'widgets/row_list.dart';
@@ -26,7 +26,7 @@ class QueuePage extends StatelessWidget {
             final user = state.user!;
             return Column(
             children: [
-              const Text('Оператор'),
+              const Text('Список деталей'),
               Text('${user.fio} / ${user.position.name}', style: const TextStyle(fontSize: 12)),
             ]);
           }),
@@ -65,21 +65,3 @@ class QueuePage extends StatelessWidget {
   }
 }
 
-class ActiveOperationCard extends StatelessWidget {
-  const ActiveOperationCard({super.key, required this.operJob});
-  final OperatorOperations? operJob;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      color: Colors.grey,
-      child: Column(
-        children: [
-          const RowList(text1: 'Деталь', text2: 'Операция', text3: 'Время обработки',),
-          const SizedBox(height: 8),
-          RowList(text1: operJob != null ? operJob!.batch.number : 'none', text2: operJob != null ? operJob!.operation.name : 'none', text3: '${operJob != null ? operJob!.timeplan : 'none'}',),
-        ],
-      ),
-    );
-  }
-}

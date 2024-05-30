@@ -12,20 +12,20 @@ import '../statistics_page/choose_report_page.dart';
 abstract class DataChief {
   static List<TabBarModel> listPage = [
     TabBarModel(
-        title: 'Списки',
+        title: 'Списки цеха',
         actions: [],
         page: const ChiefListsPage(),
         icon: Icons.list),
     TabBarModel(
-        title: 'Распределение',
+        title: 'Распределение операций',
         actions: [],
         page: const ChiefDistributionPage(),
         icon: Icons.lan),
-    TabBarModel(
+   /* TabBarModel(
         title: 'Мониторинг',
         actions: [],
         page: const MonitoringPage(),
-        icon: Icons.camera_alt_outlined),
+        icon: Icons.camera_alt_outlined),*/
     TabBarModel(
         title: 'Аналитика',
         actions: [],

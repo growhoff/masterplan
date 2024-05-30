@@ -36,17 +36,19 @@ class ChiefDistributionOperationsTable extends SupabaseTable {
     var res = await table
         .select(
             '*, z_batch:batch_id!inner(*), z_stage:stage_id(*, z_area(*)), z_operation:operation_id(*)')
-        .eq('z_batch.company_id', _companyId ?? 1).order('id', ascending: true);
+        .eq('z_batch.company_id', _companyId ?? 1)
+        .order('id', ascending: true);
     // print(res);
     return res;
   }
 
-  Future<List<Map<String, dynamic>>> selectNotDistributed() async {
+  Future<List<Map<String, dynamic>>> selectNotDistributed({required int minRange,required int maxRange}) async {
     var res = await table
         .select(
             '*, z_batch:batch_id!inner(*), z_stage:stage_id(*), z_operation:operation_id(*)')
         .eq('z_batch.company_id', _companyId ?? 1)
         .gt('quantity', 0)
+        .range(minRange, maxRange)
         .order('id', ascending: true);
     return res;
   }

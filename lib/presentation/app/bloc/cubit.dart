@@ -159,8 +159,36 @@ class CubitMain extends Cubit<StateMain> {
 
   //оператор
   Future<void> getMachineOperatorZ(int userId) async {
+    final dateNow = DateTime.now();
+    final dateLast = DateTime(dateNow.year, dateNow.month, dateNow.day - 1);
+
+    final dateChange1St = DateTime(dateNow.year, dateNow.month, dateNow.day, 8, 0);
+    final dateChange1End = DateTime(dateNow.year, dateNow.month, dateNow.day, 20, 0);
+
+    final dateShift1St = DateTime(dateNow.year, dateNow.month, dateNow.day, 7, 50);
+    final dateShift1End = DateTime(dateNow.year, dateNow.month, dateNow.day, 8, 10);
+
+    final dateShift2St = DateTime(dateNow.year, dateNow.month, dateNow.day, 19, 50);
+    final dateShift2End = DateTime(dateNow.year, dateNow.month, dateNow.day, 20, 10);
+
+    final dateChange2St = DateTime(dateNow.year, dateNow.month, dateNow.day, 20, 0);
+    final dateChange2End = DateTime(dateNow.year, dateNow.month, dateNow.day, 23, 59);
+
+
+    final dateChange2St2 = DateTime(dateNow.year, dateNow.month, dateNow.day, 0, 0);
+    final dateChange2End2 = DateTime(dateNow.year, dateNow.month, dateNow.day, 8, 0);
+
+    DateTime time = dateNow;
+    int change = 1;
+
+    if (dateNow.isAfter(dateChange1St) && dateNow.isBefore(dateChange1End)){print('1 change');}
+    if (dateNow.isAfter(dateChange2St) && dateNow.isBefore(dateChange2End)){print('2 change'); change = 2;}
+    if (dateNow.isAfter(dateChange2St2) && dateNow.isBefore(dateChange2End2)){print('2 change'); time=dateLast; change = 2;}
+    if (dateNow.isAfter(dateShift1St) && dateNow.isBefore(dateShift1End)){print('1 shift');}
+    if (dateNow.isAfter(dateShift2St) && dateNow.isBefore(dateShift2End)){print('2 shift');}
+
     final zshiftsDistributionTable = ShiftsDistributionTable();
-    final zshiftsDistributionQuery = await zshiftsDistributionTable.selectEqUser(userId);
+    final zshiftsDistributionQuery = await zshiftsDistributionTable.selectEqUser(userId, time, change);
     List<ShiftsDistribution> zshiftsDistributionList = [];
     List<int> machineListId = [];
     for (var shiftsDistr in zshiftsDistributionQuery) {
@@ -168,16 +196,6 @@ class CubitMain extends Cubit<StateMain> {
       zshiftsDistributionList.add(convertToShiftsDistribution(model));
       machineListId.add(model.machine!.id);
     }
-
-    // List<OperatorOperations> operatorOperationsList = [];
-    // if (machineListId.isNotEmpty) {
-    //   final zOperatorOperationsTable = OperatorOperationsTable();
-    //   final zOperatorOperationsQuery = await zOperatorOperationsTable.selectListIdMachine3678(machineListId);
-    //   for (var operatorOper in zOperatorOperationsQuery) {
-    //     final model = OperatorOperationsDTO.fromMap(operatorOper);
-    //     operatorOperationsList.add(convertDto(model));
-    //   }
-    // }
 
     emit(state.copyWith(zshiftsDistributionList: zshiftsDistributionList,  machineIdList: machineListId));
   }
@@ -208,7 +226,7 @@ class CubitMain extends Cubit<StateMain> {
   Future<void> goToLink() async {
     final Uri url = Uri.parse(state.link);
     if (!await launchUrl(url)) {
-      throw Exception('Could not launch $url');
+      throw Exception('Ошибка. Не получилось подключиться по данному адресу $url');
     }
   }
 }

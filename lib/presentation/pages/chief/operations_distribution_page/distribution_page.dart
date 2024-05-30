@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/pages/chief/operations_distribution_page/widgets/details_distribution_item.dart';
@@ -25,11 +26,14 @@ class ChiefDistributionPageView extends StatefulWidget {
 }
 
 class _ChiefDistributionPageViewState extends State<ChiefDistributionPageView> {
+
   @override
   void initState() {
     context.read<ChiefDistributionCubit>().fetchChiefOperations();
     context.read<ChiefDistributionCubit>().fetchAreas();
+
     super.initState();
+   context.read<ChiefDistributionCubit>().listControllerAddListener();
   }
 
   @override
@@ -59,10 +63,10 @@ class _ChiefDistributionPageViewState extends State<ChiefDistributionPageView> {
                 ),
                 const SizedBox(height: 10),
                 state.status == DistributionPageStatus.success
-                    ? ExpansionPanelList(
+                    ? /*ExpansionPanelList(
                         children: [
                           ...List.generate(
-                              3,
+                              state.chiefOperationsList.length,
                               (index) => ExpansionPanel(
                                   isExpanded: context
                                       .read<ChiefDistributionCubit>()
@@ -82,28 +86,30 @@ class _ChiefDistributionPageViewState extends State<ChiefDistributionPageView> {
                         }),
                       )
 
-                   /* Expanded(
+                   */ Expanded(
                         child: ListView.separated(
+
+                          controller: context.read<ChiefDistributionCubit>().listController,
                             shrinkWrap: true,
-                            itemBuilder: (context, index) => ExpansionTile(
-                                  tilePadding: EdgeInsets.all(0),
-                                  title: ChiefOperationDistributionTitleItem(
-                                      state.chiefOperationsList[index]),
-                                  childrenPadding:
-                                      EdgeInsets.fromLTRB(20, 0, 20, 10),
-                                  expandedAlignment: Alignment.topLeft,
-                                  children: [
-                                    ChiefOperationDistributionBodyItem(
-                                      operation:
-                                          state.chiefOperationsList[index],
-                                    )
-                                  ],
-                                ),
+                            itemBuilder: (context, index) => index<state.chiefOperationsList.length ? ExpansionTile(
+                              tilePadding: EdgeInsets.all(0),
+                              title: ChiefOperationDistributionTitleItem(
+                                  state.chiefOperationsList[index]),
+                              childrenPadding:
+                              EdgeInsets.fromLTRB(20, 0, 20, 10),
+                              expandedAlignment: Alignment.topLeft,
+                              children: [
+                                ChiefOperationDistributionBodyItem(
+                                  operation:
+                                  state.chiefOperationsList[index],
+                                )
+                              ],
+                            ) : SizedBox(height: 50,),
                             separatorBuilder: (ctx, i) => SizedBox(
                                   height: 5,
                                 ),
-                            itemCount: state.chiefOperationsList.length),
-                      )*/
+                            itemCount: state.chiefOperationsList.length+1),
+                      )
                     : Center(
                         child: CircularProgressIndicator(),
                       ),

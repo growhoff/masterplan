@@ -1,10 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:master_plan/data/repositories/local/service/excel_service.dart';
 import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/chief_distribution_operations_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto/chief_operation_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operation_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
@@ -29,6 +29,7 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
 
   final AreaTable _areaTable = AreaTable();
   final ChiefOperationTable _chiefOperationTable = ChiefOperationTable();
+  final listController = ScrollController();
 
   final ChiefDistributionOperationsTable _chiefDistributionOperationsTable =
       ChiefDistributionOperationsTable();
@@ -39,16 +40,24 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
 
   List<DistributionOperationModel> operationsForDistributionList = [];
 
+  int chiefOperationsSelectMinRange = 0;
+  final int distributionPageElementsLimit = 9;
+  int chiefOperationsSelectMaxRange = 9;
+
   Map<String, dynamic> areasMap =
       {}; // ключ - номер участка + его имя, значение - id
 
   final _excelStageLoadService = ExcelService();
 
   Future<void> fetchChiefOperations() async {
+    emit(state.copyWith(
+        chiefOperationsList: [], status: DistributionPageStatus.loading));
     isElementOpenList = [];
     List<ChiefDistributionOperation> chiefOperationsList = [];
     var fetchedChiefOperationsList =
-        await _chiefDistributionOperationsTable.selectNotDistributed();
+        await _chiefDistributionOperationsTable.selectNotDistributed(
+            maxRange: chiefOperationsSelectMaxRange,
+            minRange: chiefOperationsSelectMinRange);
 
     for (var operation in fetchedChiefOperationsList) {
       final chiefOperationDto =
@@ -67,7 +76,6 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
     emit(state.copyWith(
         chiefOperationsList: chiefOperationsList,
         status: DistributionPageStatus.success));
-
   }
 
   Future<void> fetchAreas() async {
@@ -96,10 +104,12 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
     List<int> chiefOperationsIdList = [];
     for (var operation in operationsForDistributionList) {
       final quantity = operation.quantity;
-      var fetchedChiefOperationsList = await _chiefOperationTable.fetchOperationsByOperationIdWithLimit(
-          limit: quantity, operationId: operation.operationId);
+      print(operation.operationId);
+      var fetchedChiefOperationsList =
+          await _chiefOperationTable.fetchOperationsByOperationIdWithLimit(
+              limit: quantity, operationId: operation.operationId);
 
-      for (var chiefOperation in fetchedChiefOperationsList){
+      for (var chiefOperation in fetchedChiefOperationsList) {
         chiefOperationsIdList.add(chiefOperation['id']);
       }
 
@@ -126,10 +136,32 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
           chiefOperationId: operation.chiefOperationId,
           newQuantity: operation.oldQuantity - quantity);
     }
-    emit(state.copyWith(
-        chiefOperationsList: [], status: DistributionPageStatus.loading));
+    emit(state.copyWith(status: DistributionPageStatus.loading));
     fetchChiefOperations();
 
-    _chiefOperationTable.changeIsDistributed(operationsIdList: chiefOperationsIdList);
+    operationsForDistributionList = [];
+    _chiefOperationTable.changeIsDistributed(
+        operationsIdList: chiefOperationsIdList);
+  }
+
+  void listControllerAddListener() {
+    listController.addListener(() {
+      if (chiefOperationsSelectMinRange != 0 &&
+          (listController.position.minScrollExtent == listController.offset)) {
+        chiefOperationsSelectMinRange -= distributionPageElementsLimit;
+        chiefOperationsSelectMaxRange -= distributionPageElementsLimit;
+        fetchChiefOperations();
+        print('min');
+      }
+
+      if ((state.chiefOperationsList.length > distributionPageElementsLimit) &&
+          (listController.position.maxScrollExtent == listController.offset)) {
+        chiefOperationsSelectMinRange += distributionPageElementsLimit;
+        chiefOperationsSelectMaxRange += distributionPageElementsLimit;
+
+        print('max');
+        fetchChiefOperations();
+      }
+    });
   }
 }

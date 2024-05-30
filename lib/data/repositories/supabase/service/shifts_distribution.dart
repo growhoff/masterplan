@@ -7,7 +7,7 @@ class ShiftsDistributionTable extends SupabaseTable{
 
   final table = Supabase.instance.client.from('z_shifts_distribution');
   static const selectUser = '*, z_position(*), z_company(*), z_unit(*), z_area(*)';
-  
+
   @override
   Future<void> delete(int id) async{
     await table.delete().eq('id', id);
@@ -17,14 +17,14 @@ class ShiftsDistributionTable extends SupabaseTable{
   Future<void> insert(Dto dto) async{
     if (dto is ShiftsDistributionDTO){
       await table.insert(dto.toMap());
-    } 
+    }
   }
 
   Future<List<Map<String, dynamic>>> selectListIdNew(List<int> listId, DateTime date) {
     return table.select('*, z_user($selectUser), z_change(*), z_machine(*)').inFilter('id',listId).eq('date', date);
   }
 
-    Future<List<Map<String, dynamic>>> selectListId(List<int> listId, DateTime date) {
+  Future<List<Map<String, dynamic>>> selectListId(List<int> listId, DateTime date) {
     String filters = '';
     for (var i = 0; i < listId.length; i++) {
       if (i == (listId.length - 1)) {
@@ -41,8 +41,8 @@ class ShiftsDistributionTable extends SupabaseTable{
     return table.select();
   }
 
-  Future<List<Map<String, dynamic>>> selectEqUser(int userId) {
-    return table.select('*, z_user($selectUser), z_change(*), z_machine(*)').eq('user_id', userId).eq('date', DateTime.now());
+  Future<List<Map<String, dynamic>>> selectEqUser(int userId, DateTime time, int change) {
+    return table.select('*, z_user($selectUser), z_change(*), z_machine(*)').eq('user_id', userId).eq('date', time).eq('change_id', change);
   }
 
   Future<List<Map<String, dynamic>>> selectListIdMachine(List<int> machineListId, DateTime date) {
@@ -59,7 +59,7 @@ class ShiftsDistributionTable extends SupabaseTable{
 
   @override
   Future<void> update(int id, Dto dto) {
-   return table.update({'name': '1'}).eq('id', id);
+    return table.update({'name': '1'}).eq('id', id);
   }
 
 }

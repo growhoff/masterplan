@@ -19,7 +19,7 @@ abstract class DataMaster {
         page: const DetailDistribPage(),
         icon: Icons.lan),
     TabBarData(
-        title: 'Очередь',
+        title: 'Очередь деталей',
         actions: [],
         page: const QueuePageMaster(),
         icon: Icons.library_add),
@@ -28,6 +28,11 @@ abstract class DataMaster {
         actions: [],
         page: const BrakReadyDetailsPage(),
         icon: Icons.check_box),
+    // TabBarData(
+    //     title: 'Аналитика',
+    //     actions: [],
+    //     page: Container(),
+    //     icon: Icons.fact_check_sharp),
     TabBarData(
         title: 'Мониторинг участка',
         actions: [],

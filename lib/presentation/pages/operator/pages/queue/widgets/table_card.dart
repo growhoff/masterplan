@@ -24,8 +24,8 @@ class TableCard extends StatelessWidget {
           : ListView.builder(
             shrinkWrap: true,
             itemBuilder: (context, index) => RowList(
-                text1: list[index].batch.number,
-                text2: list[index].operation.name,
+                text1: '${list[index].batch.number} ${list[index].batch.name}',
+                text2: '${list[index].operation.number} ${list[index].operation.name}',
                 text3: '${list[index].timefact}'),
             itemCount: list.length,
           ),
