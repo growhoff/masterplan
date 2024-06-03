@@ -6,7 +6,8 @@ import '../../../../domain/usecase/company_service.dart';
 
 class OperatorOperationsTable extends SupabaseTable {
   final table = Supabase.instance.client.from('z_operator_operations');
-  static const selectUser = '*, z_position(*), z_company(*), z_unit(*), z_area(*)';
+  static const selectUser =
+      '*, z_position(*), z_company(*), z_unit(*), z_area(*)';
 
   final _companyId = CompanyService.instance.companyId ?? 1;
 
@@ -34,8 +35,18 @@ class OperatorOperationsTable extends SupabaseTable {
   @override
   Future<List<Map<String, dynamic>>> select() {
     return table
-        .select('*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*), z_user($selectUser), z_machine(*), z_area!inner(*), z_chief_operation(*)').eq('z_area.company_id', _companyId)
+        .select(
+            '*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*), z_user($selectUser), z_machine(*), z_area!inner(*), z_chief_operation(*), z_chief_batch(*)')
+        .eq('z_area.company_id', _companyId)
         .order('id', ascending: true);
+  }
+
+  Future<List<Map<String, dynamic>>> selectReadyDefectAndModification() {
+    return table
+        .select(
+            '*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*), z_user($selectUser), z_machine(*), z_area!inner(*), z_chief_operation(*), z_chief_batch(*)')
+        .eq('z_area.company_id', _companyId)
+        .inFilter('status_id', [4, 5, 9]).order('id', ascending: true);
   }
 
   Future<List<Map<String, dynamic>>> selectId(int machineId) {
@@ -43,10 +54,18 @@ class OperatorOperationsTable extends SupabaseTable {
   }
 
   Future<List<Map<String, dynamic>>> selectListIdNew(List<int> listId) {
-    return table.select('*, z_status(*), z_batch(*), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_user($selectUser)').inFilter('id', listId).order('id', ascending: true);
+    return table
+        .select(
+            '*, z_status(*), z_batch(*), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_user($selectUser)')
+        .inFilter('id', listId)
+        .order('id', ascending: true);
   }
+
   Future<List<Map<String, dynamic>>> selectIdListNew(List<int> machineIdList) {
-    return table.select('*, z_status(*), z_batch(*), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_user($selectUser)').inFilter('id', machineIdList);
+    return table
+        .select(
+            '*, z_status(*), z_batch(*), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_user($selectUser)')
+        .inFilter('id', machineIdList);
   }
 
   Future<List<Map<String, dynamic>>> selectListId(List<int> listId) {
@@ -73,7 +92,8 @@ class OperatorOperationsTable extends SupabaseTable {
       }
     }
     return table
-        .select('*, z_status(*), z_batch(*), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_user($selectUser)')
+        .select(
+            '*, z_status(*), z_batch(*), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_user($selectUser)')
         .or(filters)
         .or('status_id.eq.2,status_id.eq.3,status_id.eq.4,status_id.eq.6')
         .order('order', ascending: true);
@@ -89,7 +109,8 @@ class OperatorOperationsTable extends SupabaseTable {
       }
     }
     return table
-        .select('*, z_status(*), z_batch(*), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_user($selectUser)')
+        .select(
+            '*, z_status(*), z_batch(*), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_user($selectUser)')
         .or(filters)
         .or('status_id.eq.3,status_id.eq.6,status_id.eq.7,status_id.eq.8')
         .order('order', ascending: true);
@@ -98,7 +119,8 @@ class OperatorOperationsTable extends SupabaseTable {
   Future<List<Map<String, dynamic>>> selectByAreaId(
       {required int areaId}) async {
     var res = await table
-        .select('*, z_status(*), z_batch(*), z_stage(*), z_operation(*),z_user($selectUser), z_machine(*)')
+        .select(
+            '*, z_status(*), z_batch(*), z_stage(*), z_operation(*),z_user($selectUser), z_machine(*)')
         .eq('area_id', areaId);
     print(res);
     return res;
@@ -150,11 +172,24 @@ class OperatorOperationsTable extends SupabaseTable {
   }
 
   Future<void> updateTimeStart(int id, int timeStart) async {
-    await table.update({'time_start': timeStart, 'status_id': 7}).eq('id', id);
+    await table.update({'time_start': timeStart, 'pause': false}).eq('id', id);
   }
 
-  Future<void> updateTimeStop(int id, int timeStop) async {
-    await table.update({'time_stop': timeStop}).eq('id', id);
+  Future<void> setFirstTimeStart(int id, int timeStart) async {
+    await table.update({
+      'time_fact': timeStart,
+      'time_start': timeStart,
+      'status_id': 7,
+      'pause': false
+    }).eq('id', id);
+  }
+
+  Future<void> updateTimeStop(int id, int timeStop, int seconds) async {
+    await table.update({
+      'time_stop': timeStop,
+      'pause': true,
+      'time_working': seconds
+    }).eq('id', id);
   }
 
   Future<void> updateTimeStopAndReady(int id, int timeStop, int seconds) async {

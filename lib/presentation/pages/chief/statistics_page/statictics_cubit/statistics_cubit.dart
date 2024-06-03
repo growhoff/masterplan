@@ -362,20 +362,17 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
 
       operationInList?.areaNumber = operatorOperationsDto.area!.number;
 
-      operationInList?.inWorkQuantity++;
-
       switch (operatorOperationsDto.statusId) {
         case 4:
           operationInList?.modificationQuantity++;
         case 5:
           stagesMap[operatorOperationsDto.stageId]?.defectDetailsQuantity++;
           operationInList?.defectQuantity++;
-        case 6:
-          stagesMap[operatorOperationsDto.stageId]?.readyOperationsQuantity++;
-          operationInList?.readyQuantity++;
         case 9:
           stagesMap[operatorOperationsDto.stageId]?.readyOperationsQuantity++;
           operationInList?.readyQuantity++;
+        default:
+          operationInList?.inWorkQuantity++;
       }
 
       final totalOperationsQuantity =
@@ -401,7 +398,6 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
       value.readyDetailsPercent =
           (value.readyDetailsQuantity / value.detailsQuantity * 100).round();
 
-      
       value.defectDetailsQuantity = await _chiefBatchTable
           .fetchDefectDetailsCount(batchId: value.batchId);
     });

@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:master_plan/data/repositories/local/service/excel_service.dart';
 import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
@@ -22,7 +23,14 @@ import '../../../../../domain/model/chief_distribution_operations_model.dart';
 part 'chief_distribution_state.dart';
 
 class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
-  ChiefDistributionCubit() : super(const ChiefDistributionState());
+  ChiefDistributionCubit() : super(const ChiefDistributionState()) {
+    _chiefDistributionOperationsTable.table
+        .stream(primaryKey: ['id'])
+        .neq('quantity', 0)
+        .listen((event) {
+          fetchChiefOperations();
+        });
+  }
 
   final OperatorOperationsTable _operatorOperationsTable =
       OperatorOperationsTable();
@@ -92,15 +100,20 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
 
   Future<void> loadStageFromExcel() async {
     emit(state.copyWith(status: DistributionPageStatus.loading));
-    print('STATE load: ${state.status}');
-    await _excelStageLoadService
-        .stageExcelFunction()
-        .then((value) => fetchChiefOperations());
+    try{
+      await _excelStageLoadService.stageExcelFunction();
+    }
+    catch(e){
 
-    _excelStageLoadService.finishLoading();
+    }
+
+    fetchChiefOperations();
+
+    // await _excelStageLoadService.finishLoading();
   }
 
   Future<void> sendOperationsToDistribution() async {
+    emit(state.copyWith(status: DistributionPageStatus.loading));
     List<int> chiefOperationsIdList = [];
     for (var operation in operationsForDistributionList) {
       final quantity = operation.quantity;
@@ -136,7 +149,7 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
           chiefOperationId: operation.chiefOperationId,
           newQuantity: operation.oldQuantity - quantity);
     }
-    emit(state.copyWith(status: DistributionPageStatus.loading));
+
     fetchChiefOperations();
 
     operationsForDistributionList = [];

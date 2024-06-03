@@ -22,7 +22,7 @@ class ContentDetail extends StatelessWidget {
     final userId = context.read<CubitMain>().state.user!.id;
     final astivePage = context.read<CubitWork>().state.activePage;
     final operation = pageData.operActive;
-    return  operation == null //pageData.operQueueList.isEmpty &&
+    return  operation == null
         ? const Center(
             child: Text('Нет деталей/операций на станке'),
           )
@@ -76,9 +76,6 @@ class ContentDetail extends StatelessWidget {
                               isActive: true,
                               color: const Color.fromARGB(255, 115, 16, 222),
                               onPressed: () {
-                                // context.read<CubitWork>().setMonitor(5, userId, controller.text, !(statusBtn == 2));
-                                // context.read<CubitTimer>().refreshAndStartStop(astivePage, !(statusBtn == 2));
-                                // controller.clear();
                               }))),
                   const Spacer(),
                   Expanded(

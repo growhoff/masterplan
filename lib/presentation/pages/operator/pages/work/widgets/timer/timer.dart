@@ -14,7 +14,11 @@ class Time extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CubitWork,StateWork>(
-      builder:(context, stateWork) => BlocBuilder<CubitTimer, StateTimer>(
+      builder:(context, stateWork) {
+        final activePage = stateWork.activePage;
+        final statusBtn = stateWork.statusBtn[activePage];
+        final operActive = stateWork.pageData[stateWork.activePage].operActive!;
+        return BlocBuilder<CubitTimer, StateTimer>(
         builder:(context, state) => Column(
           children: [
                 Text(state.listRes[stateWork.activePage], style: const TextStyle(fontSize: 60)),
@@ -23,24 +27,24 @@ class Time extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     ButtonCircleIcon(
-                      isActive: (stateWork.statusBtn[stateWork.activePage] == 0) || (stateWork.statusBtn[stateWork.activePage] == 1),
+                      isActive: (statusBtn == 0) || (statusBtn == 1),
                       onPressed: () {
-                        context.read<CubitTimer>().startOrStop(stateWork.activePage, !state.listState[stateWork.activePage], stateWork.pageData[stateWork.activePage].operActive!.id);
-                        // context.read<CubitWork>().setMonitor(0, context.read<CubitMain>().state.user!.id, 'start time', !state.listState[stateWork.activePage]);//доработать старт стоп
-                        // context.read<CubitWork>().setBtnStatus(0);
-                        context.read<CubitWork>().setStartMonitor(0,context.read<CubitMain>().state.user!.id, 'start time', stateWork.pageData[stateWork.activePage].operActive!.id);
+                        if (operActive.pause == null) context.read<CubitTimer>().firstStart(activePage, operActive.id);
+                        context.read<CubitTimer>().startOrStop(activePage, !state.listState[activePage], operActive.id);
+                        context.read<CubitWork>().setStartMonitor(0,context.read<CubitMain>().state.user!.id, 'start', operActive.id);
                       }, 
-                      icon: !state.listState[stateWork.activePage] ? Icons.play_arrow_rounded : Icons.pause,
+                      icon: !state.listState[activePage] ? Icons.play_arrow_rounded : Icons.pause,
                       ),
                     ButtonCircleIcon(
-                      isActive: (stateWork.statusBtn[stateWork.activePage] == 0) || (stateWork.statusBtn[stateWork.activePage] == 1),
-                      onPressed: () =>  Navigator.push(context, MaterialPageRoute(builder: (context) => QueuePage(dataPage: stateWork.pageData[stateWork.activePage]))), 
+                      isActive: (statusBtn == 0) || (statusBtn == 1),
+                      onPressed: () =>  Navigator.push(context, MaterialPageRoute(builder: (context) => QueuePage(dataPage: stateWork.pageData[activePage]))), 
                       icon: Icons.list),
                   ],
                 ),
           ],
         ),
-      ),
+      );
+      }
     );
   }
 }

@@ -42,7 +42,8 @@ class ChiefDistributionOperationsTable extends SupabaseTable {
     return res;
   }
 
-  Future<List<Map<String, dynamic>>> selectNotDistributed({required int minRange,required int maxRange}) async {
+  Future<List<Map<String, dynamic>>> selectNotDistributed(
+      {required int minRange, required int maxRange}) async {
     var res = await table
         .select(
             '*, z_batch:batch_id!inner(*), z_stage:stage_id(*), z_operation:operation_id(*)')
@@ -62,5 +63,9 @@ class ChiefDistributionOperationsTable extends SupabaseTable {
   Future<void> updateQuantity(
       {required int chiefOperationId, required int newQuantity}) async {
     await table.update({'quantity': newQuantity}).eq('id', chiefOperationId);
+  }
+
+  stream() {
+    return table.stream(primaryKey: ['id']);
   }
 }

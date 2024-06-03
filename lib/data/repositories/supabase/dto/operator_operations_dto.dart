@@ -14,6 +14,7 @@ import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 class OperatorOperationsDTO extends Dto {
   final int id;
   final int? timeplan;
+  final bool? pause;
   final int? timefact;
   final int statusId;
   final StatusDTO status;
@@ -42,6 +43,7 @@ class OperatorOperationsDTO extends Dto {
   OperatorOperationsDTO({
     required this.id,
     this.timeplan,
+    this.pause,
     this.timefact,
     required this.statusId,
     required this.status,
@@ -96,43 +98,29 @@ class OperatorOperationsDTO extends Dto {
     return OperatorOperationsDTO(
         id: map['id'] as int,
         timeplan: map['time_plan'] != null ? map['time_plan'] as int : null,
+        pause: map['pause'] != null ? map['pause'] as bool : null,
         timefact: map['time_fact'] != null ? map['time_fact'] as int : null,
         statusId: map['status_id'] as int,
         status: StatusDTO.fromMap(map['z_status'] as Map<String, dynamic>),
         batchId: map['batch_id'] as int,
         batch: BatchDTO.fromMap(map['z_batch'] as Map<String, dynamic>),
         stageId: map['stage_id'] as int,
-        stage: map['z_stage'] != null
-            ? StageDTO.fromMap(map['z_stage'] as Map<String, dynamic>)
-            : null,
+        stage: map['z_stage'] != null ? StageDTO.fromMap(map['z_stage'] as Map<String, dynamic>) : null,
         operationId: map['operation_id'] as int,
-        operation:
-            OperationDTO.fromMap(map['z_operation'] as Map<String, dynamic>),
+        operation: OperationDTO.fromMap(map['z_operation'] as Map<String, dynamic>),
         areaId: map['area_id'] as int,
-        area: map['z_area'] != null
-            ? AreaDTO.fromMap(map['z_area'] as Map<String, dynamic>)
-            : null,
+        area: map['z_area'] != null ? AreaDTO.fromMap(map['z_area'] as Map<String, dynamic>) : null,
         machineId: map['machineId'] != null ? map['machine_id'] as int : null,
-        machine: map['z_machine'] != null
-            ? MachineDTO.fromMap(map['z_machine'] as Map<String, dynamic>)
-            : null,
+        machine: map['z_machine'] != null ? MachineDTO.fromMap(map['z_machine'] as Map<String, dynamic>) : null,
         order: map['order'] != null ? map['order'] as int : null,
         timestart: map['time_start'] != null ? map['time_start'] as int : null,
         timestop: map['time_stop'] != null ? map['time_stop'] as int : null,
-        timeworking:
-            map['time_working'] != null ? map['time_working'] as int : null,
+        timeworking: map['time_working'] != null ? map['time_working'] as int : null,
         userId: map['user_id'] != null ? map['user_id'] as int : null,
-        user: map['z_user'] != null
-            ? UserDTO.fromMap(map['z_user'] as Map<String, dynamic>)
-            : null,
-        chiefBatchId:
-            map['chief_batch_id'] != null ? map['chief_batch_id'] as int : null,
-        chiefOperationId: map['chief_operation_id'] != null
-            ? map['chief_operation_id'] as int
-            : null,
-        chiefOperation: map['z_chief_operation'] != null
-            ? ChiefOperationDto.fromMap(map['z_chief_operation'])
-            : null);
+        user: map['z_user'] != null ? UserDTO.fromMap(map['z_user'] as Map<String, dynamic>) : null,
+        chiefBatchId: map['chief_batch_id'] != null ? map['chief_batch_id'] as int : null,
+        chiefOperationId: map['chief_operation_id'] != null ? map['chief_operation_id'] as int : null,
+        chiefOperation: map['z_chief_operation'] != null ? ChiefOperationDto.fromMap(map['z_chief_operation']) : null);
   }
 
   String toJson() => json.encode(toMap());

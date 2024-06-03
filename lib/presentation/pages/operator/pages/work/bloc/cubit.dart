@@ -20,12 +20,8 @@ class CubitWork extends Cubit<StateWork> {
   final operatorOperationsTable = OperatorOperationsTable();
   final monitorTable = MonitoringMachineTable();
   CubitWork(this.zShiftsDistributionList, this.machineListId) : super(const StateWork()) {
-
-    List<int> btn = [];
-    List<bool> setStart = [];
-    for (var i = 0; i < zShiftsDistributionList!.length; i++) {btn.add(0);setStart.add(false);}
-    emit(state.copyWith(statusBtn: btn, setStart: setStart));
-
+    
+    //стрим
     operatorOperationsTable.table.stream(primaryKey: ['id']).inFilter('machine_id', machineListId).listen((event) {
       }).onData((data)async {
           await getQuere(data);
@@ -42,9 +38,11 @@ class CubitWork extends Cubit<StateWork> {
         operatorOperationsList.add(convertDto(model));
       }
     List<int> timeActive = [];
-    List<PageItem> pageData = [];
-    List<int> statusBtn1 = [...state.statusBtn];
-    List<bool> setStart1 = [...state.setStart];
+    List<PageItem> pageData = [];   
+    List<int> statusBtn = [];
+    List<bool> listStartBtn = [];
+    List<bool> listStartTime = [];
+
     for (var shiftsDistr in zShiftsDistributionList!) {
       List<OperatorOperations> listOperReady = [];
       List<OperatorOperations> listOperQueue = [];
@@ -61,14 +59,44 @@ class CubitWork extends Cubit<StateWork> {
         operActive ??= listOperQueue.first;
         listOperQueue.removeAt(0);
       }
-      pageData.add(PageItem(machine: shiftsDistr.machine, operReadyList: listOperReady, operQueueList: listOperQueue, operActive: operActive));
-      timeActive.add(operActive == null ? 0 : operActive.timestart ?? 0);
-
-      for (var i = 0; i < timeActive.length; i++) {
-        if (timeActive[i] !=0) {statusBtn1[i] = 1;setStart1[i]=true;}
+      //добавляем время в массив
+      if (operActive == null){
+        timeActive.add(0);
+      } else {
+        if (operActive.pause == null) {timeActive.add(0);}
+        if (operActive.pause == true) {timeActive.add(operActive.timeworking!);}
+        if (operActive.pause == false) {
+          final date1 = DateTime.fromMillisecondsSinceEpoch(operActive.timestart!).toUtc();
+          final date2 = DateTime.now().toUtc();
+          final difference = (date2.difference(date1)).inSeconds;
+          timeActive.add(difference);
       }
+      }
+
+      //выставление статусов относительно паузы
+      if (operActive != null){
+        if (operActive.pause == null){
+          statusBtn.add(0);
+          listStartBtn.add(false);
+          listStartTime.add(false);
+        } else if (operActive.pause == true){
+          statusBtn.add(1);
+          listStartBtn.add(true);
+          listStartTime.add(false);
+        } else {
+          statusBtn.add(1);
+          listStartBtn.add(false);
+          listStartTime.add(true);
+        }
+      } else {
+          statusBtn.add(0);
+          listStartBtn.add(false);
+          listStartTime.add(false);
+      }
+      //
+      pageData.add(PageItem(machine: shiftsDistr.machine, operReadyList: listOperReady, operQueueList: listOperQueue, operActive: operActive));      
     }
-    emit(state.copyWith(pageData: pageData, timeActive: timeActive, statusBtn: statusBtn1));
+    emit(state.copyWith(pageData: pageData, timeActive: timeActive, statusBtn: statusBtn, listStartBtn: listStartTime, listStartTime: listStartTime));
   }
 
   void setActivePage(int index){
@@ -105,12 +133,12 @@ class CubitWork extends Cubit<StateWork> {
 
 
   Future<void> setStartMonitor(int status, int userid, String? comment, int operId) async{
-    if (!state.setStart[state.activePage]){
+    if (!state.listStartBtn[state.activePage]){
       if ((comment == null) || (comment == '')) comment = 'none';
       final id = await monitorTable.insertToInt(MonitoringMachineDTO(id: 0, operationId: operId, date: DateTime.now(), changeId: (DateTime.now().hour > 8) && ( DateTime.now().hour <= 20) ? 1 : 2, timeStart: DateTime.now().millisecondsSinceEpoch, timeStop: 0, statusMachineId: 1, userId: userid, machineId: state.pageData[state.activePage].machine.id, batchId: state.pageData[state.activePage].operActive!.batch.id, comment: comment));
-      List<bool> list = [...state.setStart];
+      List<bool> list = [...state.listStartBtn];
       list[state.activePage] = true;
-      emit(state.copyWith(monitorId: id, setStart: list));
+      emit(state.copyWith(monitorId: id, listStartBtn: list));
     }
     setBtnStatus(status);
   }
@@ -121,7 +149,7 @@ class CubitWork extends Cubit<StateWork> {
   }
 
   void setError(int id, int userId, int seconds, String comment, bool isStart, int operId){
-    operatorOperationsTable.updateTimeStop(id, DateTime.now().millisecondsSinceEpoch);
+    operatorOperationsTable.updateTimeStop(id, DateTime.now().millisecondsSinceEpoch, seconds);
     setMonitor(4, userId, comment, isStart, operId);
   }
 
@@ -163,9 +191,9 @@ class CubitWork extends Cubit<StateWork> {
   }
 
   void setIsStart(bool b){
-    List<bool> list = [...state.setStart];
+    List<bool> list = [...state.listStartBtn];
     list[state.activePage] = b;
-    emit(state.copyWith(setStart: list));
+    emit(state.copyWith(listStartBtn: list));
   }
 
   OperatorOperations convertDto(OperatorOperationsDTO dto) {
@@ -175,6 +203,7 @@ class CubitWork extends Cubit<StateWork> {
       operation: dto.operation,
       stage: dto.stage!,
       timeplan: dto.timeplan ?? 0,
+      pause: dto.pause,
       timefact: dto.timefact ?? 0,
       timestart: dto.timestart,
       timestop: dto.timestop,

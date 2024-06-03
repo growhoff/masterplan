@@ -6,30 +6,31 @@ import 'state.dart';
 class CubitTimer extends Cubit<StateTimer> {
   final int length;
   final List<int> timeActive;
-  CubitTimer(this.length, this.timeActive) : super(const StateTimer()){
+  final List<bool> listStartTime;
+  final operatorOperTable = OperatorOperationsTable();
+  CubitTimer(this.length, this.timeActive, this.listStartTime) : super(const StateTimer()){
     init();
   }
 
   void init(){
-      // emit(state.copyWith(listTick: List.filled(length, 0), listState: List.filled(length, false), listRes: List.filled(length, '00:00:00')));
       List<int> listTick = [];
       List<String> listRes = [];
-      List<bool> listState = [];
+      // List<bool> listState = [];
       for (var tick in timeActive) {
         if (tick == 0){
           listTick.add(0);
           listRes.add('00:00:00');
-          listState.add(false);
+          // listState.add(false);
         } else {
-          final date1 = DateTime.fromMillisecondsSinceEpoch(tick).toUtc();
-          final date2 = DateTime.now().toUtc();
-          final difference = (date2.difference(date1)).inSeconds;
-          listTick.add(difference);
-          listRes.add(convertTime(difference));
-          listState.add(true);
+          // final date1 = DateTime.fromMillisecondsSinceEpoch(tick).toUtc();
+          // final date2 = DateTime.now().toUtc();
+          // final difference = (date2.difference(date1)).inSeconds;
+          listTick.add(tick);
+          listRes.add(convertTime(tick));
+          // listState.add(true);
         }
       }
-      emit(state.copyWith(listTick: listTick, listState: listState, listRes: listRes));
+      emit(state.copyWith(listTick: listTick, listState: listStartTime, listRes: listRes));
       Timer.periodic(const Duration(seconds: 1), (timer) {
       List<int> listTick = [...state.listTick];
       List<String> listRes = [...state.listRes];
@@ -43,8 +44,14 @@ class CubitTimer extends Cubit<StateTimer> {
     });
   }
 
+  void firstStart(int index, int id){
+    List<bool> listState = [...state.listState];
+      listState[index] = true;
+      operatorOperTable.setFirstTimeStart(id, DateTime.now().millisecondsSinceEpoch);
+    emit(state.copyWith(listState: listState));
+  }
+
   void startOrStop(int index, bool isStart, int id){
-    final operatorOperTable = OperatorOperationsTable();
     List<bool> listState = [...state.listState];
     if (isStart){
       listState[index] = true;
@@ -52,7 +59,7 @@ class CubitTimer extends Cubit<StateTimer> {
     }
     else {
       listState[index] = false;
-      operatorOperTable.updateTimeStop(id, DateTime.now().millisecondsSinceEpoch);
+      operatorOperTable.updateTimeStop(id, DateTime.now().millisecondsSinceEpoch, state.listTick[index]);
     }
     emit(state.copyWith(listState: listState));
   }

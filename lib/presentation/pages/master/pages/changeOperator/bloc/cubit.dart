@@ -22,7 +22,8 @@ class CubitChangeOperator extends Cubit<StateCubitChangeOperator> {
   Future<void> getQuere (List<Map<String, dynamic>>? data)async{
     List<int> listId = [];
     for (var element in data!) {listId.add(element['id']);}
-    final zshiftsDistributionQuery = await zshiftsDistributionTable.selectListId(listId, state.days);
+    List<Map<String, dynamic>> zshiftsDistributionQuery = [];
+    if (listId.isNotEmpty) zshiftsDistributionQuery = await zshiftsDistributionTable.selectListId(listId, state.days);
     List<ShiftsDistributionDTO> listDto = [];
     for (var shiftsDistr in zshiftsDistributionQuery) {
       listDto.add(ShiftsDistributionDTO.fromMap(shiftsDistr));

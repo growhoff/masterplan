@@ -10,6 +10,7 @@ import 'package:master_plan/domain/model/user.dart';
 class OperatorOperations {
   final int id;
   final int timeplan;
+  final bool? pause;
   final int timefact;
   final Status status;
   final Batch batch;
@@ -27,6 +28,7 @@ class OperatorOperations {
   OperatorOperations({
     required this.id,
     required this.timeplan,
+    this.pause,
     required this.timefact,
     required this.status,
     required this.batch,
@@ -47,6 +49,7 @@ class OperatorOperations {
   OperatorOperations copyWith({
     int? id,
     int? timeplan,
+    bool? pause,
     int? timefact,
     Status? status,
     Batch? batch,
@@ -63,22 +66,23 @@ class OperatorOperations {
     int? chiefOperationId,
   }) {
     return OperatorOperations(
-      id: id ?? this.id,
-      timeplan: timeplan ?? this.timeplan,
-      timefact: timefact ?? this.timefact,
-      status: status ?? this.status,
-      batch: batch ?? this.batch,
-      stage: stage ?? this.stage,
-      operation: operation ?? this.operation,
-      area: area ?? this.area,
-      machine: machine ?? this.machine,
-      order: order ?? this.order,
-      timestart: timestart ?? this.timestart,
-      timestop: timestop ?? this.timestop,
-      timeworking: timeworking ?? this.timeworking,
-      user: user ?? this.user,
-      chiefBatchId: chiefBatchId ?? this.chiefBatchId,
-      chiefOperationId: chiefOperationId ?? this.chiefOperationId
+        id: id ?? this.id,
+        timeplan: timeplan ?? this.timeplan,
+        pause: pause ?? this.pause,
+        timefact: timefact ?? this.timefact,
+        status: status ?? this.status,
+        batch: batch ?? this.batch,
+        stage: stage ?? this.stage,
+        operation: operation ?? this.operation,
+        area: area ?? this.area,
+        machine: machine ?? this.machine,
+        order: order ?? this.order,
+        timestart: timestart ?? this.timestart,
+        timestop: timestop ?? this.timestop,
+        timeworking: timeworking ?? this.timeworking,
+        user: user ?? this.user,
+        chiefBatchId: chiefBatchId ?? this.chiefBatchId,
+        chiefOperationId: chiefOperationId ?? this.chiefOperationId
     );
   }
 }

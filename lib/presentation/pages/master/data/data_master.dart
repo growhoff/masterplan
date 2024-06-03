@@ -6,6 +6,8 @@ import 'package:master_plan/presentation/pages/master/pages/monitoring/monitorin
 import 'package:master_plan/presentation/pages/master/pages/queue/queue_page.dart';
 import 'package:master_plan/presentation/pages/master/pages/readyDetails/ready_details.dart';
 
+import '../pages/analytics_page/analytics_page.dart';
+
 abstract class DataMaster {
   static List<TabBarData> listPage = [
     TabBarData(
@@ -28,15 +30,16 @@ abstract class DataMaster {
         actions: [],
         page: const BrakReadyDetailsPage(),
         icon: Icons.check_box),
-    // TabBarData(
-    //     title: 'Аналитика',
-    //     actions: [],
-    //     page: Container(),
-    //     icon: Icons.fact_check_sharp),
+
     TabBarData(
         title: 'Мониторинг участка',
         actions: [],
         page: const MonitoringPage(),
         icon: Icons.personal_video),
+    TabBarData(
+        title: 'Аналитика',
+        actions: [],
+        page: AnalyticsPage(),
+        icon: Icons.fact_check_sharp),
   ];
 }

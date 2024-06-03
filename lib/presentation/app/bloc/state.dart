@@ -24,7 +24,7 @@ class StateMain extends Equatable {
   final List<OperatorOperations>? operatorOperationsList;
   final String link;
   const StateMain({
-    this.version = 'v2.5.0',
+    this.version = 'v2.5.3',
     this.user,
     this.machineList,
     this.machineIdList,

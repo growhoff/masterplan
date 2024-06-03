@@ -9,11 +9,11 @@ import 'package:master_plan/data/repositories/supabase/service/chief_batch_table
 import 'package:master_plan/data/repositories/supabase/service/chief_distribution_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/chief_operation_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/transfer_table.dart';
+import 'package:master_plan/presentation/pages/master/pages/analytics_page/analytics_operation_model.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../presentation/pages/chief/statistics_page/chief_stage_report_model.dart';
-import '../../../../presentation/pages/chief/statistics_page/stage_model.dart';
 import '../../../../presentation/pages/chief/statistics_page/statistics_stage_model.dart';
 import '../../supabase/dto/batch_dto.dart';
 import '../../supabase/dto/chief_operation_dto.dart';
@@ -33,6 +33,7 @@ class ExcelService {
   final _transferTable = TransferTable();
 
   List<ChiefOperationDto> chiefOperationsList = [];
+  List<int> chiefDistributionsOperationsIdList = [];
   int serviceBatchId = 0;
   int serviceQuantity = 0;
 
@@ -86,10 +87,7 @@ class ExcelService {
     'код операции',
     '№ детали',
     'наименование операции',
-    '1',
-    '2',
     'наименование перехода',
-    '4',
     'T план',
     'Т факт',
     'Оборудование',
@@ -120,7 +118,6 @@ class ExcelService {
       for (var table in excel.tables.keys) {
         int quantity =
             int.parse(excel.tables[table]!.rows[1][13]!.value.toString());
-
         serviceQuantity = quantity;
 
         String code = excel.tables[table]!.rows[1][0]!.value
@@ -167,8 +164,8 @@ class ExcelService {
             excel.tables[table]!.rows[1][7]?.value.toString();
         String? operationName =
             excel.tables[table]!.rows[1][8]?.value.toString();
-        int timepz = int.parse(
-            (excel.tables[table]!.rows[1][11]!.value ?? 0).toString());
+        int timepz = (int.parse(
+            (excel.tables[table]!.rows[1][11]!.value ?? 0).toString()));
         int transferTimeSH = int.parse(
             (excel.tables[table]!.rows[1][12]!.value ?? 0).toString());
 
@@ -196,7 +193,8 @@ class ExcelService {
                 operation: OperationDTO.empty,
                 batchId: batchId,
                 batch: BatchDTO.empty,
-                quantity: quantity));
+                quantity: 0));
+        chiefDistributionsOperationsIdList.add(distributionOperationId);
 
         chiefOperationsList.add(ChiefOperationDto(
             id: 0,
@@ -244,7 +242,7 @@ class ExcelService {
             operationNumber = row[i][7]?.value.toString();
             operationName = row[i][8]?.value.toString();
             if (row[i][11]?.value != null) {
-              timepz = int.parse(row[i][11]!.value.toString());
+              timepz = (int.parse(row[i][11]!.value.toString()));
             }
             operationTimeSH = int.parse(row[i][12]!.value.toString());
             print(
@@ -266,8 +264,10 @@ class ExcelService {
                     operation: OperationDTO.empty,
                     batchId: batchId,
                     batch: BatchDTO.empty,
-                    quantity: quantity,
+                    quantity: 0,
                     id: 0));
+
+            chiefDistributionsOperationsIdList.add(distributionOperationId);
 
             chiefOperationsList.add(ChiefOperationDto(
                 id: 0,
@@ -301,16 +301,19 @@ class ExcelService {
         }
       }
     }
+    finishLoading();
     return 1;
   }
 
   Future<void> finishLoading() async {
+    int quantity = serviceQuantity;
+    int batchId = serviceBatchId;
     for (int i = 0; i < serviceQuantity; i++) {
       int chiefBatchId = await _chiefBatchTable.insert(
           ChiefBatchDTO(id: 0, batchId: serviceBatchId, batch: BatchDTO.empty));
 
       for (var operation in chiefOperationsList) {
-        _chiefOperationTable.insert(ChiefOperationDto(
+        await _chiefOperationTable.insert(ChiefOperationDto(
             id: 0,
             operation: OperationDTO.empty,
             stage: StageDTO.empty,
@@ -321,9 +324,15 @@ class ExcelService {
       }
     }
 
+    chiefDistributionsOperationsIdList.forEach((element) {
+      _chiefDistributionOperationsTable.updateQuantity(
+          chiefOperationId: element, newQuantity: serviceQuantity);
+    });
+
     serviceBatchId = 0;
     chiefOperationsList = [];
     serviceQuantity = 0;
+    chiefDistributionsOperationsIdList = [];
   }
 
   Future<String> uploadReport(
@@ -688,14 +697,12 @@ class ExcelService {
 
     int operationRowIndex = 0;
 
-    for (int stageNumber = 0;
-        stageNumber < stagesList.length;
-        stageNumber++) {
+    for (int stageNumber = 0; stageNumber < stagesList.length; stageNumber++) {
       for (int stageColumnIndex = 0;
-      stageColumnIndex < stagesHeaderList.length;
-      stageColumnIndex++) {
+          stageColumnIndex < stagesHeaderList.length;
+          stageColumnIndex++) {
         final operationCell = operationsExcel.cell(CellIndex.indexByColumnRow(
-            columnIndex: stageColumnIndex, rowIndex: operationRowIndex+1));
+            columnIndex: stageColumnIndex, rowIndex: operationRowIndex + 1));
 
         switch (stageColumnIndex) {
           case 0:
@@ -706,8 +713,7 @@ class ExcelService {
 
           case 2:
             operationCell.value = TextCellValue(
-                '${stagesList[stageNumber]
-                    .batchNumber} ${stagesList[stageNumber].batchName}');
+                '${stagesList[stageNumber].batchNumber} ${stagesList[stageNumber].batchName}');
 
           case 3:
             operationCell.value =
@@ -733,32 +739,31 @@ class ExcelService {
                 TextCellValue(operationsHeaderList[operationColumnIndex]);
             cell.cellStyle = _cellHeaderStyle;
           }
-            final cell = operationsExcel.cell(CellIndex.indexByColumnRow(
-                columnIndex: operationColumnIndex,
-                rowIndex: operationRowIndex+1));
-            switch (operationColumnIndex) {
-              case 5:
-                cell.value =
-                    TextCellValue('${operation.number} ${operation.name}');
+          final cell = operationsExcel.cell(CellIndex.indexByColumnRow(
+              columnIndex: operationColumnIndex,
+              rowIndex: operationRowIndex + 1));
+          switch (operationColumnIndex) {
+            case 5:
+              cell.value =
+                  TextCellValue('${operation.number} ${operation.name}');
 
-              case 6:
-                cell.value = TextCellValue(operation.code);
+            case 6:
+              cell.value = TextCellValue(operation.code);
 
-              case 7:
-                cell.value = IntCellValue(operation.readyQuantity);
+            case 7:
+              cell.value = IntCellValue(operation.readyQuantity);
 
-              case 8:
-                cell.value = IntCellValue(operation.readyPercent);
+            case 8:
+              cell.value = IntCellValue(operation.readyPercent);
 
-              case 9:
-                cell.value = IntCellValue(operation.inWorkQuantity);
-              case 10:
-                cell.value = IntCellValue(operation.defectQuantity);
-              case 11:
-                cell.value = IntCellValue(operation.modificationQuantity);
-            }
-            cell.cellStyle = _cellTextStyle;
-
+            case 9:
+              cell.value = IntCellValue(operation.inWorkQuantity);
+            case 10:
+              cell.value = IntCellValue(operation.defectQuantity);
+            case 11:
+              cell.value = IntCellValue(operation.modificationQuantity);
+          }
+          cell.cellStyle = _cellTextStyle;
         }
         operationRowIndex++;
       }
@@ -777,6 +782,104 @@ class ExcelService {
       print('вывелось');
       return downloadsDirectoryPath ?? '';
     }
+    return '';
+  }
+
+  Future<String> uploadReadyOperationsReport(
+      {required List<AnalyticsOperationModel> analyticsOperationsList}) async {
+    var excel = Excel.createExcel();
+    excel.rename('Sheet1', 'Выполненные операции');
+
+    Sheet readyOperationsExcel = excel['Выполненные операции'];
+
+    for (int operationRowIndex = 0;
+        operationRowIndex < analyticsOperationsList.length;
+        operationRowIndex++) {
+      for (int operationColumnIndex = 0;
+          operationColumnIndex < readyOperationsHeaderList.length;
+          operationColumnIndex++) {
+        if (operationRowIndex == 0) {
+          final cell = readyOperationsExcel.cell(CellIndex.indexByColumnRow(
+              columnIndex: operationColumnIndex, rowIndex: 0));
+
+          cell.value =
+              TextCellValue(readyOperationsHeaderList[operationColumnIndex]);
+          cell.cellStyle = _cellHeaderStyle;
+        }
+        final cell = readyOperationsExcel.cell(CellIndex.indexByColumnRow(
+            columnIndex: operationColumnIndex,
+            rowIndex: operationRowIndex + 1));
+
+        switch (operationColumnIndex) {
+          case 0:
+            cell.value =
+                TextCellValue(analyticsOperationsList[operationRowIndex].code);
+          case 1:
+            cell.value = TextCellValue(
+                analyticsOperationsList[operationRowIndex].detailNumber);
+
+          case 2:
+            cell.value = TextCellValue(
+                analyticsOperationsList[operationRowIndex].operationNumber +
+                    analyticsOperationsList[operationRowIndex].name);
+          case 3:
+            cell.value = TextCellValue('');
+          case 4:
+            cell.value = TextCellValue(
+                analyticsOperationsList[operationRowIndex].timePlan);
+          case 5:
+            cell.value = TextCellValue(
+                analyticsOperationsList[operationRowIndex].timeFact);
+          case 6:
+            cell.value = TextCellValue(
+                analyticsOperationsList[operationRowIndex].machineName);
+          case 7:
+            cell.value = IntCellValue(analyticsOperationsList[operationRowIndex]
+                .machineInventoryNumber);
+          case 8:
+            cell.value =
+                TextCellValue(analyticsOperationsList[operationRowIndex].fio);
+          case 9:
+            cell.value = TextCellValue('');
+          case 10:
+            cell.value =
+                TextCellValue(analyticsOperationsList[operationRowIndex].date);
+          case 11:
+            cell.value =
+                IntCellValue(analyticsOperationsList[operationRowIndex].change);
+          case 12:
+            cell.value = TextCellValue(
+                analyticsOperationsList[operationRowIndex].areaNumber);
+          case 13:
+            cell.value = IntCellValue(
+                analyticsOperationsList[operationRowIndex].defectQuantity);
+
+          case 14:
+            cell.value = IntCellValue(analyticsOperationsList[operationRowIndex]
+                .modificationQuantity);
+          case 15:
+            cell.value = IntCellValue(
+                analyticsOperationsList[operationRowIndex].quantity);
+        }
+        cell.cellStyle = _cellTextStyle;
+      }
+    }
+
+    var fileBytes = excel.save();
+
+    final granted = await requestPermissions();
+    if (granted) {
+      String? downloadsDirectoryPath =
+          (await DownloadsPath.downloadsDirectory())?.path;
+      print(downloadsDirectoryPath);
+      final fileName = '${downloadsDirectoryPath}/Выполненные операции.xlsx';
+
+      File(fileName).writeAsBytes(fileBytes!);
+
+      print('вывелось');
+      return downloadsDirectoryPath ?? '';
+    }
+
     return '';
   }
 }

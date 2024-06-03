@@ -12,10 +12,11 @@ class WorkPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final stateMain = context.read<CubitMain>().state;
+    // final stateWork = ;
     return BlocProvider<CubitWork>(
       create: (context) => CubitWork(stateMain.zshiftsDistributionList,  stateMain.machineIdList!),
       child: BlocProvider<CubitTimer>(
-        create: (context) => CubitTimer(stateMain.zshiftsDistributionList!.length, context.read<CubitWork>().state.timeActive),
+        create: (context) => CubitTimer(stateMain.zshiftsDistributionList!.length, context.read<CubitWork>().state.timeActive, context.read<CubitWork>().state.listStartTime),
         child: const ContentWork()) 
     );
   }

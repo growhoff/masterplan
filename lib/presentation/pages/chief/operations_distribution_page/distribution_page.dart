@@ -26,14 +26,13 @@ class ChiefDistributionPageView extends StatefulWidget {
 }
 
 class _ChiefDistributionPageViewState extends State<ChiefDistributionPageView> {
-
   @override
   void initState() {
     context.read<ChiefDistributionCubit>().fetchChiefOperations();
     context.read<ChiefDistributionCubit>().fetchAreas();
 
     super.initState();
-   context.read<ChiefDistributionCubit>().listControllerAddListener();
+    context.read<ChiefDistributionCubit>().listControllerAddListener();
   }
 
   @override
@@ -49,10 +48,13 @@ class _ChiefDistributionPageViewState extends State<ChiefDistributionPageView> {
               children: [
                 Container(
                   child: ElevatedButton(
-                    onPressed: () {
-                      context
+                    onPressed: () async {
+                      await context
                           .read<ChiefDistributionCubit>()
                           .loadStageFromExcel();
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content:
+                              Text('этап загружается. пожалуйста, подождите')));
                     },
                     style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
@@ -86,29 +88,38 @@ class _ChiefDistributionPageViewState extends State<ChiefDistributionPageView> {
                         }),
                       )
 
-                   */ Expanded(
+                   */
+                    Expanded(
                         child: ListView.separated(
-
-                          controller: context.read<ChiefDistributionCubit>().listController,
+                          physics: AlwaysScrollableScrollPhysics(),
+                            controller: context
+                                .read<ChiefDistributionCubit>()
+                                .listController,
                             shrinkWrap: true,
-                            itemBuilder: (context, index) => index<state.chiefOperationsList.length ? ExpansionTile(
-                              tilePadding: EdgeInsets.all(0),
-                              title: ChiefOperationDistributionTitleItem(
-                                  state.chiefOperationsList[index]),
-                              childrenPadding:
-                              EdgeInsets.fromLTRB(20, 0, 20, 10),
-                              expandedAlignment: Alignment.topLeft,
-                              children: [
-                                ChiefOperationDistributionBodyItem(
-                                  operation:
-                                  state.chiefOperationsList[index],
-                                )
-                              ],
-                            ) : SizedBox(height: 50,),
+                            itemBuilder: (context, index) => index <
+                                    state.chiefOperationsList.length
+                                ? ExpansionTile(
+                              maintainState: true,
+                                    tilePadding: EdgeInsets.all(0),
+                                    title: ChiefOperationDistributionTitleItem(
+                                        state.chiefOperationsList[index]),
+                                    childrenPadding:
+                                        EdgeInsets.fromLTRB(20, 0, 20, 10),
+                                    expandedAlignment: Alignment.topLeft,
+                                    children: [
+                                      ChiefOperationDistributionBodyItem(
+                                        operation:
+                                            state.chiefOperationsList[index],
+                                      )
+                                    ],
+                                  )
+                                : SizedBox(
+                                    height: 50,
+                                  ),
                             separatorBuilder: (ctx, i) => SizedBox(
                                   height: 5,
                                 ),
-                            itemCount: state.chiefOperationsList.length+1),
+                            itemCount: state.chiefOperationsList.length + 1),
                       )
                     : Center(
                         child: CircularProgressIndicator(),
