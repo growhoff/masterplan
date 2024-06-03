@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:intl/intl.dart';
 import 'package:master_plan/data/repositories/local/service/excel_service.dart';
 import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
@@ -10,6 +11,7 @@ import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/position.dart';
 import 'package:master_plan/domain/model/status.dart';
 import 'package:master_plan/domain/model/user.dart';
+import 'package:master_plan/domain/usecase/time_converter.dart';
 import 'package:master_plan/presentation/pages/master/pages/analytics_page/analytics_operation_model.dart';
 import 'package:open_filex/open_filex.dart';
 
@@ -38,19 +40,28 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
       final operation = convertOperationDtoToModel(dto: operationDto);
 
       if (!operationsMap.containsKey(operation.operation.id)) {
+        var hours =
+            DateTime.fromMillisecondsSinceEpoch(operation.timestop ?? 0).hour;
+
+        int change = 1;
+        (hours >= 8 && hours <= 20) ? change = 1 : change = 2;
+
         operationsMap[operation.operation.id] = AnalyticsOperationModel(
             operationId: operation.operation.id,
             code: operation.operation.code,
             detailNumber: operation.batch.number,
             operationNumber: operation.operation.number,
             name: operation.operation.name,
-            timePlan: DateTime.fromMillisecondsSinceEpoch(operation.timeplan ).toString(),
-            timeFact: DateTime.fromMillisecondsSinceEpoch(operation.timeFirstStart ).toString(),
+            timePlan: TimeConverter.instance
+                .convertTimeFromMinutes(operation.timeplan),
+            timeFact: TimeConverter.instance
+                .convertTimeFromSeconds(operation.timeworking ?? 0),
             machineName: operation.machine?.name ?? '',
             machineInventoryNumber: operation.machine?.inventoryNumber ?? 0,
             fio: operation.user?.fio ?? '',
-            date: DateTime.fromMillisecondsSinceEpoch(operation.timestop ?? 0 ).toString(),
-            change: 0,
+            date: DateFormat.yMd().format(
+                DateTime.fromMillisecondsSinceEpoch(operation.timestop ?? 0)),
+            change: change,
             areaNumber: operation.area.number);
       }
       operationsMap[operation.operation.id]?.quantity++;

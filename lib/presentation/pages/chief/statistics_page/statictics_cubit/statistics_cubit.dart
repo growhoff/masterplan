@@ -368,11 +368,12 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
         case 5:
           stagesMap[operatorOperationsDto.stageId]?.defectDetailsQuantity++;
           operationInList?.defectQuantity++;
+        case 7:
+          operationInList?.inWorkQuantity++;
         case 9:
           stagesMap[operatorOperationsDto.stageId]?.readyOperationsQuantity++;
           operationInList?.readyQuantity++;
-        default:
-          operationInList?.inWorkQuantity++;
+
       }
 
       final totalOperationsQuantity =

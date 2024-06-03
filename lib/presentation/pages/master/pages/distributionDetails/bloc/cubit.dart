@@ -1,11 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/data/repositories/supabase/dto/chief_distribution_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
-// import 'package:master_plan/data/repositories/supabase/service/chief_operation_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/chief_distribution_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
 import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/presentation/pages/master/pages/distributionDetails/model/distrib_item.dart';
 import 'package:master_plan/presentation/pages/master/pages/distributionDetails/model/set_model.dart';
+import 'package:master_plan/presentation/pages/master/pages/distributionDetails/model/set_model_chief.dart';
 import 'state.dart';
+import 'package:collection/collection.dart';
 
 class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
   final int areaIdUser;
@@ -18,73 +21,6 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
           await getQuere(data);
       });
   }
-/*
-    Future<void> getQuere (List<Map<String, dynamic>>? data)async{
-    List<int> listId = [];
-    for (var element in data!) {
-      if ((element['status_id'] as int == 2) || (element['status_id'] as int == 4) || (element['status_id'] as int == 6)) listId.add(element['id']);
-    }
-    final table = OperatorOperationsTable();
-    final quere = await table.selectListIdNew(listId);
-    List<OperatorOperationsDTO> list = [];
-    for (var item in quere) {
-      list.add(OperatorOperationsDTO.fromMap(item));
-    }
-    // /*
-    //
-    List<DistribItem> listRes = [];
-    List<OperatorOperationsDTO> listOperate = [];
-    final tableChiefOper = ChiefOperationTable();
-    Set<String> setList = {};
-    for (var i = 0; i < list.length; i++) {
-      setList.add('${list[i].chiefBatchId!}_${list[i].stageId}');
-    }
-    for (var setI in setList) {
-      List<String> ids = setI.split('_');
-      //парсим все операции по chief_batch_id и stage_id
-      List<Map<String, dynamic>> queryOper = await tableChiefOper.selectId(int.parse(ids[0]),int.parse(ids[1]));
-      //поочередно проходим по запросу и проверяем с массивом операций
-      //ищем первую операцию из запроса, 
-        //если она без статуса, тогда записываем, 
-          //если у неё статус готово и дальше нет элементов, тогда пропуск, 
-            //если элементы ещё есть, идём дальше и проверяем на готовый, иначе записываем 
-      for (var itemQuery in queryOper) {
-        List<OperatorOperationsDTO> listTrue = list.where((item) => itemQuery['id'] == item.chiefOperationId).toList();
-        // listTrue.sort((a, b) => a.id.compareTo(b.id),);
-        for (var itemTrue in listTrue) {
-          if (itemTrue.statusId == 2 || itemTrue.statusId == 4) {listOperate.add(itemTrue); break;}
-
-
-          // if (itemTrue.statusId == 6) break;
-          //
-          //Доработать по остальным статусам
-          //
-        }
-      }
-    }
-
-    Set<String> setListRes = {};
-    for (var i = 0; i < list.length; i++) {
-      setListRes.add('${list[i].batchId}_${list[i].stageId}');
-    }
-    for (var sets in setListRes) {
-      List<String> idSets = sets.split('_');
-      List<OperatorOperationsDTO> listTrue = listOperate.where((el) => (int.parse(idSets[0]) == el.batchId) && (int.parse(idSets[1]) == el.stageId)).toList();
-      listTrue.sort((a, b) => b.order!.compareTo(a.order!));
-      if (listTrue.isNotEmpty) listRes.add(convertToDistrib(listTrue));
-    }
-
-    //
-    // */
-
-    // List<DistribItem> listItem = [];
-    //   for (var operOperat in list) {
-    //     listItem.add(DistribItem(id: operOperat.id, stageNumber: operOperat.stage!.number, statusId: operOperat.status.id, detailNumber: operOperat.batch.number, operationName: operOperat.operation.name, count: operOperat.batch.count, isSelected: false));
-    //   }
-    emit(state.copyWith(operList: listRes, isLoading: false));
-  }
-*/
-
 
     Future<void> getQuere (List<Map<String, dynamic>>? data)async{
     List<int> listId = [];
@@ -94,30 +30,49 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
     final table = OperatorOperationsTable();
     final quere = await table.selectListIdNew(listId);
     List<OperatorOperationsDTO> list = [];
-    Set<int> setIdBatch = {};
+    Set<int> setChiefBatchId = {};
+    Set<int> setBatchId = {};
     Set<String> setAllId = {};
     for (var item in quere) {
       final model = OperatorOperationsDTO.fromMap(item);
-      setIdBatch.add(model.chiefBatchId!);
+      setChiefBatchId.add(model.chiefBatchId!);
+      setBatchId.add(model.batchId);
       setAllId.add('${model.batchId}_${model.stageId}_${model.operationId}'); 
       list.add(model);
     }
+    //лист с batch_id и operation_id по порядку
+    var listSearch = await getChiefTable(setBatchId.toList());
 
     //группировка по деталям
     List<SetModelBatch> listModelBatch = [];
-    for (var eSet in setIdBatch) {
+    for (var eSet in setChiefBatchId) {
       List<OperatorOperationsDTO> listCash = [];
       for (var eOper in list) {
         if (eSet == eOper.chiefBatchId) listCash.add(eOper);
       }
-      listModelBatch.add(SetModelBatch(batchId: eSet, list: listCash));
+      listModelBatch.add(SetModelBatch(chiefBatchId: eSet, batchId: list.first.batchId, list: listCash));
     }
 
-    //создание списка операций
+    //создание списка операций new
     List<OperatorOperationsDTO> listReady = [];
+    //проход по каждой детали chiefBatchId
     for (var iModBatch in listModelBatch) {
-      for (var item in iModBatch.list) {
-         if (item.statusId == 2 || item.statusId == 4) {listReady.add(item); break;}
+      //проход по списку batchId
+      for (var elSearch in listSearch) {
+        //проход по операциям
+        if (iModBatch.batchId == elSearch.batchId){
+          // equalListOper(iModBatch.list, elSearch.list);
+          for (var order in elSearch.list) {
+            bool next = false;
+            for (var item in iModBatch.list) {
+              if (item.operationId == order) {
+                if (item.statusId == 2 || item.statusId == 4) {listReady.add(item);break;}
+                if (item.statusId == 6) next = true;
+              }
+            }
+            if (!next) break;
+          }
+        }
       }
     }
 
@@ -131,10 +86,29 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
       List<OperatorOperationsDTO> listTrue = listReady.where((el) => (int.parse(batchId) == el.batchId) && (int.parse(stageId) == el.stageId) && (int.parse(operId) == el.operationId)).toList();
       if (listTrue.isNotEmpty) listResOper.add(convertToDistrib(listTrue));
     }
-
     emit(state.copyWith(operList: listResOper, isLoading: false));
   }
 
+
+  //получение порядка операций у деталей
+  Future<List<SetModelChief>> getChiefTable (List<int> listIdBatch)async{
+    final tableChief = ChiefDistributionOperationsTable();
+    final quereChief = await tableChief.selectListBatchId(listIdBatch);
+    List<ChiefDistributionOperationsDTO> listChief = [];
+    for (var element in quereChief) {
+      listChief.add(ChiefDistributionOperationsDTO.fromMap(element));
+    }
+    List<SetModelChief> listB = [];
+    var newMap = groupBy(listChief, (el) => el.batchId);
+    newMap.forEach((key, value) {
+      List<int> list = [];
+      for (var element in value) {
+        list.add(element.operationId);
+      }
+      listB.add(SetModelChief(batchId: key, list: list));
+    });
+    return listB;
+  }
 
 
   DistribItem convertToDistrib(List<OperatorOperationsDTO> operOperat) {
@@ -186,7 +160,6 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
   void setOptPath(int index, String countStr){
       if (countStr == '') {countStr = '1';}
       int count = int.parse(countStr);
-      // if (count > state.operList[index].listOperat.length) {count = state.operList[index].listOperat.length;}
       List<DistribItem> list = [...state.operList];
       DistribItem item = state.operList[index];
       final newitem = item.copyWith(setOptPart: count);
@@ -206,7 +179,6 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
               listId.add(oper.listOperat[i].id); 
             }
             table.updateMasterQueueList(listId, machine.id);
-              // table.updateMasterQueue(oper.id, machine.id);
             }
         }
       }

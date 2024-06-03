@@ -148,7 +148,10 @@ class _ChiefOperationDistributionBodyItemState
                                     stageId: widget.operation.stageId,
                                     areaId: context
                                         .read<ChiefDistributionCubit>()
-                                        .areasMap[activeValue]));
+                                        .areasMap[activeValue],
+                                    timePlan:
+                                        widget.operation.operation.timeSH ??
+                                            0));
                           }
                           setState(() {});
                         }

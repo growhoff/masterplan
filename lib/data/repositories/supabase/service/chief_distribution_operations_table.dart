@@ -2,13 +2,10 @@ import 'package:master_plan/data/repositories/supabase/dto/chief_distribution_op
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
 import '../../../../domain/usecase/company_service.dart';
 
 class ChiefDistributionOperationsTable extends SupabaseTable {
-  final table =
-      Supabase.instance.client.from('z_chief_distribution_operations');
-
+  final table = Supabase.instance.client.from('z_chief_distribution_operations');
   final int? _companyId = CompanyService.instance.companyId;
 
   @override
@@ -33,20 +30,23 @@ class ChiefDistributionOperationsTable extends SupabaseTable {
 
   @override
   Future<List<Map<String, dynamic>>> select() async {
-    var res = await table
-        .select(
-            '*, z_batch:batch_id!inner(*), z_stage:stage_id(*, z_area(*)), z_operation:operation_id(*)')
+    var res = await table.select('*, z_batch:batch_id!inner(*), z_stage:stage_id(*, z_area(*)), z_operation:operation_id(*)')
         .eq('z_batch.company_id', _companyId ?? 1)
         .order('id', ascending: true);
     // print(res);
     return res;
   }
 
+  Future<List<Map<String, dynamic>>> selectListBatchId(List<int> batchId) async {
+    var res = await table.select('*, z_batch:batch_id!inner(*), z_stage:stage_id(*, z_area(*)), z_operation:operation_id(*)')
+        .inFilter('batch_id', batchId)
+        .order('id', ascending: true);
+    return res;
+  }
+
   Future<List<Map<String, dynamic>>> selectNotDistributed(
       {required int minRange, required int maxRange}) async {
-    var res = await table
-        .select(
-            '*, z_batch:batch_id!inner(*), z_stage:stage_id(*), z_operation:operation_id(*)')
+    var res = await table.select('*, z_batch:batch_id!inner(*), z_stage:stage_id(*), z_operation:operation_id(*)')
         .eq('z_batch.company_id', _companyId ?? 1)
         .gt('quantity', 0)
         .range(minRange, maxRange)

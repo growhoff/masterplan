@@ -129,7 +129,7 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
       for (int i = 0; i < quantity; i++) {
         await _operatorOperationsTable.insert(OperatorOperationsDTO(
             id: 0,
-            timeplan: 0,
+            timeplan: operation.timePlan,
             timeFirstStart: 0,
             statusId: operation.statusId,
             status: StatusDTO(id: 0, name: ''),

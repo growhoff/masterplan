@@ -6,7 +6,8 @@ class DistributionOperationModel {
     required this.quantity,
     required this.stageId,
     required this.areaId,
-    required this.oldQuantity
+    required this.oldQuantity,
+    required this.timePlan,
   });
 
   final int oldQuantity;
@@ -17,4 +18,5 @@ class DistributionOperationModel {
   final int operationId;
   final int areaId;
   final int quantity;
+  final int timePlan;
 }

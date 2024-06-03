@@ -20,6 +20,7 @@ class OperatorOperationsTable extends SupabaseTable {
   Future<void> insert(Dto dto) async {
     if (dto is OperatorOperationsDTO) {
       await table.insert({
+        'time_plan': dto.timeplan,
         'status_id': dto.statusId,
         'batch_id': dto.batchId,
         'stage_id': dto.stageId,

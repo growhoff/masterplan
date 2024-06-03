@@ -20,7 +20,7 @@ class AnalyticsOperationModel {
   final String operationNumber;
   final String name;
   final String timePlan;
-  final String timeFact;
+  final String  timeFact;
   final String machineName;
   final int machineInventoryNumber;
   final String fio;
