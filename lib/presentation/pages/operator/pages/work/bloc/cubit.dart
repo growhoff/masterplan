@@ -106,7 +106,7 @@ class CubitWork extends Cubit<StateWork> {
   Future<void> setReady(OperatorOperations oper, int userId, int seconds, String comment, bool isStart)async{
     final quereMon = await monitorTable.selectIdMonitor(userId, oper, state.pageData[state.activePage].machine.id);
     final idMon = quereMon.first['id'];
-    operatorOperationsTable.updateTimeStopAndReady(oper.id, DateTime.now().millisecondsSinceEpoch, seconds);
+    operatorOperationsTable.updateTimeStopAndReady(oper.id, DateTime.now().millisecondsSinceEpoch, seconds, userId);
     setStopMonitor(1, idMon);
     setIsStart(false);
 
@@ -204,10 +204,12 @@ class CubitWork extends Cubit<StateWork> {
       stage: dto.stage!,
       timeplan: dto.timeplan ?? 0,
       pause: dto.pause,
-      timefact: dto.timefact ?? 0,
+      timeFirstStart: dto.timeFirstStart ?? 0,
       timestart: dto.timestart,
       timestop: dto.timestop,
       timeworking: dto.timeworking,
+      chiefBatchId: dto.chiefBatchId,
+      chiefOperationId: dto.chiefOperationId,
       status: Status(id: dto.status.id, name: dto.status.name),
       batch: Batch(
           id: dto.batch.id,

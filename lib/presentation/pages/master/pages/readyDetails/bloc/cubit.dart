@@ -88,7 +88,7 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
           operation: dto.operation, 
           stage: dto.stage!, 
           timeplan: dto.timeplan ?? 0, 
-          timefact: dto.timefact ?? 0, 
+          timeFirstStart: dto.timeFirstStart ?? 0, 
           timestart: dto.timestart, 
           timestop: dto.timestop, 
           timeworking: dto.timeworking, 

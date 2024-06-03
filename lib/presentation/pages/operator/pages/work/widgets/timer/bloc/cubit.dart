@@ -51,11 +51,11 @@ class CubitTimer extends Cubit<StateTimer> {
     emit(state.copyWith(listState: listState));
   }
 
-  void startOrStop(int index, bool isStart, int id){
+  void startOrStop(int index, bool isStart, int id, int userId){
     List<bool> listState = [...state.listState];
     if (isStart){
       listState[index] = true;
-      operatorOperTable.updateTimeStart(id, DateTime.now().millisecondsSinceEpoch);
+      operatorOperTable.updateTimeStart(id, DateTime.now().millisecondsSinceEpoch, userId);
     }
     else {
       listState[index] = false;

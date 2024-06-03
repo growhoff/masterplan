@@ -13,6 +13,7 @@ class Time extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userId = context.read<CubitMain>().state.user!.id;
     return BlocBuilder<CubitWork,StateWork>(
       builder:(context, stateWork) {
         final activePage = stateWork.activePage;
@@ -30,8 +31,8 @@ class Time extends StatelessWidget {
                       isActive: (statusBtn == 0) || (statusBtn == 1),
                       onPressed: () {
                         if (operActive.pause == null) context.read<CubitTimer>().firstStart(activePage, operActive.id);
-                        context.read<CubitTimer>().startOrStop(activePage, !state.listState[activePage], operActive.id);
-                        context.read<CubitWork>().setStartMonitor(0,context.read<CubitMain>().state.user!.id, 'start', operActive.id);
+                        context.read<CubitTimer>().startOrStop(activePage, !state.listState[activePage], operActive.id, userId);
+                        context.read<CubitWork>().setStartMonitor(0, userId, 'start', operActive.id);
                       }, 
                       icon: !state.listState[activePage] ? Icons.play_arrow_rounded : Icons.pause,
                       ),

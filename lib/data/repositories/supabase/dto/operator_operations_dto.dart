@@ -15,7 +15,7 @@ class OperatorOperationsDTO extends Dto {
   final int id;
   final int? timeplan;
   final bool? pause;
-  final int? timefact;
+  final int? timeFirstStart;
   final int statusId;
   final StatusDTO status;
   final int batchId;
@@ -44,7 +44,7 @@ class OperatorOperationsDTO extends Dto {
     required this.id,
     this.timeplan,
     this.pause,
-    this.timefact,
+    this.timeFirstStart,
     required this.statusId,
     required this.status,
     required this.batchId,
@@ -72,7 +72,7 @@ class OperatorOperationsDTO extends Dto {
     return <String, dynamic>{
       'id': id,
       'time_plan': timeplan,
-      'time_fact': timefact,
+      'time_first_start': timeFirstStart,
       'status_id': statusId,
       'status': status.toMap(),
       'batch_id': batchId,
@@ -99,7 +99,7 @@ class OperatorOperationsDTO extends Dto {
         id: map['id'] as int,
         timeplan: map['time_plan'] != null ? map['time_plan'] as int : null,
         pause: map['pause'] != null ? map['pause'] as bool : null,
-        timefact: map['time_fact'] != null ? map['time_fact'] as int : null,
+        timeFirstStart: map['time_first_start'] != null ? map['time_first_start'] as int : null,
         statusId: map['status_id'] as int,
         status: StatusDTO.fromMap(map['z_status'] as Map<String, dynamic>),
         batchId: map['batch_id'] as int,

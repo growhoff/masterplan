@@ -45,7 +45,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
             operationNumber: operation.operation.number,
             name: operation.operation.name,
             timePlan: DateTime.fromMillisecondsSinceEpoch(operation.timeplan ).toString(),
-            timeFact: DateTime.fromMillisecondsSinceEpoch(operation.timefact ).toString(),
+            timeFact: DateTime.fromMillisecondsSinceEpoch(operation.timeFirstStart ).toString(),
             machineName: operation.machine?.name ?? '',
             machineInventoryNumber: operation.machine?.inventoryNumber ?? 0,
             fio: operation.user?.fio ?? '',
@@ -111,7 +111,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
             inventoryNumber: dto.machine?.inventoryNumber ?? 0,
             name: dto.machine?.name ?? 'empty_machine_name',
             areaId: 0),
-        timefact: dto.timefact ?? 0,
+        timeFirstStart: dto.timeFirstStart ?? 0,
         status: Status(id: dto.status.id, name: dto.status.name),
         batch: Batch(
             id: dto.batch.id,

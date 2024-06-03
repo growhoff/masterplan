@@ -11,7 +11,7 @@ class OperatorOperations {
   final int id;
   final int timeplan;
   final bool? pause;
-  final int timefact;
+  final int timeFirstStart;
   final Status status;
   final Batch batch;
   final StageDTO stage;
@@ -29,7 +29,7 @@ class OperatorOperations {
     required this.id,
     required this.timeplan,
     this.pause,
-    required this.timefact,
+    required this.timeFirstStart,
     required this.status,
     required this.batch,
     required this.stage,
@@ -50,7 +50,7 @@ class OperatorOperations {
     int? id,
     int? timeplan,
     bool? pause,
-    int? timefact,
+    int? timeFirstStart,
     Status? status,
     Batch? batch,
     StageDTO? stage,
@@ -69,7 +69,7 @@ class OperatorOperations {
         id: id ?? this.id,
         timeplan: timeplan ?? this.timeplan,
         pause: pause ?? this.pause,
-        timefact: timefact ?? this.timefact,
+        timeFirstStart: timeFirstStart ?? this.timeFirstStart,
         status: status ?? this.status,
         batch: batch ?? this.batch,
         stage: stage ?? this.stage,

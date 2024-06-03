@@ -171,13 +171,13 @@ class OperatorOperationsTable extends SupabaseTable {
     await table.update({'order': order}).eq('id', id);
   }
 
-  Future<void> updateTimeStart(int id, int timeStart) async {
-    await table.update({'time_start': timeStart, 'pause': false}).eq('id', id);
+  Future<void> updateTimeStart(int id, int timeStart, int userId) async {
+    await table.update({'time_start': timeStart, 'pause': false, 'user_id': userId}).eq('id', id);
   }
 
   Future<void> setFirstTimeStart(int id, int timeStart) async {
     await table.update({
-      'time_fact': timeStart,
+      'time_first_start': timeStart,
       'time_start': timeStart,
       'status_id': 7,
       'pause': false
@@ -192,11 +192,12 @@ class OperatorOperationsTable extends SupabaseTable {
     }).eq('id', id);
   }
 
-  Future<void> updateTimeStopAndReady(int id, int timeStop, int seconds) async {
+  Future<void> updateTimeStopAndReady(int id, int timeStop, int seconds, int userId) async {
     await table.update({
       'time_stop': timeStop,
       'status_id': 6,
-      'time_working': seconds
+      'time_working': seconds,
+      'user_id': userId
     }).eq('id', id);
   }
 }

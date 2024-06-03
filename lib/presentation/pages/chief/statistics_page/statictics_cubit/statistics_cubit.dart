@@ -121,7 +121,7 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
           id: operatorOperationsDto.status.id,
           name: operatorOperationsDto.status.name);
 
-      operation?.timeFact = operatorOperationsDto.timefact;
+      operation?.timeFact = operatorOperationsDto.timeFirstStart;
 
       operation?.timePlan = operatorOperationsDto.timeplan;
 
@@ -256,7 +256,7 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
               ?.operationsList[index]
               .readyOperationsList
               .add(ReadyOperationModel(
-                timeFact: operatorOperationDto.timefact,
+                timeFact: operatorOperationDto.timeFirstStart,
                 timePlan: operatorOperationDto.timeplan,
                 timeStart: operatorOperationDto.timestart,
                 timeStop: operatorOperationDto.timestop,

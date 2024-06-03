@@ -26,7 +26,7 @@ class TableCard extends StatelessWidget {
             itemBuilder: (context, index) => RowList(
                 text1: '${list[index].batch.number} ${list[index].batch.name}',
                 text2: '${list[index].operation.number} ${list[index].operation.name}',
-                text3: '${list[index].timefact}'),
+                text3: '${list[index].timeFirstStart}'),
             itemCount: list.length,
           ),
         ],
