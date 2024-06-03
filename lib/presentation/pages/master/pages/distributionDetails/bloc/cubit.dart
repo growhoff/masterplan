@@ -50,7 +50,7 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
       for (var eOper in list) {
         if (eSet == eOper.chiefBatchId) listCash.add(eOper);
       }
-      listModelBatch.add(SetModelBatch(chiefBatchId: eSet, batchId: list.first.batchId, list: listCash));
+      listModelBatch.add(SetModelBatch(chiefBatchId: eSet, batchId: listCash.first.batchId, list: listCash));
     }
 
     //создание списка операций new
