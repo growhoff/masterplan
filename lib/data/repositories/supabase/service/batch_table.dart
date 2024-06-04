@@ -48,4 +48,8 @@ class BatchTable extends SupabaseTable {
   Future<void> update(int id, Dto dto) {
     return table.update({'name': '1'}).eq('id', id);
   }
+
+  stream(){
+    return table.stream(primaryKey: ['id']).order('id', ascending: true);
+  }
 }

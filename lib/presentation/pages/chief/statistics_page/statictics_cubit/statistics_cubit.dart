@@ -363,6 +363,8 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
       operationInList?.areaNumber = operatorOperationsDto.area!.number;
 
       switch (operatorOperationsDto.statusId) {
+        case 3:
+          operationInList?.inWorkQuantity++;
         case 4:
           operationInList?.modificationQuantity++;
         case 5:
@@ -376,12 +378,12 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
 
       }
 
-      final totalOperationsQuantity =
-          stagesMap[operatorOperationsDto.stageId]!.operationsQuantity *
-              stagesMap[operatorOperationsDto.stageId]!.detailsQuantity;
+      // final totalOperationsQuantity =
+      //     stagesMap[operatorOperationsDto.stageId]!.operationsQuantity *
+      //         stagesMap[operatorOperationsDto.stageId]!.detailsQuantity;
 
       operationInList?.readyPercent =
-          ((operationInList.readyQuantity / totalOperationsQuantity) * 100)
+          ((operationInList.readyQuantity / stagesMap[operatorOperationsDto.stageId]!.detailsQuantity) * 100)
               .round();
     }
 

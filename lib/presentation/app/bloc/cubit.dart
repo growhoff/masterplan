@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/data/repositories/supabase/dto/machine_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/shifts_distribution_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/user_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/machine_table.dart';
@@ -8,12 +7,9 @@ import 'package:master_plan/data/repositories/supabase/service/shifts_distributi
 import 'package:master_plan/data/repositories/supabase/service/user_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/staff_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/version_table.dart';
-import 'package:master_plan/domain/model/batch.dart';
 import 'package:master_plan/domain/model/machine.dart';
-import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/domain/model/position.dart';
 import 'package:master_plan/domain/model/shifts_distribution.dart';
-import 'package:master_plan/domain/model/status.dart';
 import 'package:master_plan/domain/model/user.dart';
 import 'package:path/path.dart';
 import '../../../domain/usecase/company_service.dart';
@@ -41,7 +37,6 @@ class CubitMain extends Cubit<StateMain> {
           switch (state.user!.position.id) {
           //начальник
             case 2:
-            // emit(state.copyWith(unit: await getUnitZ(state.user!.unit!.id)));
               break;
           //мастер
             case 3:
@@ -98,38 +93,6 @@ class CubitMain extends Cubit<StateMain> {
       listId.add(machine.id);
     }
     emit(state.copyWith(machineList: listMachine, machineIdList: listId));
-  }
-
-  //master
-  OperatorOperations convertDto(OperatorOperationsDTO dto) {
-    return OperatorOperations(
-      id: dto.id,
-      area: dto.area!,
-      operation: dto.operation,
-      stage: dto.stage!,
-      timeplan: dto.timeplan ?? 0,
-      timeFirstStart: dto.timeFirstStart ?? 0,
-      timestart: dto.timestart,
-      timestop: dto.timestop,
-      timeworking: dto.timeworking,
-      status: Status(id: dto.status.id, name: dto.status.name),
-      batch: Batch(
-          id: dto.batch.id,
-          number: dto.batch.number,
-          name: dto.batch.name,
-          count: dto.batch.count,
-          code: dto.batch.code,
-          packageId: dto.batch.packageId,
-          technology: dto.batch.technology,
-          order: dto.batch.order,
-          isready: dto.batch.isready),
-      order: dto.order,
-      machine: Machine(
-          id: dto.machine!.id,
-          inventoryNumber: dto.machine!.inventoryNumber,
-          name: dto.machine!.name,
-          areaId: dto.areaId),
-    );
   }
 
   //master

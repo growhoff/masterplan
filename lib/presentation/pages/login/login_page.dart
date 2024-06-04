@@ -34,7 +34,10 @@ class ContentLogin extends StatelessWidget {
         appBar: AppBar(
           centerTitle: true,
           title: const Text('MasterPlan'),
-          actions: [Center(child: Text(context.read<CubitMain>().state.version)), const SizedBox(width: 10)],
+          actions: [
+            Center(child: Text(context.read<CubitMain>().state.version)),
+            const SizedBox(width: 10)
+          ],
         ),
         body: SafeArea(
           child: Container(
@@ -61,24 +64,50 @@ class ContentLogin extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () async {
                       context.read<CubitLogin>().setBtn();
-                      final isResult = await context.read<CubitMain>().save(numberController.text, passwordController.text);
+                      final isResult = await context
+                          .read<CubitMain>()
+                          .save(numberController.text, passwordController.text);
                       switch (isResult) {
                         case 'не оплачено':
-                          if (context.mounted)  showDialog(context: context,builder: (ctx) => const DialogPay());
+                          if (context.mounted)
+                            showDialog(
+                                context: context,
+                                builder: (ctx) => const DialogPay());
                         case 'Директор':
                           break;
                         case 'Начальник':
-                          if (context.mounted) Navigator.pushNamed(context, '/chiefPage');
+                          if (context.mounted)
+                            Navigator.pushNamed(context, '/chiefPage');
                         case 'Мастер':
-                          if (context.mounted) Navigator.pushNamed(context, '/masterPage');
+                          if (context.mounted)
+                            Navigator.pushNamed(context, '/masterPage');
                         case 'Оператор':
-                          if (context.mounted) Navigator.pushNamed(context, '/operatorPage');
+                          if (context.mounted)
+                            Navigator.pushNamed(context, '/operatorPage');
+                        case 'Диспетчер':
+                          if (context.mounted)
+                            Navigator.pushNamed(context, '/dispatcherPage');
+                        case 'Технолог':
+                          if (context.mounted)
+                            Navigator.pushNamed(context, '/technologistPage');
                         case 'Ошибка_версий':
-                          if (context.mounted) showDialog(context: context, builder: (BuildContext context) => const DialogVersion());
+                          if (context.mounted)
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) =>
+                                    const DialogVersion());
                         case 'Ошибка_авторизации_1':
-                          if (context.mounted) showDialog(context: context, builder: (BuildContext context) => const DialogAuth(1));
+                          if (context.mounted)
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) =>
+                                    const DialogAuth(1));
                         case 'Ошибка_авторизации_2':
-                          if (context.mounted) showDialog( context: context, builder: (BuildContext context) => const DialogAuth(2));
+                          if (context.mounted)
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) =>
+                                    const DialogAuth(2));
                       }
                       numberController.clear();
                       passwordController.clear();
@@ -86,7 +115,12 @@ class ContentLogin extends StatelessWidget {
                     child: BlocBuilder<CubitLogin, StateLogin>(
                         builder: (context, state) => !state.isSelect
                             ? const Text('Войти')
-                            : const SizedBox(width: 12,height: 12,child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white)))),
+                            : const SizedBox(
+                                width: 12,
+                                height: 12,
+                                child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white)))),
                   ),
                 ),
               ],

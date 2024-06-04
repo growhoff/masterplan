@@ -32,7 +32,7 @@ class CubitQueueMaster extends Cubit<StateQueueMaster> {
     for (var element in data!) {
       if (element['status_id'] as int == 3) listId.add(element['id']);
     }
-    final quere = await tableOperations.selectListIdNew(listId);
+    final quere = await tableOperations.selectListIdOrder(listId);
     List<OperatorOperationsDTO> queueList = [];
     for (var item in quere) {
       queueList.add(OperatorOperationsDTO.fromMap(item));

@@ -31,7 +31,7 @@ class CubitWork extends Cubit<StateWork> {
     Future<void> getQuere (List<Map<String, dynamic>>? data)async{
     List<int> listId = [];
     for (var element in data!) {if (element['status_id'] == 3 || element['status_id'] == 6 || element['status_id'] == 7 || element['status_id'] == 8) listId.add(element['id']);}
-    final quere = await operatorOperationsTable.selectIdListNew(listId);
+    final quere = await operatorOperationsTable.selectListIdOrder(listId);
     List<OperatorOperations> operatorOperationsList = [];
       for (var operatorOper in quere) {
         final model = OperatorOperationsDTO.fromMap(operatorOper);

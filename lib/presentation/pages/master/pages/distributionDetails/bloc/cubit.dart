@@ -23,12 +23,14 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
   }
 
     Future<void> getQuere (List<Map<String, dynamic>>? data)async{
-    List<int> listId = [];
+    // List<int> listId = [];
+    Set<int> listId = {};
     for (var element in data!) {
-      if ((element['status_id'] as int == 2) || (element['status_id'] as int == 4) || (element['status_id'] as int == 6)) listId.add(element['id']);
+      // if ((element['status_id'] as int == 2) || (element['status_id'] as int == 4) || (element['status_id'] as int == 6)) listId.add(element['id']);chief_batch_id
+       if ((element['status_id'] as int == 2) || (element['status_id'] as int == 4) || (element['status_id'] as int == 6)) listId.add(element['chief_batch_id']);
     }
-    final table = OperatorOperationsTable();
-    final quere = await table.selectListIdNew(listId);
+    // final quere = await tableOperations.selectListIdOrder(listId);
+    final quere = await tableOperations.selectListChiefBatchIdOrder(listId.toList());
     List<OperatorOperationsDTO> list = [];
     Set<int> setChiefBatchId = {};
     Set<int> setBatchId = {};
@@ -61,12 +63,12 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
       for (var elSearch in listSearch) {
         //проход по операциям
         if (iModBatch.batchId == elSearch.batchId){
-          // equalListOper(iModBatch.list, elSearch.list);
+          // сравнение двух листо операций и order
           for (var order in elSearch.list) {
             bool next = false;
             for (var item in iModBatch.list) {
               if (item.operationId == order) {
-                if (item.statusId == 2 || item.statusId == 4) {listReady.add(item);break;}
+                if ((item.statusId == 2 || item.statusId == 4) && item.areaId == areaIdUser) {listReady.add(item);break;}
                 if (item.statusId == 6) next = true;
               }
             }

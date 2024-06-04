@@ -80,7 +80,7 @@ class _OperationsStatisticsPageViewState
                         columnWidths: const {
                           0: FlexColumnWidth(4),
                           1: FlexColumnWidth(1),
-                          2: FlexColumnWidth(2),
+                          2: FlexColumnWidth(1.5),
                           3: FlexColumnWidth(3),
                           4: FlexColumnWidth(1),
                           5: FlexColumnWidth(1),
