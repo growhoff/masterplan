@@ -133,7 +133,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
             technology: dto.batch.technology,
             order: dto.batch.order,
             isready: dto.batch.isready,
-            packageId: dto.batch.packageId),
+            orderId: dto.batch.orderId),
         stage: dto.stage ?? StageDTO.empty,
         operation: dto.operation,
         area: dto.area ?? AreaDTO(id: 0, name: '', number: '', unitId: 0));

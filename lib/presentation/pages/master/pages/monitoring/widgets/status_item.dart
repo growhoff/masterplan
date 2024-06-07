@@ -31,7 +31,7 @@ class StatusItem extends StatelessWidget {
                     Expanded(flex: 2,child: Text(context.read<CubitMonitoring>().convertTimeZone(item.timeStart))),
                     Expanded(flex: 2,child: Text(context.read<CubitMonitoring>().convertTimeZone(item.timeEnd))),
                     Expanded(flex: 2,child: Text(context.read<CubitMonitoring>().differenceTime(item.timeWorking))),
-                    Expanded(child: Text('${((item.timeWorking / 720) * 100).round()}%')),
+                    Expanded(child: Text('${((item.timeWorking / 43200) * 100).round()}%')),
               ],
             ),
             const SizedBox(height: 8),

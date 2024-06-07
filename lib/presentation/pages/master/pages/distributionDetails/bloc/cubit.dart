@@ -9,6 +9,7 @@ import 'package:master_plan/presentation/pages/master/pages/distributionDetails/
 import 'package:master_plan/presentation/pages/master/pages/distributionDetails/model/set_model_chief.dart';
 import 'state.dart';
 import 'package:collection/collection.dart';
+import 'dart:math';
 
 class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
   final int areaIdUser;
@@ -27,7 +28,7 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
     Set<int> listId = {};
     for (var element in data!) {
       // if ((element['status_id'] as int == 2) || (element['status_id'] as int == 4) || (element['status_id'] as int == 6)) listId.add(element['id']);chief_batch_id
-       if ((element['status_id'] as int == 2) || (element['status_id'] as int == 4) || (element['status_id'] as int == 6)) listId.add(element['chief_batch_id']);
+       if ((element['status_id'] as int == 2) || (element['status_id'] as int == 4) || (element['status_id'] as int == 6) || (element['status_id'] as int == 9)) listId.add(element['chief_batch_id']);
     }
     // final quere = await tableOperations.selectListIdOrder(listId);
     final quere = await tableOperations.selectListChiefBatchIdOrder(listId.toList());
@@ -69,7 +70,7 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
             for (var item in iModBatch.list) {
               if (item.operationId == order) {
                 if ((item.statusId == 2 || item.statusId == 4) && item.areaId == areaIdUser) {listReady.add(item);break;}
-                if (item.statusId == 6) next = true;
+                if (item.statusId == 6 || item.statusId == 9) next = true;
               }
             }
             if (!next) break;
@@ -85,8 +86,15 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
       final batchId = listName[0];
       final stageId = listName[1];
       final operId = listName[2];
-      List<OperatorOperationsDTO> listTrue = listReady.where((el) => (int.parse(batchId) == el.batchId) && (int.parse(stageId) == el.stageId) && (int.parse(operId) == el.operationId)).toList();
-      if (listTrue.isNotEmpty) listResOper.add(convertToDistrib(listTrue));
+      //разделение на два массива с доработкой и на распределении
+      List<OperatorOperationsDTO> listTrue2 = [];
+      List<OperatorOperationsDTO> listTrue4 = [];
+      for (var el in listReady) {
+        if ((int.parse(batchId) == el.batchId) && (int.parse(stageId) == el.stageId) && (int.parse(operId) == el.operationId) && (el.statusId == 2)) listTrue2.add(el);
+        if ((int.parse(batchId) == el.batchId) && (int.parse(stageId) == el.stageId) && (int.parse(operId) == el.operationId) && (el.statusId == 4)) listTrue4.add(el);
+      }
+      if (listTrue2.isNotEmpty) listResOper.add(convertToDistrib(listTrue2));
+      if (listTrue4.isNotEmpty) listResOper.add(convertToDistrib(listTrue4));
     }
     emit(state.copyWith(operList: listResOper, isLoading: false));
   }
@@ -129,9 +137,9 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
   }
 
   void toggleSelect(int index){
-    List<DistribItem> list = [...state.operList];
-    DistribItem item = state.operList[index];
-    bool select = state.operList[index].isSelected;
+    List<DistribItem> list = [...state.pathListOper];
+    DistribItem item = state.pathListOper[index];
+    bool select = state.pathListOper[index].isSelected;
     final newitem = item.copyWith(isSelected: !select);
     list.removeAt(index);
     list.insert(index,newitem);
@@ -139,8 +147,8 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
   }
 
   void setMachine(int index, String machine){
-    List<DistribItem> list = [...state.operList];
-    DistribItem item = state.operList[index];
+    List<DistribItem> list = [...state.pathListOper];
+    DistribItem item = state.pathListOper[index];
     final newitem = item.copyWith(setMachine: machine);
     list.removeAt(index);
     list.insert(index,newitem);
@@ -150,9 +158,9 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
   void setCount(int index, String countStr){
       if (countStr == '') {countStr = '0';}
       int count = int.parse(countStr);
-      if (count > state.operList[index].listOperat.length) {count = state.operList[index].listOperat.length;}
-      List<DistribItem> list = [...state.operList];
-      DistribItem item = state.operList[index];
+      if (count > state.pathListOper[index].listOperat.length) {count = state.pathListOper[index].listOperat.length;}
+      List<DistribItem> list = [...state.pathListOper];
+      DistribItem item = state.pathListOper[index];
       final newitem = item.copyWith(setCount: count);
       list.removeAt(index);
       list.insert(index,newitem);
@@ -162,26 +170,80 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
   void setOptPath(int index, String countStr){
       if (countStr == '') {countStr = '1';}
       int count = int.parse(countStr);
-      List<DistribItem> list = [...state.operList];
-      DistribItem item = state.operList[index];
+      if (count > state.pathListOper[index].listOperat.length) {count = state.pathListOper[index].listOperat.length;}
+      List<DistribItem> list = [...state.pathListOper];
+      DistribItem item = state.pathListOper[index];
       final newitem = item.copyWith(setOptPart: count);
       list.removeAt(index);
       list.insert(index,newitem);
       emit(state.copyWith(operList: list));
   }
 
+  int getRandom(){
+    var rng = Random();
+    return rng.nextInt(1000000);
+  }
+
   void updateOperation(){
-    final table = OperatorOperationsTable();
-    for (var oper in state.operList) {
-      if ((oper.setCount != null) && (oper.setCount != 0) && (oper.setMachine != '')) {
+    for (var pathOper in state.pathListOper) {
+      //проверяем заполнены ли поля
+      if ((pathOper.setCount != null) && (pathOper.setCount != 0) && (pathOper.setMachine != '')) {
+        //проходим по списку машин и сравниваем
         for (var machine in listMachine) {
-          if (machine.name == oper.setMachine) {
+          if (machine.name == pathOper.setMachine) {
+            //считаем остаток
+            final int countRemains = pathOper.setCount! % pathOper.setOptPart!;
+            // final int countFull = pathOper.setCount! ~/ pathOper.setOptPart!;
             List<int> listId = [];
-            for (var i = 0; i < oper.setCount!; i++) {
-              listId.add(oper.listOperat[i].id); 
+            List<OperatorOperationsDTO> list = pathOper.listOperat;
+            if (pathOper.setCount == pathOper.setOptPart){
+              //выгружаем нужное количество операций
+              for (var i = 0; i < pathOper.setCount!; i++) {
+                listId.add(list[i].id);
+              }
+              //меняем статус этих операций
+              tableOperations.updateMasterQueueListPath(listId, machine.id, getRandom());
+            } else{
+              //если остатка нет
+              if (countRemains == 0){
+                //countFull
+                for (var i = 0; i < pathOper.setCount!; i++) {
+                  listId.add(list[i].id);
+                  if ((listId.length) == pathOper.setOptPart) {
+                    tableOperations.updateMasterQueueListPath(listId, machine.id, getRandom()); 
+                    listId.clear();
+                  }
+                }
+              }else{
+                //countRemains
+                final ll = list.getRange(0, countRemains).toList();
+                for (var e in ll) {
+                  listId.add(e.id);
+                }
+                list.removeRange(0, countRemains);
+                tableOperations.updateMasterQueueListPath(listId, machine.id, getRandom());
+                listId.clear();
+
+                //countFull
+                for (var i = 0; i < pathOper.setCount!-countRemains; i++) {
+                  listId.add(list[i].id);
+                  if ((listId.length) == pathOper.setOptPart) {
+                    tableOperations.updateMasterQueueListPath(listId, machine.id, getRandom()); 
+                    listId.clear();
+                  }
+                }
+              }
             }
-            table.updateMasterQueueList(listId, machine.id);
-            }
+            
+            
+            // List<int> listId = [];
+            //выгружаем нужное количество операций
+            // for (var i = 0; i < pathOper.setCount!; i++) {
+              // listId.add(pathOper.listOperat[i].id);
+            // }
+            //меняем статус этих операций
+            // tableOperations.updateMasterQueueList(listId, machine.id);
+          }
         }
       }
     }

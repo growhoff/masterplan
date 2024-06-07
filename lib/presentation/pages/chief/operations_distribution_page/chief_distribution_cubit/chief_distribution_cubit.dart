@@ -100,16 +100,11 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
 
   Future<void> loadStageFromExcel() async {
     emit(state.copyWith(status: DistributionPageStatus.loading));
-    try{
+    try {
       await _excelStageLoadService.stageExcelFunction();
-    }
-    catch(e){
-
-    }
+    } catch (e) {}
 
     fetchChiefOperations();
-
-    // await _excelStageLoadService.finishLoading();
   }
 
   Future<void> sendOperationsToDistribution() async {

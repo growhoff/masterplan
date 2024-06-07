@@ -16,7 +16,9 @@ class QueuePage extends StatelessWidget {
   Widget build(BuildContext context) {
     int timeMachine = 0;
     for (var element in dataPage.operQueueList) {
-      timeMachine += element.timeplan;
+      for (var e in element.list) {
+        timeMachine += e.timeplan;
+      }
     }
 
     return GestureDetector(
@@ -48,13 +50,13 @@ class QueuePage extends StatelessWidget {
                   const SizedBox(height: 8),
                   const Text('Готовые операции'),
                   const SizedBox(height: 8),
-                  TableCard(color: Colors.greenAccent ,list: dataPage.operReadyList, heder: const RowList(text1: 'Деталь', text2: 'Операция', text3: 'Время обработки',)),
+                  TableCard(color: Colors.greenAccent ,list: dataPage.operReadyList, heder: const RowList(text1: 'Деталь', text2: 'Операция', text3: 'Время обработки', text4: 'Кол. опт. партии')),
                   const SizedBox(height: 8),
                   const Divider(),
                   const SizedBox(height: 8),
                   const Text('Операции в очереди'),
                   const SizedBox(height: 8),
-                  TableCard(color: Colors.amberAccent ,list: dataPage.operQueueList, heder: const RowList(text1: 'Деталь', text2: 'Номер', text3: 'Время обработки',))
+                  TableCard(color: Colors.amberAccent ,list: dataPage.operQueueList, heder: const RowList(text1: 'Деталь', text2: 'Номер', text3: 'Время обработки', text4: 'Кол. опт. партии'))
                 ],
               )
         ),

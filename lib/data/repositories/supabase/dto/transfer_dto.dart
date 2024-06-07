@@ -4,7 +4,7 @@ import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 
 class TransferDTO extends Dto {
   final int id;
-  final int number;
+  final int? number;
   final String name;
   final String code;
   final int timesh;
@@ -32,7 +32,7 @@ class TransferDTO extends Dto {
   factory TransferDTO.fromMap(Map<String, dynamic> map) {
     return TransferDTO(
       id: map['id'] as int,
-      number: map['number'] as int,
+      number: map['number'] != null ? map['number'] as int : null,
       name: map['name'] as String,
       code: map['code'] as String,
       timesh: map['time_sh'] as int,

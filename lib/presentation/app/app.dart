@@ -16,9 +16,12 @@ import 'package:master_plan/presentation/pages/login/login_page.dart';
 import 'package:master_plan/presentation/pages/master/pages/addOperation/add_operation_page.dart';
 import 'package:master_plan/presentation/pages/operator/operator_page.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/work_page.dart';
+import 'package:master_plan/presentation/pages/technologist/archive_page/archive_stages_page.dart';
 import '../../theme/theme.dart';
 import '../pages/dispatcher/widgets/custom_navbar.dart';
 import '../pages/master/maste_page.dart';
+import '../pages/technologist/archive_page/archive_operations_page.dart';
+import '../pages/technologist/archive_page/archive_transfers_page.dart';
 import '../pages/technologist/widgets/custom_navbar.dart';
 import 'bloc/cubit.dart';
 
@@ -51,6 +54,10 @@ class MyApp extends StatelessWidget {
           '/chiefStageReport': (BuildContext context) => const ChiefStatisticsPage(),
           '/dispatcherPage': (BuildContext context) => const DispatcherCustomNavBar(),
           '/technologistPage': (BuildContext context) => const TechnologistCustomNavBar(),
+          '/archiveStagesPage': (BuildContext context) => const ArchiveStagesPage(),
+          '/archiveOperationsPage': (BuildContext context) => const ArchiveOperationsPage(),
+          '/archiveTransferPage': (BuildContext context) => const ArchiveTransfersPage(),
+
 
         },
         home: const LoginPage(),

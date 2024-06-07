@@ -19,6 +19,8 @@ class OperatorOperations {
   final AreaDTO area;
   final Machine? machine;
   final int? order;
+  final int? optimalPart;
+
   final int? timestart;
   final int? timestop;
   final int? timeworking;
@@ -37,6 +39,8 @@ class OperatorOperations {
     required this.area,
     this.machine,
     this.order,
+    this.optimalPart,
+
     this.timestart,
     this.timestop,
     this.timeworking,
@@ -58,6 +62,7 @@ class OperatorOperations {
     AreaDTO? area,
     Machine? machine,
     int? order,
+    int? optimalPart,
     int? timestart,
     int? timestop,
     int? timeworking,
@@ -77,6 +82,7 @@ class OperatorOperations {
         area: area ?? this.area,
         machine: machine ?? this.machine,
         order: order ?? this.order,
+        optimalPart: optimalPart ?? this.optimalPart,
         timestart: timestart ?? this.timestart,
         timestop: timestop ?? this.timestop,
         timeworking: timeworking ?? this.timeworking,

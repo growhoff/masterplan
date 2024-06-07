@@ -25,6 +25,23 @@ class ChiefBatchTable extends SupabaseTable {
     return 0;
   }
 
+  Future<List<int>> bulkInsert({required List<ChiefBatchDTO> dtosList})async{
+
+    List<Map<String, Object>> mapsList = [];
+    List<int> idsList = [];
+
+    for (var dto in dtosList){
+      mapsList.add({'batch_id': dto.batchId});
+    }
+
+    var fetchedIdsList = await table.insert(mapsList).select('id');
+    for (var fetchedId in fetchedIdsList){
+      idsList.add(fetchedId['id']);
+    }
+    print(idsList);
+    return idsList;
+  }
+
   @override
   Future<List<Map<String, dynamic>>> select() async {
     return await table.select('*, z_batch(*)');

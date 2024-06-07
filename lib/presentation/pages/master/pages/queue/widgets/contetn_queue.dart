@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/domain/model/machine.dart';
-import 'package:master_plan/domain/model/operator_operations.dart';
-
+// import 'package:master_plan/domain/model/operator_operations.dart';
+import 'package:master_plan/presentation/pages/master/pages/queue/model/item_oper.dart';
 import '../bloc/cubit.dart';
 import 'reorder_widget.dart';
 
 class ContetnQueue extends StatelessWidget {
   const ContetnQueue({super.key, required this.batchListQueue, required this.machine, required this.timeWorking});
-  final List<OperatorOperations> batchListQueue;
+  final List<ItemOper> batchListQueue;
   final Machine machine;
   final int timeWorking;
 

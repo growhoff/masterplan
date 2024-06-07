@@ -84,7 +84,7 @@ class ExcelService {
   ];
 
   static const List<String> readyOperationsHeaderList = [
-    'код операции',
+    'номер операции',
     '№ детали',
     'наименование операции',
     'наименование перехода',
@@ -99,7 +99,8 @@ class ExcelService {
     '№ участка',
     'Брак',
     'Доработка',
-    'Кол-во'
+    'Кол-во',
+    'Комментарий'
   ];
 
   Future<int> stageExcelFunction() async {
@@ -139,7 +140,7 @@ class ExcelService {
           technology: technologyNumber,
           order: 1,
           isready: false,
-          packageId: 0,
+          orderId: 0,
         ));
 
         serviceBatchId = batchId;
@@ -306,14 +307,23 @@ class ExcelService {
   }
 
   Future<void> finishLoading() async {
-    int quantity = serviceQuantity;
-    int batchId = serviceBatchId;
+    print('начали финищ лоадинг');
+    List<ChiefBatchDTO> chiefBatchDtosList = [];
+    List<ChiefOperationDto> chiefOperationDtosList = [];
+    List<int> chiefBatchIdsList = [];
     for (int i = 0; i < serviceQuantity; i++) {
-      int chiefBatchId = await _chiefBatchTable.insert(
-          ChiefBatchDTO(id: 0, batchId: serviceBatchId, batch: BatchDTO.empty));
+      print('$i');
 
+      chiefBatchDtosList.add(
+          ChiefBatchDTO(id: 0, batchId: serviceBatchId, batch: BatchDTO.empty));
+    }
+
+    chiefBatchIdsList =
+        await _chiefBatchTable.bulkInsert(dtosList: chiefBatchDtosList);
+
+    for (int chiefBatchId in chiefBatchIdsList) {
       for (var operation in chiefOperationsList) {
-        await _chiefOperationTable.insert(ChiefOperationDto(
+        chiefOperationDtosList.add(ChiefOperationDto(
             id: 0,
             operation: OperationDTO.empty,
             stage: StageDTO.empty,
@@ -324,6 +334,8 @@ class ExcelService {
       }
     }
 
+    print('финиш лоадинг булк инсерт начал');
+    await _chiefOperationTable.bulkInsert(dtosList: chiefOperationDtosList);
     chiefDistributionsOperationsIdList.forEach((element) {
       _chiefDistributionOperationsTable.updateQuantity(
           chiefOperationId: element, newQuantity: serviceQuantity);
@@ -333,6 +345,166 @@ class ExcelService {
     chiefOperationsList = [];
     serviceQuantity = 0;
     chiefDistributionsOperationsIdList = [];
+    print('финиш лоадинг закончил');
+  }
+
+  Future<int> loadDetailToArchive() async {
+    FilePickerResult? pickedFile = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['xlsx'],
+    );
+
+    var path = pickedFile?.paths.first;
+
+    if (pickedFile != null) {
+      var bytes = File(path!).readAsBytesSync();
+
+      var excel = Excel.decodeBytes(bytes);
+
+      for (var table in excel.tables.keys) {
+        int quantity =
+            int.parse(excel.tables[table]!.rows[1][13]!.value.toString());
+        serviceQuantity = quantity;
+
+        String code = excel.tables[table]!.rows[1][0]!.value
+            .toString(); // присваивается значение первой ячейки столбца номер чертежа
+
+        String technologyNumber =
+            excel.tables[table]!.rows[1][1]!.value.toString();
+
+        String planNumber = excel.tables[table]!.rows[1][2]!.value.toString();
+
+        String planName = excel.tables[table]!.rows[1][3]!.value.toString();
+
+        int batchId = await _batchTable.insert(BatchDTO(
+          id: 0,
+          number: planNumber,
+          name: planName,
+          count: quantity,
+          code: code,
+          technology: technologyNumber,
+          order: 1,
+          isready: false,
+          orderId: 0,
+        ));
+
+        serviceBatchId = batchId;
+
+        String? stageNumber =
+            excel.tables[table]!.rows[1][14]?.value.toString();
+        String? stageName = excel.tables[table]!.rows[1][5]?.value.toString();
+
+        int stageId = await _stageTable.insert(StageDTO(
+            id: 0,
+            number: stageNumber ?? '',
+            name: stageName ?? '',
+            isdistributed: false,
+            areaId: 0,
+            batchId: batchId));
+
+        print('инсерт stage: $stageNumber,  $stageName, $stageId');
+
+        String? operationCode =
+            excel.tables[table]!.rows[1][6]?.value.toString();
+        String? operationNumber =
+            excel.tables[table]!.rows[1][7]?.value.toString();
+        String? operationName =
+            excel.tables[table]!.rows[1][8]?.value.toString();
+        int timepz = (int.parse(
+            (excel.tables[table]!.rows[1][11]!.value ?? 0).toString()));
+        int transferTimeSH = int.parse(
+            (excel.tables[table]!.rows[1][12]!.value ?? 0).toString());
+
+        int operationTimeSH = transferTimeSH;
+
+        int operationId = await _operationTable.insert(OperationDTO(
+          id: 0,
+          number: operationNumber ?? '',
+          name: operationName ?? '',
+          code: operationCode ?? '',
+          timepz: timepz,
+          timeSH: operationTimeSH,
+          stageId: stageId,
+        ));
+
+        print(
+            'инсерт операцию: $operationCode, $operationNumber, $operationName, transferTimeSH: ${operationTimeSH}');
+
+        String? transferCode;
+        String? transferName;
+        if (excel.tables[table]!.rows[1][9]?.value != null) {
+          transferCode = excel.tables[table]!.rows[1][9]!.value.toString();
+          transferName = excel.tables[table]!.rows[1][10]?.value.toString();
+          _transferTable.insert(TransferDTO(
+              id: 0,
+              number: 0,
+              name: transferName ?? '',
+              code: transferCode,
+              timesh: 0,
+              operationId: operationId));
+          print('инсерт переход для операции $operationId : $transferName');
+        }
+
+        for (int i = 2; i < excel.tables[table]!.maxRows; i++) {
+          var row = excel.tables[table]!.rows;
+
+          if (row[i][4]?.value != null) {
+            stageNumber = row[i][14]?.value.toString();
+            stageName = row[i][5]?.value.toString();
+            stageId = await _stageTable.insert(StageDTO(
+                id: 0,
+                number: stageNumber ?? '',
+                name: stageName ?? '',
+                isdistributed: false,
+                areaId: 0,
+                batchId: batchId));
+
+            print('инсерт этап $stageNumber, $stageName, $stageId');
+          }
+
+          if (row[i][6]?.value != null) {
+            operationCode = row[i][6]?.value.toString();
+            operationNumber = row[i][7]?.value.toString();
+            operationName = row[i][8]?.value.toString();
+            if (row[i][11]?.value != null) {
+              timepz = (int.parse(row[i][11]!.value.toString()));
+            }
+            operationTimeSH = int.parse(row[i][12]!.value.toString());
+            print(
+                'добавляю операцию: $operationCode, $operationNumber, $operationName, operationTimeSH: $operationTimeSH');
+            operationId = await _operationTable.insert(OperationDTO(
+              id: 0,
+              number: operationNumber ?? '',
+              name: operationName ?? '',
+              code: operationCode ?? '',
+              timepz: timepz,
+              timeSH: operationTimeSH,
+              stageId: stageId,
+            ));
+          }
+
+          if (row[i][9]?.value != null) {
+            transferCode = row[i][9]!.value.toString();
+            transferName = row[i][10]?.value.toString();
+            transferTimeSH = int.parse(row[i][12]!.value.toString());
+            operationTimeSH = operationTimeSH + transferTimeSH;
+            print('operationTimeSH : $operationTimeSH');
+            _transferTable.insert(TransferDTO(
+                id: 0,
+                number: 0,
+                name: transferName ?? '',
+                code: transferCode,
+                timesh: transferTimeSH,
+                operationId: operationId));
+            print(
+                'сейчас буду обновлять  operationId: $operationId,  operationTimeSH : $operationTimeSH');
+            _operationTable.updateTimeSH(operationId, operationTimeSH);
+            print('инсерт переход для операции $operationId : $transferName');
+          }
+        }
+      }
+    }
+    return 1;
   }
 
   Future<String> uploadReport(
@@ -820,8 +992,7 @@ class ExcelService {
 
           case 2:
             cell.value = TextCellValue(
-                analyticsOperationsList[operationRowIndex].operationNumber +
-                    analyticsOperationsList[operationRowIndex].name);
+                '${analyticsOperationsList[operationRowIndex].operationNumber} ${analyticsOperationsList[operationRowIndex].name}');
           case 3:
             cell.value = TextCellValue('');
           case 4:
@@ -840,7 +1011,8 @@ class ExcelService {
             cell.value =
                 TextCellValue(analyticsOperationsList[operationRowIndex].fio);
           case 9:
-            cell.value = TextCellValue('');
+            cell.value =
+                TextCellValue(analyticsOperationsList[operationRowIndex].code);
           case 10:
             cell.value =
                 TextCellValue(analyticsOperationsList[operationRowIndex].date);
@@ -860,6 +1032,8 @@ class ExcelService {
           case 15:
             cell.value = IntCellValue(
                 analyticsOperationsList[operationRowIndex].quantity);
+          case 16:
+            cell.value = TextCellValue('');
         }
         cell.cellStyle = _cellTextStyle;
       }

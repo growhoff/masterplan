@@ -65,30 +65,7 @@ class _ChiefDistributionPageViewState extends State<ChiefDistributionPageView> {
                 ),
                 const SizedBox(height: 10),
                 state.status == DistributionPageStatus.success
-                    ? /*ExpansionPanelList(
-                        children: [
-                          ...List.generate(
-                              state.chiefOperationsList.length,
-                              (index) => ExpansionPanel(
-                                  isExpanded: context
-                                      .read<ChiefDistributionCubit>()
-                                      .isElementOpenList[index],
-                                  headerBuilder: (context, isOpen) =>
-                                      ChiefOperationDistributionTitleItem(
-                                          state.chiefOperationsList[index]),
-                                  body: ChiefOperationDistributionBodyItem(
-                                    operation:
-                                        state.chiefOperationsList[index],
-                                  )))
-                        ],
-                        expansionCallback: (i, isOpen) => setState(() {
-                          context
-                              .read<ChiefDistributionCubit>()
-                              .isElementOpenList[i] = isOpen;
-                        }),
-                      )
-
-                   */
+                    ?
                     Expanded(
                         child: ListView.separated(
                           physics: AlwaysScrollableScrollPhysics(),

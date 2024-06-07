@@ -8,11 +8,13 @@ import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/domain/model/shifts_distribution.dart';
 import 'package:master_plan/domain/model/status.dart';
+import 'package:master_plan/presentation/pages/operator/pages/work/model/item_oper.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/model/page_item.dart';
 import '../../../../../../data/repositories/supabase/dto/chief_operation_dto.dart';
 import '../../../../../../data/repositories/supabase/service/chief_batch_table.dart';
 import '../../../../../../data/repositories/supabase/service/chief_operation_table.dart';
 import 'state.dart';
+import 'package:collection/collection.dart';
 
 class CubitWork extends Cubit<StateWork> {
   final List<ShiftsDistribution>? zShiftsDistributionList;
@@ -28,6 +30,7 @@ class CubitWork extends Cubit<StateWork> {
       });
   }
 
+
     Future<void> getQuere (List<Map<String, dynamic>>? data)async{
     List<int> listId = [];
     for (var element in data!) {if (element['status_id'] == 3 || element['status_id'] == 6 || element['status_id'] == 7 || element['status_id'] == 8) listId.add(element['id']);}
@@ -37,21 +40,37 @@ class CubitWork extends Cubit<StateWork> {
         final model = OperatorOperationsDTO.fromMap(operatorOper);
         operatorOperationsList.add(convertDto(model));
       }
+
+    //группировка по оптимальной партии
+    List<ItemOperOp> listB = [];
+    var newMap = groupBy(operatorOperationsList, (el) => el.optimalPart);
+    newMap.forEach((key, value) {
+      List<OperatorOperations> list = [];
+      List<int> listId = [];
+      for (var element in value) {
+        list.add(element);
+        listId.add(element.id);
+      }
+      listB.add(ItemOperOp(idPath: key!, list: list, machineId: list.first.machine!.id, statusId: list.first.status.id, listId: listId, pause: list.first.pause));
+    });
+
     List<int> timeActive = [];
     List<PageItem> pageData = [];   
     List<int> statusBtn = [];
     List<bool> listStartBtn = [];
     List<bool> listStartTime = [];
 
+    //проход по списку машин в сменах
     for (var shiftsDistr in zShiftsDistributionList!) {
-      List<OperatorOperations> listOperReady = [];
-      List<OperatorOperations> listOperQueue = [];
-      OperatorOperations? operActive;
-      for (var operList in operatorOperationsList) {
-        if (shiftsDistr.machine.id == operList.machine!.id) {
-          if (operList.status.id == 6) listOperReady.add(operList);
-          if (operList.status.id == 3) listOperQueue.add(operList);
-          if (operList.status.id == 7) operActive = operList;
+      List<ItemOperOp> listOperReady = [];
+      List<ItemOperOp> listOperQueue = [];
+      ItemOperOp? operActive;
+      //проход по опт. операциям
+      for (var operPath in listB) {
+        if (shiftsDistr.machine.id == operPath.machineId) {
+          if (operPath.statusId == 6) listOperReady.add(operPath);
+          if (operPath.statusId == 3) listOperQueue.add(operPath);
+          if (operPath.statusId == 7) operActive = operPath;
         }
       }
       //активным ставим первый
@@ -64,15 +83,14 @@ class CubitWork extends Cubit<StateWork> {
         timeActive.add(0);
       } else {
         if (operActive.pause == null) {timeActive.add(0);}
-        if (operActive.pause == true) {timeActive.add(operActive.timeworking!);}
+        if (operActive.pause == true) {timeActive.add(operActive.list.first.timeworking!);}
         if (operActive.pause == false) {
-          final date1 = DateTime.fromMillisecondsSinceEpoch(operActive.timestart!).toUtc();
+          final date1 = DateTime.fromMillisecondsSinceEpoch(operActive.list.first.timestart!).toUtc();
           final date2 = DateTime.now().toUtc();
           final difference = (date2.difference(date1)).inSeconds;
           timeActive.add(difference);
       }
       }
-
       //выставление статусов относительно паузы
       if (operActive != null){
         if (operActive.pause == null){
@@ -99,31 +117,31 @@ class CubitWork extends Cubit<StateWork> {
     emit(state.copyWith(pageData: pageData, timeActive: timeActive, statusBtn: statusBtn, listStartBtn: listStartTime, listStartTime: listStartTime));
   }
 
+
   void setActivePage(int index){
     emit(state.copyWith(activePage: index));
   }
 
-  Future<void> setReady(OperatorOperations oper, int userId, int seconds, String comment, bool isStart)async{
-    final quereMon = await monitorTable.selectIdMonitor(userId, oper, state.pageData[state.activePage].machine.id);
+
+  Future<void> setReady(ItemOperOp oper, int userId, int seconds, String comment, bool isStart)async{
+    final quereMon = await monitorTable.selectIdMonitor(userId, state.pageData[state.activePage].machine.id, oper.list.first.batch.id, oper.idPath);
     final idMon = quereMon.first['id'];
-    operatorOperationsTable.updateTimeStopAndReady(oper.id, DateTime.now().millisecondsSinceEpoch, seconds, userId);
+    operatorOperationsTable.updateTimeStopAndReady(oper.idPath, DateTime.now().millisecondsSinceEpoch, seconds, userId);
     setStopMonitor(1, idMon);
     setIsStart(false);
-
-    checkIsDetailReady(chiefBatchId: oper.chiefBatchId ?? 0, chiefOperationId: oper.chiefOperationId ?? 0);
+//{переделать chiefOperationId}
+    checkIsDetailReady(chiefBatchId: oper.list.first.chiefBatchId ?? 0, chiefOperationId: oper.list.first.chiefOperationId ?? 0);
   }
+
 
   // проверка на готовность детали
   Future<void> checkIsDetailReady({required int chiefBatchId, required int chiefOperationId})async
   {
     final chiefOperationTable = ChiefOperationTable();
     final chiefBatchTable = ChiefBatchTable();
-
     // получает последнюю операцию в детали
     final fetchedLastOperationInBatch = await chiefOperationTable.fetchLastOperationInBatch(chiefBatchId: chiefBatchId);
-
     final lastOperationInBatchDto = ChiefOperationDto.fromMap(fetchedLastOperationInBatch);
-
     // если id последней операции в детали равен chiefOperationId у операции из operator_operations, то меняет статус детали на готово(2)
     if (lastOperationInBatchDto.id == chiefOperationId){
       chiefBatchTable.updateChiefBatchStatusToReady(chiefBatchId: chiefBatchId);
@@ -131,11 +149,10 @@ class CubitWork extends Cubit<StateWork> {
   }
 
 
-
-  Future<void> setStartMonitor(int status, int userid, String? comment, int operId) async{
+  Future<void> setStartMonitor(int status, int userid, String? comment, int idPath) async{
     if (!state.listStartBtn[state.activePage]){
       if ((comment == null) || (comment == '')) comment = 'none';
-      final id = await monitorTable.insertToInt(MonitoringMachineDTO(id: 0, operationId: operId, date: DateTime.now(), changeId: (DateTime.now().hour > 8) && ( DateTime.now().hour <= 20) ? 1 : 2, timeStart: DateTime.now().millisecondsSinceEpoch, timeStop: 0, statusMachineId: 1, userId: userid, machineId: state.pageData[state.activePage].machine.id, batchId: state.pageData[state.activePage].operActive!.batch.id, comment: comment));
+      final id = await monitorTable.insertToInt(MonitoringMachineDTO(id: 0, operationId: idPath, date: DateTime.now(), changeId: (DateTime.now().hour > 8) && ( DateTime.now().hour <= 20) ? 1 : 2, timeStart: DateTime.now().millisecondsSinceEpoch, timeStop: 0, statusMachineId: 1, userId: userid, machineId: state.pageData[state.activePage].machine.id, batchId: state.pageData[state.activePage].operActive!.list.first.batch.id, comment: comment));
       List<bool> list = [...state.listStartBtn];
       list[state.activePage] = true;
       emit(state.copyWith(monitorId: id, listStartBtn: list));
@@ -148,15 +165,15 @@ class CubitWork extends Cubit<StateWork> {
     setBtnStatus(status); 
   }
 
-  void setError(int id, int userId, int seconds, String comment, bool isStart, int operId){
-    operatorOperationsTable.updateTimeStop(id, DateTime.now().millisecondsSinceEpoch, seconds);
+  void setError(int userId, int seconds, String comment, bool isStart, int operId){
+    operatorOperationsTable.updateTimeStop(operId, DateTime.now().millisecondsSinceEpoch, seconds);
     setMonitor(4, userId, comment, isStart, operId);
   }
 
-  Future<void> setMonitor(int status, int userid, String? comment, bool isStart, int operId) async{
+  Future<void> setMonitor(int status, int userid, String? comment, bool isStart, int optPathOper) async{
     if ((comment == null) || (comment == '')) comment = 'none';
     if (isStart){
-      final id = await monitorTable.insertToInt(MonitoringMachineDTO(id: 0, operationId: operId, date: DateTime.now(), changeId: (DateTime.now().hour > 8) && ( DateTime.now().hour <= 20) ? 1 : 2, timeStart: DateTime.now().millisecondsSinceEpoch, timeStop: 0, statusMachineId: status, userId: userid, machineId: state.pageData[state.activePage].machine.id, batchId: state.pageData[state.activePage].operActive!.batch.id, comment: comment));
+      final id = await monitorTable.insertToInt(MonitoringMachineDTO(id: 0, operationId: optPathOper, date: DateTime.now(), changeId: (DateTime.now().hour > 8) && ( DateTime.now().hour <= 20) ? 1 : 2, timeStart: DateTime.now().millisecondsSinceEpoch, timeStop: 0, statusMachineId: status, userId: userid, machineId: state.pageData[state.activePage].machine.id, batchId: state.pageData[state.activePage].operActive!.list.first.batch.id, comment: comment));
       emit(state.copyWith(monitorId: id));
     } else {
       await monitorTable.updateId(state.monitorId!, DateTime.now().millisecondsSinceEpoch);
@@ -210,6 +227,7 @@ class CubitWork extends Cubit<StateWork> {
       timeworking: dto.timeworking,
       chiefBatchId: dto.chiefBatchId,
       chiefOperationId: dto.chiefOperationId,
+      optimalPart: dto.optimalPart,
       status: Status(id: dto.status.id, name: dto.status.name),
       batch: Batch(
           id: dto.batch.id,
@@ -217,7 +235,7 @@ class CubitWork extends Cubit<StateWork> {
           name: dto.batch.name,
           count: dto.batch.count,
           code: dto.batch.code,
-          packageId: dto.batch.packageId,
+          orderId: dto.batch.orderId,
           technology: dto.batch.technology,
           order: dto.batch.order,
           isready: dto.batch.isready),

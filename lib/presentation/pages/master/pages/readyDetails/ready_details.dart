@@ -6,6 +6,7 @@ import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
 // import 'package:master_plan/presentation/pages/master/model/element_bar_data.dart';
 import 'package:master_plan/presentation/pages/master/pages/readyDetails/bloc/cubit.dart';
+import 'package:master_plan/presentation/pages/master/pages/readyDetails/model/item_oper.dart';
 // import 'package:master_plan/presentation/pages/master/pages/readyDetails/bloc/state.dart';
 // import 'package:master_plan/presentation/pages/master/pages/readyDetails/model/item_operation.dart';
 import 'package:master_plan/presentation/pages/master/pages/readyDetails/widgets/element_bar.dart';
@@ -43,7 +44,7 @@ class BrakReadyDetailsContent extends StatelessWidget {
 
 class ContetnReadyBrak extends StatelessWidget {
   const ContetnReadyBrak({super.key, required this.operList, required this.machine, required this.timeWorking, required this.l});
-  final List<OperatorOperations> operList;
+  final List<ItemOperReady> operList;
   final Machine machine;
   final int timeWorking;
   final List<int> l;
@@ -59,7 +60,7 @@ class ContetnReadyBrak extends StatelessWidget {
               const SizedBox(height: 8),
               const Divider(),
               const SizedBox(height: 8),
-              const RowExpand(text1: 'Деталь', text2: 'Операция', text3: 'Время обработки'),
+              const RowExpand(text1: 'Деталь', text2: 'Операция', text3: 'Время обработки', text4: 'Кол. в опт. партии'),
               const SizedBox(height: 8),
               ListView.builder(
                 shrinkWrap: true,

@@ -30,9 +30,12 @@ class Time extends StatelessWidget {
                     ButtonCircleIcon(
                       isActive: (statusBtn == 0) || (statusBtn == 1),
                       onPressed: () {
-                        if (operActive.pause == null) context.read<CubitTimer>().firstStart(activePage, operActive.id);
-                        context.read<CubitTimer>().startOrStop(activePage, !state.listState[activePage], operActive.id, userId);
-                        context.read<CubitWork>().setStartMonitor(0, userId, 'start', operActive.id);
+                        if (operActive.pause == null) {
+                          context.read<CubitTimer>().firstStart(activePage, operActive.idPath);
+                          context.read<CubitWork>().setStartMonitor(0, userId, 'start', operActive.idPath);
+                          }
+                        else {context.read<CubitTimer>().startOrStop(activePage, !state.listState[activePage], operActive.idPath, userId);}
+                        
                       }, 
                       icon: !state.listState[activePage] ? Icons.play_arrow_rounded : Icons.pause,
                       ),

@@ -33,19 +33,19 @@ class DetailDistribContent extends StatelessWidget {
                 BlocBuilder<CubitDistributionDetails, StateDistributionDetails>(
                   builder: (context, state) {
                       List<ExpansionPanel> list = [];
-                      for (var i = 0; i < state.operList.length; i++) {
-                        Color colorMain = ((state.operList[i].setCount != null) && (state.operList[i].setCount != 0) && (state.operList[i].setMachine != null) ) ? Colors.greenAccent : Colors.white;
+                      for (var i = 0; i < state.pathListOper.length; i++) {
+                        Color colorMain = ((state.pathListOper[i].setCount != null) && (state.pathListOper[i].setCount != 0) && (state.pathListOper[i].setMachine != null) ) ? Colors.greenAccent : Colors.white;
                         list.add(
                           ExpansionPanel(
-                            headerBuilder: (context, isExpanded) => TitleItem(state.operList[i], state.operList[i].statusId == 4 ? Colors.amberAccent : colorMain), 
+                            headerBuilder: (context, isExpanded) => TitleItem(state.pathListOper[i], state.pathListOper[i].statusId == 4 ? Colors.amberAccent : colorMain), 
                             body: BodyItem(i, colorMain),
-                            isExpanded: state.operList[i].isSelected,
+                            isExpanded: state.pathListOper[i].isSelected,
                             backgroundColor: colorMain,
                           ));
                       }
                       return state.isLoading 
                       ?  const Center(child: CircularProgressIndicator()) 
-                      : state.operList.isNotEmpty 
+                      : state.pathListOper.isNotEmpty 
                       ? ExpansionPanelList(
                         children: list,
                         expansionCallback: (index, isExpanded) => context.read<CubitDistributionDetails>().toggleSelect(index),

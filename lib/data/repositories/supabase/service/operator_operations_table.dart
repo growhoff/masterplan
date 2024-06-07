@@ -60,6 +60,10 @@ class OperatorOperationsTable extends SupabaseTable {
     return table.select('*, z_status(*), z_batch(*), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_user($selectUser)').eq('chief_batch_id', chiefBatchId);
   }
 
+  Future<List<Map<String, dynamic>>> selectChiefBatchIdList(List<int> chiefBatchId) {
+    return table.select('*, z_status(*), z_batch(*), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_user($selectUser)').inFilter('chief_batch_id', chiefBatchId);
+  }
+
   Future<List<Map<String, dynamic>>> selectListIdOrder(List<int> listId) {
     return table
         .select('*, z_status(*), z_batch(*), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_user($selectUser)')
@@ -140,6 +144,10 @@ class OperatorOperationsTable extends SupabaseTable {
     await table.update({'status_id': 2}).eq('id', id);
   }
 
+  Future<void> updateMasterDistribMasterEqOptimalPart(int id) async {
+    await table.update({'status_id': 2}).eq('optimal_part', id);
+  }
+
   //выбор машины и статус "очередь"
   Future<void> updateMasterQueue(int id, int machineId) async {
     await table.update({'machine_id': machineId, 'status_id': 3}).eq('id', id);
@@ -147,13 +155,22 @@ class OperatorOperationsTable extends SupabaseTable {
 
   //выбор машины и статус "очередь"
   Future<void> updateMasterQueueList(List<int> listId, int machineId) async {
-    await table.update({'machine_id': machineId, 'status_id': 3}).inFilter(
-        'id', listId);
+    await table.update({'machine_id': machineId, 'status_id': 3}).inFilter('id', listId);
+  }
+
+  //выбор машины и статус "очередь"
+  Future<void> updateMasterQueueListPath(List<int> listId, int machineId, int random) async {
+
+    await table.update({'machine_id': machineId, 'status_id': 3, 'optimal_part': DateTime.now().millisecondsSinceEpoch + random}).inFilter('id', listId);
   }
 
   //статус доработка
   Future<void> updateMasterModificate(int id) async {
     await table.update({'status_id': 4}).eq('id', id);
+  }
+
+  Future<void> updateMasterModificateList(List<int> listId) async {
+    await table.update({'status_id': 4}).inFilter('id', listId);
   }
 
   //статус брак
@@ -170,42 +187,50 @@ class OperatorOperationsTable extends SupabaseTable {
     await table.update({'status_id': 6}).eq('id', id);
   }
 
+  Future<void> updateMasterReadyEqOptimalPart(int id) async {
+    await table.update({'status_id': 6}).eq('optimal_part', id);
+  }
+
   //статус Статистика готовых
   Future<void> updateMasterStatisticReady(int id) async {
     await table.update({'status_id': 9}).eq('id', id);
   }
 
-  Future<void> updateOrder(int id, int order) async {
-    await table.update({'order': order}).eq('id', id);
+  Future<void> updateMasterStatisticReadyList(List<int> listId) async {
+    await table.update({'status_id': 9}).inFilter('id', listId);
   }
 
-  Future<void> updateTimeStart(int id, int timeStart, int userId) async {
-    await table.update({'time_start': timeStart, 'pause': false, 'user_id': userId}).eq('id', id);
+  Future<void> updateOrder(List<int> listId, int order) async {
+    await table.update({'order': order}).inFilter('id', listId);
   }
 
-  Future<void> setFirstTimeStart(int id, int timeStart) async {
+  Future<void> updateTimeStart(int idOptPath, int timeStart, int userId) async {
+    await table.update({'time_start': timeStart, 'pause': false, 'user_id': userId}).eq('optimal_part', idOptPath);
+  }
+
+  Future<void> setFirstTimeStart(int idOptPath, int timeStart) async {
     await table.update({
       'time_first_start': timeStart,
       'time_start': timeStart,
       'status_id': 7,
       'pause': false
-    }).eq('id', id);
+    }).eq('optimal_part', idOptPath);
   }
 
-  Future<void> updateTimeStop(int id, int timeStop, int seconds) async {
+  Future<void> updateTimeStop(int idOptPath, int timeStop, int seconds) async {
     await table.update({
       'time_stop': timeStop,
       'pause': true,
       'time_working': seconds
-    }).eq('id', id);
+    }).eq('optimal_part', idOptPath);
   }
 
-  Future<void> updateTimeStopAndReady(int id, int timeStop, int seconds, int userId) async {
+  Future<void> updateTimeStopAndReady(int idOptPath, int timeStop, int seconds, int userId) async {
     await table.update({
       'time_stop': timeStop,
       'status_id': 6,
       'time_working': seconds,
       'user_id': userId
-    }).eq('id', id);
+    }).eq('optimal_part', idOptPath);
   }
 }

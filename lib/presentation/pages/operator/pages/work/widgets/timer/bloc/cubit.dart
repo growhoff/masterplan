@@ -44,22 +44,22 @@ class CubitTimer extends Cubit<StateTimer> {
     });
   }
 
-  void firstStart(int index, int id){
+  void firstStart(int index, int idOptPath){
     List<bool> listState = [...state.listState];
       listState[index] = true;
-      operatorOperTable.setFirstTimeStart(id, DateTime.now().millisecondsSinceEpoch);
+      operatorOperTable.setFirstTimeStart(idOptPath, DateTime.now().millisecondsSinceEpoch);
     emit(state.copyWith(listState: listState));
   }
 
-  void startOrStop(int index, bool isStart, int id, int userId){
+  void startOrStop(int index, bool isStart, int idOptPath, int userId){
     List<bool> listState = [...state.listState];
     if (isStart){
       listState[index] = true;
-      operatorOperTable.updateTimeStart(id, DateTime.now().millisecondsSinceEpoch, userId);
+      operatorOperTable.updateTimeStart(idOptPath, DateTime.now().millisecondsSinceEpoch, userId);
     }
     else {
       listState[index] = false;
-      operatorOperTable.updateTimeStop(id, DateTime.now().millisecondsSinceEpoch, state.listTick[index]);
+      operatorOperTable.updateTimeStop(idOptPath, DateTime.now().millisecondsSinceEpoch, state.listTick[index]);
     }
     emit(state.copyWith(listState: listState));
   }

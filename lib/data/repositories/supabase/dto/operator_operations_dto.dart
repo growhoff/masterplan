@@ -33,6 +33,7 @@ class OperatorOperationsDTO extends Dto {
   final int? machineId;
   final MachineDTO? machine;
   final int? order;
+  final int? optimalPart;
 
   final int? timestart;
   final int? timestop;
@@ -58,6 +59,7 @@ class OperatorOperationsDTO extends Dto {
     this.machineId,
     this.machine,
     this.order,
+    this.optimalPart,
     this.timestart,
     this.timestop,
     this.timeworking,
@@ -113,6 +115,7 @@ class OperatorOperationsDTO extends Dto {
         machineId: map['machineId'] != null ? map['machine_id'] as int : null,
         machine: map['z_machine'] != null ? MachineDTO.fromMap(map['z_machine'] as Map<String, dynamic>) : null,
         order: map['order'] != null ? map['order'] as int : null,
+        optimalPart: map['optimal_part'] != null ? map['optimal_part'] as int : null,
         timestart: map['time_start'] != null ? map['time_start'] as int : null,
         timestop: map['time_stop'] != null ? map['time_stop'] as int : null,
         timeworking: map['time_working'] != null ? map['time_working'] as int : null,

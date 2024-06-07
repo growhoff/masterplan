@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:master_plan/domain/model/operator_operations.dart';
+// import 'package:master_plan/domain/model/operator_operations.dart';
+import 'package:master_plan/presentation/pages/operator/pages/work/model/item_oper.dart';
 import 'row_list.dart';
 
 class TableCard extends StatelessWidget {
@@ -10,7 +11,7 @@ class TableCard extends StatelessWidget {
       required this.list});
   final Color color;
   final Widget heder;
-  final List<OperatorOperations> list;
+  final List<ItemOperOp> list;
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -20,13 +21,15 @@ class TableCard extends StatelessWidget {
           heder,
           const SizedBox(height: 8),
           list == [] 
-          ? const Text('List null')
+          ? const Text('Список пуст')
           : ListView.builder(
             shrinkWrap: true,
             itemBuilder: (context, index) => RowList(
-                text1: '${list[index].batch.number} ${list[index].batch.name}',
-                text2: '${list[index].operation.number} ${list[index].operation.name}',
-                text3: '${list[index].timeFirstStart}'),
+                text1: '${list[index].list.first.batch.number} ${list[index].list.first.batch.name}',
+                text2: '${list[index].list.first.operation.number} ${list[index].list.first.operation.name}',
+                text3: '${list[index].list.first.timeworking}',
+                text4: '${list[index].list.length}',
+                ),
             itemCount: list.length,
           ),
         ],

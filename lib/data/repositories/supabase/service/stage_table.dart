@@ -32,7 +32,6 @@ class StageTable extends SupabaseTable {
   }
 
   Future<List<Map<String, dynamic>>> selectNotDistributed() async {
-
     return await table
         .select('*, z_batch:batch_id(*)')
         .eq('is_distributed', false)
@@ -77,5 +76,8 @@ class StageTable extends SupabaseTable {
     return table.stream(primaryKey: ['id']);
   }
 
-
+  Future<List<Map<String, dynamic>>> selectByBatchId(
+      {required int batchId}) async {
+    return table.select().eq('batch_id', batchId);
+  }
 }

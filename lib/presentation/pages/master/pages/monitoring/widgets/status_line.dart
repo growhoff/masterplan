@@ -8,7 +8,7 @@ class StatusLine extends StatelessWidget {
   final List<ItemMachineStatus> list; 
   @override
   Widget build(BuildContext context) {
-    int lastTime = 720;
+    int lastTime = 43200;
     for (var element in list) {
       lastTime -= element.timeWorking;
     }

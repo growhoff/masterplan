@@ -1,6 +1,6 @@
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
-import 'package:master_plan/domain/model/operator_operations.dart';
+// import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../dto/monitoring_machine_dto.dart';
@@ -39,8 +39,8 @@ class MonitoringMachineTable extends SupabaseTable {
     return table.select('*, z_status_machine(*), z_user($userSelect), z_machine(*), z_batch(*)').inFilter('id',listId);
   }
 
-  Future<List<Map<String, dynamic>>> selectIdMonitor(int userId, OperatorOperations oper, int machineId) {
-    return table.select('*, z_status_machine(*), z_user($userSelect), z_machine(*), z_batch(*)').eq('user_id', userId).eq('operation_id', oper.id).eq('machine_id', machineId).eq('batch_id', oper.batch.id);
+  Future<List<Map<String, dynamic>>> selectIdMonitor(int userId, int machineId, int batchId, int optPathOper) {
+    return table.select('*, z_status_machine(*), z_user($userSelect), z_machine(*), z_batch(*)').eq('user_id', userId).eq('operation_id', optPathOper).eq('machine_id', machineId).eq('batch_id', batchId);
   }
 
   Future<List<Map<String, dynamic>>> selectList(List<int> listId) {

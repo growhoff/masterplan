@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
 class RowList extends StatelessWidget {
-  const RowList({super.key, required this.text1, required this.text2, required this.text3});
+  const RowList({super.key, required this.text1, required this.text2, required this.text3, required this.text4});
   final String text1;
   final String text2;
   final String text3;
+  final String text4;
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -15,6 +16,7 @@ class RowList extends StatelessWidget {
             Expanded(child: Text(text1, textAlign: TextAlign.center)),
             Expanded(child: Text(text2, textAlign: TextAlign.center)),
             Expanded(child: Text(text3, textAlign: TextAlign.center)),
+            Expanded(child: Text(text4, textAlign: TextAlign.center)),
           ],
         ),
       ),

@@ -1,10 +1,11 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/operator_operations.dart';
+import 'package:master_plan/presentation/pages/master/pages/readyDetails/model/item_oper.dart';
 
 class ItemMachine {
   final Machine machine;
-  final List<OperatorOperations> listOper;
+  final List<ItemOperReady> listOper;
   final int time;
   ItemMachine({
     required this.machine,
@@ -14,7 +15,7 @@ class ItemMachine {
 
   ItemMachine copyWith({
     Machine? machine,
-    List<OperatorOperations>? listOper,
+    List<ItemOperReady>? listOper,
     int? time,
   }) {
     return ItemMachine(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:master_plan/presentation/pages/technologist/archive_page/archive_page.dart';
 
 
 import '../../chief/model/tab_bar_model.dart';
@@ -8,12 +9,12 @@ abstract class TechnologistData {
     TabBarModel(
         title: 'Архив',
         actions: [],
-        page:  Container(),
+        page:  ArchivePage(),
         icon: Icons.archive_rounded),
     TabBarModel(
-        title: 'Архив',
+        title: ' ',
         actions: [],
         page:  Container(),
-        icon: Icons.archive_rounded),
+        icon: Icons.stop_circle_rounded),
   ];
 }

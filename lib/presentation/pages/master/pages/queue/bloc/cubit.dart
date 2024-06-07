@@ -4,12 +4,12 @@ import 'package:master_plan/data/repositories/supabase/service/operator_operatio
 import 'package:master_plan/domain/model/batch.dart';
 import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/operator_operations.dart';
-// import 'package:master_plan/domain/model/position.dart';
 import 'package:master_plan/domain/model/status.dart';
-// import 'package:master_plan/domain/model/user.dart';
 import 'package:master_plan/presentation/pages/master/pages/queue/model/item_machine.dart';
+import 'package:master_plan/presentation/pages/master/pages/queue/model/item_oper.dart';
 import 'package:master_plan/presentation/pages/master/pages/queue/model/item_saver.dart';
 import 'state.dart';
+import 'package:collection/collection.dart';
 
 class CubitQueueMaster extends Cubit<StateQueueMaster> {
   final List<Machine>? machineList;
@@ -17,17 +17,13 @@ class CubitQueueMaster extends Cubit<StateQueueMaster> {
   final List<int> machineIdList;
   final tableOperations = OperatorOperationsTable();
 
-  CubitQueueMaster(this.machineList, this.queueList, this.machineIdList)
-      : super(const StateQueueMaster()) {
-    tableOperations.table.stream(primaryKey: ['id']).inFilter(
-        'machine_id', machineIdList).listen((event) {}).onData((data) async {
-      List<ItemMachine> res = [];
-      res = [...await getQuere(data)];
-      emit(state.copyWith(listMachine: res));
+  CubitQueueMaster(this.machineList, this.queueList, this.machineIdList) : super(const StateQueueMaster()) {
+    tableOperations.table.stream(primaryKey: ['id']).inFilter('machine_id', machineIdList).listen((event) {}).onData((data) async {
+      await getQuere(data);
     });
   }
 
-  Future<List<ItemMachine>> getQuere(List<Map<String, dynamic>>? data) async {
+  Future<void> getQuere(List<Map<String, dynamic>>? data) async {
     List<int> listId = [];
     for (var element in data!) {
       if (element['status_id'] as int == 3) listId.add(element['id']);
@@ -37,25 +33,51 @@ class CubitQueueMaster extends Cubit<StateQueueMaster> {
     for (var item in quere) {
       queueList.add(OperatorOperationsDTO.fromMap(item));
     }
+
+    List<ItemOper> listB = [];
+    var newMap = groupBy(queueList, (el) => el.optimalPart);
+    newMap.forEach((key, value) {
+      List<OperatorOperations> list = [];
+      for (var element in value) {
+        list.add(convertDto(element));
+      }
+      listB.add(ItemOper(idPath: key!, list: list));
+    });
+
+    // List<ItemMachine> listItem = [];
+    // for (var machine in machineList!) {
+    //   List<OperatorOperations> listQueue = [];
+    //   int time = 0;
+    //   for (var queueItem in queueList) {
+    //     if (queueItem.machine!.id == machine.id) {
+    //       listQueue.add(convertDto(queueItem));
+    //       if (queueItem.timeplan == null) {
+    //         time += 0;
+    //       } else {
+    //         time += queueItem.timeplan!;
+    //       }
+    //     }
+    //   }
+    //   listItem.add(ItemMachine(machine: machine, listOper: listQueue, time: time));
+    // }
+
     List<ItemMachine> listItem = [];
     for (var machine in machineList!) {
-      List<OperatorOperations> listQueue = [];
+      List<ItemOper> listQueue = [];
       int time = 0;
-      for (var queueItem in queueList) {
-        if (queueItem.machine!.id == machine.id) {
-          listQueue.add(convertDto(queueItem));
-          // time += queueItem.timeplan!;
-          if (queueItem.timeplan == null) {
-            time += 0;
-          } else {
-            time += queueItem.timeplan!;
-          }
+      for (var item in listB) {
+        if (item.list.first.machine!.id == machine.id) {
+          listQueue.add(item);
+          // if (item.timeplan == null) {
+          //   time += 0;
+          // } else {
+          //   time += item.timeplan!;
+          // }
         }
       }
-      listItem.add(
-          ItemMachine(machine: machine, listOper: listQueue, time: time));
+      listItem.add(ItemMachine(machine: machine, listOper: listQueue, time: time));
     }
-    return listItem;
+    emit(state.copyWith(listMachine: listItem));
   }
 
   OperatorOperations convertDto(OperatorOperationsDTO dto) {
@@ -75,11 +97,10 @@ class CubitQueueMaster extends Cubit<StateQueueMaster> {
           name: dto.batch.name,
           count: dto.batch.count,
           code: dto.batch.code,
-          packageId: dto.batch.packageId,
+          orderId: dto.batch.orderId,
           technology: dto.batch.technology,
           order: dto.batch.order,
           isready: dto.batch.isready),
-      // user: User(id: dto.user!.id, fio: dto.user!.fio, positionId: dto.user!.positionId, companyId: dto.user!.companyId, unitId: dto.user!.unitId, areaId: dto.user!.areaId, photo: dto.user!.photo, positionModel: Position(id: dto.user!.position.id, name: dto.user!.position.name)),
       order: dto.order,
       machine: Machine(id: dto.machine!.id,
           inventoryNumber: dto.machine!.inventoryNumber,
@@ -89,13 +110,11 @@ class CubitQueueMaster extends Cubit<StateQueueMaster> {
   }
 
   void updateOperationDistribMaster(int id) {
-    final table = OperatorOperationsTable();
-    table.updateMasterDistribMaster(id);
+    tableOperations.updateMasterDistribMasterEqOptimalPart(id);
   }
 
   void updateOperationReady(int id) {
-    final table = OperatorOperationsTable();
-    table.updateMasterReady(id);
+    tableOperations.updateMasterReadyEqOptimalPart(id);
   }
 
   void setActivePage(int index) {
@@ -103,14 +122,17 @@ class CubitQueueMaster extends Cubit<StateQueueMaster> {
   }
 
   Future<void> saveDate() async {
-    final table = OperatorOperationsTable();
     List<ItemSaver> saveList = [];
     final operList = state.listMachine![state.activePage].listOper;
     for (var i = 0; i < operList.length; i++) {
-      saveList.add(ItemSaver(id: operList[i].id, order: i));
+      List<int> idL = [];
+      for (var oper in operList[i].list) {
+        idL.add(oper.id);
+      }
+      saveList.add(ItemSaver(idList: idL, order: i));
     }
     for (var element in saveList) {
-      await table.updateOrder(element.id, element.order);
+      await tableOperations.updateOrder(element.idList, element.order);
     }
   }
 }

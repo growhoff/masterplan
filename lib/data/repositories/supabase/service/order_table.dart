@@ -2,9 +2,9 @@ import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class PackageTable extends SupabaseTable{
+class OrderTable extends SupabaseTable{
 
-  final table = Supabase.instance.client.from('z_package');
+  final table = Supabase.instance.client.from('z_order');
 
   @override
   Future<void> delete(int id) {

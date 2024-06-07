@@ -5,6 +5,7 @@ import 'state.dart';
 
 class CubitOperator extends Cubit<StateOperator> {
   CubitOperator() : super(const StateOperator());
+  final tableShifts = ShiftsTable();
 
   void toggleBtn(int userId){
     emit(state.copyWith(isStart: !state.isStart));
@@ -12,12 +13,12 @@ class CubitOperator extends Cubit<StateOperator> {
   }
 
   Future<void> setTable(int userId)async{
-    final table = ShiftsTable();
+    
     if (state.isStart){
-      final id = await table.insertToInt(ShiftsDTO(id: 0, userId: userId, timeStart: DateTime.now(), timeEnd: DateTime.now()));
+      final id = await tableShifts.insertToInt(ShiftsDTO(id: 0, userId: userId, timeStart: DateTime.now(), timeEnd: DateTime.now()));
       emit(state.copyWith(idShifts: id));
     } else {
-      await table.updateId(state.idShifts!,DateTime.now());
+      await tableShifts.updateId(state.idShifts!,DateTime.now());
     }
   }
 }

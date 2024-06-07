@@ -6,8 +6,10 @@ import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/domain/model/status.dart';
 import 'package:master_plan/presentation/pages/master/pages/readyDetails/model/item_machine.dart';
+import 'package:master_plan/presentation/pages/master/pages/readyDetails/model/item_oper.dart';
 import '../../../../../../data/repositories/supabase/service/chief_batch_table.dart';
 import 'state.dart';
+import 'package:collection/collection.dart';
 
 class CubitReadyDetails extends Cubit<StateReadyDetails> { 
   final List<Machine>? machineList;
@@ -32,21 +34,33 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
       readyList.add(OperatorOperationsDTO.fromMap(item));
     }
 
+    List<ItemOperReady> listB = [];
+    var newMap = groupBy(readyList, (el) => el.optimalPart);
+    newMap.forEach((key, value) {
+      List<OperatorOperations> list = [];
+      List<int> listId = [];
+      for (var element in value) {
+        list.add(convertDto(element));
+        listId.add(element.id);
+      }
+      listB.add(ItemOperReady(idPath: key!, list: list, listId: listId));
+    });
+
     List<ItemMachine> listMachine = [];
     List<List<int>> doubleList = [];
     for (var machine in machineList!) {
       int timeWorking = 0;
-      List<OperatorOperations> list = [];
+      List<ItemOperReady> list = [];
       List<int> intList = [];
-      for (var operList in readyList) {
-        if (operList.machine!.id == machine.id) {
-          list.add(convertDto(operList));
+      for (var operList in listB) {
+        if (operList.list.first.machine!.id == machine.id) {
+          list.add(operList);
 
-          if (operList.timeworking == null){
-            timeWorking += 0;
-          }else{
-            timeWorking += operList.timeworking!;
-          }
+          // if (operList.timeworking == null){
+          //   timeWorking += 0;
+          // }else{
+          //   timeWorking += operList.timeworking!;
+          // }
           intList.add(6);
         }
       }
@@ -69,8 +83,9 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
           timeworking: dto.timeworking, 
           chiefBatchId: dto.chiefBatchId,
           chiefOperationId: dto.chiefOperationId,
+          optimalPart: dto.optimalPart,
           status: Status(id: dto.status.id, name: dto.status.name), 
-          batch: Batch(id: dto.batch.id, number: dto.batch.number, name: dto.batch.name, count: dto.batch.count, code: dto.batch.code, packageId: dto.batch.packageId, technology: dto.batch.technology, order: dto.batch.order, isready: dto.batch.isready),
+          batch: Batch(id: dto.batch.id, number: dto.batch.number, name: dto.batch.name, count: dto.batch.count, code: dto.batch.code, orderId: dto.batch.orderId, technology: dto.batch.technology, order: dto.batch.order, isready: dto.batch.isready),
           order: dto.order, 
           machine: Machine(id: dto.machine!.id, inventoryNumber: dto.machine!.inventoryNumber, name: dto.machine!.name, areaId: dto.areaId),
           );
@@ -113,19 +128,23 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
       final listStatus = state.doubleList[state.activePage];
       for (var i = 0; i < listOper.length; i++) {
         //доработка
-        if (listStatus[i] == 4) table.updateMasterModificate(listOper[i].id);
+        if (listStatus[i] == 4) table.updateMasterModificateList(listOper[i].listId);
         //брак
         if (listStatus[i] == 5) {
           //выгрузить все операции по chiefBatchId
-          final quere = await tableOperations.selectChiefBatchId(listOper[i].chiefBatchId!);
+          List<int> listChiefBatchId = [];
+          for (var element in listOper[i].list) {
+            listChiefBatchId.add(element.chiefBatchId!);
+          }
+          final quere = await tableOperations.selectChiefBatchIdList(listChiefBatchId);
           //получаем лист id нужных операций
           final listId = getListIdFromQueue(quere);
           //меняем статус по этим id в брак
-          table.updateMasterBrakList(listId);
-          chiefBatchTable.updateChiefBatchStatusToDefect(chiefBatchId: listOper[i].chiefBatchId ?? 0);
+          table.updateMasterBrakList([...listId,...listOper[i].listId]);
+          chiefBatchTable.updateChiefBatchStatusToDefect(chiefBatchId: listOper[i].list.first.chiefBatchId ?? 0);
         }
         //готово
-        if (listStatus[i] == 6) table.updateMasterStatisticReady(listOper[i].id);
+        if (listStatus[i] == 6) table.updateMasterStatisticReadyList(listOper[i].listId);
       }
     }
   }
@@ -133,7 +152,7 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
   List<int> getListIdFromQueue(List<Map<String, dynamic>> data){
     List<int> list = [];
     for (var element in data) {
-      list.add(element['id']);
+      if (element['status_id'] == 2 || element['status_id'] == 3 || element['status_id'] == 4) list.add(element['id']);
     }
     return list;
   }

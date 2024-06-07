@@ -24,21 +24,45 @@ class ChiefOperationTable extends SupabaseTable {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> select() async {
+  Future<void> bulkInsert({required List<ChiefOperationDto> dtosList}) async {
+    List<Map<String, Object>> mapsList = [];
 
+    for (var dto in dtosList) {
+      mapsList.add({
+        'chief_batch_id': dto.chiefBatchId,
+        'stage_id': dto.stageId,
+        'operation_id': dto.operationId
+      });
+    }
+
+    var res = await table.insert(mapsList).select('id');
+
+    print(res);
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> select() async {
     var res = await table
-        .select('*, z_chief_batch(*, z_batch(*)), z_stage(*), z_operation(*)').order('id', ascending: true);
+        .select('*, z_chief_batch(*, z_batch(*)), z_stage(*), z_operation(*)')
+        .order('id', ascending: true);
     return res;
   }
 
-  Future<Map<String, dynamic>> fetchLastOperationInBatch({required int chiefBatchId}) async {
-  print('chiefbatchId: $chiefBatchId');
-  final res = await table.select().eq('chief_batch_id', chiefBatchId).order('id', ascending: true);
+  Future<Map<String, dynamic>> fetchLastOperationInBatch(
+      {required int chiefBatchId}) async {
+    print('chiefbatchId: $chiefBatchId');
+    final res = await table
+        .select()
+        .eq('chief_batch_id', chiefBatchId)
+        .order('id', ascending: true);
     return res.last;
   }
 
   Future<List<Map<String, dynamic>>> selectId(int batchId, int stageId) async {
-    return await table.select('*, z_chief_batch(*, z_batch(*)), z_stage(*), z_operation(*)').eq('chief_batch_id', batchId).eq('stage_id', stageId);
+    return await table
+        .select('*, z_chief_batch(*, z_batch(*)), z_stage(*), z_operation(*)')
+        .eq('chief_batch_id', batchId)
+        .eq('stage_id', stageId);
   }
 
   @override

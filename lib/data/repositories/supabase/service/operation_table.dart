@@ -59,6 +59,10 @@ class OperationTable extends SupabaseTable {
     return await table.update({'time_sh': operationTimeSH}).eq('id', id);
   }
 
+  Future<List<Map<String, dynamic>>> selectByStageId({required int stageId})async{
+
+    return await table.select().eq('stage_id', stageId);
+  }
 
   Future<int> fetchOperationsQuantityInStage({required int stageId}) async {
     final res = await table.select().eq('stage_id', stageId).count(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:master_plan/presentation/pages/dispatcher/orders_page/orders_page.dart';
 
 
 import '../../chief/model/tab_bar_model.dart';
@@ -13,7 +14,7 @@ abstract class DispatcherData {
     TabBarModel(
         title: 'Заказы на производство',
         actions: [],
-        page:  Container(),
+        page:  OrdersPage(),
         icon: Icons.all_inbox_rounded),
      TabBarModel(
         title: 'Распределение этапов',
