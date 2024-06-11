@@ -14,7 +14,7 @@ class SelectionStaffPositionPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton( style: ButtonStyle(
-                padding: WidgetStateProperty.all<EdgeInsets>(
+                padding: MaterialStateProperty.all<EdgeInsets>(
                     EdgeInsets.symmetric(vertical: 10, horizontal: 20)),
               ),
                   onPressed: () =>
@@ -25,7 +25,7 @@ class SelectionStaffPositionPage extends StatelessWidget {
               ),
               ElevatedButton(
                   style: ButtonStyle(
-                    padding: WidgetStateProperty.all<EdgeInsets>(
+                    padding: MaterialStateProperty.all<EdgeInsets>(
                         EdgeInsets.symmetric(vertical: 10, horizontal: 20)),
                   ),
                   onPressed: () {},
@@ -34,7 +34,7 @@ class SelectionStaffPositionPage extends StatelessWidget {
                 height: 10,
               ),
               ElevatedButton( style: ButtonStyle(
-                padding: WidgetStateProperty.all<EdgeInsets>(
+                padding: MaterialStateProperty.all<EdgeInsets>(
                     EdgeInsets.symmetric(vertical: 10, horizontal: 20)),
               ),
                   onPressed: () {}, child: Text('Список кладовщиков')),
@@ -42,7 +42,7 @@ class SelectionStaffPositionPage extends StatelessWidget {
                 height: 30,
               ),
               ElevatedButton( style: ButtonStyle(
-                padding: WidgetStateProperty.all<EdgeInsets>(
+                padding: MaterialStateProperty.all<EdgeInsets>(
                     EdgeInsets.symmetric(vertical: 10, horizontal: 20)),
               ),
                   onPressed: () {}, child: Text('Добавить сотрудника'))
