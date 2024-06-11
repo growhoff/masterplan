@@ -24,13 +24,10 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
   }
 
     Future<void> getQuere (List<Map<String, dynamic>>? data)async{
-    // List<int> listId = [];
     Set<int> listId = {};
     for (var element in data!) {
-      // if ((element['status_id'] as int == 2) || (element['status_id'] as int == 4) || (element['status_id'] as int == 6)) listId.add(element['id']);chief_batch_id
-       if ((element['status_id'] as int == 2) || (element['status_id'] as int == 4) || (element['status_id'] as int == 6) || (element['status_id'] as int == 9)) listId.add(element['chief_batch_id']);
+      if ((element['status_id'] as int == 2) || (element['status_id'] as int == 4) || (element['status_id'] as int == 6) || (element['status_id'] as int == 9)) listId.add(element['chief_batch_id']);
     }
-    // final quere = await tableOperations.selectListIdOrder(listId);
     final quere = await tableOperations.selectListChiefBatchIdOrder(listId.toList());
     List<OperatorOperationsDTO> list = [];
     Set<int> setChiefBatchId = {};
@@ -180,8 +177,7 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
   }
 
   int getRandom(){
-    var rng = Random();
-    return rng.nextInt(1000000);
+    return Random().nextInt(1000000);
   }
 
   void updateOperation(){
@@ -193,7 +189,6 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
           if (machine.name == pathOper.setMachine) {
             //считаем остаток
             final int countRemains = pathOper.setCount! % pathOper.setOptPart!;
-            // final int countFull = pathOper.setCount! ~/ pathOper.setOptPart!;
             List<int> listId = [];
             List<OperatorOperationsDTO> list = pathOper.listOperat;
             if (pathOper.setCount == pathOper.setOptPart){
@@ -234,15 +229,6 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
                 }
               }
             }
-            
-            
-            // List<int> listId = [];
-            //выгружаем нужное количество операций
-            // for (var i = 0; i < pathOper.setCount!; i++) {
-              // listId.add(pathOper.listOperat[i].id);
-            // }
-            //меняем статус этих операций
-            // tableOperations.updateMasterQueueList(listId, machine.id);
           }
         }
       }

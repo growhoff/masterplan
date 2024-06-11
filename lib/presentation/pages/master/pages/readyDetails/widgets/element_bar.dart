@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:master_plan/presentation/pages/master/model/element_bar_data.dart';
 import 'package:master_plan/presentation/pages/master/pages/readyDetails/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/master/pages/readyDetails/bloc/state.dart';
-import 'package:master_plan/presentation/pages/master/pages/readyDetails/ready_details.dart';
+import 'package:master_plan/presentation/pages/master/pages/readyDetails/widgets/content_ready.dart';
 
 class ElementBarReady extends StatelessWidget {
   const ElementBarReady({super.key});
@@ -11,7 +10,7 @@ class ElementBarReady extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CubitReadyDetails, StateReadyDetails>(
-      builder:(context, state) => state.listMachine!.isNotEmpty && state.doubleList.isNotEmpty
+      builder:(context, state) => state.listMachine!.isNotEmpty && state.statusList.isNotEmpty
       ? Column(
         children: [
           SizedBox(
@@ -27,7 +26,7 @@ class ElementBarReady extends StatelessWidget {
               itemCount: state.listMachine!.length),
           ),
             const SizedBox(height: 18),
-            ContetnReadyBrak(l: state.doubleList[state.activePage], operList: state.listMachine![state.activePage].listOper, machine: state.listMachine![state.activePage].machine, timeWorking: state.listMachine![state.activePage].time)
+            ContetnReadyMaster(l: state.statusList[state.activePage], operList: state.listMachine![state.activePage].listOper, machine: state.listMachine![state.activePage].machine, timeWorking: state.listMachine![state.activePage].time)
         ],
       )
       : const Center(child: CircularProgressIndicator()),

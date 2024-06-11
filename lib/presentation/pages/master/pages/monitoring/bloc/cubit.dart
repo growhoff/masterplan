@@ -7,7 +7,6 @@ import 'package:master_plan/domain/usecase/time_converter.dart';
 import 'package:master_plan/presentation/pages/master/pages/monitoring/model/item_machine.dart';
 import 'package:master_plan/presentation/pages/master/pages/monitoring/model/item_machine_monitor.dart';
 import 'state.dart';
-import 'package:intl/intl.dart';
 
 class CubitMonitoring extends Cubit<StateMonitoring> {
   final List<Machine>? machineList;
@@ -31,28 +30,10 @@ class CubitMonitoring extends Cubit<StateMonitoring> {
         queueList.add(MonitoringMachineDTO.fromMap(item));
       }
     }
-    
-    List<ItemMachineMonitorMaster> listMonitor = [];
-    for (var machine in machineList!) {
-      List<ItemMachineStatus> listStatus = [];
-      int allTime = 0;
-      for (var queueItem in queueList) {
-        if (queueItem.machine!.id == machine.id) {
-          listStatus.add(ItemMachineStatus(
-              timeStart: queueItem.timeStart,
-              timeEnd: queueItem.timeStop,
-              timeWorking: (queueItem.timeStop < queueItem.timeStart) ? 0 : getTimeWorking(queueItem.timeStart,queueItem.timeStop),
-              status: queueItem.statusMachine!,
-              comment: queueItem.comment,
-              changeId: queueItem.changeId,
-              ));
-          allTime += (queueItem.timeStop - queueItem.timeStart);
-        }
-      }
-      listMonitor.add(ItemMachineMonitorMaster(machine: machine, listStatus: listStatus, allTime: allTime));
-    }
+    List<ItemMachineMonitorMaster> listMonitor = getListMonitor(queueList);
     emit(state.copyWith(listBar: listMonitor));
   }
+
 
   Future<void> setDate(DateTime date)async{
     final quere = await tableMonitoring.selectListIdMachine(machineIdList, date);
@@ -60,27 +41,36 @@ class CubitMonitoring extends Cubit<StateMonitoring> {
     for (var item in quere) {
       queueList.add(MonitoringMachineDTO.fromMap(item));
     }
+    List<ItemMachineMonitorMaster> listMonitor = getListMonitor(queueList);
+    emit(state.copyWith(days: date, listBar: listMonitor));
+  }
 
+
+  List<ItemMachineMonitorMaster> getListMonitor(List<MonitoringMachineDTO> queueList){
     List<ItemMachineMonitorMaster> listMonitor = [];
     for (var machine in machineList!) {
       List<ItemMachineStatus> listStatus = [];
       int allTime = 0;
       for (var queueItem in queueList) {
         if (queueItem.machine!.id == machine.id) {
-          listStatus.add(ItemMachineStatus(
-              timeStart: queueItem.timeStart,
-              timeEnd: queueItem.timeStop,
-              timeWorking: (queueItem.timeStop < queueItem.timeStart) ? 0 : getTimeWorking(queueItem.timeStart,queueItem.timeStop),
-              status: queueItem.statusMachine!,
-              comment: queueItem.comment,
-              changeId: queueItem.changeId,
-              ));
+          listStatus.add(converterToItemMachineStatus(queueItem));
           allTime += (queueItem.timeStop - queueItem.timeStart);
         }
       }
       listMonitor.add(ItemMachineMonitorMaster(machine: machine, listStatus: listStatus, allTime: allTime));
     }
-    emit(state.copyWith(days: date, listBar: listMonitor));
+    return listMonitor;
+  }
+
+  ItemMachineStatus converterToItemMachineStatus(MonitoringMachineDTO dto) {
+    return ItemMachineStatus(
+      timeStart: dto.timeStart,
+      timeEnd: dto.timeStop,
+      timeWorking: (dto.timeStop < dto.timeStart) ? 0 : TimeConverter().getTimeWorking(dto.timeStart, dto.timeStop),
+      status: dto.statusMachine!,
+      comment: dto.comment,
+      changeId: dto.changeId,
+    );
   }
 
   void setChange(int change){
@@ -91,44 +81,13 @@ class CubitMonitoring extends Cubit<StateMonitoring> {
     emit(state.copyWith(activePage: index));
   }
 
-  String convertTimeMin(int timeMin){
-    final h = timeMin ~/ 60;
-    final min = timeMin - h * 60;
-    final minStr = min > 9 ? '$min' : '0$min';
-    final hStr = h > 9 ? '$h' : '0$h';
-    return '$hStr:$minStr';
-  }
-
-    String convertTimeFromSeconds(int timeSec) {
-    var seconds = timeSec;
-    var minutes = seconds ~/ 60;
-    var hours = minutes ~/ 60;
-    final s = seconds - minutes * 60;
-    final m = minutes - hours * 60;
-    final secStr = s > 9 ? '$s' : '0$s';
-    final minStr = m > 9 ? '$m' : '0$m';
-    final hStr = hours > 9 ? '$hours' : '0$hours';
-    String time ='$hStr:${minStr}:${secStr}';
-    return time;
-  }
-
   String convertTimeZone(int time){
-    return DateFormat('hh:mm:ss').format(DateTime.fromMillisecondsSinceEpoch(time)).toString();
+    return TimeConverter().convertMillisecondsSinceEpochToHHMMSS(time);
   }
 
   String differenceTime(int timeSec){
-    // return convertTime(timeSec);
-    return convertTimeFromSeconds(timeSec);
-  }
-
-  int getTimeWorking(int timeStart, int timeStop){
-    final date1 = DateTime.fromMillisecondsSinceEpoch(timeStart).toUtc();
-    final date2 = DateTime.fromMillisecondsSinceEpoch(timeStop).toUtc();
-    final difference = (date2.difference(date1)).inSeconds;
-    return difference;
-  }
-
-   
+    return TimeConverter().convertTimeFromSecondsHHMMSS(timeSec);
+  }  
 
 Color convertColor(int status){
   Color colorStatus;

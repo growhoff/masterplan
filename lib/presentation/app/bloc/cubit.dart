@@ -160,7 +160,7 @@ class CubitMain extends Cubit<StateMain> {
       machineListId.add(model.machine!.id);
     }
 
-    emit(state.copyWith(zshiftsDistributionList: zshiftsDistributionList,  machineIdList: machineListId));
+    emit(state.copyWith(zshiftsDistributionList: zshiftsDistributionList,  machineIdList: machineListId, change: change));
   }
 
   ShiftsDistribution convertToShiftsDistribution(ShiftsDistributionDTO model){

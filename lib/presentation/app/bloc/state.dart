@@ -23,8 +23,9 @@ class StateMain extends Equatable {
   final List<ShiftsDistribution>? zshiftsDistributionList;
   final List<OperatorOperations>? operatorOperationsList;
   final String link;
+  final int? change;
   const StateMain({
-    this.version = 'v2.5.9',
+    this.version = 'v2.5.12',
     this.user,
     this.machineList,
     this.machineIdList,
@@ -37,6 +38,7 @@ class StateMain extends Equatable {
     this.zshiftsDistributionList,
     this.operatorOperationsList,
     this.link = '',
+    this.change,
   });
 
   @override
@@ -55,6 +57,7 @@ class StateMain extends Equatable {
       operatorOperationsList ?? [],
       version,
       link,
+      change ?? 0,
     ];
   }
 
@@ -72,6 +75,7 @@ class StateMain extends Equatable {
     List<ShiftsDistribution>? zshiftsDistributionList,
     List<OperatorOperations>? operatorOperationsList,
     String? link,
+    int? change,
   }) {
     return StateMain(
       user: user ?? this.user,
@@ -86,6 +90,7 @@ class StateMain extends Equatable {
       zshiftsDistributionList: zshiftsDistributionList ?? this.zshiftsDistributionList,
       operatorOperationsList:  operatorOperationsList ?? this.operatorOperationsList,
       link: link ?? this.link,
+      change: change,
     );
   }
 

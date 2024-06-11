@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:master_plan/domain/model/operator_operations.dart';
-// import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/presentation/pages/master/pages/readyDetails/bloc/cubit.dart';
+import 'package:master_plan/presentation/pages/master/pages/readyDetails/bloc/state.dart';
 import 'package:master_plan/presentation/pages/master/pages/readyDetails/model/item_oper.dart';
-// import 'package:master_plan/presentation/pages/master/pages/readyDetails/model/item_operation.dart';
+import 'package:master_plan/presentation/pages/master/pages/readyDetails/widgets/dialog_input.dart';
 
 class RowExpandContent extends StatelessWidget {
   const RowExpandContent({super.key, required this.operation, required this.indexOper, required this.intL});
@@ -32,7 +31,26 @@ class RowExpandContent extends StatelessWidget {
                         ),
                       ),
                     ),
-                    onPressed: () => context.read<CubitReadyDetails>().toggleBrak(indexOper), 
+                    onPressed: () {
+                      final state = context.read<CubitReadyDetails>().state;
+                      if (state.statusList[state.activePage][indexOper].status == 1){
+                      context.read<CubitReadyDetails>().toggleBrak(indexOper, '0');}
+                      else{
+                        showDialog(
+                        context: context, 
+                        builder: (BuildContext innerContext){
+                          return BlocProvider.value(
+                            value: context.watch<CubitReadyDetails>(),
+                            child: Material(
+                              child: BlocBuilder<CubitReadyDetails, StateReadyDetails>(
+                                builder: (context, state) => DialogInput(count: operation.list.length, indexOper: indexOper, status: true),
+                              )
+                            ),
+                            );
+                        });
+                      }
+                      
+                    }, 
                     child: const Text('Брак'),),
                 ),
                 Container(
@@ -47,7 +65,26 @@ class RowExpandContent extends StatelessWidget {
                         ),
                       ),
                     ),
-                    onPressed: ()=> context.read<CubitReadyDetails>().toggleModific(indexOper), 
+                    onPressed: (){
+                      final state = context.read<CubitReadyDetails>().state;
+                      if (state.statusList[state.activePage][indexOper].status == 2){
+                      context.read<CubitReadyDetails>().toggleModific(indexOper, '0');}
+                      else{
+                        showDialog(
+                        context: context, 
+                        builder: (BuildContext innerContext){
+                          return BlocProvider.value(
+                            value: context.watch<CubitReadyDetails>(),
+                            child: Material(
+                              child: BlocBuilder<CubitReadyDetails, StateReadyDetails>(
+                                builder: (context, state) => DialogInput(count: operation.list.length, indexOper: indexOper, status: false),
+                              )
+                            ),
+                            );
+                        });
+                      }
+                      
+                    }, 
                     child: const Text('Доработка')),
                 ),
               ],
