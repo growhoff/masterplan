@@ -1,3 +1,4 @@
+import 'package:master_plan/data/repositories/supabase/dto/user_dto.dart';
 import 'package:master_plan/domain/model/position.dart';
 
 class User {
@@ -31,4 +32,16 @@ class User {
     photo: '',
     positionModel: Position(id: 0, name: ''),
   );
+
+  factory User.fromDTO(UserDTO dto) {
+    return User(
+        id: dto.id,
+        fio: dto.fio,
+        positionId: dto.positionId,
+        companyId: dto.companyId,
+        unitId: dto.unitId,
+        areaId: dto.areaId,
+        photo: dto.photo,
+        positionModel: Position(id: dto.position.id, name: dto.position.name));
+  }
 }

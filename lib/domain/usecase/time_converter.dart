@@ -25,7 +25,7 @@ class TimeConverter {
     return time;
   }
 
-  
+
   String convertTimeMinHHMM(int timeMin){
     final h = timeMin ~/ 60;
     final min = timeMin - h * 60;
@@ -34,7 +34,7 @@ class TimeConverter {
     return '$hStr:$minStr';
   }
 
-    String convertTimeFromSecondsHHMMSS(int timeSec) {
+  String convertTimeFromSecondsHHMMSS(int timeSec) {
     final seconds = timeSec;
     final minutes = seconds ~/ 60;
     final hours = minutes ~/ 60;

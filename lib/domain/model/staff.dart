@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:master_plan/data/repositories/supabase/dto/staff_dto.dart';
 import 'package:master_plan/domain/model/user.dart';
 
 class Staff {
@@ -7,11 +8,23 @@ class Staff {
   final String password;
   final int userId;
   final User user;
-  Staff({
-    required this.id,
-    required this.login,
-    required this.user,
-    required this.userId,
-    required this.password
-  });
+
+  Staff(
+      {required this.id,
+      required this.login,
+      required this.user,
+      required this.userId,
+      required this.password});
+
+  static final Staff empty =
+      Staff(id: 0, login: '', user: User.empty, userId: 0, password: '');
+
+  factory Staff.fromDTO(StaffDTO dto) {
+    return Staff(
+        id: dto.id,
+        login: dto.login,
+        user: User.fromDTO(dto.user),
+        userId: dto.userId,
+        password: dto.password);
+  }
 }

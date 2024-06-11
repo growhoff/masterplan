@@ -133,24 +133,6 @@ class CubitWork extends Cubit<StateWork> {
     checkIsDetailReady(chiefBatchId: oper.list.first.chiefBatchId ?? 0, chiefOperationId: oper.list.first.chiefOperationId ?? 0);
   }
 
-  Future<void> setBrak(ItemOperOp oper, int userId, int seconds, String comment, bool isStart)async{
-    final quereMon = await monitorTable.selectIdMonitor(userId, state.pageData[state.activePage].machine.id, oper.list.first.batch.id, oper.idPath);
-    final idMon = quereMon.first['id'];
-    int count = state.count;
-    List<int> listId5 = [];
-    List<int> listId0 = [];
-    for (var id in oper.listId) {
-      if (count == 0) {listId0.add(id);}
-        else{
-          listId5.add(id);
-          count --;
-        }
-    }
-    operatorOperationsTable.updateTimeStopAndReadyCount(listId0, listId5, DateTime.now().millisecondsSinceEpoch, seconds, userId);
-    setStopMonitor(1, idMon);
-    setIsStart(false);
-  }
-
 
   // проверка на готовность детали
   Future<void> checkIsDetailReady({required int chiefBatchId, required int chiefOperationId})async
@@ -265,12 +247,4 @@ class CubitWork extends Cubit<StateWork> {
           areaId: dto.areaId),
     );
   }
-
-    Future<void> toggleBrak(String countStr)async{
-      int count = int.parse(countStr);
-      int length = state.pageData[state.activePage].operActive!.list.length;
-      if (count > length) {count = length;}
-      if (count < 0) {count = 0;}
-      emit(state.copyWith(count: count));
-    }
 }

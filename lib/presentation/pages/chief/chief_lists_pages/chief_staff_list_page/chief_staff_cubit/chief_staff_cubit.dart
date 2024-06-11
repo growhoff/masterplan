@@ -1,8 +1,12 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
+
 // import 'package:gpassword/gpassword.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:master_plan/data/repositories/supabase/dto/position_staff_dto.dart';
+import 'package:master_plan/data/repositories/supabase/service/position_staff_table.dart';
+import 'package:master_plan/domain/model/position_staff.dart';
 
 import 'package:mime/mime.dart';
 
@@ -37,6 +41,7 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
   final StaffTable _staffTable = StaffTable();
   final UserTable _userTable = UserTable();
   final PositionTable _positionTable = PositionTable();
+  final PositionStaffTable _positionStaffTable = PositionStaffTable();
 
   final ImagePicker _imagePicker = ImagePicker();
 
@@ -105,6 +110,22 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
     emit(state.copyWith(staffList: staffList));
   }
 
+  Future<void> fetchMasters() async {
+    List<Staff> staffList = [];
+
+    final areaId = areasMap[selectedArea] ?? 1;
+    var fetchedList =
+        await _positionStaffTable.selectMastersOnArea(areaId: areaId);
+
+    for (var fetchedUser in fetchedList) {
+      final userDto = PositionStaffDTO.fromMap(fetchedUser);
+      final user = PositionStaff.fromDTO(userDto);
+      staffList.add(user.staff);
+    }
+
+    emit(state.copyWith(staffList: staffList));
+  }
+
   Future fetchDropDownsItems(
       {int? selectedRegionId, int? selectedPositionId}) async {
     await fetchAreas();
@@ -150,9 +171,7 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
       }
     }
 
-    emit(ChiefStaffAddPageState(
-        positionsNamesList: positionsNamesList,
-        areasNamesList: areasNamesList));
+    emit(state.copyWith(areasNamesList: areasNamesList));
   }
 
   Future<List<Position>> fetchPositions() async {
@@ -205,8 +224,7 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
         login: numberController.text,
         password:
             passwordController.text == '' || passwordController.text == ' '
-                 ? _password.generatePassword()
-
+                ? _password.generatePassword()
                 : passwordController.text,
         userId: userId,
         user: UserDTO.empty));

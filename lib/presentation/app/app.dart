@@ -18,6 +18,8 @@ import 'package:master_plan/presentation/pages/operator/operator_page.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/work_page.dart';
 import 'package:master_plan/presentation/pages/technologist/archive_page/archive_stages_page.dart';
 import '../../theme/theme.dart';
+import '../pages/chief/chief_lists_pages/chief_staff_list_page/masters_list_page.dart';
+import '../pages/chief/chief_lists_pages/chief_staff_list_page/selection_staff_position_page.dart';
 import '../pages/dispatcher/widgets/custom_navbar.dart';
 import '../pages/master/maste_page.dart';
 import '../pages/technologist/archive_page/archive_operations_page.dart';
@@ -48,6 +50,8 @@ class MyApp extends StatelessWidget {
           '/chiefMachineInsertPage': (BuildContext context) => const ChiefMachineInsertPage(),
           '/chiefMachineEditPage': (BuildContext context) => const ChiefMachineEditPage(),
           '/chiefStaffListPage': (BuildContext context) => const ChiefStaffListPage(),
+          '/selectionStaffPositionPage': (BuildContext context) => const SelectionStaffPositionPage(),
+          '/mastersListPage': (BuildContext context) => const MastersListPage(),
           '/chiefStaffAddPage': (BuildContext context) => const ChiefStaffAddPage(),
           '/chiefStaffEditPage': (BuildContext context) => const ChiefStaffEditPage(),
           '/chiefOperationsStatisticsPage': (BuildContext context) => const OperationsStatisticsPage(),

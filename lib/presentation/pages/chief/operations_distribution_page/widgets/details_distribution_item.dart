@@ -152,6 +152,7 @@ class _ChiefOperationDistributionBodyItemState
                                     timePlan:
                                         widget.operation.operation.timeSH ??
                                             0));
+
                           }
                           setState(() {});
                         }

@@ -64,7 +64,7 @@ class UserDTO extends Dto {
     return UserDTO(
       id: map['id'] as int,
       fio: map['fio'] as String,
-      position: PositionDTO.fromMap(map['z_position'] as Map<String,dynamic>),
+      position: PositionDTO.fromMap(map['z_position']),
       company: map['z_company'] !=null ? CompanyDTO.fromMap(map['z_company'] as Map<String,dynamic>): null,
       unit: map['z_unit'] != null ? UnitDTO.fromMap(map['z_unit'] as Map<String,dynamic>) : null,
       area: map['z_area'] != null ? AreaDTO.fromMap(map['z_area'] as Map<String,dynamic>) : null,

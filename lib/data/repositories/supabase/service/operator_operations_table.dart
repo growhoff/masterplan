@@ -33,6 +33,27 @@ class OperatorOperationsTable extends SupabaseTable {
     }
   }
 
+  Future<void> bulkInsert(
+      {required List<OperatorOperationsDTO> operationsList}) async {
+    List<Map<String, Object?>> mapsList = [];
+
+    for (var operation in operationsList) {
+      mapsList.add({
+        'time_plan': operation.timeplan,
+        'status_id': operation.statusId,
+        'batch_id': operation.batchId,
+        'stage_id': operation.stageId,
+        'operation_id': operation.operationId,
+        'area_id': operation.areaId,
+        'order': operation.order,
+        'chief_operation_id': operation.chiefOperationId,
+        'chief_batch_id': operation.chiefBatchId
+      });
+    }
+
+    await table.insert(mapsList);
+  }
+
   @override
   Future<List<Map<String, dynamic>>> select() {
     return table

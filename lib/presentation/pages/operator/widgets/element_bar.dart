@@ -32,7 +32,7 @@ class ElementBarOperator extends StatelessWidget {
           const SizedBox(height: 8),
           const Divider(),
           const SizedBox(height: 16),
-          ContentDetail(state.pageData[state.activePage], state.statusBtn[state.activePage], state.count)
+          ContentDetail(state.pageData[state.activePage], state.statusBtn[state.activePage])
         ],
       )
       : const Center(child: CircularProgressIndicator()),

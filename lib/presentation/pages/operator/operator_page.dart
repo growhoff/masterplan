@@ -31,7 +31,7 @@ class ContentOperator extends StatelessWidget {
             return Column(
             children: [
               const Text('Оператор'),
-              Text('${state.user!.fio} / ${state.user!.position.name} / смена: ${state.change}', style: const TextStyle(fontSize: 12)),
+              Text('${state.user!.fio} / ${state.user!.position.name}', style: const TextStyle(fontSize: 12)),
             ]);
             }),
           actions: const [],

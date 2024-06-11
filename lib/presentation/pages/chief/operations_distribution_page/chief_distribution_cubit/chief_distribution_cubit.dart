@@ -109,20 +109,20 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
 
   Future<void> sendOperationsToDistribution() async {
     emit(state.copyWith(status: DistributionPageStatus.loading));
+
+    List<OperatorOperationsDTO> operatorOperationsDtoList = [];
     List<int> chiefOperationsIdList = [];
     for (var operation in operationsForDistributionList) {
       final quantity = operation.quantity;
-      print(operation.operationId);
+
       var fetchedChiefOperationsList =
           await _chiefOperationTable.fetchOperationsByOperationIdWithLimit(
               limit: quantity, operationId: operation.operationId);
 
+      int orderNumber = 1;
       for (var chiefOperation in fetchedChiefOperationsList) {
         chiefOperationsIdList.add(chiefOperation['id']);
-      }
-
-      for (int i = 0; i < quantity; i++) {
-        await _operatorOperationsTable.insert(OperatorOperationsDTO(
+        operatorOperationsDtoList.add(OperatorOperationsDTO(
             id: 0,
             timeplan: operation.timePlan,
             timeFirstStart: 0,
@@ -135,15 +135,20 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
             operationId: operation.operationId,
             operation: OperationDTO.empty,
             areaId: operation.areaId,
-            order: i + 1,
-            chiefOperationId: fetchedChiefOperationsList[i]['id'],
-            chiefBatchId: fetchedChiefOperationsList[i]['chief_batch_id'],
+            order: orderNumber,
+            chiefOperationId: chiefOperation['id'],
+            chiefBatchId: chiefOperation['chief_batch_id'],
             area: AreaDTO(id: 0, name: '', number: '', unitId: 0)));
+        orderNumber++;
       }
+
       await _chiefDistributionOperationsTable.updateQuantity(
           chiefOperationId: operation.chiefOperationId,
           newQuantity: operation.oldQuantity - quantity);
     }
+
+    await _operatorOperationsTable.bulkInsert(
+        operationsList: operatorOperationsDtoList);
 
     fetchChiefOperations();
 

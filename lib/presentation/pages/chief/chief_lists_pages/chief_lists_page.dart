@@ -33,7 +33,7 @@ class _ChiefListsPageViewState extends State<ChiefListsPageView> {
                       child: const Text('Список оборудования')),
                   const SizedBox(height: 8),
                   ElevatedButton(
-                      onPressed: () => Navigator.pushNamed(context, '/chiefStaffListPage'),
+                      onPressed: () => Navigator.pushNamed(context, '/selectionStaffPositionPage'),
                       child: const Text('Список персонала')),
                   const SizedBox(height: 8),
                   ElevatedButton(

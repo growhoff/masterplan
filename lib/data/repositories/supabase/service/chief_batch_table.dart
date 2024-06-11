@@ -19,7 +19,7 @@ class ChiefBatchTable extends SupabaseTable {
   Future<int> insert(Dto dto) async {
     if (dto is ChiefBatchDTO) {
       var chiefBatch =
-          await table.insert({'batch_id': dto.batchId}).select('id');
+      await table.insert({'batch_id': dto.batchId}).select('id');
       return chiefBatch[0]['id'];
     }
     return 0;

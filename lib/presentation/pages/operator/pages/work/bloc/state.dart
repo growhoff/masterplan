@@ -11,7 +11,6 @@ class StateWork extends Equatable {
     final List<bool> listStartBtn;
     final List<int> timeActive;
     final List<bool> listStartTime;
-    final int count;
   const StateWork({
     this.pageData = const [],
     this.activePage = 0,
@@ -20,11 +19,10 @@ class StateWork extends Equatable {
     this.listStartBtn = const [],
     this.timeActive = const [],
     this.listStartTime = const [],
-    this.count = 0,
   });
 
   @override
-  List<Object> get props => [pageData, activePage, statusBtn, monitorId ?? 0, listStartBtn, timeActive, listStartTime, count];
+  List<Object> get props => [pageData, activePage, statusBtn, monitorId ?? 0, listStartBtn, timeActive, listStartTime];
 
   StateWork copyWith({
     List<PageItem>? pageData,
@@ -35,7 +33,6 @@ class StateWork extends Equatable {
     List<bool>? listStartBtn,
     List<int>? timeActive,
     List<bool>? listStartTime,
-    int? count,
   }) {
     return StateWork(
       pageData: pageData ?? this.pageData,
@@ -45,7 +42,6 @@ class StateWork extends Equatable {
       listStartBtn: listStartBtn ?? this.listStartBtn,
       timeActive: timeActive ?? this.timeActive,
       listStartTime: listStartTime ?? this.listStartTime,
-      count: count ?? this.count,
     );
   }
 }

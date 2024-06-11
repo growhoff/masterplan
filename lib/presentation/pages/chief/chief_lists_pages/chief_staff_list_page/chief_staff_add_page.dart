@@ -30,7 +30,6 @@ class _ChiefStaffAddPageViewState extends State<ChiefStaffAddPageView> {
 
     super.initState();
     context.read<ChiefStaffCubit>().fetchDropDownsItems();
-    print('заинитилось');
 
   }
 
