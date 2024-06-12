@@ -12,8 +12,9 @@ class OperatorPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final stateMain = context.read<CubitMain>().state;
     return BlocProvider<CubitOperator>(
-      create: (context) => CubitOperator(),
+      create: (context) => CubitOperator(stateMain.user!.id),
       child: const ContentOperator()
     );
   }
@@ -31,7 +32,7 @@ class ContentOperator extends StatelessWidget {
             return Column(
             children: [
               const Text('Оператор'),
-              Text('${state.user!.fio} / ${state.user!.position.name}', style: const TextStyle(fontSize: 12)),
+              Text('${state.user!.fio} / ${state.user!.position.name} / ${state.change} смена', style: const TextStyle(fontSize: 12)),
             ]);
             }),
           actions: const [],

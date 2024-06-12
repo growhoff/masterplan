@@ -45,7 +45,7 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
         list.add(convertDto(element));
         listId.add(element.id);
       }
-      listB.add(ItemOperReady(idPath: key!, list: list, listId: listId, timeWorking: list.first.timeworking!));
+      listB.add(ItemOperReady(idPath: key!, list: list, listId: listId, timeWorking: list.first.timeworking ?? 0));
     });
 
     List<ItemMachine> listMachine = [];
@@ -124,17 +124,7 @@ void toggleModific(int indexOper, String countStr){
     l.insert(state.activePage, item);
     emit(state.copyWith(statusList: l, count: state.count+1));
   }
-  // void toggleModific(int indexOper){
-  //   List<List<int>> l = [...state.statusList];
-  //   int it = l[state.activePage][indexOper];
-  //   if (it == 4) {it = 6;} else {it = 4;}
-  //   List<int> item = l[state.activePage];
-  //   item.removeAt(indexOper);
-  //   item.insert(indexOper, it);
-  //   l.removeAt(state.activePage);
-  //   l.insert(state.activePage, item);
-  //   emit(state.copyWith(statusList: l, count: state.count+1));
-  // }
+
 
   Future<void> updateOperation() async{
     final table = OperatorOperationsTable();
@@ -143,6 +133,7 @@ void toggleModific(int indexOper, String countStr){
     if (listOper.isNotEmpty) {
       final listStatus = state.statusList[state.activePage];
       for (var i = 0; i < listOper.length; i++) {
+        
         //доработка
         if (listStatus[i].status == 2) {
           List<int> listSt2 = [];
@@ -156,7 +147,8 @@ void toggleModific(int indexOper, String countStr){
             }
           }
           table.updateMasterModificateListCount(listSt2, listSt0);
-          }
+        }
+
         //брак
         if (listStatus[i].status == 1) {
           //выгрузить все операции по chiefBatchId
@@ -171,17 +163,16 @@ void toggleModific(int indexOper, String countStr){
           List<int> listSt1 = [];
           List<int> listSt0 = [];
           int count = listStatus[i].count;
-          for (var j = 0; j < listId.length; j++) {
+          
+          for (var j = 0; j < listOper[i].list.length; j++) {
             if (count == 0){
-              for (var e in listId[j].list) {
-                listSt0.add(e);
-              }
+
               listSt0.add(listOper[i].listId[j]);
             } else{
               for (var e in listId[j].list) {
                 listSt1.add(e);
               }
-              listSt0.add(listOper[i].listId[j]);
+              listSt1.add(listOper[i].listId[j]);
               count--;
             }
           }
@@ -190,6 +181,7 @@ void toggleModific(int indexOper, String countStr){
           List<int> chId = listChiefBatchId.getRange(0, count).toList();
           chiefBatchTable.updateChiefBatchStatusToDefectList(chiefBatchId: chId);
         }
+
         //готово
         if (listStatus[i].status == 0) table.updateMasterStatisticReadyList(listOper[i].listId);
       }
@@ -197,11 +189,6 @@ void toggleModific(int indexOper, String countStr){
   }
 
   List<ItemId> getListIdFromQueue(List<Map<String, dynamic>> data){
-    // List<int> list = [];
-    // for (var element in data) {
-    //   if (element['status_id'] == 2 || element['status_id'] == 3 || element['status_id'] == 4) list.add(element['id']);
-    // }
-
     List<ItemId> listB = [];
     var newMap = groupBy(data, (el) => el['chief_batch_id']);
     newMap.forEach((key, value) {

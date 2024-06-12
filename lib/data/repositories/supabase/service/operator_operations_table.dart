@@ -196,7 +196,7 @@ class OperatorOperationsTable extends SupabaseTable {
 
   Future<void> updateMasterModificateListCount(List<int> listId2, List<int> listId0) async {
     await table.update({'status_id': 4}).inFilter('id', listId2);
-    if (listId0.isNotEmpty) await table.update({'status_id': 6}).inFilter('id', listId0);
+    if (listId0.isNotEmpty) await table.update({'status_id': 9}).inFilter('id', listId0);
   }
 
   //статус брак
@@ -210,7 +210,7 @@ class OperatorOperationsTable extends SupabaseTable {
 
   Future<void> updateMasterBrakListCount(List<int> listId1, List<int> listId0) async {
     await table.update({'status_id': 5}).inFilter('id', listId1);
-    if (listId0.isNotEmpty) await table.update({'status_id': 6}).inFilter('id', listId0);
+    if (listId0.isNotEmpty) await table.update({'status_id': 9}).inFilter('id', listId0);
   }
 
   //статус готово
@@ -218,8 +218,8 @@ class OperatorOperationsTable extends SupabaseTable {
     await table.update({'status_id': 6}).eq('id', id);
   }
 
-  Future<void> updateMasterReadyEqOptimalPart(int id) async {
-    await table.update({'status_id': 6}).eq('optimal_part', id);
+  Future<void> updateMasterReadyEqOptimalPart(int optPath, int userId, ) async {
+    await table.update({'status_id': 6, 'user_id': userId, 'time_working': 0, 'time_first_start': 0}).eq('optimal_part', optPath);
   }
 
   //статус Статистика готовых

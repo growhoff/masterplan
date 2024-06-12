@@ -15,9 +15,10 @@ class CubitQueueMaster extends Cubit<StateQueueMaster> {
   final List<Machine>? machineList;
   final List<OperatorOperations>? queueList;
   final List<int> machineIdList;
+  final int userId;
   final tableOperations = OperatorOperationsTable();
 
-  CubitQueueMaster(this.machineList, this.queueList, this.machineIdList) : super(const StateQueueMaster()) {
+  CubitQueueMaster(this.machineList, this.queueList, this.machineIdList, this.userId) : super(const StateQueueMaster()) {
     tableOperations.table.stream(primaryKey: ['id']).inFilter('machine_id', machineIdList).listen((event) {}).onData((data) async {
       await getQuere(data);
     });
@@ -113,8 +114,8 @@ class CubitQueueMaster extends Cubit<StateQueueMaster> {
     tableOperations.updateMasterDistribMasterEqOptimalPart(id);
   }
 
-  void updateOperationReady(int id) {
-    tableOperations.updateMasterReadyEqOptimalPart(id);
+  void updateOperationReady(int idPath) {
+    tableOperations.updateMasterReadyEqOptimalPart(idPath, userId);
   }
 
   void setActivePage(int index) {

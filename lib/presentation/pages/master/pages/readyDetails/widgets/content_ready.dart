@@ -41,7 +41,7 @@ class ContetnReadyMaster extends StatelessWidget {
                 width: double.maxFinite,
                 child: ElevatedButton(
                   onPressed: () => context.read<CubitReadyDetails>().updateOperation(), 
-                  child: const Text('Вызгрузить'),
+                  child: const Text('Выгрузить'),
                 ),
               )
       ],

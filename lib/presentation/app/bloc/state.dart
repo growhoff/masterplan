@@ -25,7 +25,7 @@ class StateMain extends Equatable {
   final String link;
   final int? change;
   const StateMain({
-    this.version = 'v2.5.14',
+    this.version = 'v2.5.16',
     this.user,
     this.machineList,
     this.machineIdList,

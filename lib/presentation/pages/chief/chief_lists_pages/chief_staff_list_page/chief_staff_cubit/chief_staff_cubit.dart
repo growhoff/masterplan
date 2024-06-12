@@ -55,9 +55,11 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
   XFile? loadedProfileImage;
 
   Map<String, int> areasMap = {};
-  Map<String, int> positionsMap = {};
+  Map<String, int> positionsMap = {'Мастер': 3, 'Оператор': 4};
 
-  // final GPassword _gPassword = GPassword(); // генератор пароля (библиотека)
+  final List<String> selectedPositionsList = [];
+  List<String> positionsToSelectList = [];
+
   final Password _password = Password(length: 4);
 
   Future<void> fetchAreasAndStaff() async {
@@ -126,8 +128,23 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
     emit(state.copyWith(staffList: staffList));
   }
 
-  Future fetchDropDownsItems(
-      {int? selectedRegionId, int? selectedPositionId}) async {
+  Future<void> fetchOperators() async {
+    List<Staff> staffList = [];
+
+    final areaId = areasMap[selectedArea] ?? 1;
+    var fetchedList =
+        await _positionStaffTable.selectOperatorsOnArea(areaId: areaId);
+
+    for (var fetchedUser in fetchedList) {
+      final userDto = PositionStaffDTO.fromMap(fetchedUser);
+      final user = PositionStaff.fromDTO(userDto);
+      staffList.add(user.staff);
+    }
+
+    emit(state.copyWith(staffList: staffList));
+  }
+
+  Future fetchDropDownsItems({int? staffId}) async {
     await fetchAreas();
 
     final areasList = state.areasList;
@@ -140,16 +157,7 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
       areasMap[key] = areasList[i].id;
     }
 
-    if (selectedRegionId == null) {
-      selectedArea = areasNamesList[0];
-    } else {
-      for (final element in areasMap.entries) {
-        if (element.value == selectedRegionId) {
-          selectedArea = element.key;
-          break;
-        }
-      }
-    }
+    selectedArea = areasNamesList[0];
 
     List<Position> positionsList = await fetchPositions();
 
@@ -160,18 +168,18 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
       positionsMap[key] = positionsList[i].id;
     }
 
-    if (selectedPositionId == null) {
-      selectedPosition = positionsNamesList[0];
-    } else {
-      for (final element in positionsMap.entries) {
-        if (element.value == selectedPositionId) {
-          selectedPosition = element.key;
-          break;
-        }
-      }
+    selectedPosition = positionsNamesList[0];
+
+    positionsToSelectList = positionsNamesList;
+
+    if (staffId != null) {
+      await fetchStaffPositions(staffId: staffId);
     }
 
-    emit(state.copyWith(areasNamesList: areasNamesList));
+    emit(state.copyWith(
+        areasNamesList: areasNamesList, status: ChiefStaffStatus.success));
+
+    print('dropdown закончилась: $positionsToSelectList');
   }
 
   Future<List<Position>> fetchPositions() async {
@@ -186,6 +194,16 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
     }
 
     return positionsList;
+  }
+
+  Future<void> fetchStaffPositions({required int staffId}) async {
+    var fetchedList =
+        await _positionStaffTable.selectStaffPositions(staffId: staffId);
+    for (var positionsStaff in fetchedList) {
+      final positionStaffDto = PositionStaffDTO.fromMap(positionsStaff);
+      selectedPositionsList.add(positionStaffDto.position.name);
+      positionsToSelectList.remove(positionStaffDto.position.name);
+    }
   }
 
   Future insertStaff() async {
@@ -211,7 +229,7 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
     var userId = await _userTable.insert(UserDTO(
         id: 0,
         fio: fioController.text,
-        positionId: positionsMap[selectedPosition]!,
+        positionId: positionsMap[selectedPosition] ?? 1,
         areaId: areasMap[selectedArea],
         companyId: 1,
         company: CompanyDTO.init(),
@@ -219,7 +237,7 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
         photo: imageUrl,
         unitId: null));
 
-    await _staffTable.insert(StaffDTO(
+    var staffId = await _staffTable.insert(StaffDTO(
         id: 0,
         login: numberController.text,
         password:
@@ -229,9 +247,21 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
         userId: userId,
         user: UserDTO.empty));
 
+    for (var position in selectedPositionsList) {
+      await _positionStaffTable.insert(PositionStaffDTO(
+          id: 0,
+          positionId: positionsMap[position] ?? 1,
+          staffId: staffId,
+          position: PositionDTO(id: 0, name: ''),
+          staff: StaffDTO(
+              id: 0, login: '', password: '', userId: 0, user: UserDTO.empty)));
+    }
+
     fioController.clear();
     numberController.clear();
     passwordController.clear();
+    selectedPositionsList.clear();
+    positionsToSelectList.clear();
     loadedProfileImage = null;
   }
 
@@ -272,7 +302,7 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
     }
   }
 
-  Future updateStaff({required Staff staffModel}) async {
+  Future<void> updateStaff({required Staff staffModel}) async {
     await _userTable.update(
         staffModel.user.id,
         UserDTO(
@@ -309,8 +339,10 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
       {required int staffId,
       required int userId,
       required String? imagePath}) async {
+    await _positionStaffTable.deleteByStaffId(staffId: staffId);
     await _staffTable.delete(staffId);
     await _userTable.delete(userId);
+
     if (imagePath != null) {
       await imageStorage.remove(path: imagePath);
     }

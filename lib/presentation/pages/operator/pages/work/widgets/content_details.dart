@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/bloc/cubit.dart';
+import 'package:master_plan/presentation/pages/operator/pages/work/bloc/state.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/model/page_item.dart';
+import 'package:master_plan/presentation/pages/operator/pages/work/widgets/dialog_input_work.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/widgets/timer/bloc/cubit.dart';
 import 'line_text_spawn.dart';
 import 'timer/timer.dart';
 import 'elevated_button_castom.dart';
 
 class ContentDetail extends StatelessWidget {
-  ContentDetail(this.pageData, this.statusBtn, {super.key});
+  ContentDetail(this.pageData, this.statusBtn, this.countBr, {super.key});
   final int statusBtn;
   final PageItem pageData;
+  final int countBr;
 
   final TextEditingController controller = TextEditingController();
   final FocusNode focusNode = FocusNode();
@@ -45,11 +48,15 @@ class ContentDetail extends StatelessWidget {
                     text: 'Деталь готова',
                     isActive: (statusBtn == 0) || (statusBtn == 1),
                     color: Colors.green,
-                    onPressed: () => {
-                            context.read<CubitWork>().setReady(operation, userId, context.read<CubitTimer>().state.listTick[astivePage], controller.text, !(statusBtn == 1)),
-                            context.read<CubitTimer>().refresh(astivePage),
-                            controller.clear()
-                          },
+                    onPressed: () {
+                      if (countBr > 0){
+                        context.read<CubitWork>().setBrak(operation, userId, context.read<CubitTimer>().state.listTick[astivePage], controller.text, !(statusBtn == 1));
+                      } else {
+                        context.read<CubitWork>().setReady(operation, userId, context.read<CubitTimer>().state.listTick[astivePage], controller.text, !(statusBtn == 1));
+                      }
+                      context.read<CubitTimer>().refresh(astivePage);
+                      controller.clear();
+                    },
                   )),
               const SizedBox(height: 8),
               Row(
@@ -74,10 +81,22 @@ class ContentDetail extends StatelessWidget {
                       child: SizedBox(
                           width: double.maxFinite,
                           child: ElevatedButtonCastom(
-                              text: 'Брак',
-                              isActive: true,
+                              text: 'Брак: $countBr',
+                              isActive: (statusBtn == 0) || (statusBtn == 1),
                               color: const Color.fromARGB(255, 115, 16, 222),
                               onPressed: () {
+                                showDialog(
+                                  context: context, 
+                                  builder: (BuildContext innerContext){
+                                    return BlocProvider.value(
+                                      value: context.watch<CubitWork>(),
+                                      child: Material(
+                                        child: BlocBuilder<CubitWork, StateWork>(
+                                          builder: (context, state) => DialogInputWork(count: operation.list.length, indexOper: 1),
+                                        )
+                                      ),
+                                      );
+                                  });
                               }))),
                   const Spacer(),
                   Expanded(

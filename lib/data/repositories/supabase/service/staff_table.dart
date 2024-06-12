@@ -14,14 +14,16 @@ class StaffTable extends SupabaseTable {
   }
 
   @override
-  Future<void> insert(Dto dto) async {
+  Future<int> insert(Dto dto) async {
     if (dto is StaffDTO) {
-      await table.insert({
+      var res = await table.insert({
         'login': dto.login,
         'password': dto.password,
         'user_id': dto.userId
-      });
+      }).select('id');
+      return res.first['id'];
     }
+    return 0;
   }
 
   @override

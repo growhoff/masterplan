@@ -15,14 +15,23 @@ import '../../../../../../data/repositories/supabase/service/chief_batch_table.d
 import '../../../../../../data/repositories/supabase/service/chief_operation_table.dart';
 import 'state.dart';
 import 'package:collection/collection.dart';
+import 'dart:async';
 
 class CubitWork extends Cubit<StateWork> {
   final List<ShiftsDistribution>? zShiftsDistributionList;
   final List<int> machineListId;
   final operatorOperationsTable = OperatorOperationsTable();
   final monitorTable = MonitoringMachineTable();
+  late Timer periodicTimer;
   CubitWork(this.zShiftsDistributionList, this.machineListId) : super(const StateWork()) {
-    
+    //таймер
+    periodicTimer = Timer.periodic(const Duration(minutes: 1), (timer) {
+      final date = DateTime.now();
+      if ((date.hour == 20 || date.hour == 8) && date.minute == 0) {
+        emit(state.copyWith(exit: true));
+        print('Завершил сессию');
+      } else {emit(state.copyWith(exit: false));}
+    });
     //стрим
     operatorOperationsTable.table.stream(primaryKey: ['id']).inFilter('machine_id', machineListId).listen((event) {
       }).onData((data)async {
@@ -30,6 +39,12 @@ class CubitWork extends Cubit<StateWork> {
       });
   }
 
+@override
+  Future<void> close() {
+    periodicTimer.cancel();
+    // operatorOperationsTable.
+    return super.close();
+  }
 
     Future<void> getQuere (List<Map<String, dynamic>>? data)async{
     List<int> listId = [];
@@ -51,8 +66,10 @@ class CubitWork extends Cubit<StateWork> {
         list.add(element);
         listId.add(element.id);
       }
-      listB.add(ItemOperOp(idPath: key!, list: list, machineId: list.first.machine!.id, statusId: list.first.status.id, listId: listId, pause: list.first.pause));
+      listB.add(ItemOperOp(idPath: key!, list: list, machineId: list.first.machine!.id, statusId: list.first.status.id, listId: listId, pause: list.first.pause, order: list.first.order!));
     });
+
+    listB.sort((a, b) => a.order.compareTo(b.order));
 
     List<int> timeActive = [];
     List<PageItem> pageData = [];   
@@ -133,6 +150,24 @@ class CubitWork extends Cubit<StateWork> {
     checkIsDetailReady(chiefBatchId: oper.list.first.chiefBatchId ?? 0, chiefOperationId: oper.list.first.chiefOperationId ?? 0);
   }
 
+  Future<void> setBrak(ItemOperOp oper, int userId, int seconds, String comment, bool isStart)async{
+    final quereMon = await monitorTable.selectIdMonitor(userId, state.pageData[state.activePage].machine.id, oper.list.first.batch.id, oper.idPath);
+    final idMon = quereMon.first['id'];
+    int count = state.count;
+    List<int> listId5 = [];
+    List<int> listId0 = [];
+    for (var id in oper.listId) {
+      if (count == 0) {listId0.add(id);}
+        else{
+          listId5.add(id);
+          count --;
+        }
+    }
+    operatorOperationsTable.updateTimeStopAndReadyCount(listId0, listId5, DateTime.now().millisecondsSinceEpoch, seconds, userId);
+    setStopMonitor(1, idMon);
+    setIsStart(false);
+  }
+
 
   // проверка на готовность детали
   Future<void> checkIsDetailReady({required int chiefBatchId, required int chiefOperationId})async
@@ -210,7 +245,7 @@ class CubitWork extends Cubit<StateWork> {
   void setIsStart(bool b){
     List<bool> list = [...state.listStartBtn];
     list[state.activePage] = b;
-    emit(state.copyWith(listStartBtn: list));
+    emit(state.copyWith(listStartBtn: list, count: 0));
   }
 
   OperatorOperations convertDto(OperatorOperationsDTO dto) {
@@ -247,4 +282,12 @@ class CubitWork extends Cubit<StateWork> {
           areaId: dto.areaId),
     );
   }
+
+    Future<void> toggleBrak(String countStr)async{
+      int count = int.parse(countStr);
+      int length = state.pageData[state.activePage].operActive!.list.length;
+      if (count > length) {count = length;}
+      if (count < 0) {count = 0;}
+      emit(state.copyWith(count: count));
+    }
 }

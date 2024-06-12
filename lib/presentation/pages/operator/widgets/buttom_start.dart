@@ -16,7 +16,7 @@ class ButtomStart extends StatelessWidget {
                 onPressed: () {
                   if (stateMain.machineIdList != null){
                     if (!state.isStart && stateMain.machineIdList!.isNotEmpty) Navigator.pushNamed(context, '/workPage');
-                    context.read<CubitOperator>().toggleBtn(stateMain.user!.id);
+                    context.read<CubitOperator>().toggleBtn();
                   } else {
                     showDialog( context: context, builder: (BuildContext context) => const DialogChange());
                   }                 

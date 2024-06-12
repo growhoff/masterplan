@@ -9,6 +9,7 @@ class ItemOperOp {
   final int idPath;
   final int machineId;
   final int statusId;
+  final int order;
   ItemOperOp({
     required this.list,
     required this.listId,
@@ -16,5 +17,6 @@ class ItemOperOp {
     required this.idPath,
     required this.machineId,
     required this.statusId,
+    required this.order,
   });
 }

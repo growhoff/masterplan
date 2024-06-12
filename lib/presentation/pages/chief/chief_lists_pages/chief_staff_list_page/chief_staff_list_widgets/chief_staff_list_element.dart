@@ -69,11 +69,11 @@ class _StaffListElementState extends State<StaffListElement> {
                     const SizedBox(
                       height: 10,
                     ),
-                    Text(
-                        'должность: ${widget.staffModel.user.positionModel?.name}'),
-                    const SizedBox(
-                      height: 10,
-                    ),
+                    // Text(
+                    //     'должность: ${widget.staffModel.user.positionModel?.name}'),
+                    // const SizedBox(
+                    //   height: 10,
+                    // ),
                     Text('номер: ${widget.staffModel.login}'),
                     const SizedBox(
                       height: 10,
@@ -120,6 +120,7 @@ class _StaffListElementState extends State<StaffListElement> {
                                       TextButton(
                                           onPressed: () {
                                             widget.deleteStaff();
+                                            widget.fetchStaff();
                                             Navigator.pop(context, true);
                                           },
                                           child: Text(
