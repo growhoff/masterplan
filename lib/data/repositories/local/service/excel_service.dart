@@ -929,7 +929,7 @@ class ExcelService {
               cell.value = IntCellValue(operation.readyPercent);
 
             case 9:
-              cell.value = IntCellValue(operation.inWorkQuantity);
+              cell.value = IntCellValue(operation.distributed + operation.onDistribution);
             case 10:
               cell.value = IntCellValue(operation.defectQuantity);
             case 11:

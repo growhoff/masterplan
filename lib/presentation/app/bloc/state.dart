@@ -24,6 +24,7 @@ class StateMain extends Equatable {
   final List<OperatorOperations>? operatorOperationsList;
   final String link;
   final int? change;
+  final List<int>? listAreaId;
   const StateMain({
     this.version = 'v2.5.16',
     this.user,
@@ -39,6 +40,7 @@ class StateMain extends Equatable {
     this.operatorOperationsList,
     this.link = '',
     this.change,
+    this.listAreaId,
   });
 
   @override
@@ -58,6 +60,7 @@ class StateMain extends Equatable {
       version,
       link,
       change ?? 0,
+      listAreaId ?? [],
     ];
   }
 
@@ -76,6 +79,7 @@ class StateMain extends Equatable {
     List<OperatorOperations>? operatorOperationsList,
     String? link,
     int? change,
+    List<int>? listAreaId
   }) {
     return StateMain(
       user: user ?? this.user,
@@ -91,6 +95,7 @@ class StateMain extends Equatable {
       operatorOperationsList:  operatorOperationsList ?? this.operatorOperationsList,
       link: link ?? this.link,
       change: change,
+      listAreaId: listAreaId ?? this.listAreaId,
     );
   }
 

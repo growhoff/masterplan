@@ -34,7 +34,7 @@ class RowExpandContent extends StatelessWidget {
                     onPressed: () {
                       final state = context.read<CubitReadyDetails>().state;
                       if (state.statusList[state.activePage][indexOper].status == 1){
-                      context.read<CubitReadyDetails>().toggleBrak(indexOper, '0');}
+                      context.read<CubitReadyDetails>().toggleBrak(indexOper, '0', '');}
                       else{
                         showDialog(
                         context: context, 
@@ -68,7 +68,7 @@ class RowExpandContent extends StatelessWidget {
                     onPressed: (){
                       final state = context.read<CubitReadyDetails>().state;
                       if (state.statusList[state.activePage][indexOper].status == 2){
-                      context.read<CubitReadyDetails>().toggleModific(indexOper, '0');}
+                      context.read<CubitReadyDetails>().toggleModific(indexOper, '0', '');}
                       else{
                         showDialog(
                         context: context, 

@@ -22,25 +22,25 @@ class Reorder extends StatelessWidget {
         shrinkWrap: true,
         itemCount: list.length,
         itemBuilder: (context, index) {
-          int time = 0;
-          for (var e in list[index].list) {
-            time += e.timeplan;
-          }
-          return Row(
-          key: ValueKey(index),
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(child: ReorderableIconWidget(index)),
-            Expanded(flex: 3, child: Text('${list[index].list.first.batch.number} ${list[index].list.first.batch.name}', textAlign: TextAlign.center)),
-            Expanded(flex: 4, child: Text('${list[index].list.first.operation.number} ${list[index].list.first.operation.name}', textAlign: TextAlign.center)),
-            Expanded(flex: 2, child: Text('$time', textAlign: TextAlign.center)),
-            Expanded(flex: 2, child: Text('${list[index].list.length}', textAlign: TextAlign.center)),
-            //передать на готовые детали
-            Expanded(child: IconButton(onPressed: () => context.read<CubitQueueMaster>().updateOperationReady(list[index].idPath), icon: const Icon(Icons.check_rounded))),
-            //передать на распределение
-            Expanded(child: IconButton(onPressed: () => context.read<CubitQueueMaster>().updateOperationDistribMaster(list[index].idPath), icon: const Icon(Icons.close)))
-          ],
-        );
+          bool? mod = list[index].list.first.modific;
+          return Container(
+            key: ValueKey(index),
+            color:  mod != null ? Colors.amberAccent : Colors.white,
+            child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(child: ReorderableIconWidget(index)),
+              Expanded(flex: 3, child: Text('${list[index].list.first.batch.number} ${list[index].list.first.batch.name}', textAlign: TextAlign.center)),
+              Expanded(flex: 4, child: Text('${list[index].list.first.operation.number} ${list[index].list.first.operation.name}', textAlign: TextAlign.center)),
+              Expanded(flex: 2, child: Text('${list[index].time}', textAlign: TextAlign.center)),
+              Expanded(flex: 2, child: Text('${list[index].list.length}', textAlign: TextAlign.center)),
+              //передать на готовые детали
+              Expanded(child: IconButton(onPressed: () => context.read<CubitQueueMaster>().updateOperationReady(list[index].idPath), icon: const Icon(Icons.check_rounded))),
+              //передать на распределение
+              Expanded(child: IconButton(onPressed: () => context.read<CubitQueueMaster>().updateOperationDistribMaster(list[index].idPath), icon: const Icon(Icons.close)))
+            ],
+                  ),
+          );
         },
         onReorder: (oldIndex, newIndex) {
           if (newIndex > oldIndex) {newIndex = newIndex - 1;}

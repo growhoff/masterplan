@@ -9,6 +9,6 @@ class LineTextSpawn extends StatelessWidget {
     return RichText(
         text: TextSpan(
           style: const TextStyle(color: Colors.black),
-            children: [TextSpan(text: '$title: '), TextSpan(text: text)]));
+            children: [TextSpan(text: '$title '), TextSpan(text: text)]));
   }
 }

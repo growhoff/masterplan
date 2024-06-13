@@ -280,6 +280,7 @@ class CubitWork extends Cubit<StateWork> {
           inventoryNumber: dto.machine!.inventoryNumber,
           name: dto.machine!.name,
           areaId: dto.areaId),
+      modific: dto.modific,
     );
   }
 

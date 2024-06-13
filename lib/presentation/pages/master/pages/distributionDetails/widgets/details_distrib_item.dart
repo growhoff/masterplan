@@ -31,8 +31,8 @@ class TitleItem extends StatelessWidget {
             const SizedBox(height: 2),
             Text('Кол-во на участке: ${oper.count}'),
             const SizedBox(height: 2),
-            Text('--TECH--List id batch: ${listId.toString()}'),
-            const SizedBox(height: 2),
+            // Text('--TECH--List id batch: ${listId.toString()}'),
+            // const SizedBox(height: 2),
             Text('T п.з.: ${oper.timePZ} / T шт.: ${oper.timeSh} / T шт.к.: ${(oper.timeSh + (oper.timePZ / oper.count)).toStringAsFixed(2)}'),//T шт. + Т п. з./кол-во
           ],
         ),

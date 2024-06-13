@@ -5,9 +5,9 @@ import 'package:master_plan/domain/model/batch.dart';
 import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/domain/model/status.dart';
-import 'package:master_plan/presentation/pages/master/pages/queue/model/item_machine.dart';
-import 'package:master_plan/presentation/pages/master/pages/queue/model/item_oper.dart';
-import 'package:master_plan/presentation/pages/master/pages/queue/model/item_saver.dart';
+import '../model/item_machine.dart';
+import '../model/item_oper.dart';
+import '../model/item_saver.dart';
 import 'state.dart';
 import 'package:collection/collection.dart';
 
@@ -39,28 +39,15 @@ class CubitQueueMaster extends Cubit<StateQueueMaster> {
     var newMap = groupBy(queueList, (el) => el.optimalPart);
     newMap.forEach((key, value) {
       List<OperatorOperations> list = [];
+      int time = 0;
       for (var element in value) {
         list.add(convertDto(element));
+        if (element.timeplan != null) {time += element.timeplan!;}
       }
-      listB.add(ItemOper(idPath: key!, list: list));
+      listB.add(ItemOper(idPath: key!, list: list, order: list.first.order!, time: time));
     });
 
-    // List<ItemMachine> listItem = [];
-    // for (var machine in machineList!) {
-    //   List<OperatorOperations> listQueue = [];
-    //   int time = 0;
-    //   for (var queueItem in queueList) {
-    //     if (queueItem.machine!.id == machine.id) {
-    //       listQueue.add(convertDto(queueItem));
-    //       if (queueItem.timeplan == null) {
-    //         time += 0;
-    //       } else {
-    //         time += queueItem.timeplan!;
-    //       }
-    //     }
-    //   }
-    //   listItem.add(ItemMachine(machine: machine, listOper: listQueue, time: time));
-    // }
+    listB.sort((a, b) => a.order.compareTo(b.order));
 
     List<ItemMachine> listItem = [];
     for (var machine in machineList!) {
@@ -69,11 +56,7 @@ class CubitQueueMaster extends Cubit<StateQueueMaster> {
       for (var item in listB) {
         if (item.list.first.machine!.id == machine.id) {
           listQueue.add(item);
-          // if (item.timeplan == null) {
-          //   time += 0;
-          // } else {
-          //   time += item.timeplan!;
-          // }
+          time +=item.time;
         }
       }
       listItem.add(ItemMachine(machine: machine, listOper: listQueue, time: time));
@@ -107,6 +90,7 @@ class CubitQueueMaster extends Cubit<StateQueueMaster> {
           inventoryNumber: dto.machine!.inventoryNumber,
           name: dto.machine!.name,
           areaId: dto.areaId),
+      modific: dto.modific,
     );
   }
 
@@ -126,14 +110,14 @@ class CubitQueueMaster extends Cubit<StateQueueMaster> {
     List<ItemSaver> saveList = [];
     final operList = state.listMachine![state.activePage].listOper;
     for (var i = 0; i < operList.length; i++) {
-      List<int> idL = [];
-      for (var oper in operList[i].list) {
-        idL.add(oper.id);
-      }
-      saveList.add(ItemSaver(idList: idL, order: i));
+      // List<int> idL = [];
+      // for (var oper in operList[i].list) {
+      //   idL.add(oper.id);
+      // }
+      saveList.add(ItemSaver(idPath: operList[i].idPath, order: i));
     }
     for (var element in saveList) {
-      await tableOperations.updateOrder(element.idList, element.order);
+      await tableOperations.updateOrder(element.idPath, element.order);
     }
   }
 }

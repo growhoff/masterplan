@@ -38,15 +38,19 @@ class MachineTable extends SupabaseTable{
     return table.select().eq('area_id', areaId);
   }
 
+  Future<List<Map<String, dynamic>>> selectMachineToAreaList(List<int> listAreaId) {
+    return table.select().inFilter('area_id', listAreaId);
+  }
+
   Future<List<Map<String, dynamic>>> selectListId(List<int> listId) {
-      String filters = '';
-      for (var i = 0; i < listId.length; i++) {
-        if (i == (listId.length - 1)) {
-          filters += 'id.eq.${listId[i]}';
-        } else {
-          filters += 'id.eq.${listId[i]},';
-        }
+    String filters = '';
+    for (var i = 0; i < listId.length; i++) {
+      if (i == (listId.length - 1)) {
+        filters += 'id.eq.${listId[i]}';
+      } else {
+        filters += 'id.eq.${listId[i]},';
       }
+    }
     return table.select().or(filters);
   }
 

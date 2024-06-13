@@ -121,119 +121,135 @@ class _ChiefStaffAddPageViewState extends State<ChiefStaffAddPageView> {
                     const SizedBox(
                       height: 5,
                     ),
-                    Column(
-                      children: [
-                        SingleChildScrollView(
-                          child: ListView.separated(
-                              physics: NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemBuilder:
-                                  (context, index) =>
-                                      index ==
-                                              context
-                                                  .read<ChiefStaffCubit>()
-                                                  .selectedPositionsList
-                                                  .length
-                                          ? IconButton(
-                                              onPressed: () {
-                                                showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (ctx) => SimpleDialog(
-                                                              title: Text(
-                                                                  'выберите должность'),
-                                                              children:
-                                                                  List.generate(
-                                                                      context
-                                                                          .read<
-                                                                              ChiefStaffCubit>()
-                                                                          .positionsToSelectList
-                                                                          .length,
-                                                                      (index) =>
-                                                                          SimpleDialogOption(
-                                                                            onPressed: () =>
-                                                                                setState(() {
-                                                                              context.read<ChiefStaffCubit>().selectedPositionsList.add(context.read<ChiefStaffCubit>().positionsToSelectList[index]);
-
-                                                                              context.read<ChiefStaffCubit>().positionsToSelectList.remove(context.read<ChiefStaffCubit>().positionsToSelectList[index]);
-                                                                              Navigator.pop(ctx);
-                                                                            }),
-                                                                            child:
-                                                                                Text(context.read<ChiefStaffCubit>().positionsToSelectList[index]),
-                                                                          )),
-                                                            ));
-                                              },
-                                              icon: Icon(Icons.add))
-                                          : GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  context
-                                                      .read<ChiefStaffCubit>()
-                                                      .positionsToSelectList
-                                                      .add(context
-                                                          .read<
-                                                              ChiefStaffCubit>()
-                                                          .selectedPositionsList[index]);
-
-                                                  context
-                                                      .read<ChiefStaffCubit>()
-                                                      .selectedPositionsList
-                                                      .remove(context
-                                                          .read<
-                                                              ChiefStaffCubit>()
-                                                          .selectedPositionsList[index]);
-                                                });
-                                              },
-                                              child: Container(
-                                                padding: EdgeInsets.all(10),
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
-                                                    border: Border.all(
-                                                        color: Colors.black)),
-                                                child: Text(
-                                                  context
-                                                          .read<ChiefStaffCubit>()
-                                                          .selectedPositionsList[
-                                                      index],
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                              ),
-                                            ),
-                              separatorBuilder: (ctx, i) => SizedBox(
-                                    height: 5,
-                                  ),
-                              itemCount: context
+                    SingleChildScrollView(
+                      child: ListView.separated(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) => index ==
+                                  context
                                       .read<ChiefStaffCubit>()
                                       .selectedPositionsList
-                                      .length +
-                                  1),
-                        ),
-                        DropdownButton<String>(
-                          isExpanded: true,
-                          value: context.read<ChiefStaffCubit>().selectedArea,
-                          onChanged: (String? value) => setState(() => context
+                                      .length
+                              ? IconButton(
+                                  onPressed: () {
+                                    context
+                                                .read<ChiefStaffCubit>()
+                                                .positionsToSelectList
+                                                .length ==
+                                            1
+                                        ? setState(() {
+                                            context
+                                                .read<ChiefStaffCubit>()
+                                                .addLastPositionElement();
+                                          })
+                                        : showDialog(
+                                            context: context,
+                                            builder: (ctx) => SimpleDialog(
+                                                  title: Text(
+                                                      'выберите должность'),
+                                                  children: List.generate(
+                                                      context
+                                                          .read<
+                                                              ChiefStaffCubit>()
+                                                          .positionsToSelectList
+                                                          .length,
+                                                      (index) =>
+                                                          SimpleDialogOption(
+                                                            onPressed: () =>
+                                                                setState(() {
+                                                              context
+                                                                  .read<
+                                                                      ChiefStaffCubit>()
+                                                                  .addPositionElement(
+                                                                      index);
+                                                              Navigator.pop(
+                                                                  ctx);
+                                                            }),
+                                                            child: Text(context
+                                                                .read<
+                                                                    ChiefStaffCubit>()
+                                                                .positionsToSelectList[index]),
+                                                          )),
+                                                ));
+                                  },
+                                  icon: Icon(Icons.add))
+                              : Column(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.only(left: 10),
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          border:
+                                              Border.all(color: Colors.black)),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            context
+                                                .read<ChiefStaffCubit>()
+                                                .selectedPositionsList[index],
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          IconButton(
+                                              onPressed: () {
+                                               setState(() {
+                                                 context
+                                                     .read<ChiefStaffCubit>()
+                                                     .deletePositionElement(
+                                                     index,
+                                                     context
+                                                         .read<
+                                                         ChiefStaffCubit>()
+                                                         .selectedPositionsList[index]);
+                                               });
+                                              },
+                                              icon: Icon(Icons.delete))
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+                                    DropdownButton<String>(
+                                      isExpanded: true,
+                                      value: context
+                                          .read<ChiefStaffCubit>()
+                                          .areasForPositionsList[index],
+                                      onChanged: (String? value) =>
+                                          setState(() {
+                                        context
+                                            .read<ChiefStaffCubit>()
+                                            .changeAreasDropDownValue(
+                                                index, value);
+                                      }),
+                                      items: state.areasNamesList
+                                          .map(
+                                              (String area) => DropdownMenuItem(
+                                                    value: area,
+                                                    child: Text(area),
+                                                  ))
+                                          .toList(),
+                                    ),
+                                  ],
+                                ),
+                          separatorBuilder: (ctx, i) => SizedBox(
+                                height: 5,
+                              ),
+                          itemCount: context
                                   .read<ChiefStaffCubit>()
-                                  .selectedArea =
-                              value ??
-                                  context.read<ChiefStaffCubit>().selectedArea),
-                          items: state.areasNamesList
-                              .map((String region) => DropdownMenuItem(
-                                    value: region,
-                                    child: Text(region),
-                                  ))
-                              .toList(),
-                        ),
-                      ],
+                                  .selectedPositionsList
+                                  .length +
+                              1),
                     ),
+
                     const SizedBox(
                       height: 20,
                     ),
-                    const Text(
-                      'Участок',
-                      style: TextStyle(fontSize: 18),
-                    ),
+                    // const Text(
+                    //   'Участок',
+                    //   style: TextStyle(fontSize: 18),
+                    // ),
                     const SizedBox(
                       height: 20,
                     ),

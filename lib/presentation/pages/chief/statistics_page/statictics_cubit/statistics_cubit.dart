@@ -6,15 +6,15 @@ import 'package:master_plan/data/repositories/local/service/excel_service.dart';
 import 'package:master_plan/data/repositories/local/service/notification_service.dart';
 
 import 'package:master_plan/data/repositories/supabase/dto/chief_distribution_operations_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto/chief_operation_dto.dart';
+
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
+
 import 'package:master_plan/data/repositories/supabase/service/chief_distribution_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/chief_operation_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
 
 import 'package:master_plan/domain/model/chief_distribution_operations_model.dart';
-import 'package:master_plan/domain/model/status.dart';
+
 import 'package:master_plan/presentation/pages/chief/statistics_page/chief_stage_report_model.dart';
 
 import 'package:open_filex/open_filex.dart';
@@ -81,7 +81,7 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
     }
 
     var fetchedOperatorOperationsList = await _operatorOperationsTable.select();
-    int i = 0;
+
     for (var operation in fetchedOperatorOperationsList) {
       final operatorOperationsDto = OperatorOperationsDTO.fromMap(operation);
 
@@ -93,28 +93,40 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
       operationInList?.areaNumber = operatorOperationsDto.area!.number;
       switch (operatorOperationsDto.statusId) {
         case 3:
-          operationInList?.inWorkQuantity++;
-
+          operationInList?.onDistribution++;
         case 4:
           operationInList?.modificationQuantity++;
         case 5:
           stagesMap[operatorOperationsDto.stageId]?.defectDetailsQuantity++;
           operationInList?.defectQuantity++;
         case 7:
-          operationInList?.inWorkQuantity++;
-
+          operationInList?.distributed++;
         case 9:
           stagesMap[operatorOperationsDto.stageId]?.readyOperationsQuantity++;
           operationInList?.readyQuantity++;
       }
 
-      operationInList?.readyPercent = ((operationInList.readyQuantity /
-                  stagesMap[operatorOperationsDto.stageId]!.detailsQuantity) *
-              100)
-          .round();
+      // operationInList?.readyPercent = ((operationInList.readyQuantity /
+      //             stagesMap[operatorOperationsDto.stageId]!.detailsQuantity) *
+      //         100)
+      //     .round();
     }
 
     stagesMap.forEach((key, value) async {
+      int defectCount = 0;
+
+      for (int i = 0; i < value.operationsList.length; i++) {
+        value.operationsList[i].mustBeDone =
+            value.detailsQuantity - defectCount;
+        defectCount = defectCount + value.operationsList[i].defectQuantity;
+
+        value.operationsList[i].readyPercent =
+            (value.operationsList[i].readyQuantity /
+                    value.operationsList[i].mustBeDone *
+                    100)
+                .round();
+      }
+
       value.operationsQuantity =
           value.operationsQuantity * value.detailsQuantity;
 

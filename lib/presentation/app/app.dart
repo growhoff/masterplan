@@ -21,6 +21,7 @@ import '../../theme/theme.dart';
 import '../pages/chief/chief_lists_pages/chief_staff_list_page/masters_list_page.dart';
 import '../pages/chief/chief_lists_pages/chief_staff_list_page/operators_list_page.dart';
 import '../pages/chief/chief_lists_pages/chief_staff_list_page/selection_staff_position_page.dart';
+import '../pages/chief_master/chief_maste_page.dart';
 import '../pages/dispatcher/widgets/custom_navbar.dart';
 import '../pages/master/maste_page.dart';
 import '../pages/technologist/archive_page/archive_operations_page.dart';
@@ -50,7 +51,7 @@ class MyApp extends StatelessWidget {
           '/chiefMachinesListPage': (BuildContext context) => const ChiefMachinesListPage(),
           '/chiefMachineInsertPage': (BuildContext context) => const ChiefMachineInsertPage(),
           '/chiefMachineEditPage': (BuildContext context) => const ChiefMachineEditPage(),
-          '/chiefStaffListPage': (BuildContext context) => const ChiefStaffListPage(),
+         // '/chiefStaffListPage': (BuildContext context) => const ChiefStaffListPage(),
           '/selectionStaffPositionPage': (BuildContext context) => const SelectionStaffPositionPage(),
           '/mastersListPage': (BuildContext context) => const MastersListPage(),
       '/operatorsListPage': (BuildContext context) => const OperatorsListPage(),
@@ -63,6 +64,7 @@ class MyApp extends StatelessWidget {
           '/archiveStagesPage': (BuildContext context) => const ArchiveStagesPage(),
           '/archiveOperationsPage': (BuildContext context) => const ArchiveOperationsPage(),
           '/archiveTransferPage': (BuildContext context) => const ArchiveTransfersPage(),
+          '/chiefMasterPage':(BuildContext context) => const ChiefMasterPage(),
 
 
         },

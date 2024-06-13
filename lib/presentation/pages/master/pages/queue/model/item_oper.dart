@@ -5,8 +5,12 @@ import 'package:master_plan/domain/model/operator_operations.dart';
 class ItemOper {
   final List<OperatorOperations> list;
   final int idPath;
+  final int order;
+  final int time;
   ItemOper({
     required this.list,
     required this.idPath,
+    required this.order,
+    required this.time,
   });
 }

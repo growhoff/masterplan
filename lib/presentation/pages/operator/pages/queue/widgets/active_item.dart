@@ -13,9 +13,10 @@ class ActiveOperationCard extends StatelessWidget {
       color: Colors.grey,
       child: Column(
         children: [
-          const RowList(text1: 'Деталь', text2: 'Операция', text3: 'Время обработки', text4: 'Кол. опт. партии'),
+          const RowList(mod: null, text1: 'Деталь', text2: 'Операция', text3: 'Время обработки', text4: 'Кол. опт. партии'),
           const SizedBox(height: 8),
           RowList(
+            mod: operJob!.list.first.modific,
             text1: operJob != null ? '${operJob!.list.first.batch.number} ${operJob!.list.first.batch.name}' : 'none',
             text2: operJob != null ? '${operJob!.list.first.operation.number} ${operJob!.list.first.operation.name}' : 'none',
             text3: operJob != null ? '${operJob!.list.first.timeplan}' : 'none',

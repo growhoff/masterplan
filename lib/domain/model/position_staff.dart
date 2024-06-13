@@ -2,25 +2,25 @@ import 'package:master_plan/data/repositories/supabase/dto/position_staff_dto.da
 import 'package:master_plan/domain/model/position.dart';
 import 'package:master_plan/domain/model/staff.dart';
 
-class PositionStaff {
+class PositionStaffModel {
   final int id;
   final int positionId;
   final Position position;
-  final int userId;
+  final int staffId;
   final Staff staff;
 
-  PositionStaff(
+  PositionStaffModel(
       {required this.id,
       required this.positionId,
-      required this.userId,
+      required this.staffId,
       required this.position,
       required this.staff});
 
-  factory PositionStaff.fromDTO(PositionStaffDTO dto) {
-    return PositionStaff(
+  factory PositionStaffModel.fromDTO(PositionStaffDTO dto) {
+    return PositionStaffModel(
         id: dto.id,
         positionId: dto.positionId,
-        userId: dto.staffId,
+        staffId: dto.staffId,
         staff: Staff.fromDTO(dto.staff),
         position: Position(
             id: dto.position?.id ?? 0, name: dto.position?.name ?? ''));

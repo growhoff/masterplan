@@ -45,7 +45,7 @@ class DialogInput extends StatelessWidget {
                 actions: [
                 ElevatedButton(
                   onPressed: () {
-                    status ? context.read<CubitReadyDetails>().toggleBrak(indexOper, brakController.text) : context.read<CubitReadyDetails>().toggleModific(indexOper, brakController.text);
+                    status ? context.read<CubitReadyDetails>().toggleBrak(indexOper, brakController.text, commitController.text) : context.read<CubitReadyDetails>().toggleModific(indexOper, brakController.text, commitController.text);
                     Navigator.pop(context);
                   },
                   child: const Text('СОХРАНИТЬ'),

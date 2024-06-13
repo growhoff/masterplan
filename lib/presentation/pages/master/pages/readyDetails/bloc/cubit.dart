@@ -58,7 +58,7 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
         if (operList.list.first.machine!.id == machine.id) {
           list.add(operList);
           timeWorking += operList.timeWorking;
-          intList.add(StatusNext(status: 0, count: 1));
+          intList.add(StatusNext(status: 0, count: 1, comment: ''));
         }
       }
       listMachine.add(ItemMachine(machine: machine, listOper: list, time: timeWorking ~/ 60));
@@ -92,7 +92,7 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
     emit(state.copyWith(activePage: index));
   }
 
-  void toggleBrak(int indexOper, String countStr){
+  void toggleBrak(int indexOper, String countStr, String comment){
     int count = int.parse(countStr);
     int length = state.listMachine![state.activePage].listOper[indexOper].list.length;
     if (count > length) {count = length;}
@@ -102,14 +102,14 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
     if (it == 0 || it == 2) {it = 1;} else {it = 0;}
     List<StatusNext> item = l[state.activePage];
     item.removeAt(indexOper);
-    item.insert(indexOper, StatusNext(status: it, count: count));
+    item.insert(indexOper, StatusNext(status: it, count: count, comment: comment));
     l.removeAt(state.activePage);
     l.insert(state.activePage, item);
     emit(state.copyWith(statusList: l, count: state.count+1));
   }
   
 
-void toggleModific(int indexOper, String countStr){
+void toggleModific(int indexOper, String countStr, String comment){
     int count = int.parse(countStr);
     int length = state.listMachine![state.activePage].listOper[indexOper].list.length;
     if (count > length) {count = length;}
@@ -119,7 +119,7 @@ void toggleModific(int indexOper, String countStr){
     if (it == 0 || it == 1) {it = 2;} else {it = 0;}
     List<StatusNext> item = l[state.activePage];
     item.removeAt(indexOper);
-    item.insert(indexOper, StatusNext(status: it, count: count));
+    item.insert(indexOper, StatusNext(status: it, count: count, comment: comment));
     l.removeAt(state.activePage);
     l.insert(state.activePage, item);
     emit(state.copyWith(statusList: l, count: state.count+1));
@@ -146,7 +146,7 @@ void toggleModific(int indexOper, String countStr){
               count --;
             }
           }
-          table.updateMasterModificateListCount(listSt2, listSt0);
+          table.updateMasterModificateListCount(listSt2, listSt0, listStatus[i].comment);
         }
 
         //брак
@@ -177,7 +177,7 @@ void toggleModific(int indexOper, String countStr){
             }
           }
           //меняем статус по этим id в брак
-          table.updateMasterBrakListCount(listSt1, listSt0);
+          table.updateMasterBrakListCount(listSt1, listSt0, listStatus[i].comment);
           List<int> chId = listChiefBatchId.getRange(0, count).toList();
           chiefBatchTable.updateChiefBatchStatusToDefectList(chiefBatchId: chId);
         }

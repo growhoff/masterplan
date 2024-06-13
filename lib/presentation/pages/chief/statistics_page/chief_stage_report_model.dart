@@ -28,7 +28,10 @@ class ChiefStageForReportModel {
 
 class ChiefOperationModel {
   ChiefOperationModel(
-      {required this.name, required this.number, required this.operationId, required this.code});
+      {required this.name,
+      required this.number,
+      required this.operationId,
+      required this.code});
 
   final int operationId;
   final String name;
@@ -39,7 +42,9 @@ class ChiefOperationModel {
 
   int readyQuantity = 0;
   int readyPercent = 0;
-  int inWorkQuantity = 0;
+  int onDistribution = 0;
+  int distributed = 0;
   int defectQuantity = 0;
   int modificationQuantity = 0;
+  int mustBeDone = 0;
 }

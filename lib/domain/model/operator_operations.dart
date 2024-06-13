@@ -27,6 +27,9 @@ class OperatorOperations {
   final User? user;
   final int? chiefBatchId;
   final int? chiefOperationId;
+  final bool? modific;
+  final String? comment;
+
   OperatorOperations({
     required this.id,
     required this.timeplan,
@@ -47,6 +50,8 @@ class OperatorOperations {
     this.user,
     this.chiefBatchId,
     this.chiefOperationId,
+    this.modific,
+    this.comment,
   });
 
 
@@ -69,26 +74,30 @@ class OperatorOperations {
     User? user,
     int? chiefBatchId,
     int? chiefOperationId,
+    bool? modific,
+    String? comment,
   }) {
     return OperatorOperations(
-        id: id ?? this.id,
-        timeplan: timeplan ?? this.timeplan,
-        pause: pause ?? this.pause,
-        timeFirstStart: timeFirstStart ?? this.timeFirstStart,
-        status: status ?? this.status,
-        batch: batch ?? this.batch,
-        stage: stage ?? this.stage,
-        operation: operation ?? this.operation,
-        area: area ?? this.area,
-        machine: machine ?? this.machine,
-        order: order ?? this.order,
-        optimalPart: optimalPart ?? this.optimalPart,
-        timestart: timestart ?? this.timestart,
-        timestop: timestop ?? this.timestop,
-        timeworking: timeworking ?? this.timeworking,
-        user: user ?? this.user,
-        chiefBatchId: chiefBatchId ?? this.chiefBatchId,
-        chiefOperationId: chiefOperationId ?? this.chiefOperationId
+      id: id ?? this.id,
+      timeplan: timeplan ?? this.timeplan,
+      pause: pause ?? this.pause,
+      timeFirstStart: timeFirstStart ?? this.timeFirstStart,
+      status: status ?? this.status,
+      batch: batch ?? this.batch,
+      stage: stage ?? this.stage,
+      operation: operation ?? this.operation,
+      area: area ?? this.area,
+      machine: machine ?? this.machine,
+      order: order ?? this.order,
+      optimalPart: optimalPart ?? this.optimalPart,
+      timestart: timestart ?? this.timestart,
+      timestop: timestop ?? this.timestop,
+      timeworking: timeworking ?? this.timeworking,
+      user: user ?? this.user,
+      chiefBatchId: chiefBatchId ?? this.chiefBatchId,
+      chiefOperationId: chiefOperationId ?? this.chiefOperationId,
+      modific: modific ?? this.modific,
+      comment: comment ?? this.comment,
     );
   }
 }

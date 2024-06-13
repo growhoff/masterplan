@@ -50,6 +50,15 @@ class UserTable extends SupabaseTable {
         .eq('position_id', 4);
   }
 
+  Future<List<Map<String, dynamic>>> selectEqOperatorList(
+      {required List<int> listAreaId, required int companyId}) {
+    return table
+        .select('*, z_position(*), z_company(*), z_unit(*), z_area(*)')
+        .inFilter('area_id', listAreaId)
+        .eq('company_id', companyId)
+        .eq('position_id', 4);
+  }
+
   @override
   Future<void> update(int id, Dto dto) async {
     if (dto is UserDTO) {

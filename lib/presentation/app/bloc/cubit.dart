@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/data/repositories/supabase/dto/machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/shifts_distribution_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/user_dto.dart';
+import 'package:master_plan/data/repositories/supabase/service/area_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/machine_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/shifts_distribution.dart';
 import 'package:master_plan/data/repositories/supabase/service/user_table.dart';
@@ -47,6 +48,12 @@ class CubitMain extends Cubit<StateMain> {
             case 4:
               await getMachineOperatorZ(state.user!.id);
               break;
+          //начальник мастер
+            case 7:
+              await getMachineToUnit();
+              // await getOperators();
+              break;
+          //ИНАЧЕ
             default:
               break;
           }
@@ -93,6 +100,54 @@ class CubitMain extends Cubit<StateMain> {
       listId.add(machine.id);
     }
     emit(state.copyWith(machineList: listMachine, machineIdList: listId));
+  }
+
+  // chief-master
+  Future<void> getMachineToUnit() async {
+    final areaTable = AreaTable();
+    final queruArea = await areaTable.selectUnitId(state.user!.unit!.id);
+    List<int> listIdArea = [];
+    for (var maps in queruArea) {
+      listIdArea.add(maps['id']);
+    }
+    final machineTable = MachineTable();
+    final machineQuery = await machineTable.selectMachineToAreaList(listIdArea);
+    List<Machine> listMachine = [];
+    for (var machine in machineQuery) {
+      final model = MachineDTO.fromMap(machine);
+      listMachine.add(Machine(
+          id: model.id,
+          inventoryNumber: model.inventoryNumber,
+          name: model.name,
+          areaId: model.areaId));
+    }
+    List<int> listId = [];
+    for (var machine in listMachine) {
+      listId.add(machine.id);
+    }
+
+
+    final userTable = UserTable();
+    final userQuery = await userTable.selectEqOperatorList(
+        listAreaId: listIdArea, companyId: state.user!.companyId);
+    List<UserDTO> userListDto = [];
+    for (var userDto in userQuery) {
+      userListDto.add(UserDTO.fromMap(userDto));
+    }
+    List<User> userList = [];
+    for (var user in userListDto) {
+      userList.add(User(
+          id: user.id,
+          fio: user.fio,
+          positionId: user.positionId,
+          companyId: user.companyId,
+          unitId: user.unitId,
+          areaId: user.areaId,
+          photo: user.photo,
+          positionModel:
+          Position(id: user.position.id, name: user.position.name)));
+    }
+    emit(state.copyWith(machineList: listMachine, machineIdList: listId, operatorList: userList, listAreaId: listIdArea));
   }
 
   //master

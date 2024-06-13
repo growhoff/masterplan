@@ -50,13 +50,13 @@ class QueuePage extends StatelessWidget {
                   const SizedBox(height: 8),
                   const Text('Готовые операции'),
                   const SizedBox(height: 8),
-                  TableCard(color: Colors.greenAccent ,list: dataPage.operReadyList, heder: const RowList(text1: 'Деталь', text2: 'Операция', text3: 'Время обработки', text4: 'Кол. опт. партии')),
+                  TableCard(color: Colors.greenAccent ,list: dataPage.operReadyList, heder: const RowList(mod:null, text1: 'Деталь', text2: 'Операция', text3: 'Время обработки', text4: 'Кол. опт. партии')),
                   const SizedBox(height: 8),
                   const Divider(),
                   const SizedBox(height: 8),
                   const Text('Операции в очереди'),
                   const SizedBox(height: 8),
-                  TableCard(color: Colors.amberAccent ,list: dataPage.operQueueList, heder: const RowList(text1: 'Деталь', text2: 'Номер', text3: 'Время обработки', text4: 'Кол. опт. партии'))
+                  TableCard(color: Colors.amberAccent ,list: dataPage.operQueueList, heder: const RowList(mod: null, text1: 'Деталь', text2: 'Номер', text3: 'Время обработки', text4: 'Кол. опт. партии'))
                 ],
               )
         ),

@@ -35,8 +35,12 @@ class ContentDetail extends StatelessWidget {
               LineTextSpawn(title: 'Деталь:', text: '${operation.list.first.batch.number} ${operation.list.first.batch.name}'),
               const SizedBox(height: 8),
               LineTextSpawn(title: 'Операция:', text: '${operation.list.first.operation.number} ${operation.list.first.operation.name}'),
-              const SizedBox(height: 20),
+              const SizedBox(height: 8),
               LineTextSpawn(title: 'Количество в опт. партии:', text: '${operation.list.length}'),
+              const SizedBox(height: 8),
+              Visibility(
+                visible: operation.list.first.modific != null,
+                child: const LineTextSpawn(title: 'Доработка:', text: 'да'),),
               const SizedBox(height: 20),
               const Time(),
               const SizedBox(height: 30),

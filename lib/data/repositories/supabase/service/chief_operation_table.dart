@@ -23,7 +23,6 @@ class ChiefOperationTable extends SupabaseTable {
     }
   }
 
-  @override
   Future<void> bulkInsert({required List<ChiefOperationDto> dtosList}) async {
     List<Map<String, Object>> mapsList = [];
 

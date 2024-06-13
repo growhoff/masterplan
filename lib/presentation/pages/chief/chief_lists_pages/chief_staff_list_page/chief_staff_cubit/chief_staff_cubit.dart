@@ -55,16 +55,18 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
   XFile? loadedProfileImage;
 
   Map<String, int> areasMap = {};
-  Map<String, int> positionsMap = {'Мастер': 3, 'Оператор': 4};
+  Map<String, int> positionsMap = {};
 
   final List<String> selectedPositionsList = [];
   List<String> positionsToSelectList = [];
+  final List<String> positionsToSelectStartValue = ['Мастер', 'Оператор'];
+  List<String> areasForPositionsList = [];
 
   final Password _password = Password(length: 4);
 
   Future<void> fetchAreasAndStaff() async {
     await fetchAreas();
-    fetchStaff();
+    // fetchStaff();
   }
 
   Future<void> fetchAreas() async {
@@ -84,36 +86,36 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
     emit(state.copyWith(areasList: areasList));
   }
 
-  Future<void> fetchStaff() async {
-    final staff = await _staffTable.selectByRegionId(regionId: activeAreaId);
-
-    List<Staff> staffList = [];
-    for (int i = 0; i < staff.length; i++) {
-      StaffDTO staffDto = StaffDTO.fromMap(staff[i]);
-
-      staffList.add(Staff(
-          id: staffDto.id,
-          login: staffDto.login,
-          password: staffDto.password,
-          userId: staffDto.userId,
-          user: User(
-              id: staffDto.user.id,
-              fio: staffDto.user.fio,
-              areaId: staffDto.user.areaId,
-              positionId: staffDto.user.positionId,
-              companyId: staffDto.user.companyId,
-              photo: staffDto.user.photo,
-              unitId: staffDto.user.unitId,
-              positionModel: Position(
-                  id: staffDto.user.position.id,
-                  name: staffDto.user.position.name))));
-    }
-
-    emit(state.copyWith(staffList: staffList));
-  }
+  // Future<void> fetchStaff() async {
+  //   final staff = await _staffTable.selectByRegionId(regionId: activeAreaId);
+  //
+  //   List<Staff> staffList = [];
+  //   for (int i = 0; i < staff.length; i++) {
+  //     StaffDTO staffDto = StaffDTO.fromMap(staff[i]);
+  //
+  //     staffList.add(Staff(
+  //         id: staffDto.id,
+  //         login: staffDto.login,
+  //         password: staffDto.password,
+  //         userId: staffDto.userId,
+  //         user: User(
+  //             id: staffDto.user.id,
+  //             fio: staffDto.user.fio,
+  //             areaId: staffDto.user.areaId,
+  //             positionId: staffDto.user.positionId,
+  //             companyId: staffDto.user.companyId,
+  //             photo: staffDto.user.photo,
+  //             unitId: staffDto.user.unitId,
+  //             positionModel: Position(
+  //                 id: staffDto.user.position.id,
+  //                 name: staffDto.user.position.name))));
+  //   }
+  //
+  //   emit(state.copyWith(staffList: staffList));
+  // }
 
   Future<void> fetchMasters() async {
-    List<Staff> staffList = [];
+    List<PositionStaffModel> positionStaffList = [];
 
     final areaId = areasMap[selectedArea] ?? 1;
     var fetchedList =
@@ -121,15 +123,19 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
 
     for (var fetchedUser in fetchedList) {
       final userDto = PositionStaffDTO.fromMap(fetchedUser);
-      final user = PositionStaff.fromDTO(userDto);
-      staffList.add(user.staff);
+      final user = PositionStaffModel.fromDTO(userDto);
+      positionStaffList.add(user);
     }
 
-    emit(state.copyWith(staffList: staffList));
+    emit(state.copyWith(
+        status: ChiefStaffStatus.success,
+        positionStaffList: positionStaffList));
   }
 
   Future<void> fetchOperators() async {
-    List<Staff> staffList = [];
+    emit(state
+        .copyWith(status: ChiefStaffStatus.loading, positionStaffList: []));
+    List<PositionStaffModel> positionStaffList = [];
 
     final areaId = areasMap[selectedArea] ?? 1;
     var fetchedList =
@@ -137,11 +143,14 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
 
     for (var fetchedUser in fetchedList) {
       final userDto = PositionStaffDTO.fromMap(fetchedUser);
-      final user = PositionStaff.fromDTO(userDto);
-      staffList.add(user.staff);
+      final user = PositionStaffModel.fromDTO(userDto);
+      positionStaffList.add(user);
     }
 
-    emit(state.copyWith(staffList: staffList));
+    emit(state.copyWith(
+        status: ChiefStaffStatus.success,
+        positionStaffList: positionStaffList));
+    print('заэмитило');
   }
 
   Future fetchDropDownsItems({int? staffId}) async {
@@ -170,7 +179,8 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
 
     selectedPosition = positionsNamesList[0];
 
-    positionsToSelectList = positionsNamesList;
+    positionsToSelectList = [];
+    positionsToSelectList.addAll(positionsToSelectStartValue);
 
     if (staffId != null) {
       await fetchStaffPositions(staffId: staffId);
@@ -178,8 +188,6 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
 
     emit(state.copyWith(
         areasNamesList: areasNamesList, status: ChiefStaffStatus.success));
-
-    print('dropdown закончилась: $positionsToSelectList');
   }
 
   Future<List<Position>> fetchPositions() async {
@@ -247,14 +255,16 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
         userId: userId,
         user: UserDTO.empty));
 
-    for (var position in selectedPositionsList) {
+    for (int i = 0; i < selectedPositionsList.length; i++) {
       await _positionStaffTable.insert(PositionStaffDTO(
           id: 0,
-          positionId: positionsMap[position] ?? 1,
+          positionId: positionsMap[selectedPositionsList[i]] ?? 1,
           staffId: staffId,
           position: PositionDTO(id: 0, name: ''),
           staff: StaffDTO(
-              id: 0, login: '', password: '', userId: 0, user: UserDTO.empty)));
+              id: 0, login: '', password: '', userId: 0, user: UserDTO.empty),
+          areaId: areasMap[areasForPositionsList[i]] ?? 1,
+          area: AreaDTO(id: 0, name: '', number: '', unitId: 0)));
     }
 
     fioController.clear();
@@ -335,16 +345,65 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
             user: UserDTO.empty));
   }
 
-  Future deleteStaff(
-      {required int staffId,
-      required int userId,
-      required String? imagePath}) async {
-    await _positionStaffTable.deleteByStaffId(staffId: staffId);
-    await _staffTable.delete(staffId);
-    await _userTable.delete(userId);
+  Future deleteStaff({required PositionStaffModel positionStaff}) async {
+    final isHaveAnotherPositions = await _positionStaffTable
+        .checkForAnotherRoles(staffId: positionStaff.staffId);
+    if (isHaveAnotherPositions) {
+      await _positionStaffTable.delete(positionStaff.id);
+    } else {
+      await _positionStaffTable.deleteByStaffId(staffId: positionStaff.staffId);
+      await _staffTable.delete(positionStaff.staffId);
+      await _userTable.delete(positionStaff.staff.userId);
 
-    if (imagePath != null) {
-      await imageStorage.remove(path: imagePath);
+      final String? imagePath = positionStaff.staff.user.photo;
+
+      if (imagePath != null) {
+        await imageStorage.remove(path: imagePath);
+      }
+    }
+
+    if (positionStaff.positionId == 3) {
+      fetchMasters();
+    } else {
+      fetchOperators();
+    }
+  }
+
+  // добавление элемента в список ролей на странице добавление персонала, если осталась одна роль для выбора
+  addLastPositionElement() {
+    // в список выбранных участков добавляется значение
+    areasForPositionsList.add(state.areasNamesList.first);
+
+    // в список выбранных ролей добавляется значение должности(first, так как она там одна)
+    selectedPositionsList.add(positionsToSelectList.first);
+  }
+
+  // добавление элемента в список ролей на странице добавления персонала
+  addPositionElement(int index) {
+    // в список выбранных ролей добавляется выбранная из выпадающего списка роль
+    selectedPositionsList.add(positionsToSelectList[index]);
+
+    // в список выбранных участков добавляется значение
+    areasForPositionsList.add(state.areasNamesList.first);
+
+    // из списка выбора ролей удаляются все возможные роли кроме выбранной (сделано т.к. у начальника есть возможность
+    // выбирать только мастера или оператора, а один человек не может обладать этими ролями одновременно)
+    positionsToSelectList
+        .removeWhere((position) => position != positionsToSelectList[index]);
+  }
+
+  changeAreasDropDownValue(int index, String? value) {
+    areasForPositionsList[index] = value ?? areasForPositionsList[index];
+  }
+
+  deletePositionElement(int index, String position) {
+    areasForPositionsList.removeAt(index);
+
+    selectedPositionsList.removeAt(index);
+
+    if (selectedPositionsList.isEmpty) {
+      positionsToSelectList = [];
+      positionsToSelectList.addAll(positionsToSelectStartValue);
     }
   }
 }

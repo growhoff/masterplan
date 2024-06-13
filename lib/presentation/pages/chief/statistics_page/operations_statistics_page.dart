@@ -81,11 +81,13 @@ class _OperationsStatisticsPageViewState
                           0: FlexColumnWidth(4),
                           1: FlexColumnWidth(1),
                           2: FlexColumnWidth(1.5),
-                          3: FlexColumnWidth(3),
-                          4: FlexColumnWidth(1),
+                          3: FlexColumnWidth(1.5),
+                          4: FlexColumnWidth(1.5),
                           5: FlexColumnWidth(1),
                           6: FlexColumnWidth(1),
                           7: FlexColumnWidth(1),
+                          8: FlexColumnWidth(1),
+                          9: FlexColumnWidth(1),
                         },
                         defaultColumnWidth: const FlexColumnWidth(),
                         border: TableBorder.all(color: Colors.black),
@@ -129,19 +131,44 @@ class _OperationsStatisticsPageViewState
                                       padding: const EdgeInsets.all(8),
                                       child: const FittedBox(
                                         fit: BoxFit.fitWidth,
-                                        child: Text(
-                                          'участок',
-                                          textAlign: TextAlign.center,
+                                        child: RotatedBox(
+                                          quarterTurns: 3,
+                                          child: Text(
+                                            'участок',
+                                            textAlign: TextAlign.center,
+                                          ),
                                         ),
                                       )),
                                 ),
                                 TableCell(
                                   child: Container(
                                       alignment: Alignment.center,
-                                      padding: const EdgeInsets.all(8),
-                                      child: const Text(
-                                        'кол-во выполненных деталей',
-                                        textAlign: TextAlign.center,
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 8),
+                                      child: const RotatedBox(
+                                        quarterTurns: 3,
+                                        child: Text(
+                                          'кол-во\nвыполненных',
+                                          textAlign: TextAlign.center,
+                                          maxLines: 3,
+                                        ),
+                                      )),
+                                ),
+                                TableCell(
+                                  child: Container(
+                                      alignment: Alignment.center,
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 8),
+                                      child: FittedBox(
+                                        fit: BoxFit.fill,
+                                        child: const RotatedBox(
+                                          quarterTurns: 3,
+                                          child: Text(
+                                            'требуется\nвыполнить',
+                                            textAlign: TextAlign.center,
+                                            maxLines: 3,
+                                          ),
+                                        ),
                                       )),
                                 ),
                                 TableCell(
@@ -163,11 +190,29 @@ class _OperationsStatisticsPageViewState
                                         child: RotatedBox(
                                           quarterTurns: 3,
                                           child: Text(
-                                            'в  работе',
+                                            'на распред.',
                                             //textAlign: TextAlign.center,
                                           ),
                                         ),
                                       )),
+
+                                ),
+                                TableCell(
+                                  child: Container(
+                                      alignment: Alignment.center,
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8),
+                                      child: const FittedBox(
+                                        fit: BoxFit.fill,
+                                        child: RotatedBox(
+                                          quarterTurns: 3,
+                                          child: Text(
+                                            'распределено',
+                                            //textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      )),
+
                                 ),
                                 TableCell(
                                   child: Container(
@@ -220,7 +265,8 @@ class _OperationsStatisticsPageViewState
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 5),
                                         child: Text(
-                                          widget.statisticsStage.operationsList[index].code,
+                                          widget.statisticsStage
+                                              .operationsList[index].code,
                                           textAlign: TextAlign.center,
                                         ),
                                       ),
@@ -250,6 +296,16 @@ class _OperationsStatisticsPageViewState
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 5),
                                         child: Text(
+                                          '${widget.statisticsStage.operationsList[index].mustBeDone}',
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ),
+                                    TableRowInkWell(
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 5),
+                                        child: Text(
                                           '${widget.statisticsStage.operationsList[index].readyPercent}',
                                           textAlign: TextAlign.center,
                                         ),
@@ -260,11 +316,21 @@ class _OperationsStatisticsPageViewState
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 5),
                                         child: Text(
-                                          '${widget.statisticsStage.operationsList[index].inWorkQuantity}',
+                                          '${widget.statisticsStage.operationsList[index].onDistribution}',
                                           textAlign: TextAlign.center,
                                         ),
                                       ),
                                     ),
+                                TableRowInkWell(
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 5),
+                                    child: Text(
+                                      '${widget.statisticsStage.operationsList[index].distributed}',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
                                     TableRowInkWell(
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(
