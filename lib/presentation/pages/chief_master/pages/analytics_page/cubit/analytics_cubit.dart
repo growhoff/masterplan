@@ -4,11 +4,14 @@ import 'package:intl/intl.dart';
 import 'package:master_plan/data/repositories/local/service/excel_service.dart';
 import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/staff_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/position_staff_table.dart';
 import 'package:master_plan/domain/model/batch.dart';
 import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/position.dart';
+import 'package:master_plan/domain/model/staff.dart';
 import 'package:master_plan/domain/model/status.dart';
 import 'package:master_plan/domain/model/user.dart';
 import 'package:master_plan/domain/usecase/time_converter.dart';
@@ -16,23 +19,36 @@ import 'package:master_plan/presentation/pages/master/pages/analytics_page/analy
 import 'package:open_filex/open_filex.dart';
 
 import '../../../../../../data/repositories/local/service/notification_service.dart';
+import '../../../../../../data/repositories/supabase/dto/position_staff_dto.dart';
 import '../../../../../../domain/model/operator_operations.dart';
+import '../../../../../../domain/model/position_staff.dart';
 
 part 'analytics_state.dart';
 
 class AnalyticsCubit extends Cubit<AnalyticsState> {
-  AnalyticsCubit() : super(AnalyticsState());
+  AnalyticsCubit(this.staffId) : super(AnalyticsState());
 
   final _operatorOperationsTable = OperatorOperationsTable();
+  final _positionStaffTable = PositionStaffTable();
   final _excelService = ExcelService();
+  final int staffId;
 
   Future<void> fetchReadyOperations() async {
     List<AnalyticsOperationModel> analyticsOperationsList = [];
 
     Map<int, AnalyticsOperationModel> operationsMap = {};
 
+    List<int> areasList = [];
+
+    var fetchedList = await _positionStaffTable.selectByStaffId(staffId: staffId);
+    for (var fetchedStaff in fetchedList){
+      final positionStaffDto = PositionStaffDTO.fromMap(fetchedStaff);
+      final positionStaff = PositionStaffModel.fromDTO(positionStaffDto);
+      areasList.add(positionStaff.areaId ?? 0);
+    }
+
     var fetchedOperationsList =
-        await _operatorOperationsTable.selectReadyDefectAndModification();
+    await _operatorOperationsTable.selectReadyDefectAndModificationOnArea(areasList);
 
     for (var fetchedOperation in fetchedOperationsList) {
       final operationDto = OperatorOperationsDTO.fromMap(fetchedOperation);

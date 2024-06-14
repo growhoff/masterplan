@@ -40,7 +40,7 @@ class MonitoringMachineTable extends SupabaseTable {
   }
 
   Future<List<Map<String, dynamic>>> selectIdMonitor(int userId, int machineId, int batchId, int optPathOper) {
-    return table.select('*, z_status_machine(*), z_user($userSelect), z_machine(*), z_batch(*)').eq('user_id', userId).eq('operation_id', optPathOper).eq('machine_id', machineId).eq('batch_id', batchId);
+    return table.select('*, z_status_machine(*), z_user($userSelect), z_machine(*), z_batch(*)').eq('operation_id', optPathOper).eq('batch_id', batchId);
   }
 
   Future<List<Map<String, dynamic>>> selectList(List<int> listId) {

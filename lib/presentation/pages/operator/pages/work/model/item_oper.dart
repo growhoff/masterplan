@@ -10,6 +10,8 @@ class ItemOperOp {
   final int machineId;
   final int statusId;
   final int order;
+  final List<int> listChiefBatchId;
+  final List<int> listChiefOperationId;
   ItemOperOp({
     required this.list,
     required this.listId,
@@ -18,5 +20,7 @@ class ItemOperOp {
     required this.machineId,
     required this.statusId,
     required this.order,
+    required this.listChiefBatchId,
+    required this.listChiefOperationId,
   });
 }

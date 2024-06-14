@@ -62,10 +62,10 @@ class OperatorOperationsTable extends SupabaseTable {
         .order('id', ascending: true);
   }
 
-  Future<List<Map<String, dynamic>>> selectReadyDefectAndModification() {
+  Future<List<Map<String, dynamic>>> selectReadyDefectAndModificationOnArea(List<int> areasIdList) {
     return table
         .select('*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*), z_user($selectUser), z_machine(*), z_area!inner(*), z_chief_operation(*), z_chief_batch(*)')
-        .eq('z_area.company_id', _companyId)
+        .eq('z_area.company_id', _companyId).inFilter('area_id', areasIdList)
         .inFilter('status_id', [4, 5, 9]).order('id', ascending: true);
   }
 
@@ -261,12 +261,13 @@ class OperatorOperationsTable extends SupabaseTable {
       'time_stop': timeStop,
       'status_id': 6,
       'time_working': seconds,
-      'user_id': userId
+      'user_id': userId,
+      'pause': true,
     }).eq('optimal_part', idOptPath);
   }
 
   Future<void> updateTimeStopAndReadyCount(List<int> listId0, List<int> listId5, int timeStop, int seconds, int userId) async {
-    if (listId0.isNotEmpty) {await table.update({'time_stop': timeStop,'status_id': 6,'time_working': seconds,'user_id': userId}).inFilter('id', listId0);}
-    if (listId5.isNotEmpty) {await table.update({'time_stop': timeStop,'status_id': 5,'time_working': seconds,'user_id': userId}).inFilter('id', listId5);}
+    if (listId0.isNotEmpty) {await table.update({'time_stop': timeStop,'status_id': 6,'time_working': seconds,'user_id': userId, 'pause': true}).inFilter('id', listId0);}
+    if (listId5.isNotEmpty) {await table.update({'time_stop': timeStop,'status_id': 5,'time_working': seconds,'user_id': userId, 'pause': true,}).inFilter('id', listId5);}
   }
 }

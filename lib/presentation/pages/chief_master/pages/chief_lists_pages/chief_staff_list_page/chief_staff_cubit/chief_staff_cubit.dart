@@ -198,7 +198,7 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
 
   Future<void> fetchStaffPositions({required int staffId}) async {
     var fetchedList =
-        await _positionStaffTable.selectStaffPositions(staffId: staffId);
+        await _positionStaffTable.selectByStaffId(staffId: staffId);
     for (var positionsStaff in fetchedList) {
       final positionStaffDto = PositionStaffDTO.fromMap(positionsStaff);
       selectedPositionsList.add(positionStaffDto.position.name);

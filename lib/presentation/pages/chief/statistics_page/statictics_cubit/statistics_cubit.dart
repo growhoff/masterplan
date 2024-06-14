@@ -122,7 +122,7 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
 
         value.operationsList[i].readyPercent =
             (value.operationsList[i].readyQuantity /
-                    value.operationsList[i].mustBeDone *
+                    value.detailsQuantity *
                     100)
                 .round();
       }

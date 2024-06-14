@@ -5,10 +5,10 @@ import 'package:master_plan/domain/model/batch.dart';
 import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/domain/model/status.dart';
-import 'package:master_plan/presentation/pages/master/pages/readyDetails/model/item_id.dart';
-import 'package:master_plan/presentation/pages/master/pages/readyDetails/model/item_machine.dart';
-import 'package:master_plan/presentation/pages/master/pages/readyDetails/model/item_oper.dart';
-import 'package:master_plan/presentation/pages/master/pages/readyDetails/model/status_next.dart';
+import '../model/item_id.dart';
+import '../model/item_machine.dart';
+import '../model/item_oper.dart';
+import '../model/status_next.dart';
 import '../../../../../../data/repositories/supabase/service/chief_batch_table.dart';
 import 'state.dart';
 import 'package:collection/collection.dart';
@@ -152,33 +152,35 @@ void toggleModific(int indexOper, String countStr, String comment){
         //брак
         if (listStatus[i].status == 1) {
           //выгрузить все операции по chiefBatchId
-          List<int> listChiefBatchId = [];
-          for (var element in listOper[i].list) {
-            listChiefBatchId.add(element.chiefBatchId!);
-          }
-          final quere = await tableOperations.selectChiefBatchIdList(listChiefBatchId);
-          //получаем лист id нужных операций
-          final listId = getListIdFromQueue(quere);
+          // List<int> listChiefBatchId = [];
+          // for (var element in listOper[i].list) {
+          //   listChiefBatchId.add(element.chiefBatchId!);
+          // }
+          // final quere = await tableOperations.selectChiefBatchIdList(listChiefBatchId);
+          // //получаем лист id нужных операций
+          // final listId = getListIdFromQueue(quere);
 
           List<int> listSt1 = [];
           List<int> listSt0 = [];
           int count = listStatus[i].count;
           
           for (var j = 0; j < listOper[i].list.length; j++) {
-            if (count == 0){
-
-              listSt0.add(listOper[i].listId[j]);
-            } else{
-              for (var e in listId[j].list) {
-                listSt1.add(e);
-              }
+            if (count == 0){listSt0.add(listOper[i].listId[j]);} 
+            else{
+              // for (var e in listId[j].list) {
+              //   listSt1.add(e);
+              // }
               listSt1.add(listOper[i].listId[j]);
               count--;
             }
           }
           //меняем статус по этим id в брак
           table.updateMasterBrakListCount(listSt1, listSt0, listStatus[i].comment);
-          List<int> chId = listChiefBatchId.getRange(0, count).toList();
+          List<OperatorOperations> chOperId = listOper[i].list.getRange(0, count).toList();
+          List<int> chId = [];
+          for (var e in chOperId) {
+            chId.add(e.chiefBatchId!);
+          }
           chiefBatchTable.updateChiefBatchStatusToDefectList(chiefBatchId: chId);
         }
 

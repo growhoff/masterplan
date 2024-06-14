@@ -7,11 +7,9 @@ import '../../../../../../domain/model/staff.dart';
 class StaffListElement extends StatefulWidget {
   const StaffListElement(
       {required this.fetchStaff,
-
       required this.deleteStaff,
       required this.positionStaff,
       super.key});
-
 
   final PositionStaffModel positionStaff;
   final VoidCallback fetchStaff;
@@ -71,11 +69,6 @@ class _StaffListElementState extends State<StaffListElement> {
                     const SizedBox(
                       height: 10,
                     ),
-                    // Text(
-                    //     'должность: ${widget.staffModel.user.positionModel?.name}'),
-                    // const SizedBox(
-                    //   height: 10,
-                    // ),
                     Text('номер: ${widget.positionStaff.staff.login}'),
                     const SizedBox(
                       height: 10,
@@ -92,7 +85,7 @@ class _StaffListElementState extends State<StaffListElement> {
                         iconSize: 24,
                         onPressed: () {
                           Navigator.pushNamed(context, '/chiefStaffEditPage',
-                                  arguments: widget.positionStaff.staff)
+                                  arguments: widget.positionStaff)
                               .then((_) {
                             widget.fetchStaff();
                           });

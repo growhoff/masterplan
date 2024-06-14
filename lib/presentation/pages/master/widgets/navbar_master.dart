@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import 'package:master_plan/presentation/app/bloc/state.dart';
-import 'package:master_plan/presentation/pages/master/bloc/cubit.dart';
-import 'package:master_plan/presentation/pages/master/bloc/state.dart';
-import 'package:master_plan/presentation/pages/master/data/data_master.dart';
+import '../bloc/cubit.dart';
+import '../bloc/state.dart';
+import '../data/data_master.dart';
 
 class NavbarMaster extends StatelessWidget {
   const NavbarMaster({super.key});

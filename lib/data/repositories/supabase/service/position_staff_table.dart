@@ -43,10 +43,10 @@ class PositionStaffTable extends SupabaseTable {
     return await table.select();
   }
 
-  Future<List<Map<String, dynamic>>> selectStaffPositions(
+  Future<List<Map<String, dynamic>>> selectByStaffId(
       {required int staffId}) async {
     return await table
-        .select('*, z_position(*),z_staff(*, z_user(*, z_position(*)))')
+        .select('*, z_position(*),z_staff(*, z_user(*, z_position(*))), z_area(*)')
         .eq('staff_id', staffId);
   }
 

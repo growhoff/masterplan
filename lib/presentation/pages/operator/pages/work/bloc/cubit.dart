@@ -62,11 +62,24 @@ class CubitWork extends Cubit<StateWork> {
     newMap.forEach((key, value) {
       List<OperatorOperations> list = [];
       List<int> listId = [];
+      List<int> listChiefBatchId = [];
+      List<int> listChiefOperationId = [];
       for (var element in value) {
         list.add(element);
         listId.add(element.id);
+        listChiefBatchId.add(element.chiefBatchId!);
+        listChiefOperationId.add(element.chiefOperationId!);
       }
-      listB.add(ItemOperOp(idPath: key!, list: list, machineId: list.first.machine!.id, statusId: list.first.status.id, listId: listId, pause: list.first.pause, order: list.first.order!));
+      listB.add(ItemOperOp(
+          idPath: key!,
+          list: list,
+          machineId: list.first.machine!.id,
+          statusId: list.first.status.id,
+          listId: listId,
+          pause: list.first.pause,
+          listChiefBatchId: listChiefBatchId,
+          listChiefOperationId: listChiefOperationId,
+          order: list.first.order!));
     });
 
     listB.sort((a, b) => a.order.compareTo(b.order));
@@ -147,7 +160,7 @@ class CubitWork extends Cubit<StateWork> {
     setStopMonitor(1, idMon);
     setIsStart(false);
 //{переделать chiefOperationId}
-    checkIsDetailReady(chiefBatchId: oper.list.first.chiefBatchId ?? 0, chiefOperationId: oper.list.first.chiefOperationId ?? 0);
+    checkIsDetailReady(listChiefBatchId: oper.listChiefBatchId, listChiefOperationId: oper.listChiefOperationId);
   }
 
   Future<void> setBrak(ItemOperOp oper, int userId, int seconds, String comment, bool isStart)async{
@@ -170,17 +183,40 @@ class CubitWork extends Cubit<StateWork> {
 
 
   // проверка на готовность детали
-  Future<void> checkIsDetailReady({required int chiefBatchId, required int chiefOperationId})async
+  Future<void> checkIsDetailReady({required List<int> listChiefBatchId, required List<int> listChiefOperationId})async
   {
     final chiefOperationTable = ChiefOperationTable();
     final chiefBatchTable = ChiefBatchTable();
     // получает последнюю операцию в детали
-    final fetchedLastOperationInBatch = await chiefOperationTable.fetchLastOperationInBatch(chiefBatchId: chiefBatchId);
-    final lastOperationInBatchDto = ChiefOperationDto.fromMap(fetchedLastOperationInBatch);
-    // если id последней операции в детали равен chiefOperationId у операции из operator_operations, то меняет статус детали на готово(2)
-    if (lastOperationInBatchDto.id == chiefOperationId){
-      chiefBatchTable.updateChiefBatchStatusToReady(chiefBatchId: chiefBatchId);
+    final fetchedLastOperationInBatch = await chiefOperationTable.fetchLastOperationInBatchList(listChiefBatchId: listChiefBatchId);
+    //создаём список с последними операциями и заносим их соотвественно
+    List<ChiefOperationDto> listLast = [];
+    int chifBatch = fetchedLastOperationInBatch.first['chief_batch_id'];
+    for (var i = 0; i < fetchedLastOperationInBatch.length; i++) {
+      final model = ChiefOperationDto.fromMap(fetchedLastOperationInBatch[i]);
+      if (i == fetchedLastOperationInBatch.length - 1){
+        listLast.add(ChiefOperationDto.fromMap(fetchedLastOperationInBatch[i]));
+      }
+      else{
+        if (model.chiefBatchId != chifBatch){
+        listLast.add(ChiefOperationDto.fromMap(fetchedLastOperationInBatch[i-1]));
+        chifBatch = model.chiefBatchId;
+      } 
+      }
+
     }
+    // final lastOperationInBatchDto = ChiefOperationDto.fromMap(fetchedLastOperationInBatch);
+    List<int> listChiefBatchLast = [];
+    for (var elLast in listLast) {
+      for (var elChiefOper in listChiefOperationId) {
+        if (elLast.id == elChiefOper) listChiefBatchLast.add(elLast.chiefBatchId);
+      }
+    }
+    chiefBatchTable.updateChiefBatchStatusToReadyList(listChiefBatchId: listChiefBatchLast);
+    // если id последней операции в детали равен chiefOperationId у операции из operator_operations, то меняет статус детали на готово(2)
+    // if (lastOperationInBatchDto.id == chiefOperationId){
+      
+    // }
   }
 
 

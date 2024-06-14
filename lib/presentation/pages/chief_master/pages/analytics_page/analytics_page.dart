@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import './cubit/analytics_cubit.dart';
 
 class AnalyticsPageChM extends StatelessWidget {
@@ -8,8 +9,9 @@ class AnalyticsPageChM extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final staffId = context.read<CubitMain>().state.staff?.id ?? 0;
     return BlocProvider(
-      create: (context) => AnalyticsCubit(),
+      create: (context) => AnalyticsCubit(staffId),
       child: AnalyticsPageView(),
     );
   }

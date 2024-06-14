@@ -9,9 +9,12 @@ import 'package:master_plan/domain/model/shifts_distribution.dart';
 import 'package:master_plan/domain/model/shifts_machine.dart';
 import 'package:master_plan/domain/model/user.dart';
 
+import '../../../domain/model/staff.dart';
+
 class StateMain extends Equatable {
   final String version;
   final UserDTO? user;
+  final Staff? staff;
   final List<Machine>? machineList;
   final List<int>? machineIdList;
   final List<ShiftsMachine>? shiftsList;
@@ -25,9 +28,11 @@ class StateMain extends Equatable {
   final String link;
   final int? change;
   final List<int>? listAreaId;
+
   const StateMain({
-    this.version = 'v2.5.16',
+    this.version = 'v2.5.19',
     this.user,
+    this.staff,
     this.machineList,
     this.machineIdList,
     this.shiftsList,
@@ -46,7 +51,14 @@ class StateMain extends Equatable {
   @override
   List<Object> get props {
     return [
-      user ?? UserDTO(id: 0, fio: '', company: CompanyDTO.init(), position: PositionDTO(id: 0, name: ''), positionId: 0, companyId: 0),
+      user ??
+          UserDTO(
+              id: 0,
+              fio: '',
+              company: CompanyDTO.init(),
+              position: PositionDTO(id: 0, name: ''),
+              positionId: 0,
+              companyId: 0),
       machineList ?? [],
       machineIdList ?? [],
       shiftsList ?? [],
@@ -61,29 +73,30 @@ class StateMain extends Equatable {
       link,
       change ?? 0,
       listAreaId ?? [],
+      staff ?? Staff.empty
     ];
   }
 
-
-  StateMain copyWith({
-    UserDTO? user,
-    List<Machine>? machineList,
-    List<int>? machineIdList,
-    List<ShiftsMachine>? shiftsList,
-    List<OperatorOperations>? distribMasterList,
-    List<OperatorOperations>? queueList,
-    List<OperatorOperations>? readyList,
-    List<User>? operatorList,
-    List<MonitoringMachineDTO>? monitorList,
-    List<ShiftsDistribution>? zshiftsDistributionList,
-    List<OperatorOperations>? operatorOperationsList,
-    String? link,
-    int? change,
-    List<int>? listAreaId
-  }) {
+  StateMain copyWith(
+      {UserDTO? user,
+      Staff? staff,
+      List<Machine>? machineList,
+      List<int>? machineIdList,
+      List<ShiftsMachine>? shiftsList,
+      List<OperatorOperations>? distribMasterList,
+      List<OperatorOperations>? queueList,
+      List<OperatorOperations>? readyList,
+      List<User>? operatorList,
+      List<MonitoringMachineDTO>? monitorList,
+      List<ShiftsDistribution>? zshiftsDistributionList,
+      List<OperatorOperations>? operatorOperationsList,
+      String? link,
+      int? change,
+      List<int>? listAreaId}) {
     return StateMain(
       user: user ?? this.user,
-      machineList:  machineList ?? this.machineList,
+      staff: staff ?? this.staff,
+      machineList: machineList ?? this.machineList,
       machineIdList: machineIdList ?? this.machineIdList,
       shiftsList: shiftsList ?? this.shiftsList,
       distribMasterList: distribMasterList ?? this.distribMasterList,
@@ -91,8 +104,10 @@ class StateMain extends Equatable {
       readyList: readyList ?? this.readyList,
       operatorList: operatorList ?? this.operatorList,
       monitorList: monitorList ?? this.monitorList,
-      zshiftsDistributionList: zshiftsDistributionList ?? this.zshiftsDistributionList,
-      operatorOperationsList:  operatorOperationsList ?? this.operatorOperationsList,
+      zshiftsDistributionList:
+          zshiftsDistributionList ?? this.zshiftsDistributionList,
+      operatorOperationsList:
+          operatorOperationsList ?? this.operatorOperationsList,
       link: link ?? this.link,
       change: change,
       listAreaId: listAreaId ?? this.listAreaId,
@@ -102,4 +117,3 @@ class StateMain extends Equatable {
   @override
   bool get stringify => true;
 }
-

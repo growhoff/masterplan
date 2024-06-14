@@ -86,34 +86,6 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
     emit(state.copyWith(areasList: areasList));
   }
 
-  // Future<void> fetchStaff() async {
-  //   final staff = await _staffTable.selectByRegionId(regionId: activeAreaId);
-  //
-  //   List<Staff> staffList = [];
-  //   for (int i = 0; i < staff.length; i++) {
-  //     StaffDTO staffDto = StaffDTO.fromMap(staff[i]);
-  //
-  //     staffList.add(Staff(
-  //         id: staffDto.id,
-  //         login: staffDto.login,
-  //         password: staffDto.password,
-  //         userId: staffDto.userId,
-  //         user: User(
-  //             id: staffDto.user.id,
-  //             fio: staffDto.user.fio,
-  //             areaId: staffDto.user.areaId,
-  //             positionId: staffDto.user.positionId,
-  //             companyId: staffDto.user.companyId,
-  //             photo: staffDto.user.photo,
-  //             unitId: staffDto.user.unitId,
-  //             positionModel: Position(
-  //                 id: staffDto.user.position.id,
-  //                 name: staffDto.user.position.name))));
-  //   }
-  //
-  //   emit(state.copyWith(staffList: staffList));
-  // }
-
   Future<void> fetchMasters() async {
     List<PositionStaffModel> positionStaffList = [];
 
@@ -206,11 +178,14 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
 
   Future<void> fetchStaffPositions({required int staffId}) async {
     var fetchedList =
-        await _positionStaffTable.selectStaffPositions(staffId: staffId);
+        await _positionStaffTable.selectByStaffId(staffId: staffId);
     for (var positionsStaff in fetchedList) {
       final positionStaffDto = PositionStaffDTO.fromMap(positionsStaff);
       selectedPositionsList.add(positionStaffDto.position.name);
-      positionsToSelectList.remove(positionStaffDto.position.name);
+      positionsToSelectList.removeWhere((position) => position != positionStaffDto.position.name);
+      areasForPositionsList.add(
+          '${positionStaffDto.area?.number} ${positionStaffDto.area?.name}');
+      print(areasForPositionsList);
     }
   }
 
@@ -312,17 +287,17 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
     }
   }
 
-  Future<void> updateStaff({required Staff staffModel}) async {
+  Future<void> updateStaff(PositionStaffModel positionStaff) async {
     await _userTable.update(
-        staffModel.user.id,
+        positionStaff.staff.userId,
         UserDTO(
-            id: staffModel.user.id,
+            id: positionStaff.staff.user.id,
             fio: fioController.text == ''
-                ? staffModel.user.fio
+                ? positionStaff.staff.user.fio
                 : fioController.text,
             positionId: positionsMap[selectedPosition] ?? 1,
             areaId: areasMap[selectedArea],
-            companyId: staffModel.user.companyId,
+            companyId: positionStaff.staff.user.companyId,
             position: PositionDTO(id: 0, name: ''),
             photo: '',
             company: CompanyDTO(
@@ -332,17 +307,40 @@ class ChiefStaffCubit extends Cubit<ChiefStaffState> {
             )));
 
     await _staffTable.update(
-        staffModel.id,
+        positionStaff.staffId,
         StaffDTO(
-            id: staffModel.id,
+            id: positionStaff.staff.id,
             login: numberController.text == ''
-                ? staffModel.login
+                ? positionStaff.staff.login
                 : numberController.text,
             password: passwordController.text == ''
-                ? staffModel.password
+                ? positionStaff.staff.password
                 : passwordController.text,
-            userId: staffModel.userId,
+            userId: positionStaff.staff.userId,
             user: UserDTO.empty));
+
+    var fetchedList = await _positionStaffTable.selectByStaffId(
+        staffId: positionStaff.staffId);
+    for (var positionStaff in fetchedList) {
+      final positionStaffDto = PositionStaffDTO.fromMap(positionStaff);
+      _positionStaffTable.delete(positionStaffDto.id);
+    }
+
+    for (int i = 0; i < selectedPositionsList.length; i++) {
+      await _positionStaffTable.insert(PositionStaffDTO(
+          id: 0,
+          positionId: positionsMap[selectedPositionsList[i]] ?? 1,
+          staffId: positionStaff.staffId,
+          position: PositionDTO(id: 0, name: ''),
+          staff: StaffDTO(
+              id: 0,
+              login: '',
+              password: '',
+              userId: 0,
+              user: UserDTO.empty),
+          areaId: areasMap[areasForPositionsList[i]] ?? 1,
+          area: AreaDTO(id: 0, name: '', number: '', unitId: 0)));
+    }
   }
 
   Future deleteStaff({required PositionStaffModel positionStaff}) async {

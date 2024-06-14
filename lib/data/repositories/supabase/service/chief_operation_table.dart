@@ -47,14 +47,22 @@ class ChiefOperationTable extends SupabaseTable {
     return res;
   }
 
-  Future<Map<String, dynamic>> fetchLastOperationInBatch(
-      {required int chiefBatchId}) async {
+  Future<Map<String, dynamic>> fetchLastOperationInBatch({required int chiefBatchId}) async {
     print('chiefbatchId: $chiefBatchId');
     final res = await table
         .select()
         .eq('chief_batch_id', chiefBatchId)
         .order('id', ascending: true);
     return res.last;
+  }
+
+  Future<List<Map<String, dynamic>>> fetchLastOperationInBatchList({required List<int> listChiefBatchId}) async {
+    print('chiefbatchId: $listChiefBatchId');
+    final res = await table
+        .select()
+        .inFilter('chief_batch_id', listChiefBatchId)
+        .order('id', ascending: true);
+    return res;
   }
 
   Future<List<Map<String, dynamic>>> selectId(int batchId, int stageId) async {

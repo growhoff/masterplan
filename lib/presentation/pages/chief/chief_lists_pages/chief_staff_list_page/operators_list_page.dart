@@ -75,11 +75,9 @@ class _OperatorsListPageViewState extends State<OperatorsListPageView> {
                           child: ListView.separated(
                               addAutomaticKeepAlives: false,
                               itemBuilder: (context, index) => StaffListElement(
-                                  fetchStaff: () => setState(() {
-                                        context
-                                            .read<ChiefStaffCubit>()
-                                            .fetchOperators();
-                                      }),
+                                  fetchStaff: () => context
+                                      .read<ChiefStaffCubit>()
+                                      .fetchOperators(),
                                   positionStaff: state.positionStaffList[index],
                                   deleteStaff: () {
                                     context.read<ChiefStaffCubit>().deleteStaff(

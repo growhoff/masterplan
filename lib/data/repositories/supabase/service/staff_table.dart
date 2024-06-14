@@ -32,7 +32,7 @@ class StaffTable extends SupabaseTable {
   }
 
   Future<List<Map<String, dynamic>>> selectName({required String login}) {
-    return table.select().eq('login', login);
+    return table.select('*,z_user(*, z_position(*))').eq('login', login);
   }
 
   @override
