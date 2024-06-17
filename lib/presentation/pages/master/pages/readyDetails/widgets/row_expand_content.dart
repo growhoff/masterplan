@@ -4,6 +4,7 @@ import 'package:master_plan/presentation/pages/master/pages/readyDetails/bloc/cu
 import 'package:master_plan/presentation/pages/master/pages/readyDetails/bloc/state.dart';
 import 'package:master_plan/presentation/pages/master/pages/readyDetails/model/item_oper.dart';
 import 'package:master_plan/presentation/pages/master/pages/readyDetails/widgets/dialog_input.dart';
+import 'package:master_plan/presentation/pages/master/pages/tableInfo/table_info_page.dart';
 
 class RowExpandContent extends StatelessWidget {
   const RowExpandContent({super.key, required this.operation, required this.indexOper, required this.intL});
@@ -15,12 +16,28 @@ class RowExpandContent extends StatelessWidget {
     return Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(flex: 4, child: Text('${operation.list.first.batch.number} ${operation.list.first.batch.name}', textAlign: TextAlign.start)),
-                Expanded(flex: 4, child: Text('${operation.list.first.operation.number} ${operation.list.first.operation.name}', textAlign: TextAlign.center)),
-                Expanded(flex: 2, child: Text('${operation.timeWorking}', textAlign: TextAlign.center)),
-                Expanded(flex: 2, child: Text('${operation.list.length}', textAlign: TextAlign.center)),
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 5),
+                Expanded(flex: 10, child: Text('${operation.list.first.batch.number} ${operation.list.first.batch.name}', textAlign: TextAlign.start)),
+                Expanded(flex: 10, child: Text('${operation.list.first.operation.number} ${operation.list.first.operation.name}', textAlign: TextAlign.center)),
+                Expanded(flex: 6, child: Text('${operation.timeWorking ~/ 60}', textAlign: TextAlign.center)),
+                Expanded(flex: 6, child: Text('${operation.list.length}', textAlign: TextAlign.center)),
+                Expanded(
+                  flex: 3, 
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 5, horizontal: 5)),
+                      backgroundColor: MaterialStateProperty.all(Colors.blue),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => TableInfoPage(operation.list),)), 
+                  child: const Icon(Icons.info))
+                  ),
+                const Spacer(),
+                Expanded(
+                  flex: 3,
                   child: ElevatedButton(
                     style: ButtonStyle(
                       padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 5, horizontal: 5)),
@@ -51,10 +68,11 @@ class RowExpandContent extends StatelessWidget {
                       }
                       
                     }, 
-                    child: const Text('Брак'),),
+                    child: const Tooltip(message: 'Брак', child: Icon(Icons.closed_caption_off))),
                 ),
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 5),
+                const Spacer(),
+                Expanded(
+                  flex: 3,
                   child: ElevatedButton(
                     style: ButtonStyle(
                       padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 5, horizontal: 5)),
@@ -84,8 +102,9 @@ class RowExpandContent extends StatelessWidget {
                         });
                       }
                       
-                    }, 
-                    child: const Text('Доработка')),
+                    },
+                    child: const Tooltip(message: 'Доработка', child: Icon(Icons.backspace_rounded))
+                    ),
                 ),
               ],
             );

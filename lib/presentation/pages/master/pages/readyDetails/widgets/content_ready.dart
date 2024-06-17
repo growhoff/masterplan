@@ -21,11 +21,11 @@ class ContetnReadyMaster extends StatelessWidget {
     : Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-              Text('Время работы станка - ${machine.name}: $timeWorking минут', style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text('Загрузка станка - ${machine.name}: $timeWorking минут', style: const TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               const Divider(),
               const SizedBox(height: 8),
-              const RowExpand(text1: 'Деталь', text2: 'Операция', text3: 'Время обработки', text4: 'Кол. в опт. партии'),
+              const RowExpand(text1: 'Деталь', text2: 'Операция', text3: 'Время обработки, мин.', text4: 'Кол. в опт. партии'),
               const SizedBox(height: 8),
               ListView.builder(
                 shrinkWrap: true,

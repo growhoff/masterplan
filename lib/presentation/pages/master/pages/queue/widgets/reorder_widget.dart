@@ -1,5 +1,6 @@
 import 'package:master_plan/presentation/pages/master/pages/queue/model/item_oper.dart';
 import 'package:master_plan/presentation/pages/master/pages/queue/widgets/reorderable_icon_widget.dart';
+import 'package:master_plan/presentation/pages/master/pages/tableInfo/table_info_page.dart';
 import '../bloc/cubit.dart';
 import 'row_list_four.dart';
 // import 'package:master_plan/domain/model/operator_operations.dart';
@@ -15,7 +16,7 @@ class Reorder extends StatelessWidget {
     ? const Center(child: Text('Список операций пуст')) 
     : Column(
       children: [
-        const RowListFour(text1: 'Деталь', text2: 'Номер операции', text3: 'Время обработки', text4: 'Кол. в оп. партии',),
+        const RowListFour(text1: 'Деталь', text2: 'Номер операции', text3: 'Время обработки, мин.', text4: 'Кол. в оп. партии',),
         const SizedBox(height: 8),
         ReorderableListView.builder(
         buildDefaultDragHandles: false,
@@ -34,10 +35,12 @@ class Reorder extends StatelessWidget {
               Expanded(flex: 4, child: Text('${list[index].list.first.operation.number} ${list[index].list.first.operation.name}', textAlign: TextAlign.center)),
               Expanded(flex: 2, child: Text('${list[index].time}', textAlign: TextAlign.center)),
               Expanded(flex: 2, child: Text('${list[index].list.length}', textAlign: TextAlign.center)),
+              //инфо
+              Expanded(child: IconButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => TableInfoPage(list[index].list),)), icon: const Icon(Icons.info))),
               //передать на готовые детали
               Expanded(child: IconButton(onPressed: () => context.read<CubitQueueMaster>().updateOperationReady(list[index].idPath), icon: const Icon(Icons.check_rounded))),
               //передать на распределение
-              Expanded(child: IconButton(onPressed: () => context.read<CubitQueueMaster>().updateOperationDistribMaster(list[index].idPath), icon: const Icon(Icons.close)))
+              Expanded(child: IconButton(onPressed: () => context.read<CubitQueueMaster>().updateOperationDistribMaster(list[index].idPath), icon: const Icon(Icons.close))),
             ],
                   ),
           );

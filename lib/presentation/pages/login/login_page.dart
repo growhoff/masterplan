@@ -90,6 +90,9 @@ class ContentLogin extends StatelessWidget {
                         case 'Технолог':
                           if (context.mounted)
                             Navigator.pushNamed(context, '/technologistPage');
+                        case 'Начальник-мастер':
+                          if (context.mounted)
+                            Navigator.pushNamed(context, '/chiefMasterPage');
                         case 'Ошибка_версий':
                           if (context.mounted)
                             showDialog(

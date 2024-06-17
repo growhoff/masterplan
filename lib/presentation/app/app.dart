@@ -12,6 +12,7 @@ import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_sta
 import 'package:master_plan/presentation/pages/chief/statistics_page/operations_statistics_page.dart';
 import 'package:master_plan/presentation/pages/chief/statistics_page/statistics_page.dart';
 import 'package:master_plan/presentation/pages/chief/widgets/custom_navbar.dart';
+import 'package:master_plan/presentation/pages/dispatcher/batches_page/batches_page.dart';
 import 'package:master_plan/presentation/pages/login/login_page.dart';
 import 'package:master_plan/presentation/pages/master/pages/addOperation/add_operation_page.dart';
 import 'package:master_plan/presentation/pages/operator/operator_page.dart';
@@ -65,6 +66,7 @@ class MyApp extends StatelessWidget {
           '/archiveOperationsPage': (BuildContext context) => const ArchiveOperationsPage(),
           '/archiveTransferPage': (BuildContext context) => const ArchiveTransfersPage(),
           '/chiefMasterPage':(BuildContext context) => const ChiefMasterPage(),
+          '/batchesPage':(BuildContext context) => const BatchesPage(),
 
 
         },

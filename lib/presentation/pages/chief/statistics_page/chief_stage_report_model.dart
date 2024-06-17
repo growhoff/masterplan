@@ -6,7 +6,6 @@ class ChiefStageForReportModel {
   final String batchCode;
 
   int detailsQuantity = 0;
-  int detailsInWorkQuantity = 0;
 
   int readyDetailsQuantity = 0;
   int readyDetailsPercent = 0;
@@ -15,6 +14,11 @@ class ChiefStageForReportModel {
   int readyOperationsQuantity = 0;
   int operationsQuantity = 0;
   int readyOperationsPercent = 0;
+
+  int defectOperationsQuantity = 0;
+  int modificationOperationsQuantity = 0;
+  int onDistributionOperationsQuantity = 0;
+  int distributedOperationsQuantity = 0;
 
   List<ChiefOperationModel> operationsList = [];
 

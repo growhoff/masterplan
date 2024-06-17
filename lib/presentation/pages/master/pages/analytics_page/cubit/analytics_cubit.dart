@@ -1,17 +1,16 @@
 import 'package:bloc/bloc.dart';
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
-import 'package:intl/intl.dart';
+// import 'package:intl/intl.dart';
 import 'package:master_plan/data/repositories/local/service/excel_service.dart';
 import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
-// import 'package:master_plan/data/repositories/supabase/dto/staff_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/position_staff_table.dart';
 import 'package:master_plan/domain/model/batch.dart';
 import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/position.dart';
-// import 'package:master_plan/domain/model/staff.dart';
 import 'package:master_plan/domain/model/status.dart';
 import 'package:master_plan/domain/model/user.dart';
 import 'package:master_plan/domain/usecase/time_converter.dart';
@@ -29,69 +28,77 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
   AnalyticsCubit(this.staffId) : super(AnalyticsState());
 
   final _operatorOperationsTable = OperatorOperationsTable();
-  final _positionStaffTable = PositionStaffTable();
   final _excelService = ExcelService();
+  final _positionStaffTable = PositionStaffTable();
   final int staffId;
 
   Future<void> fetchReadyOperations() async {
     List<AnalyticsOperationModel> analyticsOperationsList = [];
 
-    Map<int, AnalyticsOperationModel> operationsMap = {};
-
+    List<OperatorOperations> operatorOperationsList = [];
     List<int> areasList = [];
 
-    var fetchedList = await _positionStaffTable.selectByStaffId(staffId: staffId);
-    for (var fetchedStaff in fetchedList){
+    // получить список участков на которых работает мастер
+    var fetchedList =
+        await _positionStaffTable.selectByStaffId(staffId: staffId);
+    for (var fetchedStaff in fetchedList) {
       final positionStaffDto = PositionStaffDTO.fromMap(fetchedStaff);
       final positionStaff = PositionStaffModel.fromDTO(positionStaffDto);
       areasList.add(positionStaff.areaId ?? 0);
     }
 
-    var fetchedOperationsList =
-        await _operatorOperationsTable.selectReadyDefectAndModificationOnArea(areasList);
+    var fetchedOperationsList = await _operatorOperationsTable
+        .selectReadyDefectAndModificationOnArea(areasList);
 
     for (var fetchedOperation in fetchedOperationsList) {
       final operationDto = OperatorOperationsDTO.fromMap(fetchedOperation);
 
       final operation = convertOperationDtoToModel(dto: operationDto);
 
-      if (!operationsMap.containsKey(operation.operation.id)) {
-        var hours =
-            DateTime.fromMillisecondsSinceEpoch(operation.timestop ?? 0).hour;
-
-        int change = 1;
-        (hours >= 8 && hours <= 20) ? change = 1 : change = 2;
-
-        operationsMap[operation.operation.id] = AnalyticsOperationModel(
-            operationId: operation.operation.id,
-            code: operation.operation.code,
-            detailNumber: operation.batch.number,
-            operationNumber: operation.operation.number,
-            name: operation.operation.name,
-            timePlan: TimeConverter.instance
-                .convertTimeFromMinutes(operation.timeplan),
-            timeFact: TimeConverter.instance
-                .convertTimeFromSeconds(operation.timeworking ?? 0),
-            machineName: operation.machine?.name ?? '',
-            machineInventoryNumber: operation.machine?.inventoryNumber ?? 0,
-            fio: operation.user?.fio ?? '',
-            date: DateFormat.yMd().format(
-                DateTime.fromMillisecondsSinceEpoch(operation.timestop ?? 0)),
-            change: change,
-            areaNumber: operation.area.number);
-      }
-      operationsMap[operation.operation.id]?.quantity++;
-
-      switch (operation.status.id) {
-        case 4:
-          operationsMap[operation.operation.id]?.modificationQuantity++;
-        case 5:
-          operationsMap[operation.operation.id]?.defectQuantity++;
-      }
+      operatorOperationsList.add(operation);
     }
 
+    var operationsMap =
+        groupBy(operatorOperationsList, (operation) => operation.optimalPart);
+
     operationsMap.forEach((key, value) {
-      analyticsOperationsList.add(value);
+      var hours =
+          DateTime.fromMillisecondsSinceEpoch(value.first.timestop ?? 0).hour;
+
+      var dateTime =
+          DateTime.fromMillisecondsSinceEpoch(value.first.timestop ?? 0);
+      String date = '${dateTime.day}.${dateTime.month}.${dateTime.year}';
+
+      int change = 1;
+      (hours >= 8 && hours <= 20) ? change = 1 : change = 2;
+
+      AnalyticsOperationModel analyticsOperation = AnalyticsOperationModel(
+          operationId: value.first.operation.id,
+          code: value.first.operation.code,
+          detailNumber: value.first.batch.number,
+          operationNumber: value.first.operation.number,
+          name: value.first.operation.name,
+          timePlan: TimeConverter.instance
+              .convertTimeFromMinutes(value.first.timeplan),
+          timeFact: TimeConverter.instance
+              .convertTimeFromSeconds(value.first.timeworking ?? 0),
+          machineName: value.first.machine?.name ?? '',
+          machineInventoryNumber: value.first.machine?.inventoryNumber ?? 0,
+          fio: value.first.user?.fio ?? '',
+          date: date,
+          change: change,
+          areaNumber: value.first.area.number);
+
+      for (var operation in value) {
+        analyticsOperation.quantity++;
+        switch (operation.status.id) {
+          case 4:
+            analyticsOperation.modificationQuantity++;
+          case 5:
+            analyticsOperation.defectQuantity++;
+        }
+      }
+      analyticsOperationsList.add(analyticsOperation);
     });
 
     emit(state.copyWith(analyticsOperationsList: analyticsOperationsList));
@@ -121,6 +128,8 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
   OperatorOperations convertOperationDtoToModel(
       {required OperatorOperationsDTO dto}) {
     return OperatorOperations(
+        timeworking: dto.timeworking,
+        optimalPart: dto.optimalPart,
         timeplan: dto.timeplan ?? 0,
         id: dto.id,
         timestop: dto.timestop,

@@ -5,8 +5,8 @@ import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 class OrderDTO extends Dto {
   final int id;
   final String number;
-  final DateTime? dateReceipt;
-  final DateTime? datePlanCompletion;
+  final String? dateReceipt;
+  final String? datePlanCompletion;
   final int? priority;
   OrderDTO({
     required this.id,

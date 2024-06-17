@@ -663,7 +663,7 @@
     },
     {
       "name": "table_calendar",
-      "rootUri": "file:///C:/Users/user/AppData/Local/Pub/Cache/hosted/pub.dev/table_calendar-3.1.0",
+      "rootUri": "file:///C:/Users/user/AppData/Local/Pub/Cache/hosted/pub.dev/table_calendar-3.1.2",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -794,7 +794,7 @@
       "languageVersion": "3.0"
     }
   ],
-  "generated": "2024-05-20T11:15:33.861040Z",
+  "generated": "2024-06-17T11:20:01.209650Z",
   "generator": "pub",
   "generatorVersion": "3.0.3"
 }

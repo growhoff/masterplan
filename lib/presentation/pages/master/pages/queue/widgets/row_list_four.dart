@@ -11,11 +11,12 @@ class RowListFour extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Spacer(flex: 2),
-        Expanded(flex: 2, child: Text(text1)),
+        const Spacer(),
+        Expanded(flex: 3, child: Text(text1, textAlign: TextAlign.center)),
         Expanded(flex: 4, child: Text(text2, textAlign: TextAlign.center)),
         Expanded(flex: 2, child: Text(text3, textAlign: TextAlign.center)),
         Expanded(flex: 2, child: Text(text4, textAlign: TextAlign.center)),
+        const Spacer(),
         const Spacer(),
         const Spacer()
       ],

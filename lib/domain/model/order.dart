@@ -3,8 +3,8 @@
 class Order {
   final int id;
   final String number;
-  final DateTime? dateReceipt;
-  final DateTime? datePlanCompletion;
+  final String? dateReceipt;
+  final String? datePlanCompletion;
   final int? priority;
   Order({
     required this.id,

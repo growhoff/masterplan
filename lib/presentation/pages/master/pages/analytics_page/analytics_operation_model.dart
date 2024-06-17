@@ -1,18 +1,20 @@
 class AnalyticsOperationModel {
   AnalyticsOperationModel(
-      {required this.operationId,
-      required this.code,
-      required this.detailNumber,
-      required this.operationNumber,
-      required this.name,
-      required this.timePlan,
-      required this.timeFact,
-      required this.machineName,
+      {
+        required this.operationId,
+        required this.code,
+        required this.detailNumber,
+        required this.operationNumber,
+        required this.name,
+        required this.timePlan,
+        required this.timeFact,
+        required this.machineName,
         required this.machineInventoryNumber,
-      required this.fio,
-      required this.date,
-      required this.change,
-      required this.areaNumber});
+        required this.fio,
+        required this.date,
+        required this.change,
+        required this.areaNumber});
+
 
   final int operationId;
   final String code;
@@ -32,3 +34,6 @@ class AnalyticsOperationModel {
   int modificationQuantity = 0;
   int quantity = 0;
 }
+
+
+

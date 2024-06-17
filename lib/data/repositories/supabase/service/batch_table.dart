@@ -42,14 +42,16 @@ class BatchTable extends SupabaseTable {
     return table.select().eq('id', id);
   }
 
-
+  Future<List<Map<String, dynamic>>> selectByOrderId(int orderId) async {
+    return table.select().eq('order_id', orderId).order('id', ascending: true);
+  }
 
   @override
   Future<void> update(int id, Dto dto) {
     return table.update({'name': '1'}).eq('id', id);
   }
 
-  stream(){
+  stream() {
     return table.stream(primaryKey: ['id']).order('id', ascending: true);
   }
 }

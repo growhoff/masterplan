@@ -58,7 +58,7 @@ class _OperationsStatisticsPageViewState
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                  'Номер чертежа: ${widget.statisticsStage.batchName}'),
+                                  'Номер чертежа: ${widget.statisticsStage.batchNumber} ${widget.statisticsStage.batchName}'),
                               const SizedBox(
                                 height: 5,
                               ),
@@ -195,7 +195,6 @@ class _OperationsStatisticsPageViewState
                                           ),
                                         ),
                                       )),
-
                                 ),
                                 TableCell(
                                   child: Container(
@@ -212,7 +211,6 @@ class _OperationsStatisticsPageViewState
                                           ),
                                         ),
                                       )),
-
                                 ),
                                 TableCell(
                                   child: Container(
@@ -321,16 +319,16 @@ class _OperationsStatisticsPageViewState
                                         ),
                                       ),
                                     ),
-                                TableRowInkWell(
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 5),
-                                    child: Text(
-                                      '${widget.statisticsStage.operationsList[index].distributed}',
-                                      textAlign: TextAlign.center,
+                                    TableRowInkWell(
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 5),
+                                        child: Text(
+                                          '${widget.statisticsStage.operationsList[index].distributed}',
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
                                     TableRowInkWell(
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(
@@ -355,6 +353,36 @@ class _OperationsStatisticsPageViewState
                         ],
                       ),
                     ),
+                    Container(
+                      padding: EdgeInsets.only(left: 8),
+                      child: Card(
+                        child: Container(
+                          padding: EdgeInsets.all(8),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                  'На распределении: ${widget.statisticsStage.onDistributionOperationsQuantity}'),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                  'Распределено: ${widget.statisticsStage.distributedOperationsQuantity}'),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                  'Забраковано: ${widget.statisticsStage.defectOperationsQuantity}'),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                  'На доработку: ${widget.statisticsStage.modificationOperationsQuantity}'),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
                   ],
                 ));
           },

@@ -92,24 +92,28 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
 
       operationInList?.areaNumber = operatorOperationsDto.area!.number;
       switch (operatorOperationsDto.statusId) {
-        case 3:
+        case 2:
           operationInList?.onDistribution++;
+          stagesMap[operatorOperationsDto.stageId]?.onDistributionOperationsQuantity++;
+        case 3:
+          operationInList?.distributed++;
+          stagesMap[operatorOperationsDto.stageId]?.distributedOperationsQuantity++;
         case 4:
           operationInList?.modificationQuantity++;
+          stagesMap[operatorOperationsDto.stageId]?.modificationOperationsQuantity++;
         case 5:
           stagesMap[operatorOperationsDto.stageId]?.defectDetailsQuantity++;
+          stagesMap[operatorOperationsDto.stageId]?.defectOperationsQuantity++;
           operationInList?.defectQuantity++;
-        case 7:
-          operationInList?.distributed++;
+        // case 7:
+        //   operationInList?.distributed++;
+        //   stagesMap[operatorOperationsDto.stageId]?.distributedOperationsQuantity++;
         case 9:
           stagesMap[operatorOperationsDto.stageId]?.readyOperationsQuantity++;
           operationInList?.readyQuantity++;
       }
 
-      // operationInList?.readyPercent = ((operationInList.readyQuantity /
-      //             stagesMap[operatorOperationsDto.stageId]!.detailsQuantity) *
-      //         100)
-      //     .round();
+
     }
 
     stagesMap.forEach((key, value) async {
