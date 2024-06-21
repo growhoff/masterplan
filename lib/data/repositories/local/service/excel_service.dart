@@ -319,7 +319,7 @@ class ExcelService {
     }
 
     chiefBatchIdsList =
-        await _chiefBatchTable.bulkInsert(dtosList: chiefBatchDtosList);
+        await _chiefBatchTable.bulkInsertFromList(dtosList: chiefBatchDtosList);
 
     for (int chiefBatchId in chiefBatchIdsList) {
       for (var operation in chiefOperationsList) {

@@ -97,13 +97,13 @@ class ChiefMachineCubit extends Cubit<ChiefMachineState> {
   }
 
   Future insertMachine() async {
-    int machineId = await _machineTable.insert(
-      MachineDTO(
-          id: 0,
-          inventoryNumber: int.parse(numberController.text),
-          name: nameController.text,
-          areaId: areasMap[selectedArea] ?? 1),
-    );
+    // int machineId = await _machineTable.insert(
+    //   MachineDTO(
+    //       id: 0,
+    //       inventoryNumber: int.parse(numberController.text),
+    //       name: nameController.text,
+    //       areaId: areasMap[selectedArea] ?? 1),
+    // );
 
 
     nameController.clear();

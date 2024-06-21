@@ -62,6 +62,13 @@ class OperatorOperationsTable extends SupabaseTable {
         .order('id', ascending: true);
   }
 
+  Future<List<Map<String, dynamic>>> selectOrderedByChiefOperation() {
+    return table
+        .select('*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*), z_user($selectUser), z_machine(*), z_area!inner(*), z_chief_operation(*), z_chief_batch(*)')
+        .eq('z_area.company_id', _companyId)
+        .order('chief_operation_id', ascending: true);
+  }
+
   Future<List<Map<String, dynamic>>> selectReadyDefectAndModificationOnArea(List<int> areasIdList) {
     return table
         .select('*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*), z_user($selectUser), z_machine(*), z_area!inner(*), z_chief_operation(*), z_chief_batch(*)')
@@ -71,6 +78,10 @@ class OperatorOperationsTable extends SupabaseTable {
 
   Future<List<Map<String, dynamic>>> selectMachineId(int machineId) {
     return table.select().eq('machine_id', machineId);
+  }
+
+  Future<List<Map<String, dynamic>>> selectListMachineId(List<int> machineIdList) {
+    return table.select('*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*), z_user($selectUser), z_machine(*), z_area!inner(*), z_chief_operation(*), z_chief_batch(*)').inFilter('machine_id', machineIdList);
   }
 
   Future<List<Map<String, dynamic>>> selectId(int id) {

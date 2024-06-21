@@ -10,6 +10,8 @@ class Batch {
   final int order;
   final bool isready;
   final int? orderId;
+  final int? batchArchiveId;
+
   Batch({
     required this.id,
     required this.number,
@@ -20,5 +22,17 @@ class Batch {
     required this.order,
     required this.isready,
     required this.orderId,
+    this.batchArchiveId,
   });
+
+  static final empty =  Batch(
+      id: 0,
+      number: '',
+      name: '',
+      count: 0,
+      code: '',
+      technology: '',
+      order: 0,
+      isready: false,
+      orderId: 0);
 }

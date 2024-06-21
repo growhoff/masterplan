@@ -75,232 +75,232 @@ class _OperationsStatisticsPageViewState
                     const SizedBox(
                       height: 10,
                     ),
-                    Card(
-                      child: Table(
-                        columnWidths: const {
-                          0: FlexColumnWidth(4),
-                          1: FlexColumnWidth(1),
-                          2: FlexColumnWidth(1.5),
-                          3: FlexColumnWidth(1.5),
-                          4: FlexColumnWidth(1.5),
-                          5: FlexColumnWidth(1),
-                          6: FlexColumnWidth(1),
-                          7: FlexColumnWidth(1),
-                          8: FlexColumnWidth(1),
-                          9: FlexColumnWidth(1),
-                        },
-                        defaultColumnWidth: const FlexColumnWidth(),
-                        border: TableBorder.all(color: Colors.black),
-                        defaultVerticalAlignment:
-                            TableCellVerticalAlignment.middle,
-                        children: [
-                          TableRow(
-                              decoration:
-                                  const BoxDecoration(color: Colors.grey),
-                              children: [
-                                TableCell(
-                                  child: Container(
-                                      alignment: Alignment.center,
-                                      padding: const EdgeInsets.all(8),
-                                      child: const FittedBox(
-                                        fit: BoxFit.fill,
-                                        child: Text(
-                                          'наименование\nоперации',
-                                          softWrap: true,
-                                          maxLines: 2,
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      )),
-                                ),
-                                TableCell(
-                                  child: Container(
-                                      alignment: Alignment.center,
-                                      padding: const EdgeInsets.all(8),
-                                      child: const FittedBox(
-                                        fit: BoxFit.fitWidth,
-                                        child: Text(
-                                          '№',
-                                          softWrap: true,
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      )),
-                                ),
-                                TableCell(
-                                  child: Container(
-                                      alignment: Alignment.center,
-                                      padding: const EdgeInsets.all(8),
-                                      child: const FittedBox(
-                                        fit: BoxFit.fitWidth,
-                                        child: RotatedBox(
-                                          quarterTurns: 3,
-                                          child: Text(
-                                            'участок',
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ),
-                                      )),
-                                ),
-                                TableCell(
-                                  child: Container(
-                                      alignment: Alignment.center,
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 8),
-                                      child: const RotatedBox(
+                    Table(
+                      columnWidths: const {
+                        0: FlexColumnWidth(4),
+                        1: FlexColumnWidth(1),
+                        2: FlexColumnWidth(1.5),
+                        3: FlexColumnWidth(1.5),
+                       // 4: FlexColumnWidth(1.5),
+                        5: FlexColumnWidth(1),
+                        6: FlexColumnWidth(1),
+                        7: FlexColumnWidth(1),
+                        8: FlexColumnWidth(1),
+                        9: FlexColumnWidth(1),
+                      },
+                      defaultColumnWidth: const FlexColumnWidth(),
+                      border: TableBorder.all(color: Colors.black),
+                      defaultVerticalAlignment:
+                          TableCellVerticalAlignment.middle,
+                      children: [
+                        TableRow(
+                            decoration: const BoxDecoration(color: Colors.grey),
+                            children: [
+                              TableCell(
+                                child: Container(
+                                    alignment: Alignment.center,
+                                    padding: const EdgeInsets.all(8),
+                                    child: const FittedBox(
+                                      fit: BoxFit.fill,
+                                      child: Text(
+                                        'наименование\nоперации',
+                                        softWrap: true,
+                                        maxLines: 2,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    )),
+                              ),
+                              TableCell(
+                                child: Container(
+                                    alignment: Alignment.center,
+                                    padding: const EdgeInsets.all(8),
+                                    child: const FittedBox(
+                                      fit: BoxFit.fitWidth,
+                                      child: Text(
+                                        '№',
+                                        softWrap: true,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    )),
+                              ),
+                              TableCell(
+                                child: Container(
+                                    alignment: Alignment.center,
+                                    padding: const EdgeInsets.all(8),
+                                    child: const FittedBox(
+                                      fit: BoxFit.fitWidth,
+                                      child: RotatedBox(
                                         quarterTurns: 3,
                                         child: Text(
-                                          'кол-во\nвыполненных',
+                                          'участок',
                                           textAlign: TextAlign.center,
-                                          maxLines: 3,
                                         ),
-                                      )),
-                                ),
-                                TableCell(
-                                  child: Container(
-                                      alignment: Alignment.center,
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 8),
-                                      child: FittedBox(
-                                        fit: BoxFit.fill,
-                                        child: const RotatedBox(
-                                          quarterTurns: 3,
-                                          child: Text(
-                                            'требуется\nвыполнить',
-                                            textAlign: TextAlign.center,
-                                            maxLines: 3,
-                                          ),
-                                        ),
-                                      )),
-                                ),
-                                TableCell(
-                                  child: Container(
-                                      alignment: Alignment.center,
-                                      padding: const EdgeInsets.all(8),
-                                      child: const Text(
-                                        '%',
+                                      ),
+                                    )),
+                              ),
+                              TableCell(
+                                child: Container(
+                                    alignment: Alignment.center,
+                                    padding: EdgeInsets.symmetric(vertical: 8),
+                                    child: const RotatedBox(
+                                      quarterTurns: 3,
+                                      child: Text(
+                                        'кол-во\nвыполненных',
                                         textAlign: TextAlign.center,
-                                      )),
-                                ),
-                                TableCell(
-                                  child: Container(
-                                      alignment: Alignment.center,
+                                        maxLines: 3,
+                                      ),
+                                    )),
+                              ),
+                              // TableCell(
+                              //   child: Container(
+                              //       alignment: Alignment.center,
+                              //       padding: EdgeInsets.symmetric(vertical: 8),
+                              //       child: FittedBox(
+                              //         fit: BoxFit.fill,
+                              //         child: const RotatedBox(
+                              //           quarterTurns: 3,
+                              //           child: Text(
+                              //             'требуется\nвыполнить',
+                              //             textAlign: TextAlign.center,
+                              //             maxLines: 3,
+                              //           ),
+                              //         ),
+                              //       )),
+                              // ),
+                              TableCell(
+                                child: Container(
+                                    alignment: Alignment.center,
+                                    padding: const EdgeInsets.all(8),
+                                    child: const Text(
+                                      '%',
+                                      textAlign: TextAlign.center,
+                                    )),
+                              ),
+                              TableCell(
+                                child: Container(
+                                    alignment: Alignment.center,
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 8),
+                                    child: const FittedBox(
+                                      fit: BoxFit.fill,
+                                      child: RotatedBox(
+                                        quarterTurns: 3,
+                                        child: Text(
+                                          'на распред.',
+                                          //textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    )),
+                              ),
+                              TableCell(
+                                child: Container(
+                                    alignment: Alignment.center,
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 8),
+                                    child: const FittedBox(
+                                      fit: BoxFit.fill,
+                                      child: RotatedBox(
+                                        quarterTurns: 3,
+                                        child: Text(
+                                          'в очереди',
+                                          //textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    )),
+                              ),
+                              TableCell(
+                                child: Container(
+                                    alignment: Alignment.center,
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 8),
+                                    child: const FittedBox(
+                                      fit: BoxFit.fill,
+                                      child: RotatedBox(
+                                        quarterTurns: 3,
+                                        child: Text(
+                                          'брак',
+                                          //textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    )),
+                              ),
+                              TableCell(
+                                child: Container(
+                                    alignment: Alignment.center,
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 8),
+                                    child: const FittedBox(
+                                      fit: BoxFit.fill,
+                                      child: RotatedBox(
+                                        quarterTurns: 3,
+                                        child: Text(
+                                          'доработка',
+                                          //textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    )),
+                              ),
+                            ]),
+                        ...List.generate(
+                            widget.statisticsStage.operationsList.length,
+                            (index) => TableRow(children: [
+                                  TableRowInkWell(
+                                    child: Container(
                                       padding: const EdgeInsets.symmetric(
-                                          vertical: 8),
-                                      child: const FittedBox(
-                                        fit: BoxFit.fill,
-                                        child: RotatedBox(
-                                          quarterTurns: 3,
-                                          child: Text(
-                                            'на распред.',
-                                            //textAlign: TextAlign.center,
-                                          ),
-                                        ),
-                                      )),
-                                ),
-                                TableCell(
-                                  child: Container(
-                                      alignment: Alignment.center,
+                                          vertical: 5),
+                                      child: Text(
+                                        '${widget.statisticsStage.operationsList[index].number} ${widget.statisticsStage.operationsList[index].name}',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                  TableRowInkWell(
+                                    child: Container(
                                       padding: const EdgeInsets.symmetric(
-                                          vertical: 8),
-                                      child: const FittedBox(
-                                        fit: BoxFit.fill,
-                                        child: RotatedBox(
-                                          quarterTurns: 3,
-                                          child: Text(
-                                            'распределено',
-                                            //textAlign: TextAlign.center,
-                                          ),
-                                        ),
-                                      )),
-                                ),
-                                TableCell(
-                                  child: Container(
-                                      alignment: Alignment.center,
+                                          vertical: 5),
+                                      child: Text(
+                                        widget.statisticsStage
+                                            .operationsList[index].code,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                  TableRowInkWell(
+                                    child: Container(
                                       padding: const EdgeInsets.symmetric(
-                                          vertical: 8),
-                                      child: const FittedBox(
-                                        fit: BoxFit.fill,
-                                        child: RotatedBox(
-                                          quarterTurns: 3,
-                                          child: Text(
-                                            'брак',
-                                            //textAlign: TextAlign.center,
-                                          ),
-                                        ),
-                                      )),
-                                ),
-                                TableCell(
-                                  child: Container(
-                                      alignment: Alignment.center,
+                                          vertical: 5),
+                                      child: Text(
+                                        '${widget.statisticsStage.operationsList[index].areaNumber}',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                  TableRowInkWell(
+                                    child: Container(
                                       padding: const EdgeInsets.symmetric(
-                                          vertical: 8),
-                                      child: const FittedBox(
-                                        fit: BoxFit.fill,
-                                        child: RotatedBox(
-                                          quarterTurns: 3,
-                                          child: Text(
-                                            'доработка',
-                                            //textAlign: TextAlign.center,
-                                          ),
-                                        ),
-                                      )),
-                                ),
-                              ]),
-                          ...List.generate(
-                              widget.statisticsStage.operationsList.length,
-                              (index) => TableRow(children: [
-                                    TableRowInkWell(
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 5),
-                                        child: Text(
-                                          '${widget.statisticsStage.operationsList[index].number} ${widget.statisticsStage.operationsList[index].name}',
-                                          textAlign: TextAlign.center,
-                                        ),
+                                          vertical: 5),
+                                      child: Text(
+                                        '${widget.statisticsStage.operationsList[index].readyQuantity}',
+                                        textAlign: TextAlign.center,
                                       ),
                                     ),
-                                    TableRowInkWell(
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 5),
-                                        child: Text(
-                                          widget.statisticsStage
-                                              .operationsList[index].code,
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    ),
-                                    TableRowInkWell(
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 5),
-                                        child: Text(
-                                          '${widget.statisticsStage.operationsList[index].areaNumber}',
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    ),
-                                    TableRowInkWell(
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 5),
-                                        child: Text(
-                                          '${widget.statisticsStage.operationsList[index].readyQuantity}',
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    ),
-                                    TableRowInkWell(
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 5),
-                                        child: Text(
-                                          '${widget.statisticsStage.operationsList[index].mustBeDone}',
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    ),
-                                    TableRowInkWell(
-                                      child: Container(
+                                  ),
+                                  // TableRowInkWell(
+                                  //   child: Container(
+                                  //     padding: const EdgeInsets.symmetric(
+                                  //         vertical: 5),
+                                  //     child: Text(
+                                  //       '${widget.statisticsStage.operationsList[index].mustBeDone}',
+                                  //       textAlign: TextAlign.center,
+                                  //     ),
+                                  //   ),
+                                  // ),
+                                  Stack(
+                                    children: [
+
+                                      Container(
+                                        alignment: Alignment.center,
+
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 5),
                                         child: Text(
@@ -308,50 +308,50 @@ class _OperationsStatisticsPageViewState
                                           textAlign: TextAlign.center,
                                         ),
                                       ),
-                                    ),
-                                    TableRowInkWell(
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 5),
-                                        child: Text(
-                                          '${widget.statisticsStage.operationsList[index].onDistribution}',
-                                          textAlign: TextAlign.center,
-                                        ),
+                                    ],
+                                  ),
+                                  TableRowInkWell(
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5),
+                                      child: Text(
+                                        '${widget.statisticsStage.operationsList[index].onDistribution}',
+                                        textAlign: TextAlign.center,
                                       ),
                                     ),
-                                    TableRowInkWell(
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 5),
-                                        child: Text(
-                                          '${widget.statisticsStage.operationsList[index].distributed}',
-                                          textAlign: TextAlign.center,
-                                        ),
+                                  ),
+                                  TableRowInkWell(
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5),
+                                      child: Text(
+                                        '${widget.statisticsStage.operationsList[index].distributed}',
+                                        textAlign: TextAlign.center,
                                       ),
                                     ),
-                                    TableRowInkWell(
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 5),
-                                        child: Text(
-                                          '${widget.statisticsStage.operationsList[index].defectQuantity}',
-                                          textAlign: TextAlign.center,
-                                        ),
+                                  ),
+                                  TableRowInkWell(
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5),
+                                      child: Text(
+                                        '${widget.statisticsStage.operationsList[index].defectQuantity}',
+                                        textAlign: TextAlign.center,
                                       ),
                                     ),
-                                    TableRowInkWell(
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 5),
-                                        child: Text(
-                                          '${widget.statisticsStage.operationsList[index].modificationQuantity}',
-                                          textAlign: TextAlign.center,
-                                        ),
+                                  ),
+                                  TableRowInkWell(
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5),
+                                      child: Text(
+                                        '${widget.statisticsStage.operationsList[index].modificationQuantity}',
+                                        textAlign: TextAlign.center,
                                       ),
                                     ),
-                                  ]))
-                        ],
-                      ),
+                                  ),
+                                ]))
+                      ],
                     ),
                     Container(
                       padding: EdgeInsets.only(left: 8),
@@ -367,7 +367,7 @@ class _OperationsStatisticsPageViewState
                                 height: 10,
                               ),
                               Text(
-                                  'Распределено: ${widget.statisticsStage.distributedOperationsQuantity}'),
+                                  'В очереди: ${widget.statisticsStage.distributedOperationsQuantity}'),
                               const SizedBox(
                                 height: 10,
                               ),

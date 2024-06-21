@@ -1,9 +1,9 @@
+import 'package:master_plan/data/repositories/supabase/dto/order_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class OrderTable extends SupabaseTable{
-
+class OrderTable extends SupabaseTable {
   final table = Supabase.instance.client.from('z_order');
 
   @override
@@ -12,13 +12,20 @@ class OrderTable extends SupabaseTable{
   }
 
   @override
-  Future<void> insert(Dto dto) {
-    return table.insert(dto);
+  Future<void> insert(Dto dto) async {
+    if (dto is OrderDTO) {
+     await table.insert({
+        'number': dto.number,
+        'date_receipt': dto.dateReceipt,
+        'date_plan_completion': dto.datePlanCompletion,
+        'priority': dto.priority,
+      });
+    }
   }
 
   @override
   Future<List<Map<String, dynamic>>> select() {
-    return table.select();
+    return table.select().order('priority', ascending: true);
   }
 
   Future<List<Map<String, dynamic>>> selectId(int id) {
@@ -39,7 +46,6 @@ class OrderTable extends SupabaseTable{
 
   @override
   Future<void> update(int id, Dto dto) {
-   return table.update({'name': '1'}).eq('id', id);
+    return table.update({'name': '1'}).eq('id', id);
   }
-
 }

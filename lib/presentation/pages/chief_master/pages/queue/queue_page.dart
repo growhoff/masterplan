@@ -1,32 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:master_plan/presentation/app/bloc/cubit.dart';
-import './bloc/cubit.dart';
-import './widgets/element_bar.dart';
+import 'package:master_plan/presentation/pages/chief_master/pages/queue/queue_details/queue_details_page.dart';
+import 'package:master_plan/presentation/pages/chief_master/pages/queue/queue_operations/queue_operations_page.dart';
 
-class QueuePageMasterChM extends StatelessWidget {
-  const QueuePageMasterChM({super.key});
+class QueuePage extends StatelessWidget {
+  const QueuePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final stateMain = context.read<CubitMain>().state;
-    return BlocProvider<CubitQueueMasterChM>(
-      create: (context) => CubitQueueMasterChM(stateMain.machineList, stateMain.queueList, stateMain.machineIdList!, stateMain.user!.id),
-      child: const QueuePageMasterContent(),
-    );
-  }
-}
-
-class QueuePageMasterContent extends StatelessWidget {
-  const QueuePageMasterContent({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return const SafeArea(
-      child: SingleChildScrollView(
+    return SafeArea(
         child: Padding(
-            padding:  EdgeInsets.all(16),
-            child: ElementBarQueue()),
+      padding: const EdgeInsets.all(16),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const QueueOperatPageMasterChM(),)), child: const Text('Очередь операций')),
+            const SizedBox(height: 16),
+            ElevatedButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const QueuePageMasterChM(),)), child: const Text('Очередь деталей')),
+            ],
+        ),
       ),
-    );
+    ));
   }
 }

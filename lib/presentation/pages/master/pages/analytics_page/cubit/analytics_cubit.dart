@@ -1,7 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
-// import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:master_plan/data/repositories/local/service/excel_service.dart';
 import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
@@ -32,7 +33,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
   final _positionStaffTable = PositionStaffTable();
   final int staffId;
 
-  Future<void> fetchReadyOperations() async {
+  Future<void> fetchReadyOperations({int? timeStart, int? timeEnd}) async {
     List<AnalyticsOperationModel> analyticsOperationsList = [];
 
     List<OperatorOperations> operatorOperationsList = [];
@@ -55,7 +56,16 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
 
       final operation = convertOperationDtoToModel(dto: operationDto);
 
-      operatorOperationsList.add(operation);
+      if (timeStart != null && timeEnd != null) {
+        print('start: ${timeStart}  operation: ${operation.timeFirstStart} end: ${timeEnd}');
+        if (operation.timeFirstStart >= timeStart &&
+            operation.timeFirstStart <= timeEnd) {
+
+          operatorOperationsList.add(operation);
+        }
+      } else {
+        operatorOperationsList.add(operation);
+      }
     }
 
     var operationsMap =
@@ -104,8 +114,21 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
     emit(state.copyWith(analyticsOperationsList: analyticsOperationsList));
   }
 
-  Future<void> uploadReadyOperationsReport() async {
-    await fetchReadyOperations();
+  Future<void> uploadReadyOperationsReport(BuildContext context) async {
+    DateTime start = DateTime(2024);
+    DateTime end = DateTime.now();
+
+    final dateTimeRange = await showDateRangePicker(
+        context: context, firstDate: start, lastDate: end);
+    if (dateTimeRange != null) {
+      start = dateTimeRange.start;
+      end = dateTimeRange.end;
+    }
+
+
+    await fetchReadyOperations(
+        timeStart: start.millisecondsSinceEpoch,
+        timeEnd: end.millisecondsSinceEpoch + 86399000);
 
     String filePath = await _excelService.uploadReadyOperationsReport(
         analyticsOperationsList: state.analyticsOperationsList);

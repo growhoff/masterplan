@@ -53,8 +53,7 @@ class _ChiefMachineEditPageViewState extends State<ChiefMachineEditPageView> {
           title: const Text('редактирование оборудования')),
       body: BlocBuilder<ChiefMachineCubit, ChiefMachineState>(
         builder: (context, state) {
-          if (state is ChiefMachineState) {
-            return SafeArea(
+          return SafeArea(
               child: SingleChildScrollView(
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -136,11 +135,6 @@ class _ChiefMachineEditPageViewState extends State<ChiefMachineEditPageView> {
                 ),
               ),
             );
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
         },
       ),
     );

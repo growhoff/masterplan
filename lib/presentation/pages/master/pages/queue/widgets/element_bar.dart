@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:master_plan/presentation/pages/master/pages/queue/bloc/cubit.dart';
-import 'package:master_plan/presentation/pages/master/pages/queue/bloc/state.dart';
+import '../../queue/bloc/cubit.dart';
+import '../../queue/bloc/state.dart';
 import 'contetn_queue.dart';
 
 class ElementBarQueue extends StatelessWidget {

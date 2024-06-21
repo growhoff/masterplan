@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:master_plan/data/repositories/supabase/dto/order_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/order_table.dart';
 import 'package:master_plan/domain/model/order.dart';
@@ -10,6 +11,15 @@ class OrdersCubit extends Cubit<OrdersState> {
   OrdersCubit() : super(const OrdersState());
 
   final _orderTable = OrderTable();
+  final numberController = TextEditingController();
+  DateTime receiptDate = DateTime.now();
+
+  DateTime planCompletionDate = DateTime.now();
+
+  final List<int> prioritiesList = [1,2,3,4];
+
+  int selectedPriority = 1;
+
 
   Future<void> fetchOrders() async {
     final List<Order> ordersList = [];
@@ -32,5 +42,16 @@ class OrdersCubit extends Cubit<OrdersState> {
     } catch (e) {
       emit(state.copyWith(status: OrdersStatus.failure));
     }
+  }
+
+
+
+  Future<void> createOrder() async {
+   await  _orderTable.insert(OrderDTO(
+        id: 0,
+        number: numberController.text,
+        dateReceipt: receiptDate.toString(),
+        datePlanCompletion: planCompletionDate.toString(),
+        priority: selectedPriority));
   }
 }

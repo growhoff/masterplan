@@ -42,7 +42,7 @@ class ContentDetail extends StatelessWidget {
                 visible: operation.list.first.modific != null,
                 child: const Card(color: Colors.amberAccent, child: Text('Доработка')),),
               const SizedBox(height: 20),
-              const Time(),
+              Time(controller.text),
               const SizedBox(height: 30),
               const Divider(),
               const SizedBox(height: 16),
@@ -87,7 +87,7 @@ class ContentDetail extends StatelessWidget {
                           child: ElevatedButtonCastom(
                               text: 'Брак: $countBr',
                               isActive: (statusBtn == 0) || (statusBtn == 1),
-                              color: Color.fromARGB(255, 61, 16, 222),
+                              color: const Color.fromARGB(255, 61, 16, 222),
                               onPressed: () {
                                 showDialog(
                                   context: context, 

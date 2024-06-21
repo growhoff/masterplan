@@ -3,6 +3,8 @@ import 'package:master_plan/data/repositories/supabase/dto/company_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/monitoring_machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/position_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/user_dto.dart';
+import 'package:master_plan/domain/model/area.dart';
+import 'package:master_plan/domain/model/area_machine.dart';
 import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/domain/model/shifts_distribution.dart';
@@ -28,9 +30,12 @@ class StateMain extends Equatable {
   final String link;
   final int? change;
   final List<int>? listAreaId;
+  final List<Area>? listArea;
+  final List<AreaMachine>? listAreaMachine;
+  final List<AreaMachine>? listAreaMachineUser;
 
   const StateMain({
-    this.version = 'v2.5.19',
+    this.version = 'v2.6.0',
     this.user,
     this.staff,
     this.machineList,
@@ -46,6 +51,9 @@ class StateMain extends Equatable {
     this.link = '',
     this.change,
     this.listAreaId,
+    this.listArea,
+    this.listAreaMachine,
+    this.listAreaMachineUser,
   });
 
   @override
@@ -73,6 +81,9 @@ class StateMain extends Equatable {
       link,
       change ?? 0,
       listAreaId ?? [],
+      listArea ?? [],
+      listAreaMachine ?? [],
+      listAreaMachineUser ?? [],
       staff ?? Staff.empty
     ];
   }
@@ -92,7 +103,11 @@ class StateMain extends Equatable {
       List<OperatorOperations>? operatorOperationsList,
       String? link,
       int? change,
-      List<int>? listAreaId}) {
+      List<int>? listAreaId,
+      List<Area>? listArea,
+      List<AreaMachine>? listAreaMachine,
+      List<AreaMachine>? listAreaMachineUser,
+      }) {
     return StateMain(
       user: user ?? this.user,
       staff: staff ?? this.staff,
@@ -111,6 +126,9 @@ class StateMain extends Equatable {
       link: link ?? this.link,
       change: change,
       listAreaId: listAreaId ?? this.listAreaId,
+      listArea: listArea ?? this.listArea,
+      listAreaMachine: listAreaMachine ?? this.listAreaMachine,
+      listAreaMachineUser: listAreaMachineUser ?? this.listAreaMachineUser,
     );
   }
 

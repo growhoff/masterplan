@@ -12,7 +12,8 @@ import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_sta
 import 'package:master_plan/presentation/pages/chief/statistics_page/operations_statistics_page.dart';
 import 'package:master_plan/presentation/pages/chief/statistics_page/statistics_page.dart';
 import 'package:master_plan/presentation/pages/chief/widgets/custom_navbar.dart';
-import 'package:master_plan/presentation/pages/dispatcher/batches_page/batches_page.dart';
+
+import 'package:master_plan/presentation/pages/dispatcher/orders_page/add_order_page.dart';
 import 'package:master_plan/presentation/pages/login/login_page.dart';
 import 'package:master_plan/presentation/pages/master/pages/addOperation/add_operation_page.dart';
 import 'package:master_plan/presentation/pages/operator/operator_page.dart';
@@ -23,6 +24,9 @@ import '../pages/chief/chief_lists_pages/chief_staff_list_page/masters_list_page
 import '../pages/chief/chief_lists_pages/chief_staff_list_page/operators_list_page.dart';
 import '../pages/chief/chief_lists_pages/chief_staff_list_page/selection_staff_position_page.dart';
 import '../pages/chief_master/chief_maste_page.dart';
+
+import '../pages/dispatcher/orders_page/batches_page/add_batch_page.dart';
+import '../pages/dispatcher/orders_page/batches_page/batches_page.dart';
 import '../pages/dispatcher/widgets/custom_navbar.dart';
 import '../pages/master/maste_page.dart';
 import '../pages/technologist/archive_page/archive_operations_page.dart';
@@ -37,6 +41,7 @@ class MyApp extends StatelessWidget {
     return BlocProvider<CubitMain>(
       create: (context) => CubitMain(),
       child: MaterialApp(
+
         debugShowCheckedModeBanner: false,
         theme: createTheme(),
         routes: {
@@ -67,6 +72,8 @@ class MyApp extends StatelessWidget {
           '/archiveTransferPage': (BuildContext context) => const ArchiveTransfersPage(),
           '/chiefMasterPage':(BuildContext context) => const ChiefMasterPage(),
           '/batchesPage':(BuildContext context) => const BatchesPage(),
+          '/addBatchPage':(BuildContext context) => const AddBatchPage(),
+          '/addOrderPage':(BuildContext context) => const AddOrderPage(),
 
 
         },

@@ -23,8 +23,6 @@ class AnalyticsPageView extends StatefulWidget {
 }
 
 class _AnalyticsPageViewState extends State<AnalyticsPageView> {
-
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AnalyticsCubit, AnalyticsState>(
@@ -32,9 +30,12 @@ class _AnalyticsPageViewState extends State<AnalyticsPageView> {
         return Center(
           child: ElevatedButton(
             style: ButtonStyle(
-                padding: MaterialStateProperty.all<EdgeInsets>(
-                    EdgeInsets.all(10))),
-            onPressed: () {context.read<AnalyticsCubit>().uploadReadyOperationsReport();},
+                padding:
+                    MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(10))),
+            onPressed: () async{
+
+              context.read<AnalyticsCubit>().uploadReadyOperationsReport(context);
+            },
             child: Text('Выполненные операции (отчет)'),
           ),
         );

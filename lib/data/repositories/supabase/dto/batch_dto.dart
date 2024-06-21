@@ -13,6 +13,7 @@ class BatchDTO extends Dto {
   final bool isready;
   final int? orderId;
   final int? companyId;
+  final int? batchArchiveId;
   BatchDTO({
     required this.id,
     required this.number,
@@ -22,6 +23,7 @@ class BatchDTO extends Dto {
     required this.technology,
     required this.order,
     required this.isready,
+    this.batchArchiveId,
     this.orderId,
     this.companyId,
   });
@@ -63,7 +65,8 @@ class BatchDTO extends Dto {
       order: map['order'] as int,
       isready: map['isready'] as bool,
       orderId: map['order_id'] != null ? map['order_id'] as int : null,
-      companyId: map['company_id']
+      companyId: map['company_id'],
+      batchArchiveId: map['batch_archive_id']
     );
   }
 

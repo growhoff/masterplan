@@ -222,7 +222,7 @@ class CubitWork extends Cubit<StateWork> {
 
   Future<void> setStartMonitor(int status, int userid, String? comment, int idPath) async{
     if (!state.listStartBtn[state.activePage]){
-      if ((comment == null) || (comment == '')) comment = 'none';
+      if ((comment == null) || (comment == '')) comment = '-';
       final id = await monitorTable.insertToInt(MonitoringMachineDTO(id: 0, operationId: idPath, date: DateTime.now(), changeId: (DateTime.now().hour > 8) && ( DateTime.now().hour <= 20) ? 1 : 2, timeStart: DateTime.now().millisecondsSinceEpoch, timeStop: 0, statusMachineId: 1, userId: userid, machineId: state.pageData[state.activePage].machine.id, batchId: state.pageData[state.activePage].operActive!.list.first.batch.id, comment: comment));
       List<bool> list = [...state.listStartBtn];
       list[state.activePage] = true;
@@ -242,7 +242,7 @@ class CubitWork extends Cubit<StateWork> {
   }
 
   Future<void> setMonitor(int status, int userid, String? comment, bool isStart, int optPathOper) async{
-    if ((comment == null) || (comment == '')) comment = 'none';
+    if ((comment == null) || (comment == '')) comment = '-';
     if (isStart){
       final id = await monitorTable.insertToInt(MonitoringMachineDTO(id: 0, operationId: optPathOper, date: DateTime.now(), changeId: (DateTime.now().hour > 8) && ( DateTime.now().hour <= 20) ? 1 : 2, timeStart: DateTime.now().millisecondsSinceEpoch, timeStop: 0, statusMachineId: status, userId: userid, machineId: state.pageData[state.activePage].machine.id, batchId: state.pageData[state.activePage].operActive!.list.first.batch.id, comment: comment));
       emit(state.copyWith(monitorId: id));

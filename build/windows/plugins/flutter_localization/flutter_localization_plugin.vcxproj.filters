@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\Flutter project\master-plan\master_plan\windows\flutter\ephemeral\.plugin_symlinks\flutter_localization\windows\flutter_localization_plugin_c_api.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Flutter project\master-plan\master_plan\windows\flutter\ephemeral\.plugin_symlinks\flutter_localization\windows\flutter_localization_plugin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="D:\Flutter project\master-plan\master_plan\windows\flutter\ephemeral\.plugin_symlinks\flutter_localization\windows\include\flutter_localization\flutter_localization_plugin_c_api.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Flutter project\master-plan\master_plan\windows\flutter\ephemeral\.plugin_symlinks\flutter_localization\windows\flutter_localization_plugin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\Flutter project\master-plan\master_plan\windows\flutter\ephemeral\.plugin_symlinks\flutter_localization\windows\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{3E4AE923-1F67-347B-AA42-4D18C03DC17D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{38C2E712-92FE-365A-9429-062A161CDBDA}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

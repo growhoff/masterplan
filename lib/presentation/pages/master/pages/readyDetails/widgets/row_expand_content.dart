@@ -33,7 +33,7 @@ class RowExpandContent extends StatelessWidget {
                       ),
                     ),
                     onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => TableInfoPage(operation.list),)), 
-                  child: const Icon(Icons.info))
+                  child: const Icon(Icons.info, color: Colors.white,))
                   ),
                 const Spacer(),
                 Expanded(
@@ -68,7 +68,7 @@ class RowExpandContent extends StatelessWidget {
                       }
                       
                     }, 
-                    child: const Tooltip(message: 'Брак', child: Icon(Icons.closed_caption_off))),
+                    child: const Tooltip(message: 'Брак', child: Icon(Icons.report_gmailerrorred_outlined, color: Colors.red))),
                 ),
                 const Spacer(),
                 Expanded(
@@ -103,7 +103,7 @@ class RowExpandContent extends StatelessWidget {
                       }
                       
                     },
-                    child: const Tooltip(message: 'Доработка', child: Icon(Icons.backspace_rounded))
+                    child: const Tooltip(message: 'Доработка', child: Icon(Icons.refresh, color: Colors.amber,))
                     ),
                 ),
               ],

@@ -1,15 +1,20 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/machine_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/position_staff_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/shifts_distribution_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/staff_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/user_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/area_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/machine_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/position_staff_table.dart';
+// import 'package:master_plan/data/repositories/supabase/service/position_staff_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/shifts_distribution.dart';
 import 'package:master_plan/data/repositories/supabase/service/user_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/staff_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/version_table.dart';
+import 'package:master_plan/domain/model/area.dart';
+import 'package:master_plan/domain/model/area_machine.dart';
 import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/position.dart';
 import 'package:master_plan/domain/model/shifts_distribution.dart';
@@ -19,6 +24,7 @@ import 'package:path/path.dart';
 import '../../../domain/usecase/company_service.dart';
 import 'state.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:collection/collection.dart';
 
 class CubitMain extends Cubit<StateMain> {
   CubitMain() : super(const StateMain());
@@ -41,6 +47,8 @@ class CubitMain extends Cubit<StateMain> {
           switch (state.user!.position.id) {
             //начальник
             case 2:
+              List<int> listAreaId = await getAreaForStaff(query.first['id']);
+              await getMachineToUnit(listAreaId);
               break;
             //мастер
             case 3:
@@ -62,8 +70,9 @@ class CubitMain extends Cubit<StateMain> {
               break;
             //начальник мастер
             case 7:
-              await getMachineToUnit();
-              // await getOperators();
+              List<int> listAreaId = await getAreaForStaff(query.first['id']);
+              await getMachineToUnit(listAreaId);
+              await getOperatorsToUnit();
               break;
             //ИНАЧЕ
             default:
@@ -114,13 +123,16 @@ class CubitMain extends Cubit<StateMain> {
     emit(state.copyWith(machineList: listMachine, machineIdList: listId));
   }
 
-  // chief-master
-  Future<void> getMachineToUnit() async {
+  // chief && chief-master
+  Future<void> getMachineToUnit(List<int> listAreaId) async {
     final areaTable = AreaTable();
     final queruArea = await areaTable.selectUnitId(state.user!.unit!.id);
     List<int> listIdArea = [];
+    List<Area> listArea = [];
     for (var maps in queruArea) {
-      listIdArea.add(maps['id']);
+      final model = AreaDTO.fromMap(maps);
+      listIdArea.add(model.id);
+      listArea.add(Area(id: model.id, name: model.name, number: model.number, unitId: model.unitId));
     }
     final machineTable = MachineTable();
     final machineQuery = await machineTable.selectMachineToAreaList(listIdArea);
@@ -138,9 +150,45 @@ class CubitMain extends Cubit<StateMain> {
       listId.add(machine.id);
     }
 
+    List<AreaMachine> listAreaMachine = [];
+    var newMapAreaMach = groupBy(listMachine, (el) => el.areaId);
+    newMapAreaMach.forEach((key, value) {
+      listAreaMachine.add(AreaMachine(area: listArea.firstWhere((element) => element.id == key), listMachine: value, idListMachine: value.map((e) => e.id).toList()));
+    });
+    List<AreaMachine> listAreaMachineUser = [];
+    for (var areaMachine in listAreaMachine) {
+      for (var id in listAreaId) {
+        if (areaMachine.area.id == id) listAreaMachineUser.add(areaMachine);
+      }
+    }
+
+    emit(state.copyWith(
+        machineList: listMachine,
+        machineIdList: listId,
+        listAreaId: listIdArea,
+        listArea: listArea,
+        listAreaMachine: listAreaMachine,
+        listAreaMachineUser: listAreaMachineUser,
+        ));
+  }
+
+  Future<List<int>> getAreaForStaff(int staffId)async{
+    final posStaffTable = PositionStaffTable();
+    final posStafQuery = await posStaffTable.selectByStaffId(staffId: staffId);
+    List<int> listIdArea = [];
+    for (var pos in posStafQuery) {
+      final model = PositionStaffDTO.fromMap(pos);
+      listIdArea.add(model.areaId!);
+    }
+    return listIdArea;
+  }
+
+  // chief-master
+  Future<void> getOperatorsToUnit() async {
+   
     final userTable = UserTable();
     final userQuery = await userTable.selectEqOperatorList(
-        listAreaId: listIdArea, companyId: state.user!.companyId);
+        listAreaId: state.listAreaId!, companyId: state.user!.companyId);
     List<UserDTO> userListDto = [];
     for (var userDto in userQuery) {
       userListDto.add(UserDTO.fromMap(userDto));
@@ -158,11 +206,7 @@ class CubitMain extends Cubit<StateMain> {
           positionModel:
               Position(id: user.position.id, name: user.position.name)));
     }
-    emit(state.copyWith(
-        machineList: listMachine,
-        machineIdList: listId,
-        operatorList: userList,
-        listAreaId: listIdArea));
+    emit(state.copyWith(operatorList: userList));
   }
 
   //master

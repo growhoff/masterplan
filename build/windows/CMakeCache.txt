@@ -227,6 +227,15 @@ file_selector_windows_IS_TOP_LEVEL:STATIC=OFF
 file_selector_windows_SOURCE_DIR:STATIC=D:/Flutter project/master-plan/master_plan/windows/flutter/ephemeral/.plugin_symlinks/file_selector_windows/windows
 
 //Value Computed by CMake
+flutter_localization_BINARY_DIR:STATIC=D:/Flutter project/master-plan/master_plan/build/windows/plugins/flutter_localization
+
+//Value Computed by CMake
+flutter_localization_IS_TOP_LEVEL:STATIC=OFF
+
+//Value Computed by CMake
+flutter_localization_SOURCE_DIR:STATIC=D:/Flutter project/master-plan/master_plan/windows/flutter/ephemeral/.plugin_symlinks/flutter_localization/windows
+
+//Value Computed by CMake
 master_plan_BINARY_DIR:STATIC=D:/Flutter project/master-plan/master_plan/build/windows
 
 //Value Computed by CMake

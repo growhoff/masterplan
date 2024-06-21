@@ -9,8 +9,8 @@ import 'package:master_plan/presentation/pages/operator/pages/work/widgets/timer
 import '../button_icon.dart';
 
 class Time extends StatelessWidget {
-  const Time({super.key});
-
+  const Time(this.text, {super.key});
+  final String text;
   @override
   Widget build(BuildContext context) {
     final userId = context.read<CubitMain>().state.user!.id;
@@ -32,7 +32,7 @@ class Time extends StatelessWidget {
                       onPressed: () {
                         if (operActive.pause == null) {
                           context.read<CubitTimer>().firstStart(activePage, operActive.idPath);
-                          context.read<CubitWork>().setStartMonitor(0, userId, 'start', operActive.idPath);
+                          context.read<CubitWork>().setStartMonitor(0, userId, text, operActive.idPath);
                           }
                         else {context.read<CubitTimer>().startOrStop(activePage, !state.listState[activePage], operActive.idPath, userId);}
                         

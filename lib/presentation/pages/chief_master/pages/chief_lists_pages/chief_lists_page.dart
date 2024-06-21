@@ -39,6 +39,10 @@ class _ChiefListsPageViewState extends State<ChiefListsPageView> {
                   ElevatedButton(
                       onPressed: () => Navigator.pushNamed(context, '/chiefAreasPage'),
                       child: const Text('Список участков')),
+                  const SizedBox(height: 8),
+                  ElevatedButton(
+                      onPressed: () {},
+                      child: const Text('Список смен')),
                 ],
               ),
             )),

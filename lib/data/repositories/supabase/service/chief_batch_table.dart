@@ -19,32 +19,50 @@ class ChiefBatchTable extends SupabaseTable {
   Future<int> insert(Dto dto) async {
     if (dto is ChiefBatchDTO) {
       var chiefBatch =
-      await table.insert({'batch_id': dto.batchId}).select('id');
+          await table.insert({'batch_id': dto.batchId}).select('id');
       return chiefBatch[0]['id'];
     }
     return 0;
   }
 
-  Future<List<int>> bulkInsert({required List<ChiefBatchDTO> dtosList})async{
-
+  Future<List<int>> bulkInsertFromList(
+      {required List<ChiefBatchDTO> dtosList}) async {
     List<Map<String, Object>> mapsList = [];
     List<int> idsList = [];
 
-    for (var dto in dtosList){
+    for (var dto in dtosList) {
       mapsList.add({'batch_id': dto.batchId});
     }
 
     var fetchedIdsList = await table.insert(mapsList).select('id');
-    for (var fetchedId in fetchedIdsList){
+    for (var fetchedId in fetchedIdsList) {
       idsList.add(fetchedId['id']);
     }
-    print(idsList);
+
     return idsList;
+  }
+
+  Future<void> bulkInsert({
+    required int batchId,
+    required int quantity,
+  }) async {
+    List<Map<String, Object>> mapsList = [];
+    for (int i = 0; i < quantity; i++) {
+      mapsList.add({'batch_id': batchId});
+    }
+
+    await table.insert(mapsList);
   }
 
   @override
   Future<List<Map<String, dynamic>>> select() async {
     return await table.select('*, z_batch(*)');
+  }
+
+  Future<List<Map<String, dynamic>>> selectByOrder(int orderId) async {
+    return await table
+        .select('*, z_batch(*), z_order(*)')
+        .eq('order_id', orderId);
   }
 
   Future<int> fetchReadyDetailsCount({required int batchId}) async {

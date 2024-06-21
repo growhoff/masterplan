@@ -1,9 +1,8 @@
-import 'package:master_plan/presentation/pages/master/pages/queue/model/item_oper.dart';
-import 'package:master_plan/presentation/pages/master/pages/queue/widgets/reorderable_icon_widget.dart';
-import 'package:master_plan/presentation/pages/master/pages/tableInfo/table_info_page.dart';
+import '../../queue/model/item_oper.dart';
+import '../../queue/widgets/reorderable_icon_widget.dart';
+import '../../tableInfo/table_info_page.dart';
 import '../bloc/cubit.dart';
 import 'row_list_four.dart';
-// import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -36,11 +35,11 @@ class Reorder extends StatelessWidget {
               Expanded(flex: 2, child: Text('${list[index].time}', textAlign: TextAlign.center)),
               Expanded(flex: 2, child: Text('${list[index].list.length}', textAlign: TextAlign.center)),
               //инфо
-              Expanded(child: IconButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => TableInfoPage(list[index].list),)), icon: const Icon(Icons.info))),
+              Expanded(child: IconButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => TableInfoPage(list[index].list),)), icon: const Icon(Icons.info, color: Colors.blue))),
               //передать на готовые детали
-              Expanded(child: IconButton(onPressed: () => context.read<CubitQueueMaster>().updateOperationReady(list[index].idPath), icon: const Icon(Icons.check_rounded))),
+              Expanded(child: IconButton(onPressed: () => context.read<CubitQueueMaster>().updateOperationReady(list[index].idPath), icon: const Icon(Icons.check_rounded, color: Colors.green))),
               //передать на распределение
-              Expanded(child: IconButton(onPressed: () => context.read<CubitQueueMaster>().updateOperationDistribMaster(list[index].idPath), icon: const Icon(Icons.close))),
+              Expanded(child: IconButton(onPressed: () => context.read<CubitQueueMaster>().updateOperationDistribMaster(list[index].idPath), icon: const Icon(Icons.close, color: Colors.red))),
             ],
                   ),
           );
