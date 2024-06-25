@@ -11,12 +11,12 @@ class TableInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return 
-    listOper.isEmpty ? const Text('Null')
+    listOper.isEmpty ? const Text('Список пуст')
     : Card(
       child: Table(
         columnWidths: const {
-          0: FlexColumnWidth(4),
-          1: FlexColumnWidth(1),
+          0: FlexColumnWidth(0.5),
+          1: FlexColumnWidth(4),
           2: FlexColumnWidth(1.5),
           // 3: FlexColumnWidth(1.5),
         },
@@ -27,8 +27,8 @@ class TableInfo extends StatelessWidget {
           const TableRow(
               decoration: BoxDecoration(color: Colors.grey),
               children: [
+                TableCell(child: TableContentCell('№ п.п.')),
                 TableCell(child: TableContentCell('наименование\nоперации')),
-                TableCell(child: TableContentCell('№')),
                 TableCell(child: TableContentCell('участок')),
                 // TableCell(child: TableContentCell('участок')),
                 // TableCell(child: TableContentCell('кол-во\nвыполненных')),
@@ -36,8 +36,8 @@ class TableInfo extends StatelessWidget {
           ...List.generate(
               listOper.length,
               (index) => TableRow(children: [
-                    TableContentRow(listOper[index].nameOper, index, indexActive),
                     TableContentRow('${listOper[index].order}', index, indexActive),
+                    TableContentRow(listOper[index].nameOper, index, indexActive),
                     TableContentRow(listOper[index].nameArea, index, indexActive),
                     // TableContentRow('$index'),
                   ]))

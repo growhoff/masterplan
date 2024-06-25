@@ -9,7 +9,7 @@ class TableContentRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return TableRowInkWell(
       child: Container(
-        color: index == indexActive ? Colors.amberAccent : index > indexActive ? Colors.white : Colors.black26,
+        color: index == indexActive ? Colors.amberAccent : index > indexActive ? Colors.white : Colors.green,
         padding: const EdgeInsets.symmetric(vertical: 5),
         child: Text(
           text,

@@ -23,16 +23,16 @@ abstract class DataChief {
         actions: [],
         page: const ChiefDistributionPage(),
         icon: Icons.lan),
-   TabBarModel(
-        title: 'Мониторинг',
-        actions: [],
-        page: const MonitoringPageChief(),
-        icon: Icons.camera_alt_outlined),
     TabBarModel(
         title: 'Очередь операций',
         actions: [],
         page: const QueueOperatPageMasterChief(),
         icon: Icons.queue),
+   TabBarModel(
+        title: 'Мониторинг',
+        actions: [],
+        page: const MonitoringPageChief(),
+        icon: Icons.camera_alt_outlined),
     TabBarModel(
         title: 'Аналитика',
         actions: [],

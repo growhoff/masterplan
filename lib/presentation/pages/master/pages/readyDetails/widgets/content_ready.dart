@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/domain/model/machine.dart';
+import 'package:master_plan/domain/usecase/time_converter.dart';
 import 'package:master_plan/presentation/pages/master/pages/readyDetails/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/master/pages/readyDetails/model/item_oper.dart';
 import 'package:master_plan/presentation/pages/master/pages/readyDetails/model/status_next.dart';
@@ -21,7 +22,7 @@ class ContetnReadyMaster extends StatelessWidget {
     : Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-              Text('Загрузка станка - ${machine.name}: $timeWorking минут', style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text('Загрузка станка - ${machine.name} ${TimeConverter().convertTimeMinHMin(timeWorking)}', style: const TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               const Divider(),
               const SizedBox(height: 8),

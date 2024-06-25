@@ -177,6 +177,16 @@ class CubitWork extends Cubit<StateWork> {
         }
     }
     operatorOperationsTable.updateTimeStopAndReadyCount(listId0, listId5, DateTime.now().millisecondsSinceEpoch, seconds, userId);
+
+    //меняем статус по этим id в брак
+        final chiefBatchTable = ChiefBatchTable();
+          List<OperatorOperations> chOperId = oper.list.getRange(0, state.count).toList();
+          List<int> chId = [];
+          for (var e in chOperId) {
+            chId.add(e.chiefBatchId!);
+          }
+        await chiefBatchTable.updateChiefBatchStatusToDefectList(chiefBatchId: chId);
+
     setStopMonitor(1, idMon);
     setIsStart(false);
   }

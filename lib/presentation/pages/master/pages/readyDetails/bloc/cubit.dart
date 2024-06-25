@@ -132,62 +132,56 @@ void toggleModific(int indexOper, String countStr, String comment){
     final listOper = state.listMachine![state.activePage].listOper;
     if (listOper.isNotEmpty) {
       final listStatus = state.statusList[state.activePage];
+      final List<int> listIdStatusReady = [];
       for (var i = 0; i < listOper.length; i++) {
         
         //доработка
         if (listStatus[i].status == 2) {
           List<int> listSt2 = [];
-          List<int> listSt0 = [];
           int count = listStatus[i].count;
           for (var e in listOper[i].listId) {
-            if (count == 0) {listSt0.add(e);}
+            if (count == 0) {listIdStatusReady.add(e);}
             else{
               listSt2.add(e);
               count --;
             }
           }
-          table.updateMasterModificateListCount(listSt2, listSt0, listStatus[i].comment);
+        await table.updateMasterModificateListCount(listSt2, listStatus[i].comment);
         }
 
         //брак
         if (listStatus[i].status == 1) {
-          //выгрузить все операции по chiefBatchId
-          // List<int> listChiefBatchId = [];
-          // for (var element in listOper[i].list) {
-          //   listChiefBatchId.add(element.chiefBatchId!);
-          // }
-          // final quere = await tableOperations.selectChiefBatchIdList(listChiefBatchId);
-          // //получаем лист id нужных операций
-          // final listId = getListIdFromQueue(quere);
-
           List<int> listSt1 = [];
-          List<int> listSt0 = [];
           int count = listStatus[i].count;
           
           for (var j = 0; j < listOper[i].list.length; j++) {
-            if (count == 0){listSt0.add(listOper[i].listId[j]);} 
+            if (count == 0){listIdStatusReady.add(listOper[i].listId[j]);} 
             else{
-              // for (var e in listId[j].list) {
-              //   listSt1.add(e);
-              // }
               listSt1.add(listOper[i].listId[j]);
               count--;
             }
           }
           //меняем статус по этим id в брак
-          table.updateMasterBrakListCount(listSt1, listSt0, listStatus[i].comment);
-          List<OperatorOperations> chOperId = listOper[i].list.getRange(0, count).toList();
+        await table.updateMasterBrakListCount(listSt1, listStatus[i].comment);
+          List<OperatorOperations> chOperId = listOper[i].list.getRange(0, listStatus[i].count).toList();
           List<int> chId = [];
           for (var e in chOperId) {
             chId.add(e.chiefBatchId!);
           }
-          chiefBatchTable.updateChiefBatchStatusToDefectList(chiefBatchId: chId);
+        await chiefBatchTable.updateChiefBatchStatusToDefectList(chiefBatchId: chId);
         }
 
         //готово
-        if (listStatus[i].status == 0) table.updateMasterStatisticReadyList(listOper[i].listId);
+        if (listStatus[i].status == 0) listIdStatusReady.addAll(listOper[i].listId); 
       }
+      //тут выгрузка
+      await table.updateMasterStatisticReadyList(listIdStatusReady);
     }
+    List<ItemMachine> listMachine = state.listMachine!;
+    List<List<StatusNext>> listStatus = state.statusList;
+    listStatus[state.activePage].clear();
+    listMachine[state.activePage].listOper.clear();
+    emit(state.copyWith(listMachine: listMachine, statusList: listStatus, count: state.count+1));
   }
 
   List<ItemId> getListIdFromQueue(List<Map<String, dynamic>> data){

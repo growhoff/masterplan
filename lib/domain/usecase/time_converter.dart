@@ -34,6 +34,13 @@ class TimeConverter {
     return '$hStr:$minStr';
   }
 
+  String convertTimeMinHMin(int timeMin){
+    final h = timeMin ~/ 60;
+    final min = timeMin - h * 60;
+    if (h == 0) {return '$min мин.';}
+    else {return '$h ч. $min мин.';}
+  }
+
   String convertTimeFromSecondsHHMMSS(int timeSec) {
     final seconds = timeSec;
     final minutes = seconds ~/ 60;

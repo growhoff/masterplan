@@ -26,7 +26,7 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
     Future<void> getQuere (List<Map<String, dynamic>>? data)async{
     Set<int> listId = {};
     for (var element in data!) {
-      if ((element['status_id'] as int == 2) || (element['status_id'] as int == 4) || (element['status_id'] as int == 6) || (element['status_id'] as int == 9)) listId.add(element['chief_batch_id']);
+      if ((element['status_id'] as int == 2) || (element['status_id'] as int == 4) || (element['status_id'] as int == 9)) listId.add(element['chief_batch_id']);//|| (element['status_id'] as int == 6)
     }
     final quere = await tableOperations.selectListChiefBatchIdOrder(listId.toList());
     List<OperatorOperationsDTO> list = [];
@@ -67,7 +67,8 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
             for (var item in iModBatch.list) {
               if (item.operationId == order) {
                 if ((item.statusId == 2 || item.statusId == 4) && item.areaId == areaIdUser) {listReady.add(item);break;}
-                if (item.statusId == 6 || item.statusId == 9) next = true;
+                // if (item.statusId == 6 || item.statusId == 9) next = true;
+                if (item.statusId == 9) next = true;
               }
             }
             if (!next) break;

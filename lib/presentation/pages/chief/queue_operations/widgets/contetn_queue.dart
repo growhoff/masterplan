@@ -1,25 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:master_plan/domain/model/otp_path_operations.dart';
-// import 'package:master_plan/domain/model/machine.dart';
-// import 'package:master_plan/domain/model/operator_operations.dart';
-// import '../model/item_oper.dart';
-import '../bloc/cubit.dart';
+// import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/presentation/pages/chief/queue_operations/model/distrib_item.dart';
+// import '../bloc/cubit.dart';
 import 'reorder_widget.dart';
 
 class ContetnQueue extends StatelessWidget {
   const ContetnQueue({super.key, required this.batchListQueue});
-  final List<OptPathOperations> batchListQueue;
-  // final Machine machine;
-  // final int timeWorking;
+  final List<DistribItem> batchListQueue;
 
   @override
   Widget build(BuildContext context) {
+    double time = 0;
+    for (var e in batchListQueue) {
+      time += e.timeShKal;
+    }
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Text('Время работы станка: $timeWorking минут', style: const TextStyle(fontWeight: FontWeight.bold)),
-        // const SizedBox(height: 8),
         SizedBox(
           child: Row(
             children: [
@@ -29,7 +26,7 @@ class ContetnQueue extends StatelessWidget {
                   style: ButtonStyle(
                     padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 8, horizontal: 16)),
                   ),
-                  onPressed: () => Navigator.pushNamed(context, '/addOperationPage'),
+                  onPressed: () {},//Navigator.pushNamed(context, '/addOperationPage'),
                   child: const Text('Добавить операцию', textAlign: TextAlign.center),
                 ),
               ),
@@ -40,13 +37,15 @@ class ContetnQueue extends StatelessWidget {
                   style: ButtonStyle(
                     padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 8, horizontal: 16)),
                   ),
-                  onPressed: () => context.read<CubitOperatQueueMasterChM>().saveDate(),
+                  onPressed: () {},//context.read<CubitOperatQueueMasterChM>().saveDate(),
                   child: const Text('Сохранить изменения', textAlign: TextAlign.center),
                 ),
               ),
             ],
           ),
         ),
+        const SizedBox(height: 8),
+        Text('Общая загрузка участка: ${time.round()} мин.', style: const TextStyle(fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         const Divider(),
         const SizedBox(height: 8),

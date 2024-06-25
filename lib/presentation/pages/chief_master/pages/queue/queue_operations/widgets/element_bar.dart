@@ -39,8 +39,8 @@ class ElementBarQueue extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            state.listOper!.isNotEmpty 
-              ? ContetnQueue(batchListQueue: state.listOper!)
+            state.listResOper.isNotEmpty 
+              ? ContetnQueue(batchListQueue: state.listResOper)
               : const Center(child: Text('Список пуст'))
         ],
       )

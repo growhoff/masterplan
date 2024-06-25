@@ -1,3 +1,5 @@
+import 'package:master_plan/theme/theme.dart';
+
 import '../../queue/model/item_oper.dart';
 import '../../queue/widgets/reorderable_icon_widget.dart';
 import '../../tableInfo/table_info_page.dart';
@@ -25,7 +27,7 @@ class Reorder extends StatelessWidget {
           bool? mod = list[index].list.first.modific;
           return Container(
             key: ValueKey(index),
-            color:  mod != null ? Colors.amberAccent : Colors.white,
+            color:  mod != null ? AppColors.modific : AppColors.notModific,
             child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

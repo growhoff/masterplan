@@ -17,7 +17,7 @@ class MonitoringPageChM extends StatelessWidget {
   Widget build(BuildContext context) {
     final stateMain = context.read<CubitMain>().state;
     return BlocProvider<CubitMonitoringChM>(
-      create: (context) => CubitMonitoringChM(stateMain.machineList,  stateMain.machineIdList!, stateMain.listAreaMachineUser!),
+      create: (context) => CubitMonitoringChM(stateMain.machineList,  stateMain.machineIdList!, stateMain.listAreaMachine!),
       child: const MonitoringPageContentChM(),
     );
   }

@@ -205,9 +205,9 @@ class OperatorOperationsTable extends SupabaseTable {
     await table.update({'status_id': 4}).inFilter('id', listId);
   }
 
-  Future<void> updateMasterModificateListCount(List<int> listId2, List<int> listId0, String comment) async {
+  Future<void> updateMasterModificateListCount(List<int> listId2, String comment) async {
     await table.update({'status_id': 4, 'pause': null, 'time_first_start': null, 'time_start': null, 'time_stop': null, 'time_working': null, 'modific': true, 'comment': comment}).inFilter('id', listId2);
-    if (listId0.isNotEmpty) await table.update({'status_id': 9}).inFilter('id', listId0);
+    // if (listId0.isNotEmpty) await table.update({'status_id': 9}).inFilter('id', listId0);
   }
 
   //статус брак
@@ -219,9 +219,9 @@ class OperatorOperationsTable extends SupabaseTable {
     await table.update({'status_id': 5}).inFilter('id', listId);
   }
 
-  Future<void> updateMasterBrakListCount(List<int> listId1, List<int> listId0, String comment) async {
+  Future<void> updateMasterBrakListCount(List<int> listId1, String comment) async {
     await table.update({'status_id': 5, 'comment': comment}).inFilter('id', listId1);
-    if (listId0.isNotEmpty) await table.update({'status_id': 9}).inFilter('id', listId0);
+    // if (listId0.isNotEmpty) await table.update({'status_id': 9}).inFilter('id', listId0);
   }
 
   //статус готово

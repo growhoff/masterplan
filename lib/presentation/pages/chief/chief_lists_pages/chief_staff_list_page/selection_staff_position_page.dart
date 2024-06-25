@@ -13,10 +13,11 @@ class SelectionStaffPositionPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ElevatedButton( style: ButtonStyle(
-                padding: MaterialStateProperty.all<EdgeInsets>(
-                    EdgeInsets.symmetric(vertical: 10, horizontal: 20)),
-              ),
+              ElevatedButton(
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all<EdgeInsets>(
+                        EdgeInsets.symmetric(vertical: 10, horizontal: 20)),
+                  ),
                   onPressed: () =>
                       Navigator.pushNamed(context, '/mastersListPage'),
                   child: Text('Список мастеров')),
@@ -28,24 +29,30 @@ class SelectionStaffPositionPage extends StatelessWidget {
                     padding: MaterialStateProperty.all<EdgeInsets>(
                         EdgeInsets.symmetric(vertical: 10, horizontal: 20)),
                   ),
-                  onPressed: () {},
+                  onPressed: () =>
+                      Navigator.pushNamed(context, '/operatorsListPage'),
                   child: Text('Список операторов')),
               const SizedBox(
                 height: 10,
               ),
-              ElevatedButton( style: ButtonStyle(
-                padding: MaterialStateProperty.all<EdgeInsets>(
-                    EdgeInsets.symmetric(vertical: 10, horizontal: 20)),
-              ),
-                  onPressed: () {}, child: Text('Список кладовщиков')),
+              ElevatedButton(
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all<EdgeInsets>(
+                        EdgeInsets.symmetric(vertical: 10, horizontal: 20)),
+                  ),
+                  onPressed: () {},
+                  child: Text('Список кладовщиков')),
               const SizedBox(
                 height: 30,
               ),
-              ElevatedButton( style: ButtonStyle(
-                padding: MaterialStateProperty.all<EdgeInsets>(
-                    EdgeInsets.symmetric(vertical: 10, horizontal: 20)),
-              ),
-                  onPressed: () {}, child: Text('Добавить сотрудника'))
+              ElevatedButton(
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all<EdgeInsets>(
+                        EdgeInsets.symmetric(vertical: 10, horizontal: 20)),
+                  ),
+                  onPressed: () =>
+                      Navigator.pushNamed(context, '/chiefStaffAddPage'),
+                  child: Text('Добавить сотрудника'))
             ],
           ),
         ),

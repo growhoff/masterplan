@@ -11,25 +11,25 @@ class QueueOperatPageMasterChM extends StatelessWidget {
   Widget build(BuildContext context) {
     final stateMain = context.read<CubitMain>().state;
     return BlocProvider<CubitOperatQueueMasterChM>(
-      create: (context) => CubitOperatQueueMasterChM(stateMain.machineList, stateMain.queueList, stateMain.machineIdList!, stateMain.user!.id, stateMain.listArea!, stateMain.listAreaMachineUser!),
-      child: const QueuePageMasterContent(),
+      create: (context) => CubitOperatQueueMasterChM(stateMain.machineList, stateMain.queueList, stateMain.machineIdList!, stateMain.user!.id, stateMain.listArea!, stateMain.listAreaMachine!),
+      child: const QueuePageChiefMasContent(),
     );
   }
 }
 
-class QueuePageMasterContent extends StatelessWidget {
-  const QueuePageMasterContent({super.key});
+class QueuePageChiefMasContent extends StatelessWidget {
+  const QueuePageChiefMasContent({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Очередь операций')),
       body: const SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-              padding:  EdgeInsets.all(16),
-              child: ElementBarQueue()),
+          child: SingleChildScrollView(
+            child: Padding(
+                padding:  EdgeInsets.all(16),
+                child: ElementBarQueue()),
+          ),
         ),
-      ),
     );
   }
 }

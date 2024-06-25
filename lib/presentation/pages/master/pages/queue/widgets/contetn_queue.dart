@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/domain/model/machine.dart';
+import 'package:master_plan/domain/usecase/time_converter.dart';
 // import 'package:master_plan/domain/model/operator_operations.dart';
 import '../model/item_oper.dart';
 import '../bloc/cubit.dart';
@@ -17,7 +18,7 @@ class ContetnQueue extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text('Время работы станка: $timeWorking минут', style: const TextStyle(fontWeight: FontWeight.bold)),
+        Text('Время работы станка: ${TimeConverter().convertTimeMinHMin(timeWorking)}', style: const TextStyle(fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         SizedBox(
           child: Row(
