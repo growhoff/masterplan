@@ -12,6 +12,7 @@ class ChiefDistributionOperationsDTO extends Dto {
   final int batchId;
   final BatchDTO batch;
   final int quantity;
+  final int? unitId;
 
   ChiefDistributionOperationsDTO(
       {required this.id,
@@ -21,7 +22,8 @@ class ChiefDistributionOperationsDTO extends Dto {
       required this.operation,
       required this.batchId,
       required this.batch,
-      required this.quantity});
+      required this.quantity,
+      this.unitId});
 
   factory ChiefDistributionOperationsDTO.fromMap(Map<String, dynamic> map) {
     return ChiefDistributionOperationsDTO(
@@ -32,6 +34,7 @@ class ChiefDistributionOperationsDTO extends Dto {
         operation: OperationDTO.fromMap(map['z_operation']),
         quantity: map['quantity'],
         batchId: map['batch_id'],
+        unitId: map['unit_id'],
         batch: BatchDTO.fromMap(map['z_batch']));
   }
 }

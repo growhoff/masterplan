@@ -48,7 +48,7 @@ class ChiefBatchTable extends SupabaseTable {
   }) async {
     List<Map<String, Object>> mapsList = [];
     for (int i = 0; i < quantity; i++) {
-      mapsList.add({'batch_id': batchId});
+      mapsList.add({'batch_id': batchId, 'batch_status_id': 4});
     }
 
     await table.insert(mapsList);
@@ -59,10 +59,11 @@ class ChiefBatchTable extends SupabaseTable {
     return await table.select('*, z_batch(*)');
   }
 
-  Future<List<Map<String, dynamic>>> selectByOrder(int orderId) async {
+  Future<List<Map<String, dynamic>>> selectByBatchesIdList(
+      List<int> batchesIdList) async {
     return await table
-        .select('*, z_batch(*), z_order(*)')
-        .eq('order_id', orderId);
+        .select('*,z_batch(*,z_batch_archive(*))')
+        .inFilter('batch_id', batchesIdList);
   }
 
   Future<int> fetchReadyDetailsCount({required int batchId}) async {
@@ -89,6 +90,10 @@ class ChiefBatchTable extends SupabaseTable {
   Future<void> update(int id, Dto dto) {
     // TODO: implement update
     throw UnimplementedError();
+  }
+
+  Future updateChiefBatchStatusToInWorkList({required List<int> chiefBatchIdList}) async {
+    await table.update({'batch_status_id': 1}).inFilter('id', chiefBatchIdList);
   }
 
   Future<void> updateChiefBatchStatusToDefect(

@@ -17,11 +17,11 @@ import 'state.dart';
 import 'package:collection/collection.dart';
 
 class CubitReadyDetailsChM extends Cubit<StateReadyDetailsChM> { 
-  final List<Machine>? machineList;
-  final List<int> machineIdList;
+  // final List<Machine>? machineList;
+  // final List<int> machineIdList;
   final List<AreaMachine> listAreaMachine;
   final tableOperations = OperatorOperationsTable();
-  CubitReadyDetailsChM(this.machineList, this.machineIdList, this.listAreaMachine) : super(const StateReadyDetailsChM()){
+  CubitReadyDetailsChM( this.listAreaMachine) : super(const StateReadyDetailsChM()){
     emit(state.copyWith(listAreaMachine: listAreaMachine));
     tableOperations.table.stream(primaryKey: ['id']).inFilter('machine_id', listAreaMachine[state.activeArea].idListMachine).listen((event) {
       }).onData((data)async {
@@ -54,7 +54,7 @@ class CubitReadyDetailsChM extends Cubit<StateReadyDetailsChM> {
 
     List<ItemMachine> listMachine = [];
     List<List<StatusNext>> statusList = [];
-    for (var machine in machineList!) {
+    for (var machine in listAreaMachine[state.activeArea].listMachine) {
       int timeWorking = 0;
       List<OptPathOperations> list = [];
       List<StatusNext> intList = [];

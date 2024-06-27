@@ -28,6 +28,9 @@ class ChiefOperationDistributionTitleItem extends StatelessWidget {
                 'Операция: ${operation.operation.number} ${operation.operation.name}'),
             const SizedBox(height: 8),
             Text('Кол-во деталей: ${operation.quantity}'),
+            const SizedBox(height: 8),
+            Text(
+                'Т п.з.: ${operation.operation.timepz} / Т шт.: ${operation.operation.timeSH} / Т шт.к.: ${(operation.operation.timepz + operation.operation.timeSH) / operation.quantity}')
           ],
         ),
       ),
@@ -150,9 +153,7 @@ class _ChiefOperationDistributionBodyItemState
                                         .read<ChiefDistributionCubit>()
                                         .areasMap[activeValue],
                                     timePlan:
-                                        widget.operation.operation.timeSH ??
-                                            0));
-
+                                        widget.operation.operation.timeSH));
                           }
                           setState(() {});
                         }

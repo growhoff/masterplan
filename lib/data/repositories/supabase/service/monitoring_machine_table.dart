@@ -19,7 +19,7 @@ class MonitoringMachineTable extends SupabaseTable {
     if (dto is MonitoringMachineDTO) await table.insert(dto.toMap()).select();
   }
 
-  Future<int?> insertToInt(Dto dto) async{
+  Future<int?> insertAndGetId(Dto dto) async{
     int? id;
     if (dto is MonitoringMachineDTO) {
       final qveru = await table.insert(dto.toMap()).select();

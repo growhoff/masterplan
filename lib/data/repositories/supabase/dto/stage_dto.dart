@@ -13,6 +13,7 @@ class StageDTO extends Dto {
   final bool isdistributed;
   final int batchId;
   final BatchDTO? batch;
+  final int? batchArchiveId;
   StageDTO({
     required this.id,
     required this.number,
@@ -22,6 +23,7 @@ class StageDTO extends Dto {
     required this.batchId,
     this.area,
     this.batch,
+    this.batchArchiveId
   });
   
   static final empty = StageDTO(
@@ -55,6 +57,7 @@ class StageDTO extends Dto {
       batchId: map['batch_id'] as int,
       area: map['z_area'] != null ? AreaDTO.fromMap(map['z_area']) : null,
       batch: map['z_batch'] != null ? BatchDTO.fromMap(map['z_batch']) : null,
+      batchArchiveId: map['batch_archive_id']
     );
   }
 

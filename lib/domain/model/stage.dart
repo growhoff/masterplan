@@ -1,4 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
+
 import 'batch.dart';
 
 class Stage {
@@ -9,7 +11,8 @@ class Stage {
   final bool isdistributed;
   final int batchId;
   final Batch? batch;
-  final int? operationsQuantity;
+  final int? batchArchiveId;
+
   Stage({
     required this.id,
     required this.number,
@@ -18,6 +21,17 @@ class Stage {
     required this.isdistributed,
     required this.batchId,
     this.batch,
-    this.operationsQuantity
+    this.batchArchiveId,
   });
+
+  factory Stage.fromDto(StageDTO dto) {
+    return Stage(
+        id: dto.id,
+        number: dto.number,
+        name: dto.name,
+        areaId: dto.areaId,
+        isdistributed: dto.isdistributed,
+        batchId: dto.batchId,
+    batchArchiveId: dto.batchArchiveId);
+  }
 }

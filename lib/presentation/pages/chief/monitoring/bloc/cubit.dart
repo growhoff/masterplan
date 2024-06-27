@@ -3,18 +3,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/data/repositories/supabase/dto/monitoring_machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/monitoring_machine_table.dart';
 import 'package:master_plan/domain/model/area_machine.dart';
-import 'package:master_plan/domain/model/machine.dart';
+// import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/usecase/time_converter.dart';
 import '../model/item_machine.dart';
 import '../model/item_machine_monitor.dart';
 import 'state.dart';
 
 class CubitMonitoringChM extends Cubit<StateMonitoringChM> {
-  final List<Machine>? machineList;
-  final List<int> machineIdList;
+  // final List<Machine>? machineList;
+  // final List<int> machineIdList;
   final tableMonitoring = MonitoringMachineTable();
   final List<AreaMachine> listAreaMachine;
-  CubitMonitoringChM(this.machineList, this.machineIdList, this.listAreaMachine) : super(StateMonitoringChM(days: DateTime.now())){
+  CubitMonitoringChM(this.listAreaMachine) : super(StateMonitoringChM(days: DateTime.now())){
     emit(state.copyWith(listAreaMachine: listAreaMachine));
     tableMonitoring.table.stream(primaryKey: ['id']).inFilter('machine_id', listAreaMachine[state.activeArea].idListMachine).listen((event) {
       }).onData((data)async {
@@ -39,7 +39,7 @@ class CubitMonitoringChM extends Cubit<StateMonitoringChM> {
 
 
   Future<void> setDate(DateTime date)async{
-    final quere = await tableMonitoring.selectListIdMachine(machineIdList, date);
+    final quere = await tableMonitoring.selectListIdMachine(listAreaMachine[state.activeArea].idListMachine, date);
     List<MonitoringMachineDTO> queueList = [];
     for (var item in quere) {
       queueList.add(MonitoringMachineDTO.fromMap(item));
@@ -51,7 +51,7 @@ class CubitMonitoringChM extends Cubit<StateMonitoringChM> {
 
   List<ItemMachineMonitorMaster> getListMonitor(List<MonitoringMachineDTO> queueList){
     List<ItemMachineMonitorMaster> listMonitor = [];
-    for (var machine in machineList!) {
+    for (var machine in listAreaMachine[state.activeArea].listMachine) {
       List<ItemMachineStatus> listStatus = [];
       int allTime = 0;
       for (var queueItem in queueList) {

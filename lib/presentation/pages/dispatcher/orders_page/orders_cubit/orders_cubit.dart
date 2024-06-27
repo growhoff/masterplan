@@ -16,10 +16,9 @@ class OrdersCubit extends Cubit<OrdersState> {
 
   DateTime planCompletionDate = DateTime.now();
 
-  final List<int> prioritiesList = [1,2,3,4];
+  final List<int> prioritiesList = [1, 2, 3, 4];
 
   int selectedPriority = 1;
-
 
   Future<void> fetchOrders() async {
     final List<Order> ordersList = [];
@@ -33,7 +32,8 @@ class OrdersCubit extends Cubit<OrdersState> {
             number: orderDto.number,
             dateReceipt: orderDto.dateReceipt,
             datePlanCompletion: orderDto.datePlanCompletion,
-            priority: orderDto.priority);
+            priority: orderDto.priority,
+            isFormed: orderDto.isFormed);
         ordersList.add(order);
       }
 
@@ -44,14 +44,17 @@ class OrdersCubit extends Cubit<OrdersState> {
     }
   }
 
-
-
   Future<void> createOrder() async {
-   await  _orderTable.insert(OrderDTO(
+    await _orderTable.insert(OrderDTO(
         id: 0,
         number: numberController.text,
         dateReceipt: receiptDate.toString(),
         datePlanCompletion: planCompletionDate.toString(),
-        priority: selectedPriority));
+        priority: selectedPriority,
+        isFormed: false));
+  }
+
+  Future deleteOrder(int id) async {
+    await _orderTable.delete(id);
   }
 }

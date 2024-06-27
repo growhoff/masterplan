@@ -154,41 +154,93 @@ class CubitWork extends Cubit<StateWork> {
 
 
   Future<void> setReady(ItemOperOp oper, int userId, int seconds, String comment, bool isStart)async{
-    final quereMon = await monitorTable.selectIdMonitor(userId, state.pageData[state.activePage].machine.id, oper.list.first.batch.id, oper.idPath);
-    final idMon = quereMon.first['id'];
-    operatorOperationsTable.updateTimeStopAndReady(oper.idPath, DateTime.now().millisecondsSinceEpoch, seconds, userId);
-    setStopMonitor(1, idMon);
-    setIsStart(false);
-//{переделать chiefOperationId}
+    getMonitoringIdAndSetMonitor(oper, userId);
+    await operatorOperationsTable.updateTimeStopAndReady(oper.idPath, DateTime.now().millisecondsSinceEpoch, seconds, userId);
+    setStateStart(false);
     checkIsDetailReady(listChiefBatchId: oper.listChiefBatchId, listChiefOperationId: oper.listChiefOperationId);
   }
 
   Future<void> setBrak(ItemOperOp oper, int userId, int seconds, String comment, bool isStart)async{
+    getMonitoringIdAndSetMonitor(oper, userId);
+    setStatusOperationBrak(oper.listId, userId, seconds);
+    setStatusBatch(oper.list);
+    setStateStart(false);
+  }
+
+  Future<void> getMonitoringIdAndSetMonitor(ItemOperOp oper, int userId)async{
     final quereMon = await monitorTable.selectIdMonitor(userId, state.pageData[state.activePage].machine.id, oper.list.first.batch.id, oper.idPath);
-    final idMon = quereMon.first['id'];
+    late MonitoringMachineDTO model;
+    for (var element in quereMon) {
+      final model1 = MonitoringMachineDTO.fromMap(element);
+      if (model1.timeStop == 0) model = model1;
+    }
+    
+    final dateNow = DateTime.now();
+    bool change1 = (model.changeId == 1) && (dateNow.hour >= 8) && (dateNow.hour <= 20) && (dateNow.minute == 0);
+    // bool change2 = (model.changeId == 2) && (dateNow.hour > 20) && (dateNow.hour <= 0) && (dateNow.minute == 0);
+    // bool change2NextDay = (model.changeId == 2) && (dateNow.hour > 0) && (dateNow.hour <= 8) && (dateNow.minute == 0);
+    //если дни одинаковы
+    if (model.date.day == dateNow.day){
+      if (change1) {
+        print('change1');
+        await monitorTable.updateId(model.id, DateTime.now().millisecondsSinceEpoch);
+      }
+      else {
+        print('change2');
+        //запись окончания в первой смене
+        await monitorTable.updateId(model.id, DateTime(dateNow.year, dateNow.month, dateNow.day, 20, 0, 0).millisecondsSinceEpoch);
+        //запись во второй смене со следующим днём
+        await monitorTable.insert(MonitoringMachineDTO(id: 0, timeStart: DateTime(dateNow.year, dateNow.month, dateNow.day, 20, 0, 1).millisecondsSinceEpoch, timeStop: 0, statusMachineId: 1, userId: userId, machineId: oper.machineId, batchId: oper.list.first.batch.id, comment: 'Перенос на сделующий день', date: DateTime(dateNow.year, dateNow.month, dateNow.day + 1), changeId: 2, operationId: oper.idPath));
+      }
+    }
+    //если дни разные
+    else {
+      final dayDiff = dateNow.day - model.date.day;
+      print('Разница в днях: $dayDiff');
+      if (change1){
+        print('change1 nextDay');
+
+        } else {
+        print('change2 nextDay');
+        //запись окончания
+        await monitorTable.updateId(model.id, DateTime(dateNow.year, dateNow.month, dateNow.day - dayDiff, 20, 0, 0).millisecondsSinceEpoch);
+        //
+        for (var i = 0; i < dayDiff; i++) {
+          //начать вторую смену и закончить
+          
+        }
+        //запись во второй смене со следующим днём
+        await monitorTable.insert(MonitoringMachineDTO(id: 0, timeStart: DateTime(dateNow.year, dateNow.month, dateNow.day - dayDiff, 20, 0, 1).millisecondsSinceEpoch, timeStop: 0, statusMachineId: 1, userId: userId, machineId: oper.machineId, batchId: oper.list.first.batch.id, comment: 'Перенос на сделующий день', date: DateTime(dateNow.year, dateNow.month, dateNow.day), changeId: 2, operationId: oper.idPath));
+      
+      }
+      
+    }
+    setBtnStatus(1); 
+  }
+
+  Future<void> setStatusOperationBrak(List<int> listId, int userId, int seconds) async{
     int count = state.count;
     List<int> listId5 = [];
     List<int> listId0 = [];
-    for (var id in oper.listId) {
+    for (var id in listId) {
       if (count == 0) {listId0.add(id);}
         else{
           listId5.add(id);
           count --;
         }
     }
-    operatorOperationsTable.updateTimeStopAndReadyCount(listId0, listId5, DateTime.now().millisecondsSinceEpoch, seconds, userId);
+    await operatorOperationsTable.updateTimeStopAndReadyCount(listId0, listId5, DateTime.now().millisecondsSinceEpoch, seconds, userId);
+  }
 
-    //меняем статус по этим id в брак
+  Future<void> setStatusBatch(List<OperatorOperations> list)async{
+    //меняем статус по id в брак
         final chiefBatchTable = ChiefBatchTable();
-          List<OperatorOperations> chOperId = oper.list.getRange(0, state.count).toList();
+          List<OperatorOperations> chOperId = list.getRange(0, state.count).toList();
           List<int> chId = [];
           for (var e in chOperId) {
             chId.add(e.chiefBatchId!);
           }
         await chiefBatchTable.updateChiefBatchStatusToDefectList(chiefBatchId: chId);
-
-    setStopMonitor(1, idMon);
-    setIsStart(false);
   }
 
 
@@ -233,7 +285,7 @@ class CubitWork extends Cubit<StateWork> {
   Future<void> setStartMonitor(int status, int userid, String? comment, int idPath) async{
     if (!state.listStartBtn[state.activePage]){
       if ((comment == null) || (comment == '')) comment = '-';
-      final id = await monitorTable.insertToInt(MonitoringMachineDTO(id: 0, operationId: idPath, date: DateTime.now(), changeId: (DateTime.now().hour > 8) && ( DateTime.now().hour <= 20) ? 1 : 2, timeStart: DateTime.now().millisecondsSinceEpoch, timeStop: 0, statusMachineId: 1, userId: userid, machineId: state.pageData[state.activePage].machine.id, batchId: state.pageData[state.activePage].operActive!.list.first.batch.id, comment: comment));
+      final id = await monitorTable.insertAndGetId(MonitoringMachineDTO(id: 0, operationId: idPath, date: DateTime.now(), changeId: (DateTime.now().hour > 8) && ( DateTime.now().hour <= 20) ? 1 : 2, timeStart: DateTime.now().millisecondsSinceEpoch, timeStop: 0, statusMachineId: 1, userId: userid, machineId: state.pageData[state.activePage].machine.id, batchId: state.pageData[state.activePage].operActive!.list.first.batch.id, comment: comment));
       List<bool> list = [...state.listStartBtn];
       list[state.activePage] = true;
       emit(state.copyWith(monitorId: id, listStartBtn: list));
@@ -254,7 +306,7 @@ class CubitWork extends Cubit<StateWork> {
   Future<void> setMonitor(int status, int userid, String? comment, bool isStart, int optPathOper) async{
     if ((comment == null) || (comment == '')) comment = '-';
     if (isStart){
-      final id = await monitorTable.insertToInt(MonitoringMachineDTO(id: 0, operationId: optPathOper, date: DateTime.now(), changeId: (DateTime.now().hour > 8) && ( DateTime.now().hour <= 20) ? 1 : 2, timeStart: DateTime.now().millisecondsSinceEpoch, timeStop: 0, statusMachineId: status, userId: userid, machineId: state.pageData[state.activePage].machine.id, batchId: state.pageData[state.activePage].operActive!.list.first.batch.id, comment: comment));
+      final id = await monitorTable.insertAndGetId(MonitoringMachineDTO(id: 0, operationId: optPathOper, date: DateTime.now(), changeId: (DateTime.now().hour > 8) && ( DateTime.now().hour <= 20) ? 1 : 2, timeStart: DateTime.now().millisecondsSinceEpoch, timeStop: 0, statusMachineId: status, userId: userid, machineId: state.pageData[state.activePage].machine.id, batchId: state.pageData[state.activePage].operActive!.list.first.batch.id, comment: comment));
       emit(state.copyWith(monitorId: id));
     } else {
       await monitorTable.updateId(state.monitorId!, DateTime.now().millisecondsSinceEpoch);
@@ -288,7 +340,7 @@ class CubitWork extends Cubit<StateWork> {
     emit(state.copyWith(statusBtn: list));
   }
 
-  void setIsStart(bool b){
+  void setStateStart(bool b){
     List<bool> list = [...state.listStartBtn];
     list[state.activePage] = b;
     emit(state.copyWith(listStartBtn: list, count: 0));
@@ -337,4 +389,7 @@ class CubitWork extends Cubit<StateWork> {
       if (count < 0) {count = 0;}
       emit(state.copyWith(count: count));
     }
+
+
+  
 }

@@ -33,10 +33,12 @@ class StateMain extends Equatable {
   final List<Area>? listArea;
   final List<AreaMachine>? listAreaMachine;
   final List<AreaMachine>? listAreaMachineUser;
+  final int? unitId;
 
   const StateMain({
-    this.version = 'v2.6.0',
+    this.version = 'v2.6.3',
     this.user,
+    this.unitId,
     this.staff,
     this.machineList,
     this.machineIdList,
@@ -57,7 +59,7 @@ class StateMain extends Equatable {
   });
 
   @override
-  List<Object> get props {
+  List<Object?> get props {
     return [
       user ??
           UserDTO(
@@ -67,6 +69,7 @@ class StateMain extends Equatable {
               position: PositionDTO(id: 0, name: ''),
               positionId: 0,
               companyId: 0),
+      unitId ?? 1,
       machineList ?? [],
       machineIdList ?? [],
       shiftsList ?? [],
@@ -88,26 +91,27 @@ class StateMain extends Equatable {
     ];
   }
 
-  StateMain copyWith(
-      {UserDTO? user,
-      Staff? staff,
-      List<Machine>? machineList,
-      List<int>? machineIdList,
-      List<ShiftsMachine>? shiftsList,
-      List<OperatorOperations>? distribMasterList,
-      List<OperatorOperations>? queueList,
-      List<OperatorOperations>? readyList,
-      List<User>? operatorList,
-      List<MonitoringMachineDTO>? monitorList,
-      List<ShiftsDistribution>? zshiftsDistributionList,
-      List<OperatorOperations>? operatorOperationsList,
-      String? link,
-      int? change,
-      List<int>? listAreaId,
-      List<Area>? listArea,
-      List<AreaMachine>? listAreaMachine,
-      List<AreaMachine>? listAreaMachineUser,
-      }) {
+  StateMain copyWith({
+    UserDTO? user,
+    Staff? staff,
+    List<Machine>? machineList,
+    List<int>? machineIdList,
+    List<ShiftsMachine>? shiftsList,
+    List<OperatorOperations>? distribMasterList,
+    List<OperatorOperations>? queueList,
+    List<OperatorOperations>? readyList,
+    List<User>? operatorList,
+    List<MonitoringMachineDTO>? monitorList,
+    List<ShiftsDistribution>? zshiftsDistributionList,
+    List<OperatorOperations>? operatorOperationsList,
+    String? link,
+    int? change,
+    int? unitId,
+    List<int>? listAreaId,
+    List<Area>? listArea,
+    List<AreaMachine>? listAreaMachine,
+    List<AreaMachine>? listAreaMachineUser,
+  }) {
     return StateMain(
       user: user ?? this.user,
       staff: staff ?? this.staff,
@@ -118,6 +122,7 @@ class StateMain extends Equatable {
       queueList: queueList ?? this.queueList,
       readyList: readyList ?? this.readyList,
       operatorList: operatorList ?? this.operatorList,
+      unitId: unitId ?? this.unitId,
       monitorList: monitorList ?? this.monitorList,
       zshiftsDistributionList:
           zshiftsDistributionList ?? this.zshiftsDistributionList,

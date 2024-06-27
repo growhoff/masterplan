@@ -2,11 +2,16 @@
 
 class Unit {
   final int id;
-  final String name;
+  final String? name;
+  final String? number;
   final int companyId;
+
   Unit({
     required this.id,
-    required this.name,
+    this.name,
+    this.number,
     required this.companyId,
   });
+
+  static final empty = Unit(id: 0, companyId: 0);
 }

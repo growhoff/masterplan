@@ -138,7 +138,7 @@ class CubitDistributionDetailsChMas extends Cubit<StateDistributionDetailsChMas>
         count: operOperat.length,
         isSelected: false,
         listOperat: operOperat,
-        timeSh: operOperat.first.operation.timeSH ?? 0,
+        timeSh: operOperat.first.operation.timeSH,
         timePZ: operOperat.first.operation.timepz,
         setOptPart: 1);
   }

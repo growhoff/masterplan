@@ -17,15 +17,15 @@ import 'state.dart';
 import 'package:collection/collection.dart';
 
 class CubitQueueMasterChM extends Cubit<StateQueueMasterChM> {
-  final List<Machine>? machineList;
+  // final List<Machine>? machineList;
   final List<OperatorOperations>? queueList;
-  final List<int> machineIdList;
+  // final List<int> machineIdList;
   final int userId;
   final List<Area> listArea;
   final List<AreaMachine> listAreaMachine;
   final tableOperations = OperatorOperationsTable();
 
-  CubitQueueMasterChM(this.machineList, this.queueList, this.machineIdList, this.userId, this.listArea, this.listAreaMachine) : super(const StateQueueMasterChM()) {
+  CubitQueueMasterChM(this.queueList,  this.userId, this.listArea, this.listAreaMachine) : super(const StateQueueMasterChM()) {
     emit(state.copyWith(listAreaMachine: listAreaMachine));
     tableOperations.table.stream(primaryKey: ['id']).inFilter('machine_id', listAreaMachine[state.activeArea].idListMachine).listen((event) {}).onData((data) async {
       await getQuere(data);
@@ -76,7 +76,7 @@ class CubitQueueMasterChM extends Cubit<StateQueueMasterChM> {
     // }
 
     List<ItemMachine> listItem = [];
-    for (var machine in machineList!) {
+    for (var machine in listAreaMachine[state.activeArea].listMachine) {
       List<OptPathOperations> listQueue = [];
       int time = 0;
       for (var item in listB) {

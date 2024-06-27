@@ -3,7 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
 // import 'package:image_picker/image_picker.dart';
-import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_staff_list_page/chief_staff_cubit/chief_staff_cubit.dart';
+// import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_staff_list_page/chief_staff_cubit/chief_staff_cubit.dart';
+import 'chief_staff_cubit/chief_staff_cubit.dart';
 import 'chief_staff_list_widgets/add_page_user_photo_widget.dart';
 
 class ChiefStaffAddPage extends StatelessWidget {

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/domain/model/monitoring_machine.dart';
+import 'package:master_plan/presentation/pages/master/pages/monitoring/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/master/pages/monitoring/model/item_machine_monitor.dart';
 import './calendar.dart';
 import 'button_change.dart';
@@ -23,9 +25,9 @@ class ContentListWidgetMaster extends StatelessWidget {
           children: [
             Text('${monitor.machine.name} станок / Оператор: ${listStatus.isNotEmpty ? listStatus.first.user!.fio : '-'} ', textAlign: TextAlign.left, style: const TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(width: 10),
-            Visibility(visible: monitor.statusActive, child: const Card(color: Colors.amber, child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 5),
-              child: Text('В работе'),
+            Visibility(visible: monitor.statusActive != null, child: Card(color: monitor.statusActive != null ? context.read<CubitMonitoring>().convertColor(monitor.statusActive!.id) : Colors.white, child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              child: Text(monitor.statusActive != null ? monitor.statusActive!.name : ''),
             ),))
           ],
         ),

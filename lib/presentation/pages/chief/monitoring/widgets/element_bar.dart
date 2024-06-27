@@ -18,14 +18,12 @@ class ElementBarMonitor extends StatelessWidget {
           for (var i = 0; i < state.listAreaMachine.length; i++) {
             listItemArea.add(NameIndex(name: state.listAreaMachine[i].area.name, index: i));
           }
-
           if (state.listAreaMachine[state.activeArea].listMachine.isNotEmpty){
             var listMachine = state.listAreaMachine[state.activeArea].listMachine;
             for (var i = 0; i < listMachine.length; i++) {
               listItemMachine.add(NameIndex(name: listMachine[i].name, index: i));
             }
         }
-        
         }
         return state.listAreaMachine.isNotEmpty 
       ? Column(

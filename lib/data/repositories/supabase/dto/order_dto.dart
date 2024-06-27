@@ -7,13 +7,15 @@ class OrderDTO extends Dto {
   final String number;
   final String? dateReceipt;
   final String? datePlanCompletion;
-  final int? priority;
+  final int priority;
+  final bool isFormed;
   OrderDTO({
     required this.id,
     required this.number,
     required this.dateReceipt,
     required this.datePlanCompletion,
     required this.priority,
+    required this.isFormed,
   });
 
   Map<String, dynamic> toMap() {
@@ -30,6 +32,7 @@ class OrderDTO extends Dto {
       dateReceipt: map['date_receipt'],
       datePlanCompletion: map['date_plan_completion'],
       priority: map['priority'],
+      isFormed: map['is_formed']
     );
   }
 

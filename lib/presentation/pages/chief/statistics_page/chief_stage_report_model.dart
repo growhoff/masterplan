@@ -19,8 +19,11 @@ class ChiefStageForReportModel {
   int modificationOperationsQuantity = 0;
   int onDistributionOperationsQuantity = 0;
   int distributedOperationsQuantity = 0;
+  int onCheckOperationQuantity = 0;
+  int onMachinesOperationsQuantity = 0;
 
-  List<ChiefOperationModel> operationsList = [];
+
+  List<ChiefOperationForReportModel> operationsList = [];
 
   ChiefStageForReportModel(
       {required this.batchId,
@@ -30,8 +33,8 @@ class ChiefStageForReportModel {
       required this.stageNumber});
 }
 
-class ChiefOperationModel {
-  ChiefOperationModel(
+class ChiefOperationForReportModel {
+  ChiefOperationForReportModel(
       {required this.name,
       required this.number,
       required this.operationId,
@@ -50,5 +53,8 @@ class ChiefOperationModel {
   int distributed = 0;
   int defectQuantity = 0;
   int modificationQuantity = 0;
-  int mustBeDone = 0;
+  int onMachinesQuantity = 0;
+  int onCheckQuantity = 0;
+
+
 }

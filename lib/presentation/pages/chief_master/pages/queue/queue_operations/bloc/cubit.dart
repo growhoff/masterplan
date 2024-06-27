@@ -18,15 +18,15 @@ import 'state.dart';
 // import 'package:collection/collection.dart';
 
 class CubitOperatQueueMasterChM extends Cubit<StateOperatQueueMasterChM> {
-  final List<Machine>? machineList;
+  // final List<Machine>? machineList;
   final List<OperatorOperations>? queueList;
-  final List<int> machineIdList;
+  // final List<int> machineIdList;
   final int userId;
   final List<Area> listArea;
    final List<AreaMachine> listAreaMachine;
   final tableOperations = OperatorOperationsTable();
 
-  CubitOperatQueueMasterChM(this.machineList, this.queueList, this.machineIdList, this.userId, this.listArea, this.listAreaMachine) : super(const StateOperatQueueMasterChM()) {
+  CubitOperatQueueMasterChM( this.queueList,  this.userId, this.listArea, this.listAreaMachine) : super(const StateOperatQueueMasterChM()) {
     emit(state.copyWith(listAreaMachine: listAreaMachine));
     tableOperations.table.stream(primaryKey: ['id']).inFilter('machine_id', listAreaMachine[state.activeArea].idListMachine).listen((event) {}).onData((data) async {
       await getQuere(data);
@@ -84,7 +84,7 @@ class CubitOperatQueueMasterChM extends Cubit<StateOperatQueueMasterChM> {
   }
 
     DistribItem convertToDistrib(List<OperatorOperationsDTO> operOperat) {
-      int timeSH = operOperat.first.operation.timeSH ?? 0;
+      int timeSH = operOperat.first.operation.timeSH;
       int timePZ = operOperat.first.operation.timepz;
       List<OperatorOperations> list = [];
       for (var element in operOperat) {

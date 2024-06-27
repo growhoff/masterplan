@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/pages/dispatcher/orders_page/orders_cubit/orders_cubit.dart';
+import 'package:master_plan/presentation/pages/dispatcher/orders_page/widgets/priority_circle.dart';
 
 class OrdersPage extends StatelessWidget {
   const OrdersPage({super.key});
@@ -55,48 +56,74 @@ class _OrdersPageViewState extends State<OrdersPageView> {
                       physics: AlwaysScrollableScrollPhysics(),
                       shrinkWrap: true,
                       itemBuilder: (context, index) => Center(
-                            child: Card(
-                              child: GestureDetector(
-                                onTap: () {
-                                  Navigator.pushNamed(context, '/batchesPage',
-                                      arguments: state.ordersList[index].id);
-                                },
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(context, '/batchesPage',
+                                        arguments: state.ordersList[index])
+                                    .then((_) => context
+                                        .read<OrdersCubit>()
+                                        .fetchOrders());
+                              },
+                              child: Card(
                                 child: Container(
                                   padding: EdgeInsets.all(10),
-                                  child: Column(
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
                                         children: [
                                           Text(
                                               'номер: ${state.ordersList[index].number}'),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
                                           Text(
-                                              'приоритет: ${state.ordersList[index].priority}')
+                                              textAlign: TextAlign.center,
+                                              "дата поступления\n${state.ordersList[index].dateReceipt}"),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text(
+                                              textAlign: TextAlign.center,
+                                              "планируемая дата завершения\n${state.ordersList[index].datePlanCompletion}"),
+                                          const SizedBox(
+                                            height: 10,
+
+                                          ),
                                         ],
                                       ),
                                       const SizedBox(
-                                        height: 10,
+                                        width: 10,
                                       ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                      Column(
                                         children: [
-                                          Expanded(
-                                            child: Text(
-                                                textAlign: TextAlign.center,
-                                                "дата поступления\n${state.ordersList[index].dateReceipt}"),
+                                          PriorityCircle(
+                                            state.ordersList[index].priority,
+                                            size: 20,
                                           ),
-                                          Expanded(
-                                            child: Text(
-                                                textAlign: TextAlign.center,
-                                                "планируемая дата завершения\n${state.ordersList[index].datePlanCompletion}"),
+                                          const SizedBox(
+                                            height: 10,
                                           ),
+                                          IconButton(
+                                              onPressed: () {},
+                                              icon: Icon(Icons.edit_rounded)),
+                                          IconButton(
+                                              onPressed: () {
+                                                context
+                                                    .read<OrdersCubit>()
+                                                    .deleteOrder(state
+                                                        .ordersList[index].id);
+                                                context
+                                                    .read<OrdersCubit>()
+                                                    .fetchOrders();
+                                              },
+                                              icon: Icon(Icons.delete_rounded))
                                         ],
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
+                                      )
                                     ],
                                   ),
                                 ),

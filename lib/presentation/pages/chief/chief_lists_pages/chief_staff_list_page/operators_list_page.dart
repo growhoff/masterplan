@@ -9,7 +9,7 @@ class OperatorsListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ChiefStaffCubit(),
+      create: (context) => StaffCubit(),
       child: const OperatorsListPageView(),
     );
   }
@@ -25,9 +25,9 @@ class OperatorsListPageView extends StatefulWidget {
 class _OperatorsListPageViewState extends State<OperatorsListPageView> {
   @override
   void initState() {
-    context.read<ChiefStaffCubit>().fetchDropDownsItems();
+    context.read<StaffCubit>().fetchDropDownsItems();
     super.initState();
-    context.read<ChiefStaffCubit>().fetchOperators();
+    context.read<StaffCubit>().fetchOperators();
   }
 
   @override
@@ -37,7 +37,7 @@ class _OperatorsListPageViewState extends State<OperatorsListPageView> {
         title: Text('Список операторов'),
       ),
       body: SafeArea(
-        child: BlocBuilder<ChiefStaffCubit, ChiefStaffState>(
+        child: BlocBuilder<StaffCubit, StaffState>(
           builder: (context, state) {
             return Container(
               padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -47,14 +47,14 @@ class _OperatorsListPageViewState extends State<OperatorsListPageView> {
                     height: 60,
                     child: DropdownButton<String>(
                       isExpanded: true,
-                      value: context.read<ChiefStaffCubit>().selectedArea,
+                      value: context.read<StaffCubit>().selectedArea,
                       onChanged: (String? value) {
                         setState(() => context
-                                .read<ChiefStaffCubit>()
+                                .read<StaffCubit>()
                                 .selectedArea =
                             value ??
-                                context.read<ChiefStaffCubit>().selectedArea);
-                        context.read<ChiefStaffCubit>().fetchOperators();
+                                context.read<StaffCubit>().selectedArea);
+                        context.read<StaffCubit>().fetchOperators();
                       },
                       items: state.areasNamesList
                           .map((String region) => DropdownMenuItem(
@@ -76,11 +76,11 @@ class _OperatorsListPageViewState extends State<OperatorsListPageView> {
                               addAutomaticKeepAlives: false,
                               itemBuilder: (context, index) => StaffListElement(
                                   fetchStaff: () => context
-                                      .read<ChiefStaffCubit>()
+                                      .read<StaffCubit>()
                                       .fetchOperators(),
                                   positionStaff: state.positionStaffList[index],
                                   deleteStaff: () {
-                                    context.read<ChiefStaffCubit>().deleteStaff(
+                                    context.read<StaffCubit>().deleteStaff(
                                         positionStaff:
                                             state.positionStaffList[index]);
                                   }),

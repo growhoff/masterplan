@@ -12,7 +12,7 @@ class ChiefStaffAddPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ChiefStaffCubit(),
+      create: (context) => StaffCubit(),
       child: const ChiefStaffAddPageView(),
     );
   }
@@ -29,7 +29,7 @@ class _ChiefStaffAddPageViewState extends State<ChiefStaffAddPageView> {
   @override
   void initState() {
     super.initState();
-    context.read<ChiefStaffCubit>().fetchDropDownsItems();
+    context.read<StaffCubit>().fetchDropDownsItems();
   }
 
   @override
@@ -40,7 +40,7 @@ class _ChiefStaffAddPageViewState extends State<ChiefStaffAddPageView> {
               onPressed: () => Navigator.pop(context, true),
               icon: const Icon(Icons.arrow_back_ios_new_rounded)),
           title: const Text('добавление персонала')),
-      body: BlocBuilder<ChiefStaffCubit, ChiefStaffState>(
+      body: BlocBuilder<StaffCubit, StaffState>(
         builder: (context, state) {
           return SafeArea(
             child: SingleChildScrollView(
@@ -52,15 +52,15 @@ class _ChiefStaffAddPageViewState extends State<ChiefStaffAddPageView> {
                   children: [
                     AddPageUserPhotoWidget(
                       imageUrl: context
-                          .read<ChiefStaffCubit>()
+                          .read<StaffCubit>()
                           .loadedProfileImage
                           ?.path,
                       downloadImageFromGallery: () => context
-                          .read<ChiefStaffCubit>()
+                          .read<StaffCubit>()
                           .addPhotoFromGallery(imageSource: ImageSource.gallery)
                           .then((_) => setState(() {})),
                       fetchImageFromCamera: () => context
-                          .read<ChiefStaffCubit>()
+                          .read<StaffCubit>()
                           .addPhotoFromGallery(imageSource: ImageSource.camera)
                           .then((_) => setState(() {})),
                     ),
@@ -75,7 +75,7 @@ class _ChiefStaffAddPageViewState extends State<ChiefStaffAddPageView> {
                       height: 5,
                     ),
                     TextField(
-                      controller: context.read<ChiefStaffCubit>().fioController,
+                      controller: context.read<StaffCubit>().fioController,
                     ),
                     const SizedBox(
                       height: 20,
@@ -89,7 +89,7 @@ class _ChiefStaffAddPageViewState extends State<ChiefStaffAddPageView> {
                     ),
                     TextField(
                       controller:
-                          context.read<ChiefStaffCubit>().numberController,
+                          context.read<StaffCubit>().numberController,
                     ),
                     const SizedBox(
                       height: 20,
@@ -103,7 +103,7 @@ class _ChiefStaffAddPageViewState extends State<ChiefStaffAddPageView> {
                     ),
                     TextField(
                       controller:
-                          context.read<ChiefStaffCubit>().passwordController,
+                          context.read<StaffCubit>().passwordController,
                       decoration: const InputDecoration(
                           helperText:
                               'оставьте пустым для автоматической генерации'),
@@ -127,19 +127,19 @@ class _ChiefStaffAddPageViewState extends State<ChiefStaffAddPageView> {
                           shrinkWrap: true,
                           itemBuilder: (context, index) => index ==
                                   context
-                                      .read<ChiefStaffCubit>()
+                                      .read<StaffCubit>()
                                       .selectedPositionsList
                                       .length
                               ? IconButton(
                                   onPressed: () {
                                     context
-                                                .read<ChiefStaffCubit>()
+                                                .read<StaffCubit>()
                                                 .positionsToSelectList
                                                 .length ==
                                             1
                                         ? setState(() {
                                             context
-                                                .read<ChiefStaffCubit>()
+                                                .read<StaffCubit>()
                                                 .addLastPositionElement();
                                           })
                                         : showDialog(
@@ -150,7 +150,7 @@ class _ChiefStaffAddPageViewState extends State<ChiefStaffAddPageView> {
                                                   children: List.generate(
                                                       context
                                                           .read<
-                                                              ChiefStaffCubit>()
+                                                              StaffCubit>()
                                                           .positionsToSelectList
                                                           .length,
                                                       (index) =>
@@ -159,7 +159,7 @@ class _ChiefStaffAddPageViewState extends State<ChiefStaffAddPageView> {
                                                                 setState(() {
                                                               context
                                                                   .read<
-                                                                      ChiefStaffCubit>()
+                                                                      StaffCubit>()
                                                                   .addPositionElement(
                                                                       index);
                                                               Navigator.pop(
@@ -167,7 +167,7 @@ class _ChiefStaffAddPageViewState extends State<ChiefStaffAddPageView> {
                                                             }),
                                                             child: Text(context
                                                                 .read<
-                                                                    ChiefStaffCubit>()
+                                                                    StaffCubit>()
                                                                 .positionsToSelectList[index]),
                                                           )),
                                                 ));
@@ -187,7 +187,7 @@ class _ChiefStaffAddPageViewState extends State<ChiefStaffAddPageView> {
                                         children: [
                                           Text(
                                             context
-                                                .read<ChiefStaffCubit>()
+                                                .read<StaffCubit>()
                                                 .selectedPositionsList[index],
                                             textAlign: TextAlign.center,
                                           ),
@@ -195,12 +195,12 @@ class _ChiefStaffAddPageViewState extends State<ChiefStaffAddPageView> {
                                               onPressed: () {
                                                setState(() {
                                                  context
-                                                     .read<ChiefStaffCubit>()
+                                                     .read<StaffCubit>()
                                                      .deletePositionElement(
                                                      index,
                                                      context
                                                          .read<
-                                                         ChiefStaffCubit>()
+                                                         StaffCubit>()
                                                          .selectedPositionsList[index]);
                                                });
                                               },
@@ -214,12 +214,12 @@ class _ChiefStaffAddPageViewState extends State<ChiefStaffAddPageView> {
                                     DropdownButton<String>(
                                       isExpanded: true,
                                       value: context
-                                          .read<ChiefStaffCubit>()
+                                          .read<StaffCubit>()
                                           .areasForPositionsList[index],
                                       onChanged: (String? value) =>
                                           setState(() {
                                         context
-                                            .read<ChiefStaffCubit>()
+                                            .read<StaffCubit>()
                                             .changeAreasDropDownValue(
                                                 index, value);
                                       }),
@@ -237,7 +237,7 @@ class _ChiefStaffAddPageViewState extends State<ChiefStaffAddPageView> {
                                 height: 5,
                               ),
                           itemCount: context
-                                  .read<ChiefStaffCubit>()
+                                  .read<StaffCubit>()
                                   .selectedPositionsList
                                   .length +
                               1),
@@ -257,7 +257,7 @@ class _ChiefStaffAddPageViewState extends State<ChiefStaffAddPageView> {
                         child: ElevatedButton(
                       onPressed: () {
                         setState(() {
-                          context.read<ChiefStaffCubit>().insertStaff();
+                          context.read<StaffCubit>().insertStaff();
                           showModalBottomSheet(
                               context: context,
                               builder: (context) => Container(

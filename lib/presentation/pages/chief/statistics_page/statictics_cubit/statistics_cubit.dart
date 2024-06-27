@@ -71,11 +71,12 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
             chiefOperation.batch.count;
       }
 
-      stagesMap[chiefOperation.stageId]?.operationsList.add(ChiefOperationModel(
-          name: chiefOperation.operation.name,
-          number: chiefOperation.operation.number,
-          operationId: chiefOperation.operation.id,
-          code: chiefOperation.operation.code));
+      stagesMap[chiefOperation.stageId]?.operationsList.add(
+          ChiefOperationForReportModel(
+              name: chiefOperation.operation.name,
+              number: chiefOperation.operation.number,
+              operationId: chiefOperation.operation.id,
+              code: chiefOperation.operation.code));
 
       stagesMap[chiefOperation.stageId]?.operationsQuantity++;
     }
@@ -97,18 +98,29 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
       operationInList?.areaNumber = operatorOperationsDto.area!.number;
       switch (operatorOperationsDto.statusId) {
         case 2:
-          if (i != 0 &&
-              (operatorOperationsDto.modific == false ||
-                  operatorOperationsDto.modific == null) &&
-              (operatorOperationsDto.chiefBatchId ==
-                  prevOperation.chiefBatchId) &&
-              (prevOperation.chiefOperationId ==
-                  operatorOperationsDto.chiefOperationId! - 1) &&
-              (prevOperation.statusId == 6 || prevOperation.statusId == 9)) {
+          if (i == 0) {
             operationInList?.onDistribution++;
             stagesMap[operatorOperationsDto.stageId]
                 ?.onDistributionOperationsQuantity++;
+          } else {
+            if (operatorOperationsDto.chiefBatchId !=
+                prevOperation.chiefBatchId) {
+              operationInList?.onDistribution++;
+              stagesMap[operatorOperationsDto.stageId]
+                  ?.onDistributionOperationsQuantity++;
+            } else {
+              if ((operatorOperationsDto.modific == false ||
+                      operatorOperationsDto.modific == null) &&
+                  (prevOperation.chiefOperationId ==
+                      operatorOperationsDto.chiefOperationId! - 1) &&
+                  (prevOperation.statusId == 9)) {
+                operationInList?.onDistribution++;
+                stagesMap[operatorOperationsDto.stageId]
+                    ?.onDistributionOperationsQuantity++;
+              }
+            }
           }
+
         case 3:
           operationInList?.distributed++;
           stagesMap[operatorOperationsDto.stageId]
@@ -121,7 +133,13 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
           stagesMap[operatorOperationsDto.stageId]?.defectDetailsQuantity++;
           stagesMap[operatorOperationsDto.stageId]?.defectOperationsQuantity++;
           operationInList?.defectQuantity++;
-
+        case 6:
+          operationInList?.onCheckQuantity++;
+          stagesMap[operatorOperationsDto.stageId]?.onCheckOperationQuantity++;
+        case 7:
+          stagesMap[operatorOperationsDto.stageId]
+              ?.onMachinesOperationsQuantity++;
+          operationInList?.onMachinesQuantity++;
         case 9:
           stagesMap[operatorOperationsDto.stageId]?.readyOperationsQuantity++;
           operationInList?.readyQuantity++;
@@ -134,16 +152,7 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
       //int onDistributionCount = 0;
 
       for (int i = 0; i < value.operationsList.length; i++) {
-        value.operationsList[i].mustBeDone =
-            value.detailsQuantity - defectCount;
-
-        // value.operationsList[i].mustBeDone =
-        //    value.detailsQuantity - (defectCount + onDistributionCount);
-
         defectCount = defectCount + value.operationsList[i].defectQuantity;
-
-        //  onDistributionCount =
-        //     onDistributionCount + value.operationsList[i].onDistribution;
 
         value.operationsList[i].readyPercent =
             (value.operationsList[i].readyQuantity /

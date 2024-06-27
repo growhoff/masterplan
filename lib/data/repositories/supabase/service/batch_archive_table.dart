@@ -16,15 +16,18 @@ class BatchArchiveTable extends SupabaseTable {
   }
 
   @override
-  Future<void> insert(Dto dto) async {
+  Future<int> insert(Dto dto) async {
     if (dto is BatchArchiveDto) {
-      await _table.insert({
+      var data = await _table.insert({
         'name': dto.name,
         'number': dto.number,
         'technology_number': dto.technologyNumber,
-        'company_id': dto.companyId
-      });
+        'company_id': _companyId
+      }).select('id');
+
+      return data.first['id'];
     }
+    return 0;
   }
 
   @override

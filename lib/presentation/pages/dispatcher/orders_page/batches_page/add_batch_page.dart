@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../domain/model/batch.dart';
+import '../../../../../domain/model/batch_archive.dart';
+import '../../../../../domain/model/order.dart';
 import 'batches_cubit/batches_cubit.dart';
 
 
@@ -12,9 +14,9 @@ class AddBatchPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final orderId = ModalRoute.of(context)?.settings.arguments as int?;
+    final order = ModalRoute.of(context)?.settings.arguments as Order?;
     return BlocProvider(
-        create: (context) => BatchesCubit(orderId),
+        create: (context) => BatchesCubit(order),
         child: const AddBatchPagePageView());
   }
 }
@@ -55,18 +57,18 @@ class _AddBatchPagePageViewState extends State<AddBatchPagePageView> {
                       'выберите деталь',
                       style: TextStyle(fontSize: 20),
                     ),
-                    DropdownButton<Batch>(
+                    DropdownButton<BatchArchive>(
                         isExpanded: true,
                         value: context.read<BatchesCubit>().selectedBatch,
-                        items: state.batchesList
-                            .map((Batch batch) => DropdownMenuItem(
+                        items: state.batchesArchiveList
+                            .map((BatchArchive batch) => DropdownMenuItem(
                                 value: batch,
                                 child: Text('${batch.number} ${batch.name}')))
                             .toList(),
                         onChanged: (value) => {
                               setState(() {
                                 context.read<BatchesCubit>().selectedBatch =
-                                    value ?? state.batchesList.first;
+                                    value ?? state.batchesArchiveList.first;
                               })
                             }),
                     const SizedBox(

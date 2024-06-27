@@ -150,8 +150,7 @@ class _ChiefOperationDistributionBodyItemState
                                         .read<ChiefDistributionChMCubit>()
                                         .areasMap[activeValue],
                                     timePlan:
-                                        widget.operation.operation.timeSH ??
-                                            0));
+                                        widget.operation.operation.timeSH));
 
                           }
                           setState(() {});

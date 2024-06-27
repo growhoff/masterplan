@@ -16,7 +16,7 @@ class ChiefStaffEditPage extends StatelessWidget {
     final positionStaff =
         ModalRoute.of(context)!.settings.arguments as PositionStaffModel;
     return BlocProvider(
-      create: (context) => ChiefStaffCubit(),
+      create: (context) => StaffCubit(),
       child: ChiefStaffEditPageView(
         positionStaff: positionStaff,
       ),
@@ -37,7 +37,7 @@ class _ChiefStaffEditPageViewState extends State<ChiefStaffEditPageView> {
   @override
   void initState() {
     context
-        .read<ChiefStaffCubit>()
+        .read<StaffCubit>()
         .fetchDropDownsItems(staffId: widget.positionStaff.staffId);
     super.initState();
   }
@@ -50,7 +50,7 @@ class _ChiefStaffEditPageViewState extends State<ChiefStaffEditPageView> {
               onPressed: () => Navigator.pop(context, true),
               icon: const Icon(Icons.arrow_back_ios_new_rounded)),
           title: const Text('редактирование работника')),
-      body: BlocBuilder<ChiefStaffCubit, ChiefStaffState>(
+      body: BlocBuilder<StaffCubit, StaffState>(
         builder: (context, state) {
           if (state.status == ChiefStaffStatus.success) {
             return SafeArea(
@@ -65,7 +65,7 @@ class _ChiefStaffEditPageViewState extends State<ChiefStaffEditPageView> {
                         imageUrl: widget.positionStaff.staff.user.photo,
                         downloadImageFromGallery: () {
                           context
-                              .read<ChiefStaffCubit>()
+                              .read<StaffCubit>()
                               .updateProfileImageFromGallery(
                                   imageName: widget.positionStaff.staff.login,
                                   userId: widget.positionStaff.staff.userId,
@@ -74,7 +74,7 @@ class _ChiefStaffEditPageViewState extends State<ChiefStaffEditPageView> {
                         },
                         fetchImageFromCamera: () {
                           context
-                              .read<ChiefStaffCubit>()
+                              .read<StaffCubit>()
                               .updateProfileImageFromGallery(
                                   imageName: widget.positionStaff.staff.login,
                                   userId: widget.positionStaff.staff.userId,
@@ -96,7 +96,7 @@ class _ChiefStaffEditPageViewState extends State<ChiefStaffEditPageView> {
                         decoration: InputDecoration(
                             hintText: widget.positionStaff.staff.user.fio),
                         controller:
-                            context.read<ChiefStaffCubit>().fioController,
+                            context.read<StaffCubit>().fioController,
                       ),
                       const SizedBox(
                         height: 20,
@@ -112,7 +112,7 @@ class _ChiefStaffEditPageViewState extends State<ChiefStaffEditPageView> {
                         decoration: InputDecoration(
                             hintText: widget.positionStaff.staff.login),
                         controller:
-                            context.read<ChiefStaffCubit>().numberController,
+                            context.read<StaffCubit>().numberController,
                       ),
                       const SizedBox(
                         height: 20,
@@ -126,7 +126,7 @@ class _ChiefStaffEditPageViewState extends State<ChiefStaffEditPageView> {
                       ),
                       TextField(
                         controller:
-                            context.read<ChiefStaffCubit>().passwordController,
+                            context.read<StaffCubit>().passwordController,
                         decoration: InputDecoration(
                             hintText: widget.positionStaff.staff.password,
                             helperText:
@@ -152,19 +152,19 @@ class _ChiefStaffEditPageViewState extends State<ChiefStaffEditPageView> {
                             itemBuilder: (context, index) =>
                                 index ==
                                         context
-                                            .read<ChiefStaffCubit>()
+                                            .read<StaffCubit>()
                                             .selectedPositionsList
                                             .length
                                     ? IconButton(
                                         onPressed: () {
                                           context
-                                                      .read<ChiefStaffCubit>()
+                                                      .read<StaffCubit>()
                                                       .positionsToSelectList
                                                       .length ==
                                                   1
                                               ? setState(() {
                                                   context
-                                                      .read<ChiefStaffCubit>()
+                                                      .read<StaffCubit>()
                                                       .addLastPositionElement();
                                                 })
                                               : showDialog(
@@ -177,18 +177,18 @@ class _ChiefStaffEditPageViewState extends State<ChiefStaffEditPageView> {
                                                                 List.generate(
                                                                     context
                                                                         .read<
-                                                                            ChiefStaffCubit>()
+                                                                            StaffCubit>()
                                                                         .positionsToSelectList
                                                                         .length,
                                                                     (index) =>
                                                                         SimpleDialogOption(
                                                                           onPressed: () =>
                                                                               setState(() {
-                                                                            context.read<ChiefStaffCubit>().addPositionElement(index);
+                                                                            context.read<StaffCubit>().addPositionElement(index);
                                                                             Navigator.pop(ctx);
                                                                           }),
                                                                           child: Text(context
-                                                                              .read<ChiefStaffCubit>()
+                                                                              .read<StaffCubit>()
                                                                               .positionsToSelectList[index]),
                                                                         )),
                                                           ));
@@ -208,7 +208,7 @@ class _ChiefStaffEditPageViewState extends State<ChiefStaffEditPageView> {
                                               children: [
                                                 Text(
                                                   context
-                                                          .read<ChiefStaffCubit>()
+                                                          .read<StaffCubit>()
                                                           .selectedPositionsList[
                                                       index],
                                                   textAlign: TextAlign.center,
@@ -218,12 +218,12 @@ class _ChiefStaffEditPageViewState extends State<ChiefStaffEditPageView> {
                                                       setState(() {
                                                         context
                                                             .read<
-                                                                ChiefStaffCubit>()
+                                                                StaffCubit>()
                                                             .deletePositionElement(
                                                                 index,
                                                                 context
                                                                     .read<
-                                                                        ChiefStaffCubit>()
+                                                                        StaffCubit>()
                                                                     .selectedPositionsList[index]);
                                                       });
                                                     },
@@ -237,12 +237,12 @@ class _ChiefStaffEditPageViewState extends State<ChiefStaffEditPageView> {
                                           DropdownButton<String>(
                                             isExpanded: true,
                                             value: context
-                                                .read<ChiefStaffCubit>()
+                                                .read<StaffCubit>()
                                                 .areasForPositionsList[index],
                                             onChanged: (String? value) =>
                                                 setState(() {
                                               context
-                                                  .read<ChiefStaffCubit>()
+                                                  .read<StaffCubit>()
                                                   .changeAreasDropDownValue(
                                                       index, value);
                                             }),
@@ -260,7 +260,7 @@ class _ChiefStaffEditPageViewState extends State<ChiefStaffEditPageView> {
                                   height: 5,
                                 ),
                             itemCount: context
-                                    .read<ChiefStaffCubit>()
+                                    .read<StaffCubit>()
                                     .selectedPositionsList
                                     .length +
                                 1),
@@ -272,7 +272,7 @@ class _ChiefStaffEditPageViewState extends State<ChiefStaffEditPageView> {
                           child: ElevatedButton(
                         onPressed: () async{
                           await context
-                              .read<ChiefStaffCubit>()
+                              .read<StaffCubit>()
                               .updateStaff(widget.positionStaff);
                           Navigator.pop(context, true);
                           showModalBottomSheet(

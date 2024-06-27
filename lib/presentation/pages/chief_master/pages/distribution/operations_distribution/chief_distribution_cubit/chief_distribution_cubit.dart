@@ -65,7 +65,7 @@ class ChiefDistributionChMCubit extends Cubit<ChiefDistributionChMState> {
     var fetchedChiefOperationsList =
         await _chiefDistributionOperationsTable.selectNotDistributed(
             maxRange: chiefOperationsSelectMaxRange,
-            minRange: chiefOperationsSelectMinRange);
+            minRange: chiefOperationsSelectMinRange, unitId: 1);
 
     for (var operation in fetchedChiefOperationsList) {
       final chiefOperationDto =

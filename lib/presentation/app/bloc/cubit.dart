@@ -8,6 +8,7 @@ import 'package:master_plan/data/repositories/supabase/dto/user_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/area_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/machine_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/position_staff_table.dart';
+
 // import 'package:master_plan/data/repositories/supabase/service/position_staff_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/shifts_distribution.dart';
 import 'package:master_plan/data/repositories/supabase/service/user_table.dart';
@@ -47,6 +48,7 @@ class CubitMain extends Cubit<StateMain> {
           switch (state.user!.position.id) {
             //начальник
             case 2:
+              await fetchUnitId(query.first['id']);
               List<int> listAreaId = await getAreaForStaff(query.first['id']);
               await getMachineToUnit(listAreaId);
               break;
@@ -103,6 +105,16 @@ class CubitMain extends Cubit<StateMain> {
     emit(state.copyWith(user: userDto));
   }
 
+  Future fetchUnitId(int staffId) async {
+    final positionStaffTable = PositionStaffTable();
+    var fetchedList =
+        await positionStaffTable.selectByStaffId(staffId: staffId);
+    print(fetchedList.first);
+    final positionStaffDto = PositionStaffDTO.fromMap(fetchedList.first);
+    final int unitId = positionStaffDto.unitId ?? 1;
+    emit(state.copyWith(unitId: unitId));
+  }
+
   // master
   Future<void> getMachineToArea(int areaId) async {
     final machineTable = MachineTable();
@@ -132,7 +144,11 @@ class CubitMain extends Cubit<StateMain> {
     for (var maps in queruArea) {
       final model = AreaDTO.fromMap(maps);
       listIdArea.add(model.id);
-      listArea.add(Area(id: model.id, name: model.name, number: model.number, unitId: model.unitId));
+      listArea.add(Area(
+          id: model.id,
+          name: model.name,
+          number: model.number,
+          unitId: model.unitId));
     }
     final machineTable = MachineTable();
     final machineQuery = await machineTable.selectMachineToAreaList(listIdArea);
@@ -153,7 +169,10 @@ class CubitMain extends Cubit<StateMain> {
     List<AreaMachine> listAreaMachine = [];
     var newMapAreaMach = groupBy(listMachine, (el) => el.areaId);
     newMapAreaMach.forEach((key, value) {
-      listAreaMachine.add(AreaMachine(area: listArea.firstWhere((element) => element.id == key), listMachine: value, idListMachine: value.map((e) => e.id).toList()));
+      listAreaMachine.add(AreaMachine(
+          area: listArea.firstWhere((element) => element.id == key),
+          listMachine: value,
+          idListMachine: value.map((e) => e.id).toList()));
     });
     List<AreaMachine> listAreaMachineUser = [];
     for (var areaMachine in listAreaMachine) {
@@ -163,16 +182,16 @@ class CubitMain extends Cubit<StateMain> {
     }
 
     emit(state.copyWith(
-        machineList: listMachine,
-        machineIdList: listId,
-        listAreaId: listIdArea,
-        listArea: listArea,
-        listAreaMachine: listAreaMachine,
-        listAreaMachineUser: listAreaMachineUser,
-        ));
+      machineList: listMachine,
+      machineIdList: listId,
+      listAreaId: listIdArea,
+      listArea: listArea,
+      listAreaMachine: listAreaMachine,
+      listAreaMachineUser: listAreaMachineUser,
+    ));
   }
 
-  Future<List<int>> getAreaForStaff(int staffId)async{
+  Future<List<int>> getAreaForStaff(int staffId) async {
     final posStaffTable = PositionStaffTable();
     final posStafQuery = await posStaffTable.selectByStaffId(staffId: staffId);
     List<int> listIdArea = [];
@@ -185,7 +204,6 @@ class CubitMain extends Cubit<StateMain> {
 
   // chief-master
   Future<void> getOperatorsToUnit() async {
-   
     final userTable = UserTable();
     final userQuery = await userTable.selectEqOperatorList(
         listAreaId: state.listAreaId!, companyId: state.user!.companyId);

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../domain/model/order.dart';
 import 'batches_cubit/batches_cubit.dart';
-
 
 class BatchesPage extends StatelessWidget {
   const BatchesPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final orderId = ModalRoute.of(context)?.settings.arguments as int;
+    final order = ModalRoute.of(context)?.settings.arguments as Order?;
     return BlocProvider(
-        create: (context) => BatchesCubit(orderId),
+        create: (context) => BatchesCubit(order),
         child: const BatchesPageView());
   }
 }
@@ -39,7 +39,7 @@ class _BatchesPageViewState extends State<BatchesPageView> {
             IconButton(
                 onPressed: () {
                   Navigator.pushNamed(context, '/addBatchPage',
-                          arguments: context.read<BatchesCubit>().orderId)
+                          arguments: context.read<BatchesCubit>().order)
                       .then((_) =>
                           context.read<BatchesCubit>().fetchBatchesInOrder());
                 },
@@ -51,7 +51,52 @@ class _BatchesPageViewState extends State<BatchesPageView> {
               padding: const EdgeInsets.only(right: 10),
               child: IconButton(
                   onPressed: () {
-                    //context.read<BatchesCubit>().addDetail();
+
+                    context.read<BatchesCubit>().isOrderFormed == false
+                        ? {
+                            context.read<BatchesCubit>().formOrder(),
+                            showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                      title: Center(
+                                          child: Text(
+                                              'заказ успешно сформирован')),
+                                      actions: [
+                                        Center(
+                                          child: MaterialButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context),
+                                            child: Text(
+                                              'Ок',
+                                              style: TextStyle(fontSize: 24),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                      elevation: 20,
+                                    ))
+                          }
+                        : {
+                            showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                      title: Center(
+                                          child: Text('заказ уже сформирован')),
+                                      actions: [
+                                        Center(
+                                          child: MaterialButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context),
+                                            child: Text(
+                                              'Ок',
+                                              style: TextStyle(fontSize: 24),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                      elevation: 20,
+                                    ))
+                          };
                   },
                   icon: Icon(Icons.format_indent_increase_rounded)),
             )

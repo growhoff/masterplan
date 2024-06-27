@@ -91,8 +91,9 @@ class _AddOrderPageViewState extends State<AddOrderPageView> {
                           onTap: () async {
                             var pickedDate = await showDatePicker(
                                 context: context,
+                                initialDate: DateTime.now(),
                                 firstDate: DateTime(2024),
-                                lastDate: DateTime.now(), initialDate: DateTime.now());
+                                lastDate: DateTime.now());
                             setState(() {
                               if (pickedDate != null) {
                                 context.read<OrdersCubit>().receiptDate =
@@ -152,8 +153,9 @@ class _AddOrderPageViewState extends State<AddOrderPageView> {
                           onTap: () async {
                             var pickedDate = await showDatePicker(
                                 context: context,
+                                initialDate: DateTime.now(),
                                 firstDate: DateTime(2024),
-                                lastDate: DateTime(2100), initialDate: DateTime.now());
+                                lastDate: DateTime(2100));
                             setState(() {
                               if (pickedDate != null) {
                                 context.read<OrdersCubit>().planCompletionDate =
@@ -182,11 +184,15 @@ class _AddOrderPageViewState extends State<AddOrderPageView> {
                                 children: [
                                   Icon(Icons.calendar_month_rounded),
                                   const SizedBox(
-                                    width: 15,
+                                    width: 13,
                                   ),
-                                  Text(
-                                    '${context.read<OrdersCubit>().planCompletionDate.day}.${context.read<OrdersCubit>().planCompletionDate.month}.${context.read<OrdersCubit>().planCompletionDate.year}',
-                                    style: TextStyle(fontSize: 18),
+                                  FittedBox(
+                                    fit: BoxFit.fill,
+                                    child: Text(
+                                      softWrap: true,
+                                      '${context.read<OrdersCubit>().planCompletionDate.day}.${context.read<OrdersCubit>().planCompletionDate.month}.${context.read<OrdersCubit>().planCompletionDate.year}',
+                                      style: TextStyle(fontSize: 18),
+                                    ),
                                   )
                                 ],
                               )),

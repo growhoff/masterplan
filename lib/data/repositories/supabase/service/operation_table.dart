@@ -5,7 +5,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../dto/operation_dto.dart';
 
 class OperationTable extends SupabaseTable {
-
   final table = Supabase.instance.client.from('z_operation');
 
   @override
@@ -34,6 +33,11 @@ class OperationTable extends SupabaseTable {
     return table.select();
   }
 
+  Future<List<Map<String, dynamic>>> selectByStageIdList(
+      List<int> stagesIdList) async {
+    return await table.select().inFilter('stage_id', stagesIdList);
+  }
+
   Future<List<Map<String, dynamic>>> selectId(int id) {
     return table.select().eq('id', id);
   }
@@ -55,18 +59,18 @@ class OperationTable extends SupabaseTable {
     return table.update({'name': '1'}).eq('id', id);
   }
 
-  Future<void> updateTimeSH(int id, int operationTimeSH) async{
+  Future<void> updateTimeSH(int id, int operationTimeSH) async {
     return await table.update({'time_sh': operationTimeSH}).eq('id', id);
   }
 
-  Future<List<Map<String, dynamic>>> selectByStageId({required int stageId})async{
-
+  Future<List<Map<String, dynamic>>> selectByStageId(
+      {required int stageId}) async {
     return await table.select().eq('stage_id', stageId);
   }
 
   Future<int> fetchOperationsQuantityInStage({required int stageId}) async {
-    final res = await table.select().eq('stage_id', stageId).count(
-        CountOption.exact);
+    final res =
+        await table.select().eq('stage_id', stageId).count(CountOption.exact);
 
     return res.count;
   }

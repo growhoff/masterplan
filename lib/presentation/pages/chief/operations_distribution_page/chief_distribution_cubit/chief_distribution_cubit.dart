@@ -23,7 +23,8 @@ import '../../../../../domain/model/chief_distribution_operations_model.dart';
 part 'chief_distribution_state.dart';
 
 class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
-  ChiefDistributionCubit() : super(const ChiefDistributionState()) {
+  ChiefDistributionCubit({this.unitId})
+      : super(const ChiefDistributionState()) {
     _chiefDistributionOperationsTable.table
         .stream(primaryKey: ['id'])
         .neq('quantity', 0)
@@ -31,6 +32,8 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
           fetchChiefOperations();
         });
   }
+
+  final int? unitId;
 
   final OperatorOperationsTable _operatorOperationsTable =
       OperatorOperationsTable();
@@ -64,6 +67,7 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
     List<ChiefDistributionOperation> chiefOperationsList = [];
     var fetchedChiefOperationsList =
         await _chiefDistributionOperationsTable.selectNotDistributed(
+          unitId: unitId ?? 1,
             maxRange: chiefOperationsSelectMaxRange,
             minRange: chiefOperationsSelectMinRange);
 

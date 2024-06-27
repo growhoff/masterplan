@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:lecle_downloads_path_provider/lecle_downloads_path_provider.dart';
+import 'package:master_plan/data/repositories/supabase/dto/batch_archive_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/chief_batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/chief_distribution_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/transfer_dto.dart';
@@ -19,12 +20,14 @@ import '../../supabase/dto/batch_dto.dart';
 import '../../supabase/dto/chief_operation_dto.dart';
 import '../../supabase/dto/operation_dto.dart';
 import '../../supabase/dto/stage_dto.dart';
+import '../../supabase/service/batch_archive_table.dart';
 import '../../supabase/service/batch_table.dart';
 import '../../supabase/service/operation_table.dart';
 import '../../supabase/service/stage_table.dart';
 
 class ExcelService {
   final _batchTable = BatchTable();
+  final _batchArchiveTable = BatchArchiveTable();
   final _stageTable = StageTable();
   final _operationTable = OperationTable();
   final _chiefDistributionOperationsTable = ChiefDistributionOperationsTable();
@@ -119,6 +122,7 @@ class ExcelService {
       for (var table in excel.tables.keys) {
         int quantity =
             int.parse(excel.tables[table]!.rows[1][13]!.value.toString());
+        print('quantity: $quantity');
         serviceQuantity = quantity;
 
         String code = excel.tables[table]!.rows[1][0]!.value
@@ -131,17 +135,27 @@ class ExcelService {
 
         String planName = excel.tables[table]!.rows[1][3]!.value.toString();
 
+        print('вставляю бетч архив');
+        int batchArchiveId = await _batchArchiveTable.insert(BatchArchiveDto(
+            id: 0,
+            number: planNumber,
+            name: planName,
+            technologyNumber: technologyNumber,
+            companyId: 0));
+
+        print(batchArchiveId);
+
         int batchId = await _batchTable.insert(BatchDTO(
-          id: 0,
-          number: planNumber,
-          name: planName,
-          count: quantity,
-          code: code,
-          technology: technologyNumber,
-          order: 1,
-          isready: false,
-          orderId: 0,
-        ));
+            id: 0,
+            number: planNumber,
+            name: planName,
+            count: quantity,
+            code: code,
+            technology: technologyNumber,
+            order: 1,
+            isready: false,
+            orderId: null,
+            batchArchiveId: batchArchiveId));
 
         serviceBatchId = batchId;
 
@@ -320,6 +334,7 @@ class ExcelService {
 
     chiefBatchIdsList =
         await _chiefBatchTable.bulkInsertFromList(dtosList: chiefBatchDtosList);
+
 
     for (int chiefBatchId in chiefBatchIdsList) {
       for (var operation in chiefOperationsList) {
@@ -929,7 +944,8 @@ class ExcelService {
               cell.value = IntCellValue(operation.readyPercent);
 
             case 9:
-              cell.value = IntCellValue(operation.distributed + operation.onDistribution);
+              cell.value = IntCellValue(
+                  operation.distributed + operation.onDistribution);
             case 10:
               cell.value = IntCellValue(operation.defectQuantity);
             case 11:

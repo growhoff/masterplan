@@ -11,7 +11,7 @@ class ReadyDetailsPageChM extends StatelessWidget {
   Widget build(BuildContext context) {
     final cubitMain = context.read<CubitMain>().state;
     return BlocProvider<CubitReadyDetailsChM>(
-      create: (context) => CubitReadyDetailsChM(cubitMain.machineList, cubitMain.machineIdList!, cubitMain.listAreaMachineUser!),
+      create: (context) => CubitReadyDetailsChM(cubitMain.listAreaMachineUser!),
       child: const ReadyDetailsContent(),
     );
   }

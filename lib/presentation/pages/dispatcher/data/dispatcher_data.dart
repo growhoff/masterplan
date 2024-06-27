@@ -3,23 +3,25 @@ import 'package:master_plan/presentation/pages/dispatcher/orders_page/orders_pag
 
 
 import '../../chief/model/tab_bar_model.dart';
+import '../distribution_page/dispatcher_distribution_page.dart';
+import '../lists_page/lists_page.dart';
 
 abstract class DispatcherData {
   static List<TabBarModel> listPage = [
     TabBarModel(
         title: 'Списки предприятия',
         actions: [],
-        page:  Container(),
+        page:  const DispatcherListsPage(),
         icon: Icons.list),
     TabBarModel(
         title: 'Заказы на производство',
         actions: [],
-        page:  OrdersPage(),
+        page:  const OrdersPage(),
         icon: Icons.all_inbox_rounded),
      TabBarModel(
         title: 'Распределение этапов',
         actions: [],
-        page: Container(),
+        page: DispatcherDistributionPage(),
         icon:  Icons.lan),
     TabBarModel(
         title: 'Очередь заказов',

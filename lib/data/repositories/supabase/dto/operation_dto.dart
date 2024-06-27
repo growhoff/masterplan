@@ -10,7 +10,7 @@ class OperationDTO extends Dto {
   final String code;
   final int timepz;
   final int stageId;
-  final int? timeSH;
+  final int timeSH;
   OperationDTO({
     required this.id,
     required this.number,
@@ -18,7 +18,7 @@ class OperationDTO extends Dto {
     required this.code,
     required this.timepz,
     required this.stageId,
-    this.timeSH
+    required this.timeSH
   });
 
   static final empty = OperationDTO(
@@ -28,6 +28,7 @@ class OperationDTO extends Dto {
     code: '', 
     timepz: 0, 
     stageId: 0,
+    timeSH: 0
   );
 
   Map<String, dynamic> toMap() {

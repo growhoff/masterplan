@@ -11,7 +11,7 @@ class QueuePageMasterChM extends StatelessWidget {
   Widget build(BuildContext context) {
     final stateMain = context.read<CubitMain>().state;
     return BlocProvider<CubitQueueMasterChM>(
-      create: (context) => CubitQueueMasterChM(stateMain.machineList, stateMain.queueList, stateMain.machineIdList!, stateMain.user!.id, stateMain.listArea!, stateMain.listAreaMachineUser!),
+      create: (context) => CubitQueueMasterChM(stateMain.queueList,  stateMain.user!.id, stateMain.listArea!, stateMain.listAreaMachineUser!),
       child: const QueuePageMasterContent(),
     );
   }

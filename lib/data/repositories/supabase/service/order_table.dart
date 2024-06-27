@@ -7,14 +7,14 @@ class OrderTable extends SupabaseTable {
   final table = Supabase.instance.client.from('z_order');
 
   @override
-  Future<void> delete(int id) {
-    return table.delete().eq('id', id);
+  Future<void> delete(int id) async {
+    return await table.delete().eq('id', id);
   }
 
   @override
   Future<void> insert(Dto dto) async {
     if (dto is OrderDTO) {
-     await table.insert({
+      await table.insert({
         'number': dto.number,
         'date_receipt': dto.dateReceipt,
         'date_plan_completion': dto.datePlanCompletion,
@@ -26,6 +26,10 @@ class OrderTable extends SupabaseTable {
   @override
   Future<List<Map<String, dynamic>>> select() {
     return table.select().order('priority', ascending: true);
+  }
+
+  Future changeIsFormedToTrue(int orderId) async {
+    await table.update({'is_formed': true}).eq('id', orderId);
   }
 
   Future<List<Map<String, dynamic>>> selectId(int id) {

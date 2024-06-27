@@ -5,12 +5,14 @@ class Order {
   final String number;
   final String? dateReceipt;
   final String? datePlanCompletion;
-  final int? priority;
-  Order({
-    required this.id,
-    required this.number,
-    required this.dateReceipt,
-    required this.datePlanCompletion,
-    required this.priority
-  });
+  final int priority;
+  final bool isFormed;
+
+  Order(
+      {required this.id,
+      required this.number,
+      required this.dateReceipt,
+      required this.datePlanCompletion,
+      required this.priority,
+      required this.isFormed});
 }
