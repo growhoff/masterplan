@@ -129,7 +129,7 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
         count: operOperat.length,
         isSelected: false,
         listOperat: operOperat,
-        timeSh: operOperat.first.operation.timeSH,
+        timeSh: operOperat.first.operation.timeSH ?? 0,
         timePZ: operOperat.first.operation.timepz,
         setOptPart: 1);
   }

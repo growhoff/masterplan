@@ -23,7 +23,7 @@ class ChiefDistributionOperationsTable extends SupabaseTable {
         'stage_id': dto.stageId,
         'operation_id': dto.operationId,
         'quantity': dto.quantity,
-        'unit_id': dto.unitId
+        'unit_id': dto.unitId ?? 0
       }).select('id');
       return operation[0]['id'];
     }

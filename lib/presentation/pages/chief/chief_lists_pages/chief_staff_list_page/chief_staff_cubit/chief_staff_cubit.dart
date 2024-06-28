@@ -170,7 +170,11 @@ class StaffCubit extends Cubit<StaffState> {
             id: fetchedDto.id,
             companyId: fetchedDto.companyId,
             name: fetchedDto.name,
-            number: fetchedDto.number);
+            number: fetchedDto.number,
+          areasQuantity: fetchedDto.areasQuantity,
+          machinesQuantity: fetchedDto.machinesQuantity,
+          operatorsQuantity: fetchedDto.operatorsQuantity,
+          supportStaffQuantity: fetchedDto.supportStaffQuantity,);
         unitsList.add(unit);
       }
       emit(state.copyWith(unitsList: unitsList));

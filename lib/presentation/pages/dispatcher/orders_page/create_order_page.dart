@@ -90,8 +90,8 @@ class _AddOrderPageViewState extends State<AddOrderPageView> {
                         GestureDetector(
                           onTap: () async {
                             var pickedDate = await showDatePicker(
+                              initialDate: DateTime.now(),
                                 context: context,
-                                initialDate: DateTime.now(),
                                 firstDate: DateTime(2024),
                                 lastDate: DateTime.now());
                             setState(() {
@@ -152,8 +152,8 @@ class _AddOrderPageViewState extends State<AddOrderPageView> {
                         GestureDetector(
                           onTap: () async {
                             var pickedDate = await showDatePicker(
+                              initialDate: DateTime.now(),
                                 context: context,
-                                initialDate: DateTime.now(),
                                 firstDate: DateTime(2024),
                                 lastDate: DateTime(2100));
                             setState(() {

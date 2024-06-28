@@ -28,7 +28,7 @@ import '../../../../../../../data/repositories/supabase/service/user_table.dart'
 import '../../../../../../../domain/model/area.dart';
 import '../../../../../../../domain/model/position.dart';
 import '../../../../../../../domain/model/staff.dart';
-// import '../../../../../../../domain/model/user.dart';
+import '../../../../../../../domain/model/user.dart';
 
 part 'chief_staff_state.dart';
 

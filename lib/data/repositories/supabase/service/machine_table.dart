@@ -3,8 +3,7 @@ import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class MachineTable extends SupabaseTable{
-
+class MachineTable extends SupabaseTable {
   final table = Supabase.instance.client.from('z_machine');
 
   @override
@@ -38,8 +37,15 @@ class MachineTable extends SupabaseTable{
     return table.select().eq('area_id', areaId);
   }
 
-  Future<List<Map<String, dynamic>>> selectMachineToAreaList(List<int> listAreaId) {
+  Future<List<Map<String, dynamic>>> selectMachineToAreaList(
+      List<int> listAreaId) {
     return table.select().inFilter('area_id', listAreaId);
+  }
+
+  Future<List<Map<String, dynamic>>> selectByUnitIdList(List<int> unitIdList) async{
+    return await table
+        .select('*, z_area!inner(*)')
+        .inFilter('z_area.unit_id', unitIdList);
   }
 
   Future<List<Map<String, dynamic>>> selectListId(List<int> listId) {
@@ -55,7 +61,7 @@ class MachineTable extends SupabaseTable{
   }
 
   @override
-  Future update(int id, Dto dto) async{
+  Future update(int id, Dto dto) async {
     if (dto is MachineDTO) {
       await table.update({
         'name': dto.name,
@@ -68,9 +74,9 @@ class MachineTable extends SupabaseTable{
     return table.stream(primaryKey: ['id']);
   }
 
-  Future<int> fetchMachinesQuantityOnArea({required int areaId})async{
-    var res = await  table.select('id').eq('area_id', areaId).count(CountOption.exact);
+  Future<int> fetchMachinesQuantityOnArea({required int areaId}) async {
+    var res =
+        await table.select('id').eq('area_id', areaId).count(CountOption.exact);
     return res.count;
   }
-
 }

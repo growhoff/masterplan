@@ -115,11 +115,11 @@ class _OperationsStatisticsPageViewState
                               TableCell(
                                 child: Container(
                                     alignment: Alignment.center,
-                                    padding: const EdgeInsets.all(8),
-                                    child: const FittedBox(
-                                      fit: BoxFit.fitWidth,
+                                    padding: const EdgeInsets.symmetric(vertical: 8),
+                                    child: const RotatedBox(
+                                      quarterTurns: 3,
                                       child: Text(
-                                        '№',
+                                        '№ операции',
                                         softWrap: true,
                                         textAlign: TextAlign.center,
                                       ),
@@ -135,7 +135,7 @@ class _OperationsStatisticsPageViewState
                                       child: RotatedBox(
                                         quarterTurns: 3,
                                         child: Text(
-                                          'участок',
+                                          '№ участка',
                                           textAlign: TextAlign.center,
                                         ),
                                       ),
@@ -159,22 +159,22 @@ class _OperationsStatisticsPageViewState
                               ),
                               TableCell(
                                 child: Container(
+                                  height: 100,
+                                  color: Colors.blue[200],
                                     alignment: Alignment.center,
                                     padding:
                                         const EdgeInsets.symmetric(vertical: 8),
-                                    child: const FittedBox(
-                                      fit: BoxFit.fill,
-                                      child: RotatedBox(
-                                        quarterTurns: 3,
-                                        child: Text(
-                                          'в очереди',
-                                          //textAlign: TextAlign.center,
-                                        ),
+                                    child: RotatedBox(
+                                      quarterTurns: 3,
+                                      child: Text(
+                                        'в очереди',
+                                        //textAlign: TextAlign.center,
                                       ),
                                     )),
                               ),
                               TableCell(
-                                child: Container(
+                                child: Container( height: 100,
+                                    color: Colors.blue[200],
                                     alignment: Alignment.center,
                                     padding:
                                         const EdgeInsets.symmetric(vertical: 8),
@@ -190,7 +190,8 @@ class _OperationsStatisticsPageViewState
                                     )),
                               ),
                               TableCell(
-                                child: Container(
+                                child: Container( height: 100,
+                                    color: Colors.blue[200],
                                     alignment: Alignment.center,
                                     padding:
                                         const EdgeInsets.symmetric(vertical: 8),
@@ -207,6 +208,8 @@ class _OperationsStatisticsPageViewState
                               ),
                               TableCell(
                                 child: Container(
+                                    height: 100,
+                                    color: Colors.yellow[200],
                                     alignment: Alignment.center,
                                     padding:
                                         const EdgeInsets.symmetric(vertical: 8),
@@ -222,25 +225,34 @@ class _OperationsStatisticsPageViewState
                                     )),
                               ),
                               TableCell(
-                                child: Container(
+                                child: Container( height: 100,
+                                    color: Colors.green[300],
                                     alignment: Alignment.center,
                                     padding: EdgeInsets.symmetric(vertical: 8),
                                     child: const RotatedBox(
                                       quarterTurns: 3,
-                                      child: Text(
-                                        'годные',
-                                        textAlign: TextAlign.center,
-                                        maxLines: 3,
+                                      child: FittedBox(
+                                        fit: BoxFit.fill,
+                                        child: Text(softWrap: true,
+                                          'годные\nоперации',
+                                          textAlign: TextAlign.center,
+                                          maxLines: 3,
+                                        ),
                                       ),
                                     )),
                               ),
                               TableCell(
                                 child: Container(
+                                    height: 100,
+                                    color: Colors.green[300],
                                     alignment: Alignment.center,
-                                    padding: const EdgeInsets.all(8),
-                                    child: const Text(
-                                      '%',
-                                      textAlign: TextAlign.center,
+                                    padding: const EdgeInsets.symmetric(vertical: 8),
+                                    child: RotatedBox(
+                                      quarterTurns: 3,
+                                      child: const Text(
+                                        '% годных',
+                                        textAlign: TextAlign.center,
+                                      ),
                                     )),
                               ),
                               Container(
@@ -387,37 +399,63 @@ class _OperationsStatisticsPageViewState
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                  'На распределении: ${widget.statisticsStage.onDistributionOperationsQuantity}'),
+                                  'Операций на распределении: ${widget.statisticsStage.onDistributionOperationsQuantity}'),
                               const SizedBox(
                                 height: 5,
                               ),
                               Text(
-                                  'В очереди: ${widget.statisticsStage.distributedOperationsQuantity}'),
+                                  'Операций в очередях: ${widget.statisticsStage.distributedOperationsQuantity}'),
                               const SizedBox(
                                 height: 5,
                               ),
                               Text(
-                                  'На станках: ${widget.statisticsStage.onMachinesOperationsQuantity}'),
+                                  'Операций на станках: ${widget.statisticsStage.onMachinesOperationsQuantity}'),
                               const SizedBox(
                                 height: 5,
                               ),
                               Text(
-                                  'На проверке у мастера: ${widget.statisticsStage.onCheckOperationQuantity}'),
+                                  'Операций на проверке у мастеров: ${widget.statisticsStage.onCheckOperationQuantity}'),
                               const SizedBox(
                                 height: 5,
                               ),
                               Text(
-                                  'На доработку: ${widget.statisticsStage.modificationOperationsQuantity}'),
+                                  'Операций на доработку: ${widget.statisticsStage.modificationOperationsQuantity}'),
                               const SizedBox(
                                 height: 5,
                               ),
-                              Text(
-                                  'Годные: ${widget.statisticsStage.readyOperationsQuantity}'),
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.green[200],
+                                    borderRadius: BorderRadius.circular(8)),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 3, horizontal: 5),
+                                child: Text(
+                                    'Годных операций: ${widget.statisticsStage.readyOperationsQuantity}'),
+                              ),
                               const SizedBox(
                                 height: 5,
                               ),
-                              Text(
-                                  'Забраковано: ${widget.statisticsStage.defectOperationsQuantity}'),
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.green[200],
+                                    borderRadius: BorderRadius.circular(8)),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 3, horizontal: 5),
+                                child: Text(
+                                    'Годных деталей: ${widget.statisticsStage.readyDetailsQuantity}'),
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 3, horizontal: 5),
+                                decoration: BoxDecoration(
+                                    color: Colors.red[200],
+                                    borderRadius: BorderRadius.circular(8)),
+                                child: Text(
+                                    'Забракованых деталей: ${widget.statisticsStage.defectOperationsQuantity}'),
+                              ),
                               const SizedBox(
                                 height: 5,
                               ),

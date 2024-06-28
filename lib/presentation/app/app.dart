@@ -14,6 +14,7 @@ import 'package:master_plan/presentation/pages/chief/statistics_page/statistics_
 import 'package:master_plan/presentation/pages/chief/widgets/custom_navbar.dart';
 import 'package:master_plan/presentation/pages/dispatcher/lists_page/chiefs_list_page/add_chief_page.dart';
 import 'package:master_plan/presentation/pages/dispatcher/lists_page/chiefs_list_page/edit_chief_page.dart';
+import 'package:master_plan/presentation/pages/dispatcher/lists_page/units_list_page/units_list_page.dart';
 
 import 'package:master_plan/presentation/pages/dispatcher/orders_page/create_order_page.dart';
 import 'package:master_plan/presentation/pages/login/login_page.dart';
@@ -28,6 +29,8 @@ import '../pages/chief/chief_lists_pages/chief_staff_list_page/selection_staff_p
 import '../pages/chief_master/chief_maste_page.dart';
 
 import '../pages/dispatcher/lists_page/chiefs_list_page/chiefs_list_page.dart';
+import '../pages/dispatcher/lists_page/units_list_page/add_unit_page.dart';
+import '../pages/dispatcher/lists_page/units_list_page/edit_unit_page.dart';
 import '../pages/dispatcher/orders_page/batches_page/add_batch_page.dart';
 import '../pages/dispatcher/orders_page/batches_page/batches_page.dart';
 import '../pages/dispatcher/widgets/custom_navbar.dart';
@@ -100,6 +103,12 @@ class MyApp extends StatelessWidget {
               const AddChiefPage(),
           '/dispatcherEditChiefPage': (BuildContext context) =>
               const EditChiefPage(),
+          '/dispatcherUnitsListPage': (BuildContext context) =>
+              const UnitsListPage(),
+          '/dispatcherEditUnitPage': (BuildContext context) =>
+          const EditUnitPage(),
+          '/dispatcherAddUnitPage': (BuildContext context) =>
+          const AddUnitPage(),
         },
         home: const LoginPage(),
       ),

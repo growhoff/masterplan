@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
+import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 
 class MachineDTO extends Dto {
@@ -7,11 +8,13 @@ class MachineDTO extends Dto {
   final int inventoryNumber;
   final String name;
   final int areaId;
+  final AreaDTO? area;
   MachineDTO({
     required this.id,
     required this.inventoryNumber,
     required this.name,
     required this.areaId,
+    this.area
   });
 
 
@@ -30,6 +33,7 @@ class MachineDTO extends Dto {
       inventoryNumber: map['inventory_number'] as int,
       name: map['name'] as String,
       areaId: map['area_id'] as int,
+      area: map['z_area'] != null ? AreaDTO.fromMap(map['z_area']) : null,
     );
   }
 

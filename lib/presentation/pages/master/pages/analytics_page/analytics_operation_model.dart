@@ -4,8 +4,9 @@ class AnalyticsOperationModel {
         required this.operationId,
         required this.code,
         required this.detailNumber,
+        required this.detailName,
         required this.operationNumber,
-        required this.name,
+        required this.operationName,
         required this.timePlan,
         required this.timeFact,
         required this.machineName,
@@ -16,11 +17,12 @@ class AnalyticsOperationModel {
         required this.areaNumber});
 
 
+  final String detailName;
   final int operationId;
   final String code;
   final String detailNumber;
   final String operationNumber;
-  final String name;
+  final String operationName;
   final String timePlan;
   final String  timeFact;
   final String machineName;

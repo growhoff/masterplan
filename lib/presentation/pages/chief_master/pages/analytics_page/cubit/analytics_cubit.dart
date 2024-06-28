@@ -67,7 +67,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
             code: operation.operation.code,
             detailNumber: operation.batch.number,
             operationNumber: operation.operation.number,
-            name: operation.operation.name,
+            operationName: operation.operation.name,
             timePlan: TimeConverter.instance
                 .convertTimeFromMinutes(operation.timeplan),
             timeFact: TimeConverter.instance
@@ -78,7 +78,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
             date: DateFormat.yMd().format(
                 DateTime.fromMillisecondsSinceEpoch(operation.timestop ?? 0)),
             change: change,
-            areaNumber: operation.area.number);
+            areaNumber: operation.area.number, detailName: operation.batch.name);
       }
       operationsMap[operation.operation.id]?.quantity++;
 

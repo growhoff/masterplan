@@ -176,6 +176,10 @@ class StatisticsCubit extends Cubit<ChiefStatisticsState> {
 
       value.defectDetailsQuantity = await _chiefBatchTable
           .fetchDefectDetailsCount(batchId: value.batchId);
+
+      value.semisQuantity = value.detailsQuantity - value.defectDetailsQuantity;
+
+      value.missingSemisQuantity = value.detailsQuantity - value.semisQuantity;
     });
 
     stagesMap.forEach((key, value) {

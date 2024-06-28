@@ -10,9 +10,9 @@ import 'package:master_plan/domain/model/shifts_distribution.dart';
 import 'package:master_plan/domain/model/status.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/model/item_oper.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/model/page_item.dart';
-import '../../../../../../data/repositories/supabase/dto/chief_operation_dto.dart';
+// import '../../../../../../data/repositories/supabase/dto/chief_operation_dto.dart';
 import '../../../../../../data/repositories/supabase/service/chief_batch_table.dart';
-import '../../../../../../data/repositories/supabase/service/chief_operation_table.dart';
+// import '../../../../../../data/repositories/supabase/service/chief_operation_table.dart';
 import 'state.dart';
 import 'package:collection/collection.dart';
 import 'dart:async';
@@ -34,27 +34,27 @@ class CubitWork extends Cubit<StateWork> {
     });
     //стрим
     operatorOperationsTable.table.stream(primaryKey: ['id']).inFilter('machine_id', machineListId).listen((event) {
-      }).onData((data)async {
-          await getQuere(data);
-      });
+    }).onData((data)async {
+      await getQuere(data);
+    });
   }
 
-@override
+  @override
   Future<void> close() {
     periodicTimer.cancel();
     // operatorOperationsTable.
     return super.close();
   }
 
-    Future<void> getQuere (List<Map<String, dynamic>>? data)async{
+  Future<void> getQuere (List<Map<String, dynamic>>? data)async{
     List<int> listId = [];
     for (var element in data!) {if (element['status_id'] == 3 || element['status_id'] == 6 || element['status_id'] == 7 || element['status_id'] == 8) listId.add(element['id']);}
     final quere = await operatorOperationsTable.selectListIdOrder(listId);
     List<OperatorOperations> operatorOperationsList = [];
-      for (var operatorOper in quere) {
-        final model = OperatorOperationsDTO.fromMap(operatorOper);
-        operatorOperationsList.add(convertDto(model));
-      }
+    for (var operatorOper in quere) {
+      final model = OperatorOperationsDTO.fromMap(operatorOper);
+      operatorOperationsList.add(convertDto(model));
+    }
 
     //группировка по оптимальной партии
     List<ItemOperOp> listB = [];
@@ -85,7 +85,7 @@ class CubitWork extends Cubit<StateWork> {
     listB.sort((a, b) => a.order.compareTo(b.order));
 
     List<int> timeActive = [];
-    List<PageItem> pageData = [];   
+    List<PageItem> pageData = [];
     List<int> statusBtn = [];
     List<bool> listStartBtn = [];
     List<bool> listStartTime = [];
@@ -119,7 +119,7 @@ class CubitWork extends Cubit<StateWork> {
           final date2 = DateTime.now().toUtc();
           final difference = (date2.difference(date1)).inSeconds;
           timeActive.add(difference);
-      }
+        }
       }
       //выставление статусов относительно паузы
       if (operActive != null){
@@ -137,12 +137,12 @@ class CubitWork extends Cubit<StateWork> {
           listStartTime.add(true);
         }
       } else {
-          statusBtn.add(0);
-          listStartBtn.add(false);
-          listStartTime.add(false);
+        statusBtn.add(0);
+        listStartBtn.add(false);
+        listStartTime.add(false);
       }
       //
-      pageData.add(PageItem(machine: shiftsDistr.machine, operReadyList: listOperReady, operQueueList: listOperQueue, operActive: operActive));      
+      pageData.add(PageItem(machine: shiftsDistr.machine, operReadyList: listOperReady, operQueueList: listOperQueue, operActive: operActive));
     }
     emit(state.copyWith(pageData: pageData, timeActive: timeActive, statusBtn: statusBtn, listStartBtn: listStartTime, listStartTime: listStartTime));
   }
@@ -157,7 +157,7 @@ class CubitWork extends Cubit<StateWork> {
     getMonitoringIdAndSetMonitor(oper, userId);
     await operatorOperationsTable.updateTimeStopAndReady(oper.idPath, DateTime.now().millisecondsSinceEpoch, seconds, userId);
     setStateStart(false);
-    checkIsDetailReady(listChiefBatchId: oper.listChiefBatchId, listChiefOperationId: oper.listChiefOperationId);
+    // checkIsDetailReady(listChiefBatchId: oper.listChiefBatchId, listChiefOperationId: oper.listChiefOperationId);
   }
 
   Future<void> setBrak(ItemOperOp oper, int userId, int seconds, String comment, bool isStart)async{
@@ -174,7 +174,7 @@ class CubitWork extends Cubit<StateWork> {
       final model1 = MonitoringMachineDTO.fromMap(element);
       if (model1.timeStop == 0) model = model1;
     }
-    
+
     final dateNow = DateTime.now();
     bool change1 = (model.changeId == 1) && (dateNow.hour >= 8) && (dateNow.hour <= 20) && (dateNow.minute == 0);
     // bool change2 = (model.changeId == 2) && (dateNow.hour > 20) && (dateNow.hour <= 0) && (dateNow.minute == 0);
@@ -200,22 +200,22 @@ class CubitWork extends Cubit<StateWork> {
       if (change1){
         print('change1 nextDay');
 
-        } else {
+      } else {
         print('change2 nextDay');
         //запись окончания
         await monitorTable.updateId(model.id, DateTime(dateNow.year, dateNow.month, dateNow.day - dayDiff, 20, 0, 0).millisecondsSinceEpoch);
         //
         for (var i = 0; i < dayDiff; i++) {
           //начать вторую смену и закончить
-          
+
         }
         //запись во второй смене со следующим днём
         await monitorTable.insert(MonitoringMachineDTO(id: 0, timeStart: DateTime(dateNow.year, dateNow.month, dateNow.day - dayDiff, 20, 0, 1).millisecondsSinceEpoch, timeStop: 0, statusMachineId: 1, userId: userId, machineId: oper.machineId, batchId: oper.list.first.batch.id, comment: 'Перенос на сделующий день', date: DateTime(dateNow.year, dateNow.month, dateNow.day), changeId: 2, operationId: oper.idPath));
-      
+
       }
-      
+
     }
-    setBtnStatus(1); 
+    setBtnStatus(1);
   }
 
   Future<void> setStatusOperationBrak(List<int> listId, int userId, int seconds) async{
@@ -224,26 +224,26 @@ class CubitWork extends Cubit<StateWork> {
     List<int> listId0 = [];
     for (var id in listId) {
       if (count == 0) {listId0.add(id);}
-        else{
-          listId5.add(id);
-          count --;
-        }
+      else{
+        listId5.add(id);
+        count --;
+      }
     }
     await operatorOperationsTable.updateTimeStopAndReadyCount(listId0, listId5, DateTime.now().millisecondsSinceEpoch, seconds, userId);
   }
 
   Future<void> setStatusBatch(List<OperatorOperations> list)async{
     //меняем статус по id в брак
-        final chiefBatchTable = ChiefBatchTable();
-          List<OperatorOperations> chOperId = list.getRange(0, state.count).toList();
-          List<int> chId = [];
-          for (var e in chOperId) {
-            chId.add(e.chiefBatchId!);
-          }
-        await chiefBatchTable.updateChiefBatchStatusToDefectList(chiefBatchId: chId);
+    final chiefBatchTable = ChiefBatchTable();
+    List<OperatorOperations> chOperId = list.getRange(0, state.count).toList();
+    List<int> chId = [];
+    for (var e in chOperId) {
+      chId.add(e.chiefBatchId!);
+    }
+    await chiefBatchTable.updateChiefBatchStatusToDefectList(chiefBatchId: chId);
   }
 
-
+/*
   // проверка на готовность детали
   Future<void> checkIsDetailReady({required List<int> listChiefBatchId, required List<int> listChiefOperationId})async
   {
@@ -263,7 +263,7 @@ class CubitWork extends Cubit<StateWork> {
         if (model.chiefBatchId != chifBatch){
         listLast.add(ChiefOperationDto.fromMap(fetchedLastOperationInBatch[i-1]));
         chifBatch = model.chiefBatchId;
-      } 
+      }
       }
 
     }
@@ -277,10 +277,10 @@ class CubitWork extends Cubit<StateWork> {
     chiefBatchTable.updateChiefBatchStatusToReadyList(listChiefBatchId: listChiefBatchLast);
     // если id последней операции в детали равен chiefOperationId у операции из operator_operations, то меняет статус детали на готово(2)
     // if (lastOperationInBatchDto.id == chiefOperationId){
-      
+
     // }
   }
-
+*/
 
   Future<void> setStartMonitor(int status, int userid, String? comment, int idPath) async{
     if (!state.listStartBtn[state.activePage]){
@@ -295,7 +295,7 @@ class CubitWork extends Cubit<StateWork> {
 
   Future<void> setStopMonitor(int status, int id) async{
     await monitorTable.updateId(id, DateTime.now().millisecondsSinceEpoch);
-    setBtnStatus(status); 
+    setBtnStatus(status);
   }
 
   void setError(int userId, int seconds, String comment, bool isStart, int operId){
@@ -311,7 +311,7 @@ class CubitWork extends Cubit<StateWork> {
     } else {
       await monitorTable.updateId(state.monitorId!, DateTime.now().millisecondsSinceEpoch);
     }
-    setBtnStatus(status); 
+    setBtnStatus(status);
   }
 
 
@@ -382,14 +382,14 @@ class CubitWork extends Cubit<StateWork> {
     );
   }
 
-    Future<void> toggleBrak(String countStr)async{
-      int count = int.parse(countStr);
-      int length = state.pageData[state.activePage].operActive!.list.length;
-      if (count > length) {count = length;}
-      if (count < 0) {count = 0;}
-      emit(state.copyWith(count: count));
-    }
+  Future<void> toggleBrak(String countStr)async{
+    int count = int.parse(countStr);
+    int length = state.pageData[state.activePage].operActive!.list.length;
+    if (count > length) {count = length;}
+    if (count < 0) {count = 0;}
+    emit(state.copyWith(count: count));
+  }
 
 
-  
+
 }

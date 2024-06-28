@@ -76,7 +76,7 @@ class MonitoringMachineTable extends SupabaseTable {
         filters += 'id.eq.${listId[i]},';
       }
     }
-    return table.select('*, z_status_machine(*), z_user($userSelect), z_machine(*), z_batch(*)').or(filters).eq('date', date);
+    return table.select('*, z_status_machine(*), z_user($userSelect), z_machine(*), z_batch(*)').or(filters).eq('date', date).order('time_start', ascending: true);
   }
 
   @override

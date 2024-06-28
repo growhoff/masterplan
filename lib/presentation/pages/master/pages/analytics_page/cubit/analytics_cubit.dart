@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-// import 'package:intl/intl.dart';
+import 'package:intl/intl.dart';
 import 'package:master_plan/data/repositories/local/service/excel_service.dart';
 import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
@@ -57,10 +57,10 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
       final operation = convertOperationDtoToModel(dto: operationDto);
 
       if (timeStart != null && timeEnd != null) {
-        print('start: ${timeStart}  operation: ${operation.timeFirstStart} end: ${timeEnd}');
+        print(
+            'start: ${timeStart}  operation: ${operation.timeFirstStart} end: ${timeEnd}');
         if (operation.timeFirstStart >= timeStart &&
             operation.timeFirstStart <= timeEnd) {
-
           operatorOperationsList.add(operation);
         }
       } else {
@@ -87,7 +87,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
           code: value.first.operation.code,
           detailNumber: value.first.batch.number,
           operationNumber: value.first.operation.number,
-          name: value.first.operation.name,
+          operationName: value.first.operation.name,
           timePlan: TimeConverter.instance
               .convertTimeFromMinutes(value.first.timeplan),
           timeFact: TimeConverter.instance
@@ -97,7 +97,8 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
           fio: value.first.user?.fio ?? '',
           date: date,
           change: change,
-          areaNumber: value.first.area.number);
+          areaNumber: value.first.area.number,
+          detailName: value.first.batch.name);
 
       for (var operation in value) {
         analyticsOperation.quantity++;
@@ -124,7 +125,6 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
       start = dateTimeRange.start;
       end = dateTimeRange.end;
     }
-
 
     await fetchReadyOperations(
         timeStart: start.millisecondsSinceEpoch,

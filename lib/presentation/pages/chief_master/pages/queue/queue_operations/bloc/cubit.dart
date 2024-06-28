@@ -84,7 +84,7 @@ class CubitOperatQueueMasterChM extends Cubit<StateOperatQueueMasterChM> {
   }
 
     DistribItem convertToDistrib(List<OperatorOperationsDTO> operOperat) {
-      int timeSH = operOperat.first.operation.timeSH;
+      int timeSH = operOperat.first.operation.timeSH ?? 0;
       int timePZ = operOperat.first.operation.timepz;
       List<OperatorOperations> list = [];
       for (var element in operOperat) {

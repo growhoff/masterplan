@@ -335,7 +335,6 @@ class ExcelService {
     chiefBatchIdsList =
         await _chiefBatchTable.bulkInsertFromList(dtosList: chiefBatchDtosList);
 
-
     for (int chiefBatchId in chiefBatchIdsList) {
       for (var operation in chiefOperationsList) {
         chiefOperationDtosList.add(ChiefOperationDto(
@@ -828,7 +827,11 @@ class ExcelService {
           case 6:
             cell.value =
                 TextCellValue('${stagesList[stageRowIndex].detailsQuantity}');
-
+          case 7:
+            cell.value = IntCellValue(stagesList[stageRowIndex].semisQuantity);
+          case 8:
+            cell.value =
+                IntCellValue(stagesList[stageRowIndex].missingSemisQuantity);
           case 9:
             cell.value =
                 IntCellValue(stagesList[stageRowIndex].readyDetailsQuantity);
@@ -1004,11 +1007,11 @@ class ExcelService {
                 TextCellValue(analyticsOperationsList[operationRowIndex].code);
           case 1:
             cell.value = TextCellValue(
-                analyticsOperationsList[operationRowIndex].detailNumber);
+                '${analyticsOperationsList[operationRowIndex].detailNumber} ${analyticsOperationsList[operationRowIndex].detailName}');
 
           case 2:
             cell.value = TextCellValue(
-                '${analyticsOperationsList[operationRowIndex].operationNumber} ${analyticsOperationsList[operationRowIndex].name}');
+                '${analyticsOperationsList[operationRowIndex].operationNumber} ${analyticsOperationsList[operationRowIndex].operationName}');
           case 3:
             cell.value = TextCellValue('');
           case 4:

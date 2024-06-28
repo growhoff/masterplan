@@ -22,6 +22,9 @@ class ChiefStageForReportModel {
   int onCheckOperationQuantity = 0;
   int onMachinesOperationsQuantity = 0;
 
+  int semisQuantity = 0;
+  int missingSemisQuantity = 0;
+
 
   List<ChiefOperationForReportModel> operationsList = [];
 

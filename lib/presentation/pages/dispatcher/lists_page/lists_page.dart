@@ -31,7 +31,7 @@ class _DispatcherListsPageViewState extends State<DispatcherListsPageView> {
                 children: [
                   ElevatedButton(
                       onPressed: () => Navigator.pushNamed(
-                          context, '/chiefMachinesListPage'),
+                          context, '/dispatcherUnitsListPage'),
                       child: const Text('Список цехов')),
                   const SizedBox(height: 8),
                   ElevatedButton(

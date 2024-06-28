@@ -46,7 +46,11 @@ class ChiefsListCubit extends Cubit<ChiefsListState> {
           id: unitDto.id,
           name: unitDto.name,
           number: unitDto.number,
-          companyId: unitDto.companyId);
+          companyId: unitDto.companyId,
+        areasQuantity: unitDto.areasQuantity,
+        machinesQuantity: unitDto.machinesQuantity,
+        operatorsQuantity: unitDto.operatorsQuantity,
+        supportStaffQuantity: unitDto.supportStaffQuantity,);
       unitsList.add(unit);
     }
 
