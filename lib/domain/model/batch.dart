@@ -1,0 +1,38 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+
+class Batch {
+  final int id;
+  final String number;
+  final String name;
+  final int count;
+  final String code;
+  final String technology;
+  final int order;
+  final bool isready;
+  final int? orderId;
+  final int? batchArchiveId;
+
+  Batch({
+    required this.id,
+    required this.number,
+    required this.name,
+    required this.count,
+    required this.code,
+    required this.technology,
+    required this.order,
+    required this.isready,
+    required this.orderId,
+    this.batchArchiveId,
+  });
+
+  static final empty =  Batch(
+      id: 0,
+      number: '',
+      name: '',
+      count: 0,
+      code: '',
+      technology: '',
+      order: 0,
+      isready: false,
+      orderId: 0);
+}
