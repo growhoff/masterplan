@@ -26,7 +26,7 @@ class ElementBarQueue extends StatelessWidget {
               itemCount: state.listMachine!.length),
           ),
             const SizedBox(height: 18),
-            ContetnQueue(batchListQueue: state.listMachine![state.activePage].listOper, machine: state.listMachine![state.activePage].machine, timeWorking: state.listMachine![state.activePage].time)
+            ContetnQueue(itemMachine: state.listMachine![state.activePage])
         ],
       )
       : const Center(child: CircularProgressIndicator()),

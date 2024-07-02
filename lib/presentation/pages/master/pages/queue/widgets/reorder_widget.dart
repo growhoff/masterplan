@@ -1,6 +1,8 @@
+import 'package:master_plan/domain/model/otp_path_operations.dart';
+import 'package:master_plan/presentation/pages/master/bloc/cubit.dart';
 import 'package:master_plan/theme/theme.dart';
 
-import '../../queue/model/item_oper.dart';
+// import '../../queue/model/item_oper.dart';
 import '../../queue/widgets/reorderable_icon_widget.dart';
 import '../../tableInfo/table_info_page.dart';
 import '../bloc/cubit.dart';
@@ -10,7 +12,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Reorder extends StatelessWidget {
   const Reorder(this.list, {super.key});
-  final List<ItemOper> list;
+  final List<OptPathOperations> list;
   @override
   Widget build(BuildContext context) {
     return (list.isEmpty) 
@@ -50,6 +52,8 @@ class Reorder extends StatelessWidget {
           if (newIndex > oldIndex) {newIndex = newIndex - 1;}
           final element  = list.removeAt(oldIndex);
           list.insert(newIndex, element);
+          //save
+          context.read<CubitMaster>().setList(list);
         }
       )
       ],

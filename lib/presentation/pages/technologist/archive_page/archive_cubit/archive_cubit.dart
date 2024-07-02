@@ -120,7 +120,8 @@ class ArchiveCubit extends Cubit<ArchiveState> {
   Future<void> loadDetailToArchive() async {
     emit(state.copyWith(status: ArchiveStatus.loading));
     try {
-      await _excelService.loadDetailToArchive();
+      ///надо переделывать
+      //await _excelService.loadDetailToArchive();
       fetchBatches();
     } catch (e) {}
   }

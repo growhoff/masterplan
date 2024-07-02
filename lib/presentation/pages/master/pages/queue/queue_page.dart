@@ -21,11 +21,38 @@ class QueuePageMasterContent extends StatelessWidget {
   const QueuePageMasterContent({super.key});
   @override
   Widget build(BuildContext context) {
-    return const SafeArea(
-      child: SingleChildScrollView(
-        child: Padding(
-            padding:  EdgeInsets.all(16),
-            child: ElementBarQueue()),
+    return WillPopScope(
+      onWillPop: () async {
+        final value = await showDialog<bool>(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              content: const Text('Вы действтельно хотите выйти?'),
+              actions: <Widget>[
+                ElevatedButton(
+                  child: const Text('Нет'),
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                ),
+                ElevatedButton(
+                  child: const Text('Да, выйти'),
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                ),
+              ],
+            );
+          }
+        );
+
+        return value == true;},
+      child: const SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+              padding:  EdgeInsets.all(16),
+              child: ElementBarQueue()),
+        ),
       ),
     );
   }

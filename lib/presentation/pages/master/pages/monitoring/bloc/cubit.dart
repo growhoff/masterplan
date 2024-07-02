@@ -18,7 +18,8 @@ class CubitMonitoring extends Cubit<StateMonitoring> {
   final List<int> machineIdList;
   final tableMonitoring = MonitoringMachineTable();
   CubitMonitoring(this.machineList, this.machineIdList): super(StateMonitoring(days: DateTime.now())) {
-    test();
+    // test();
+    
     tableMonitoring.table
         .stream(primaryKey: ['id'])
         .inFilter('machine_id', machineIdList)

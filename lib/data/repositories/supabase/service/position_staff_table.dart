@@ -30,20 +30,12 @@ class PositionStaffTable extends SupabaseTable {
   @override
   Future<void> insert(Dto dto) async {
     if (dto is PositionStaffDTO) {
-      if (dto.unitId == 0) {
-        await table.insert({
-          'position_id': dto.positionId,
-          'staff_id': dto.staffId,
-          'area_id': dto.areaId
-        });
-      } else {
-        await table.insert({
-          'position_id': dto.positionId,
-          'staff_id': dto.staffId,
-          'area_id': dto.areaId,
-          'unit_id': dto.unitId
-        });
-      }
+      await table.insert({
+        'position_id': dto.positionId,
+        'staff_id': dto.staffId,
+        'area_id': dto.areaId,
+        'unit_id': dto.unitId
+      });
     }
   }
 
@@ -51,6 +43,13 @@ class PositionStaffTable extends SupabaseTable {
   Future<List<Map<String, dynamic>>> select() async {
     return await table.select(
         '*,z_unit(*), z_area(*),z_position(*),z_staff(*, z_user(*, z_position(*)))');
+  }
+
+  Future<List<Map<String, dynamic>>> selectStaffByUnitsIdList(
+      List<int> unitsIdList) async {
+    return await table
+        .select('*,z_staff(*,z_user(*, z_position(*))), z_area!inner(*), z_position(*)')
+        .inFilter('z_area.unit_id', unitsIdList);
   }
 
   Future<List<Map<String, dynamic>>> selectChiefOnUnit(int unitId) async {
@@ -65,7 +64,7 @@ class PositionStaffTable extends SupabaseTable {
   Future<List<Map<String, dynamic>>> selectAllChiefs() async {
     return await table
         .select(
-        '*, z_area(*),z_position(*),z_staff!inner(*, z_user!inner(*, z_position(*)))')
+            '*, z_area(*),z_position(*),z_staff!inner(*, z_user!inner(*, z_position(*)))')
         .eq('position_id', 2)
         .eq('z_staff.z_user.company_id', _companyId);
   }
@@ -77,7 +76,6 @@ class PositionStaffTable extends SupabaseTable {
             '*,z_unit(*), z_position(*),z_staff(*, z_user(*, z_position(*))), z_area(*)')
         .eq('staff_id', staffId);
   }
-
 
   Future<List<Map<String, dynamic>>> selectMastersOnArea(
       {required int areaId}) async {

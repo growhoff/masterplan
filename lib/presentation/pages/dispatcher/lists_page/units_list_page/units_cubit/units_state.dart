@@ -8,13 +8,13 @@ final class UnitsState extends Equatable {
       this.status = UnitsStatus.initial,
       this.chiefsList = const []});
 
-  final List<Unit> unitsList;
+  final List<UnitModel> unitsList;
   final UnitsStatus status;
   final List<Staff> chiefsList;
 
   UnitsState copyWith({
     UnitsStatus? status,
-    List<Unit>? unitsList,
+    List<UnitModel>? unitsList,
     List<Staff>? chiefsList,
   }) {
     return UnitsState(

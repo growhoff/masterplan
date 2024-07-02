@@ -19,7 +19,8 @@ class StageTable extends SupabaseTable {
         'number': dto.number,
         'name': dto.name,
         'area_id': 1,
-        'batch_id': dto.batchId
+        'batch_id': dto.batchId,
+        'batch_archive_id': dto.batchArchiveId
       }).select('id');
       return stage[0]['id'];
     }

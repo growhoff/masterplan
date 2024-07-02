@@ -8,9 +8,8 @@ import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_mac
 import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_machines_list_page/chief_machines_list_page.dart';
 import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_staff_list_page/chief_staff_add_page.dart';
 import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_staff_list_page/chief_staff_edit_page.dart';
-import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_staff_list_page/chief_staff_list_page.dart';
-import 'package:master_plan/presentation/pages/chief/statistics_page/operations_statistics_page.dart';
-import 'package:master_plan/presentation/pages/chief/statistics_page/statistics_page.dart';
+// import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_staff_list_page/chief_staff_list_page.dart';
+import 'package:master_plan/presentation/pages/chief/chief_analytics_page/analytics_page.dart';
 import 'package:master_plan/presentation/pages/chief/widgets/custom_navbar.dart';
 import 'package:master_plan/presentation/pages/dispatcher/lists_page/chiefs_list_page/add_chief_page.dart';
 import 'package:master_plan/presentation/pages/dispatcher/lists_page/chiefs_list_page/edit_chief_page.dart';
@@ -26,6 +25,7 @@ import '../../theme/theme.dart';
 import '../pages/chief/chief_lists_pages/chief_staff_list_page/masters_list_page.dart';
 import '../pages/chief/chief_lists_pages/chief_staff_list_page/operators_list_page.dart';
 import '../pages/chief/chief_lists_pages/chief_staff_list_page/selection_staff_position_page.dart';
+import '../pages/chief/chief_analytics_page/operations_statistics_page.dart';
 import '../pages/chief_master/chief_maste_page.dart';
 
 import '../pages/dispatcher/lists_page/chiefs_list_page/chiefs_list_page.dart';
@@ -82,7 +82,7 @@ class MyApp extends StatelessWidget {
           '/chiefOperationsStatisticsPage': (BuildContext context) =>
               const OperationsStatisticsPage(),
           '/chiefStageReport': (BuildContext context) =>
-              const ChiefStatisticsPage(),
+              const ChiefAnalyticsPage(),
           '/dispatcherPage': (BuildContext context) =>
               const DispatcherCustomNavBar(),
           '/technologistPage': (BuildContext context) =>

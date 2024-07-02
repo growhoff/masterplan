@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/presentation/pages/dispatcher/lists_page/units_list_page/unit_model.dart';
 import 'package:master_plan/presentation/pages/dispatcher/lists_page/units_list_page/units_cubit/units_cubit.dart';
 
 import '../../../../../domain/model/staff.dart';
@@ -12,7 +13,7 @@ class EditUnitPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final unit = ModalRoute.of(context)!.settings.arguments as Unit;
+    final unit = ModalRoute.of(context)!.settings.arguments as UnitModel;
 
     return BlocProvider(
       create: (context) => UnitsCubit(),
@@ -24,7 +25,7 @@ class EditUnitPage extends StatelessWidget {
 class EditUnitPageView extends StatefulWidget {
   const EditUnitPageView({required this.unit, super.key});
 
-  final Unit unit;
+  final UnitModel unit;
 
   @override
   State<EditUnitPageView> createState() => _EditUnitPageViewState();
@@ -39,7 +40,7 @@ class _EditUnitPageViewState extends State<EditUnitPageView> {
 
     context
         .read<UnitsCubit>()
-        .fetchChiefs(selectedStaffId: widget.unit.chief?.id ?? 0);
+        .fetchChiefs(selectedStaffId: widget.unit.chiefId ?? 0);
     super.initState();
   }
 
@@ -64,7 +65,7 @@ class _EditUnitPageViewState extends State<EditUnitPageView> {
                     const Text('Номер цеха', style: TextStyle(fontSize: 18)),
                     const SizedBox(height: 5),
                     TextField(
-                      decoration: InputDecoration(hintText: widget.unit.number),
+                      decoration: InputDecoration(hintText: widget.unit.unitNumber),
                       controller:
                           context.read<UnitsCubit>().unitNumberController,
                     ),
@@ -72,7 +73,7 @@ class _EditUnitPageViewState extends State<EditUnitPageView> {
                     const Text('Название', style: TextStyle(fontSize: 18)),
                     const SizedBox(height: 5),
                     TextField(
-                      decoration: InputDecoration(hintText: widget.unit.name),
+                      decoration: InputDecoration(hintText: widget.unit.unitName),
                       controller: context.read<UnitsCubit>().unitNameController,
                     ),
                     const SizedBox(

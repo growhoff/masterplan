@@ -149,20 +149,35 @@ class _UnitsListPageViewState extends State<UnitsListPageView> {
                           state.unitsList.length,
                           (index) => TableRow(children: [
                                 UnitsTableRowElement(
-                                  '${state.unitsList[index].number}',
+                                  deleteUnit: () => setState(() {
+                                    context
+                                        .read<UnitsCubit>()
+                                        .deleteUnit(state.unitsList[index]);
+                                  }),
+                                  '${state.unitsList[index].unitNumber}',
                                   unit: state.unitsList[index],
                                   fetchUnits: () => setState(() {
                                     context.read<UnitsCubit>().fetchUnits();
                                   }),
                                 ),
                                 UnitsTableRowElement(
-                                  '${state.unitsList[index].name}',
+                                  deleteUnit: () => setState(() {
+                                    context
+                                        .read<UnitsCubit>()
+                                        .deleteUnit(state.unitsList[index]);
+                                  }),
+                                  '${state.unitsList[index].unitName}',
                                   unit: state.unitsList[index],
                                   fetchUnits: () => setState(() {
                                     context.read<UnitsCubit>().fetchUnits();
                                   }),
                                 ),
                                 UnitsTableRowElement(
+                                  deleteUnit: () => setState(() {
+                                    context
+                                        .read<UnitsCubit>()
+                                        .deleteUnit(state.unitsList[index]);
+                                  }),
                                   '${state.unitsList[index].areasQuantity}',
                                   unit: state.unitsList[index],
                                   fetchUnits: () => setState(() {
@@ -170,6 +185,11 @@ class _UnitsListPageViewState extends State<UnitsListPageView> {
                                   }),
                                 ),
                                 UnitsTableRowElement(
+                                  deleteUnit: () => setState(() {
+                                    context
+                                        .read<UnitsCubit>()
+                                        .deleteUnit(state.unitsList[index]);
+                                  }),
                                   '${state.unitsList[index].operatorsQuantity}',
                                   unit: state.unitsList[index],
                                   fetchUnits: () => setState(() {
@@ -177,6 +197,11 @@ class _UnitsListPageViewState extends State<UnitsListPageView> {
                                   }),
                                 ),
                                 UnitsTableRowElement(
+                                  deleteUnit: () => setState(() {
+                                    context
+                                        .read<UnitsCubit>()
+                                        .deleteUnit(state.unitsList[index]);
+                                  }),
                                   '${state.unitsList[index].machinesQuantity}',
                                   unit: state.unitsList[index],
                                   fetchUnits: () => setState(() {
@@ -184,6 +209,11 @@ class _UnitsListPageViewState extends State<UnitsListPageView> {
                                   }),
                                 ),
                                 UnitsTableRowElement(
+                                  deleteUnit: () => setState(() {
+                                    context
+                                        .read<UnitsCubit>()
+                                        .deleteUnit(state.unitsList[index]);
+                                  }),
                                   '${state.unitsList[index].supportStaffQuantity}',
                                   unit: state.unitsList[index],
                                   fetchUnits: () => setState(() {
@@ -191,10 +221,17 @@ class _UnitsListPageViewState extends State<UnitsListPageView> {
                                   }),
                                 ),
                                 UnitsTableRowElement(
-                                  '${state.unitsList[index].chief?.user.fio}',
+                                  '${state.unitsList[index].chiefFIO}',
                                   unit: state.unitsList[index],
-                                  fetchUnits: () => setState(() {
-                                    context.read<UnitsCubit>().fetchUnits();
+                                  fetchUnits: () => setState(
+                                    () {
+                                      context.read<UnitsCubit>().fetchUnits();
+                                    },
+                                  ),
+                                  deleteUnit: () => setState(() {
+                                    context
+                                        .read<UnitsCubit>()
+                                        .deleteUnit(state.unitsList[index]);
                                   }),
                                 ),
                               ]))

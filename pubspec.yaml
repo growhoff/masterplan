@@ -55,6 +55,9 @@ dependencies:
   open_filex: ^4.4.0
   url_launcher: ^6.1.14
   # gpassword: ^0.0.1
+  # collection: ^1.18.0
+  # supabase_init:
+  #     path: D:\Flutter project\supabase_init
 
 dev_dependencies:
   json_serializable: ^6.7.1

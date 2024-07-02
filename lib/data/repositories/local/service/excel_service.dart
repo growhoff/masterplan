@@ -14,8 +14,8 @@ import 'package:master_plan/presentation/pages/master/pages/analytics_page/analy
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../../../../presentation/pages/chief/statistics_page/chief_stage_report_model.dart';
-import '../../../../presentation/pages/chief/statistics_page/statistics_stage_model.dart';
+import '../../../../presentation/pages/chief/chief_analytics_page/chief_stage_report_model.dart';
+import '../../../../presentation/pages/chief/chief_analytics_page/statistics_stage_model.dart';
 import '../../supabase/dto/batch_dto.dart';
 import '../../supabase/dto/chief_operation_dto.dart';
 import '../../supabase/dto/operation_dto.dart';
@@ -63,7 +63,7 @@ class ExcelService {
     'Общее кол-во деталей',
     'Общее кол-во полуфабрикатов в работе (в этапе)',
     'Недостающие заготовки',
-    'кол-во выпыполненных деталей (в этапе)',
+    'кол-во выполненных деталей (в этапе)',
     '% выполненных деталей',
     'Кол-во бракованных деталей (в этапе)',
     'Кол-во выполненных операций (в этапе)',
@@ -79,7 +79,7 @@ class ExcelService {
     'Код детали',
     'Наименование операции',
     '№ оп.',
-    'Кол-во выпыполненных деталей',
+    'Кол-во выполненных деталей',
     '% выполнено',
     'В работе',
     'Брак',
@@ -169,7 +169,8 @@ class ExcelService {
             name: stageName ?? '',
             isdistributed: false,
             areaId: 0,
-            batchId: batchId));
+            batchId: batchId,
+            batchArchiveId: batchArchiveId));
 
         print('инсерт stage: $stageNumber,  $stageName, $stageId');
 
@@ -247,7 +248,8 @@ class ExcelService {
                 name: stageName ?? '',
                 isdistributed: false,
                 areaId: 0,
-                batchId: batchId));
+                batchId: batchId,
+                batchArchiveId: batchArchiveId));
 
             print('инсерт этап $stageNumber, $stageName, $stageId');
           }
@@ -409,12 +411,13 @@ class ExcelService {
         String? stageName = excel.tables[table]!.rows[1][5]?.value.toString();
 
         int stageId = await _stageTable.insert(StageDTO(
-            id: 0,
-            number: stageNumber ?? '',
-            name: stageName ?? '',
-            isdistributed: false,
-            areaId: 0,
-            batchId: batchId));
+          id: 0,
+          number: stageNumber ?? '',
+          name: stageName ?? '',
+          isdistributed: false,
+          areaId: 0,
+          batchId: batchId,
+        ));
 
         print('инсерт stage: $stageNumber,  $stageName, $stageId');
 
@@ -947,8 +950,10 @@ class ExcelService {
               cell.value = IntCellValue(operation.readyPercent);
 
             case 9:
-              cell.value = IntCellValue(
-                  operation.distributed + operation.onDistribution);
+              cell.value = IntCellValue(operation.distributed +
+                  operation.onDistribution +
+                  operation.onMachinesQuantity +
+                  operation.onCheckQuantity);
             case 10:
               cell.value = IntCellValue(operation.defectQuantity);
             case 11:

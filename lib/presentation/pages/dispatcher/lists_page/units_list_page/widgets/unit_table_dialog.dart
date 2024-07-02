@@ -2,16 +2,17 @@ import 'package:flutter/material.dart';
 
 import '../../../../../../domain/model/area.dart';
 import '../../../../../../domain/model/unit.dart';
+import '../unit_model.dart';
 
 class UnitTableDialog extends StatefulWidget {
   const UnitTableDialog(
       {required this.unit,
       required this.fetchUnits,
-      required this.deleteRegion,
+      required this.deleteUnit,
       super.key});
 
-  final Unit unit;
-  final VoidCallback deleteRegion;
+  final UnitModel unit;
+  final VoidCallback deleteUnit;
   final VoidCallback fetchUnits;
 
   @override
@@ -23,7 +24,7 @@ class _UnitTableDialogState extends State<UnitTableDialog> {
   Widget build(BuildContext context) {
     return SimpleDialog(
       contentPadding: const EdgeInsets.all(5),
-      title: Text('${widget.unit.number} ${widget.unit.name}'),
+      title: Text('${widget.unit.unitNumber} ${widget.unit.unitName}'),
       children: [
         const SizedBox(
           height: 5,
@@ -54,7 +55,7 @@ class _UnitTableDialogState extends State<UnitTableDialog> {
         ),
         SimpleDialogOption(
           onPressed: () {
-            widget.deleteRegion();
+            widget.deleteUnit();
             Navigator.pop(context, false);
           },
           child: const Row(

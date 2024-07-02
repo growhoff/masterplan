@@ -2,9 +2,9 @@ import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/distribution_stage_dto.dart';
 import 'package:master_plan/domain/model/chief_batch.dart';
 import 'package:master_plan/domain/model/stage.dart';
-import 'package:master_plan/domain/model/user.dart';
+// import 'package:master_plan/domain/model/user.dart';
 
-import 'batch.dart';
+// import 'batch.dart';
 
 class DistributionStage {
   DistributionStage({

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/domain/model/order.dart';
 
 import 'package:master_plan/presentation/pages/dispatcher/orders_page/orders_cubit/orders_cubit.dart';
+import 'package:master_plan/presentation/pages/dispatcher/orders_page/widgets/priority_circle.dart';
 
 import '../../../../domain/model/batch.dart';
 
@@ -218,24 +219,28 @@ class _AddOrderPageViewState extends State<AddOrderPageView> {
                           const SizedBox(
                             width: 20,
                           ),
-                          DropdownButton(
-                              value:
-                                  context.read<OrdersCubit>().selectedPriority,
-                              items: context
-                                  .read<OrdersCubit>()
-                                  .prioritiesList
-                                  .map((int priority) => DropdownMenuItem(
-                                      value: priority,
-                                      child: Text(
-                                        '$priority',
-                                        style: TextStyle(fontSize: 20),
-                                      )))
-                                  .toList(),
-                              onChanged: (priority) => setState(() {
-                                    context
-                                        .read<OrdersCubit>()
-                                        .selectedPriority = priority ?? 1;
-                                  }))
+                          Center(
+                            child: DropdownButton(
+                                isDense: true,
+                                value: context
+                                    .read<OrdersCubit>()
+                                    .selectedPriority,
+                                items: context
+                                    .read<OrdersCubit>()
+                                    .prioritiesList
+                                    .map((int priority) => DropdownMenuItem(
+                                        value: priority,
+                                        child: PriorityCircle(
+                                          priority,
+                                          size: 20,
+                                        )))
+                                    .toList(),
+                                onChanged: (priority) => setState(() {
+                                      context
+                                          .read<OrdersCubit>()
+                                          .selectedPriority = priority ?? 1;
+                                    })),
+                          )
                         ],
                       ),
                     ),

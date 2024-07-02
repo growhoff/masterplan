@@ -5,6 +5,7 @@ import 'package:master_plan/presentation/app/bloc/state.dart';
 import 'package:master_plan/presentation/pages/master/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/master/bloc/state.dart';
 import 'package:master_plan/presentation/pages/master/data/data_master.dart';
+import 'package:master_plan/presentation/pages/master/widgets/dialog_version.dart';
 
 class NavbarMaster extends StatelessWidget {
   const NavbarMaster({super.key});
@@ -32,7 +33,21 @@ class NavbarMaster extends StatelessWidget {
             selectedIndex: stateMaster.activePage,
             height: 50,
             destinations: DataMaster.listPage.map((e) => NavigationDestination(icon: Icon(e.icon, color: Colors.black),label: e.title,)).toList(),
-            onDestinationSelected: (value) => context.read<CubitMaster>().setPage(value),
+            onDestinationSelected: (value) {
+              bool check = context.read<CubitMaster>().checkDialog(value);
+              if (check) {
+                showDialog(
+                  context: context, 
+                  builder: (BuildContext innerContext) {
+                    return BlocProvider.value(value: context.watch<CubitMaster>(),
+                    child: Material(
+                        child: BlocBuilder<CubitMaster, StateMaster>(builder: (context, state) => const DialogSaver()),
+                      ),
+                    );
+                  });
+              }
+              else {context.read<CubitMaster>().setPage(value);}
+              }
           ),
         ),
       ),

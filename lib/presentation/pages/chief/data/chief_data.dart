@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:master_plan/presentation/pages/chief/chief_analytics_page/analytics_page.dart';
 import 'package:master_plan/presentation/pages/chief/monitoring/monitoring_page.dart';
-
 
 import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_lists_page.dart';
 import 'package:master_plan/presentation/pages/chief/queue_operations/queue_operations_page.dart';
 
-
 import '../model/tab_bar_model.dart';
 
 import '../operations_distribution_page/chief_distribution_page.dart';
-import '../statistics_page/choose_report_page.dart';
+import '../reports_page/choose_report_page.dart';
 
 abstract class DataChief {
   static List<TabBarModel> listPage = [
@@ -28,15 +27,20 @@ abstract class DataChief {
         actions: [],
         page: const QueueOperatPageMasterChief(),
         icon: Icons.queue),
-   TabBarModel(
+    TabBarModel(
         title: 'Мониторинг',
         actions: [],
         page: const MonitoringPageChief(),
         icon: Icons.camera_alt_outlined),
     TabBarModel(
+        title: 'Очередь этапов',
+        actions: [],
+        page: const ChiefAnalyticsPage(),
+        icon: Icons.auto_awesome_mosaic_rounded),
+    TabBarModel(
         title: 'Аналитика',
         actions: [],
         page: const ChooseReportPage(),
-        icon: Icons.stacked_bar_chart_sharp),
+        icon: Icons.analytics_rounded),
   ];
 }

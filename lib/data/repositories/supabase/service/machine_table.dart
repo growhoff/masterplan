@@ -65,7 +65,8 @@ class MachineTable extends SupabaseTable {
     if (dto is MachineDTO) {
       await table.update({
         'name': dto.name,
-        'inventory_number': dto.inventoryNumber
+        'inventory_number': dto.inventoryNumber,
+        'area_id': dto.areaId
       }).eq('id', id);
     }
   }

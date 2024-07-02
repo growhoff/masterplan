@@ -1,10 +1,8 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../domain/model/machine.dart';
 import 'chief_machine_cubit/chief_machine_cubit.dart';
 import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_machines_list_page/chief_machine_list_widgets/edit_page_arguments.dart';
-
 
 class ChiefMachineEditPage extends StatelessWidget {
   const ChiefMachineEditPage({super.key});
@@ -40,7 +38,12 @@ class _ChiefMachineEditPageViewState extends State<ChiefMachineEditPageView> {
   @override
   void initState() {
     super.initState();
-    context.read<ChiefMachineCubit>().fetchDropDownItems(selectedAreaId: widget.areaId);
+    context
+        .read<ChiefMachineCubit>()
+        .fetchDropDownItems(selectedAreaId: widget.areaId);
+    context.read<ChiefMachineCubit>().nameController.text = widget.machine.name;
+    context.read<ChiefMachineCubit>().numberController.text =
+        '${widget.machine.inventoryNumber}';
   }
 
   @override

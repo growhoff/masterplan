@@ -11,6 +11,7 @@ class OptPathOperations {
   final Machine? machine;
   final AreaDTO? area;
   final List<int>? listId;
+  final bool? active;
   OptPathOperations({
     required this.list,
     required this.idPath,
@@ -18,6 +19,7 @@ class OptPathOperations {
     required this.time,
     this.machine,
     this.area,
-    this.listId
+    this.listId,
+    this.active
   });
 }

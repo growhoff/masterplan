@@ -4,10 +4,11 @@ import 'package:master_plan/data/repositories/supabase/service/operator_operatio
 import 'package:master_plan/domain/model/batch.dart';
 import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/operator_operations.dart';
+import 'package:master_plan/domain/model/otp_path_operations.dart';
 import 'package:master_plan/domain/model/status.dart';
 import '../model/item_machine.dart';
-import '../model/item_oper.dart';
-import '../model/item_saver.dart';
+// import '../model/item_oper.dart';
+// import '../model/item_saver.dart';
 import 'state.dart';
 import 'package:collection/collection.dart';
 
@@ -27,7 +28,7 @@ class CubitQueueMaster extends Cubit<StateQueueMaster> {
   Future<void> getQuere(List<Map<String, dynamic>>? data) async {
     List<int> listId = [];
     for (var element in data!) {
-      if (element['status_id'] as int == 3) listId.add(element['id']);
+      if ((element['status_id'] as int == 3) || (element['status_id'] as int == 7)) listId.add(element['id']);
     }
     final quere = await tableOperations.selectListIdOrder(listId);
     List<OperatorOperationsDTO> queueList = [];
@@ -35,7 +36,7 @@ class CubitQueueMaster extends Cubit<StateQueueMaster> {
       queueList.add(OperatorOperationsDTO.fromMap(item));
     }
 
-    List<ItemOper> listB = [];
+    List<OptPathOperations> listB = [];
     var newMap = groupBy(queueList, (el) => el.optimalPart);
     newMap.forEach((key, value) {
       List<OperatorOperations> list = [];
@@ -44,22 +45,27 @@ class CubitQueueMaster extends Cubit<StateQueueMaster> {
         list.add(convertDto(element));
         if (element.timeplan != null) {time += element.timeplan!;}
       }
-      listB.add(ItemOper(idPath: key!, list: list, order: list.first.order!, time: time));
+      listB.add(OptPathOperations(idPath: key!, list: list, order: list.first.order!, time: time, active: list.first.status.id == 7));
     });
 
-    listB.sort((a, b) => a.order.compareTo(b.order));
+    listB.sort((a, b) => a.order!.compareTo(b.order!));
 
     List<ItemMachine> listItem = [];
     for (var machine in machineList!) {
-      List<ItemOper> listQueue = [];
+      List<OptPathOperations> listQueue = [];
       int time = 0;
+      OptPathOperations? activeOper;
       for (var item in listB) {
         if (item.list.first.machine!.id == machine.id) {
-          listQueue.add(item);
-          time +=item.time;
+          if (!item.active!){
+            listQueue.add(item);
+            time +=item.time;
+          }else{
+            activeOper = item;
+          }
         }
       }
-      listItem.add(ItemMachine(machine: machine, listOper: listQueue, time: time));
+      listItem.add(ItemMachine(machine: machine, listOper: listQueue, time: time, activeOper: activeOper));
     }
     emit(state.copyWith(listMachine: listItem));
   }
@@ -109,18 +115,18 @@ class CubitQueueMaster extends Cubit<StateQueueMaster> {
     emit(state.copyWith(activePage: index));
   }
 
-  Future<void> saveDate() async {
-    List<ItemSaver> saveList = [];
-    final operList = state.listMachine![state.activePage].listOper;
-    for (var i = 0; i < operList.length; i++) {
-      // List<int> idL = [];
-      // for (var oper in operList[i].list) {
-      //   idL.add(oper.id);
-      // }
-      saveList.add(ItemSaver(idPath: operList[i].idPath, order: i));
-    }
-    for (var element in saveList) {
-      await tableOperations.updateOrder(element.idPath, element.order);
-    }
-  }
+  // Future<void> saveDate(List<OptPathOperations> operList) async {
+  //   List<ItemSaver> saveList = [];
+  //   // final operList = state.listMachine![state.activePage].listOper;
+  //   for (var i = 0; i < operList.length; i++) {
+  //     // List<int> idL = [];
+  //     // for (var oper in operList[i].list) {
+  //     //   idL.add(oper.id);
+  //     // }
+  //     saveList.add(ItemSaver(idPath: operList[i].idPath, order: i));
+  //   }
+  //   for (var element in saveList) {
+  //     await tableOperations.updateOrder(element.idPath, element.order);
+  //   }
+  // }
 }

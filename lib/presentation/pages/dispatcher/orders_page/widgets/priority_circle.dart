@@ -9,13 +9,19 @@ class PriorityCircle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: size.toDouble(),
-      height: size.toDouble(),
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: priorityToColor(priority),
-      ),
+    return Center(
+      child: Container(
+          width: size.toDouble(),
+          height: size.toDouble(),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: priorityToColor(priority),
+          ),
+          child: Text(
+            '$priority',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          )),
     );
   }
 }
