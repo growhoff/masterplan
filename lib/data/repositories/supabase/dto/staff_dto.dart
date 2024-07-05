@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:master_plan/data/repositories/supabase/dto/company_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/user_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 
@@ -8,12 +9,16 @@ class StaffDTO extends Dto {
   final String password;
   final int userId;
   final UserDTO user;
+  final int? companyId;
+  final CompanyDTO? company;
   StaffDTO({
     required this.id,
     required this.login,
     required this.password,
     required this.userId,
     required this.user,
+    this.companyId,
+    this.company,
   });
 
   Map<String, dynamic> toMap() {
@@ -33,6 +38,8 @@ class StaffDTO extends Dto {
       password: map['password'] as String,
       userId: map['user_id'] as int,
       user: UserDTO.fromMap(map['z_user'] as Map<String,dynamic>),
+      companyId: map['company_id'] != null ? map['company_id'] as int : null,
+      company: map['z_company'] != null ? CompanyDTO.fromMap(map['z_company'] as Map<String,dynamic>) : null,
     );
   }
 

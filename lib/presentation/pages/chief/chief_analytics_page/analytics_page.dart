@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/presentation/app/bloc/cubit.dart';
 
 import 'analytics_cubit/analytics_cubit.dart';
 
@@ -8,6 +9,7 @@ class ChiefAnalyticsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return BlocProvider(
       create: (context) => AnalyticsCubit(),
       child: ChiefAnalyticsPageView(),
@@ -29,6 +31,7 @@ class _ChiefAnalyticsPageViewState extends State<ChiefAnalyticsPageView> {
 
   @override
   void initState() {
+
     context.read<AnalyticsCubit>().fetchStagesForReport();
 
     super.initState();

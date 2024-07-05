@@ -33,7 +33,7 @@ abstract class DataChief {
         page: const MonitoringPageChief(),
         icon: Icons.camera_alt_outlined),
     TabBarModel(
-        title: 'Очередь этапов',
+        title: 'Этапы в цехе',
         actions: [],
         page: const ChiefAnalyticsPage(),
         icon: Icons.auto_awesome_mosaic_rounded),

@@ -34,7 +34,10 @@ class StageTable extends SupabaseTable {
 
   Future<List<Map<String, dynamic>>> selectByBatchesArchiveIdList(
       List<int> batchesIdList) async {
-    return await table.select().inFilter('batch_archive_id', batchesIdList).order('id', ascending: true);
+    return await table
+        .select()
+        .inFilter('batch_archive_id', batchesIdList)
+        .order('id', ascending: true);
   }
 
   Future<List<Map<String, dynamic>>> selectNotDistributed() async {
@@ -85,5 +88,10 @@ class StageTable extends SupabaseTable {
   Future<List<Map<String, dynamic>>> selectByBatchId(
       {required int batchId}) async {
     return table.select().eq('batch_id', batchId);
+  }
+
+  Future<List<Map<String, dynamic>>> selectByBatchArchiveId(
+      {required int batchArchiveId}) async {
+    return table.select().eq('batch_archive_id', batchArchiveId);
   }
 }

@@ -1,6 +1,7 @@
 import 'package:master_plan/data/repositories/supabase/dto/chief_distribution_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
+import 'package:master_plan/domain/usecase/chief_unit_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../domain/usecase/company_service.dart';
 
@@ -8,6 +9,7 @@ class ChiefDistributionOperationsTable extends SupabaseTable {
   final table =
       Supabase.instance.client.from('z_chief_distribution_operations');
   final int? _companyId = CompanyService.instance.companyId;
+  final _unitId = ChiefUnitService.instance.unitId ?? 1;
 
   @override
   Future<void> delete(int id) {
@@ -36,8 +38,8 @@ class ChiefDistributionOperationsTable extends SupabaseTable {
         .select(
             '*, z_batch:batch_id!inner(*), z_stage:stage_id(*, z_area(*)), z_operation:operation_id(*)')
         .eq('z_batch.company_id', _companyId ?? 1)
-        .order('id', ascending: true);
-    // print(res);
+        .inFilter('unit_id', [0, _unitId]).order('id', ascending: true);
+     print(res);
     return res;
   }
 

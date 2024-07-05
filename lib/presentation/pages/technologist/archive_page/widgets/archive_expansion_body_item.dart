@@ -1,13 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:master_plan/domain/model/batch_archive.dart';
 
 import '../../../../../domain/model/batch.dart';
 
 class ArchiveExpansionBodyItem extends StatelessWidget {
   const ArchiveExpansionBodyItem(this.batch, {super.key});
 
-  final Batch batch;
+  final BatchArchive batch;
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +42,7 @@ class ArchiveExpansionBodyItem extends StatelessWidget {
                             const EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 10))),
                     onPressed: () {
-                      Navigator.pushNamed(context, '/archiveStagesPage',
+                      Navigator.pushNamed(context, '/dispatcherArchiveStagesPage',
                           arguments: batch);
                     },
                     child: Text('подробнее'))),

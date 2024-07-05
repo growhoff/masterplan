@@ -2,7 +2,9 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:master_plan/data/repositories/supabase/service/machine_table.dart';
+import 'package:master_plan/domain/usecase/chief_unit_service.dart';
 import 'package:master_plan/domain/usecase/company_service.dart';
+import 'package:master_plan/presentation/app/bloc/cubit.dart';
 
 import '../../../../../../data/repositories/supabase/dto/area_dto.dart';
 import '../../../../../../data/repositories/supabase/service/area_table.dart';
@@ -16,12 +18,13 @@ class ChiefAreasCubit extends Cubit<ChiefAreasState> {
   final AreaTable _areaTable = AreaTable();
   final MachineTable _machineTable = MachineTable();
 
-  final areaStream = AreaTable().stream();
+  final areaStream = AreaTable().streamForChief();
 
   TextEditingController numberController = TextEditingController();
   TextEditingController nameController = TextEditingController();
 
   Future<void> fetchAreas() async {
+    print(ChiefUnitService.instance.unitId);
     areaStream.listen((list) async {
       List<Area> newAreasList = [];
       for (var item in list) {

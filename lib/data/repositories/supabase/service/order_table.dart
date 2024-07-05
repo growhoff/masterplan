@@ -19,17 +19,18 @@ class OrderTable extends SupabaseTable {
         'date_receipt': dto.dateReceipt,
         'date_plan_completion': dto.datePlanCompletion,
         'priority': dto.priority,
+        'order_status_id': dto.statusId,
       });
     }
   }
 
   @override
   Future<List<Map<String, dynamic>>> select() {
-    return table.select().order('priority', ascending: true);
+    return table.select('*, z_order_status(*)').order('priority', ascending: true);
   }
 
-  Future changeIsFormedToTrue(int orderId) async {
-    await table.update({'is_formed': true}).eq('id', orderId);
+  Future changeStatusToFormed(int orderId) async {
+    await table.update({'order_status_id': 2}).eq('id', orderId);
   }
 
   Future<List<Map<String, dynamic>>> selectId(int id) {

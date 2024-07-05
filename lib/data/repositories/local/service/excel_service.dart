@@ -10,6 +10,7 @@ import 'package:master_plan/data/repositories/supabase/service/chief_batch_table
 import 'package:master_plan/data/repositories/supabase/service/chief_distribution_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/chief_operation_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/transfer_table.dart';
+import 'package:master_plan/domain/usecase/chief_unit_service.dart';
 import 'package:master_plan/presentation/pages/master/pages/analytics_page/analytics_operation_model.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -34,6 +35,7 @@ class ExcelService {
   final _chiefBatchTable = ChiefBatchTable();
   final _chiefOperationTable = ChiefOperationTable();
   final _transferTable = TransferTable();
+  final _unitId = ChiefUnitService.instance.unitId ?? 1;
 
   List<ChiefOperationDto> chiefOperationsList = [];
   List<int> chiefDistributionsOperationsIdList = [];
@@ -208,6 +210,7 @@ class ExcelService {
                 stage: StageDTO.empty,
                 operation: OperationDTO.empty,
                 batchId: batchId,
+                unitId: _unitId,
                 batch: BatchDTO.empty,
                 quantity: 0));
         chiefDistributionsOperationsIdList.add(distributionOperationId);
@@ -280,6 +283,7 @@ class ExcelService {
                     stage: StageDTO.empty,
                     operation: OperationDTO.empty,
                     batchId: batchId,
+                    unitId: _unitId,
                     batch: BatchDTO.empty,
                     quantity: 0,
                     id: 0));
@@ -392,19 +396,13 @@ class ExcelService {
 
         String planName = excel.tables[table]!.rows[1][3]!.value.toString();
 
-        int batchId = await _batchTable.insert(BatchDTO(
+        int batchArchiveId = await _batchArchiveTable.insert(BatchArchiveDto(
           id: 0,
           number: planNumber,
           name: planName,
-          count: quantity,
-          code: code,
-          technology: technologyNumber,
-          order: 1,
-          isready: false,
-          orderId: 0,
+          technologyNumber: technologyNumber,
+          companyId: 0,
         ));
-
-        serviceBatchId = batchId;
 
         String? stageNumber =
             excel.tables[table]!.rows[1][14]?.value.toString();
@@ -416,7 +414,8 @@ class ExcelService {
           name: stageName ?? '',
           isdistributed: false,
           areaId: 0,
-          batchId: batchId,
+          batchArchiveId: batchArchiveId,
+          batchId: 0,
         ));
 
         print('инсерт stage: $stageNumber,  $stageName, $stageId');
@@ -474,7 +473,8 @@ class ExcelService {
                 name: stageName ?? '',
                 isdistributed: false,
                 areaId: 0,
-                batchId: batchId));
+                batchArchiveId: batchArchiveId,
+                batchId: 0));
 
             print('инсерт этап $stageNumber, $stageName, $stageId');
           }

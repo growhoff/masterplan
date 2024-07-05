@@ -36,7 +36,7 @@ class StateMain extends Equatable {
   final int? unitId;
 
   const StateMain({
-    this.version = 'v2.6.5',
+    this.version = 'v2.6.8',
     this.user,
     this.unitId,
     this.staff,
@@ -59,37 +59,35 @@ class StateMain extends Equatable {
   });
 
   @override
-  List<Object?> get props {
-    return [
-      user ??
-          UserDTO(
-              id: 0,
-              fio: '',
-              company: CompanyDTO.init(),
-              position: PositionDTO(id: 0, name: ''),
-              positionId: 0,
-              companyId: 0),
-      unitId ?? 1,
-      machineList ?? [],
-      machineIdList ?? [],
-      shiftsList ?? [],
-      distribMasterList ?? [],
-      queueList ?? [],
-      readyList ?? [],
-      operatorList ?? [],
-      monitorList ?? [],
-      zshiftsDistributionList ?? [],
-      operatorOperationsList ?? [],
-      version,
-      link,
-      change ?? 0,
-      listAreaId ?? [],
-      listArea ?? [],
-      listAreaMachine ?? [],
-      listAreaMachineUser ?? [],
-      staff ?? Staff.empty
-    ];
-  }
+  List<Object?> get props => [
+        user ??
+            UserDTO(
+                id: 0,
+                fio: '',
+                company: CompanyDTO.init(),
+                position: PositionDTO(id: 0, name: ''),
+                positionId: 0,
+                companyId: 0),
+        unitId,
+        machineList ?? [],
+        machineIdList ?? [],
+        shiftsList ?? [],
+        distribMasterList ?? [],
+        queueList ?? [],
+        readyList ?? [],
+        operatorList ?? [],
+        monitorList ?? [],
+        zshiftsDistributionList ?? [],
+        operatorOperationsList ?? [],
+        version,
+        link,
+        change ?? 0,
+        listAreaId ?? [],
+        listArea ?? [],
+        listAreaMachine ?? [],
+        listAreaMachineUser ?? [],
+        staff ?? Staff.empty
+      ];
 
   StateMain copyWith({
     UserDTO? user,

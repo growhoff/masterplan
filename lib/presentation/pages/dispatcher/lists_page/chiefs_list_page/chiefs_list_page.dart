@@ -29,7 +29,7 @@ class ChiefsListPageView extends StatefulWidget {
 class _ChiefsListPageViewState extends State<ChiefsListPageView> {
   @override
   void initState() {
-    context.read<ChiefsListCubit>().fetchUnits();
+    context.read<ChiefsListCubit>().initChiefsListsPage();
     super.initState();
   }
 

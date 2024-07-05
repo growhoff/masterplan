@@ -8,7 +8,7 @@ import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_mac
 import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_machines_list_page/chief_machines_list_page.dart';
 import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_staff_list_page/chief_staff_add_page.dart';
 import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_staff_list_page/chief_staff_edit_page.dart';
-// import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_staff_list_page/chief_staff_list_page.dart';
+import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_staff_list_page/chief_staff_list_page.dart';
 import 'package:master_plan/presentation/pages/chief/chief_analytics_page/analytics_page.dart';
 import 'package:master_plan/presentation/pages/chief/widgets/custom_navbar.dart';
 import 'package:master_plan/presentation/pages/dispatcher/lists_page/chiefs_list_page/add_chief_page.dart';
@@ -28,6 +28,9 @@ import '../pages/chief/chief_lists_pages/chief_staff_list_page/selection_staff_p
 import '../pages/chief/chief_analytics_page/operations_statistics_page.dart';
 import '../pages/chief_master/chief_maste_page.dart';
 
+import '../pages/dispatcher/dispatcher_archive_page/dispatcher_archive_transfers_page.dart';
+import '../pages/dispatcher/dispatcher_archive_page/dispatcher_archive_operations_page.dart';
+import '../pages/dispatcher/dispatcher_archive_page/dispatcher_archive_stages_page.dart';
 import '../pages/dispatcher/lists_page/chiefs_list_page/chiefs_list_page.dart';
 import '../pages/dispatcher/lists_page/units_list_page/add_unit_page.dart';
 import '../pages/dispatcher/lists_page/units_list_page/edit_unit_page.dart';
@@ -93,6 +96,12 @@ class MyApp extends StatelessWidget {
               const ArchiveOperationsPage(),
           '/archiveTransferPage': (BuildContext context) =>
               const ArchiveTransfersPage(),
+          '/dispatcherArchiveStagesPage': (BuildContext context) =>
+          const DispatcherArchiveStagesPage(),
+          '/dispatcherArchiveOperationsPage': (BuildContext context) =>
+          const DispatcherArchiveOperationsPage(),
+          '/dispatcherArchiveTransferPage': (BuildContext context) =>
+          const DispatcherArchiveTransfersPage(),
           '/chiefMasterPage': (BuildContext context) => const ChiefMasterPage(),
           '/batchesPage': (BuildContext context) => const BatchesPage(),
           '/addBatchPage': (BuildContext context) => const AddBatchPage(),
@@ -106,9 +115,9 @@ class MyApp extends StatelessWidget {
           '/dispatcherUnitsListPage': (BuildContext context) =>
               const UnitsListPage(),
           '/dispatcherEditUnitPage': (BuildContext context) =>
-          const EditUnitPage(),
+              const EditUnitPage(),
           '/dispatcherAddUnitPage': (BuildContext context) =>
-          const AddUnitPage(),
+              const AddUnitPage(),
         },
         home: const LoginPage(),
       ),

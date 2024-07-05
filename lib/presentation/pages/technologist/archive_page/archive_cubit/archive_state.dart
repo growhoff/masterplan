@@ -10,14 +10,14 @@ class ArchiveState extends Equatable {
         this.transfersList = const [],
       this.status = ArchiveStatus.initial});
 
-  final List<Batch> batchesList;
+  final List<BatchArchive> batchesList;
   final List<Stage> stagesList;
   final List<Operation> operationsList;
   final List<Transfer> transfersList;
   final ArchiveStatus status;
 
   ArchiveState copyWith(
-      {List<Batch>? batchesList,
+      {List<BatchArchive>? batchesList,
       List<Stage>? stagesList,
       List<Operation>? operationsList,
         List<Transfer>? transfersList,

@@ -8,7 +8,6 @@ class StaffState extends Equatable {
     this.areasList = const [],
     this.areasNamesList = const [],
 
-    this.unitsList = const [],
     this.status = ChiefStaffStatus.initial,
   });
 
@@ -16,7 +15,6 @@ class StaffState extends Equatable {
   final List<Area> areasList;
 
   final List<String> areasNamesList;
-  final List<Unit> unitsList;
 
   final ChiefStaffStatus status;
 
@@ -24,18 +22,16 @@ class StaffState extends Equatable {
     List<Area>? areasList,
     List<String>? areasNamesList,
     List<PositionStaffModel>? positionStaffList,
-    List<Unit>? unitsList,
     ChiefStaffStatus? status,
   }) {
     return StaffState(
         areasList: areasList ?? this.areasList,
         areasNamesList: areasNamesList ?? this.areasNamesList,
         status: status ?? this.status,
-        unitsList: unitsList ?? this.unitsList,
         positionStaffList: positionStaffList ?? this.positionStaffList);
   }
 
   @override
   List<Object?> get props =>
-      [areasList, areasNamesList, status, positionStaffList, unitsList];
+      [areasList, areasNamesList, status, positionStaffList];
 }

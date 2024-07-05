@@ -21,6 +21,7 @@ import 'package:master_plan/domain/model/position.dart';
 import 'package:master_plan/domain/model/shifts_distribution.dart';
 import 'package:master_plan/domain/model/staff.dart';
 import 'package:master_plan/domain/model/user.dart';
+import 'package:master_plan/domain/usecase/chief_unit_service.dart';
 import 'package:path/path.dart';
 import '../../../domain/usecase/company_service.dart';
 import 'state.dart';
@@ -30,7 +31,7 @@ import 'package:collection/collection.dart';
 class CubitMain extends Cubit<StateMain> {
   CubitMain() : super(const StateMain());
 
-  Future<String> save(String login, String password) async {
+  Future<String> save(String login, String password, String companyS) async {
     final tableVersion = VersionTable();
     final queryVersion = await tableVersion.select();
     if (!equals(queryVersion.first['version'], state.version)) {
@@ -38,25 +39,25 @@ class CubitMain extends Cubit<StateMain> {
       return 'Ошибка_версий';
     } else {
       final tableStaff = StaffTable();
-      final query = await tableStaff.selectName(login: login);
-      if (query.isEmpty) {
+      final query = await tableStaff.selectName(login: login, company: companyS);
+      if (query == null) {
         return 'Ошибка_авторизации_1'; //ошибка авторизации.нет пользователя
       } else {
-        if (query.first['password'] == password) {
-          await getUserNew(query.first['user_id']); //ошибка. неверный пароль
+        if (query['password'] == password) {
+          await getUserNew(query['user_id']); //ошибка. неверный пароль
 
           switch (state.user!.position.id) {
-            //начальник
+          //начальник
             case 2:
-              await fetchUnitId(query.first['id']);
-              List<int> listAreaId = await getAreaForStaff(query.first['id']);
+              await fetchUnitId(query['id']);
+              List<int> listAreaId = await getAreaForStaff(query['id']);
               await getMachineToUnit(listAreaId);
               break;
-            //мастер
+          //мастер
             case 3:
               await getMachineToArea(state.user!.area!.id);
               await getOperators();
-              final staffDto = StaffDTO.fromMap(query.first);
+              final staffDto = StaffDTO.fromMap(query);
               final staffModel = Staff(
                   id: staffDto.id,
                   login: staffDto.login,
@@ -66,17 +67,17 @@ class CubitMain extends Cubit<StateMain> {
               emit(state.copyWith(staff: staffModel));
               print('staffId : ${state.staff?.id}');
               break;
-            //оператор
+          //оператор
             case 4:
               await getMachineOperatorZ(state.user!.id);
               break;
-            //начальник мастер
+          //начальник мастер
             case 7:
-              List<int> listAreaId = await getAreaForStaff(query.first['id']);
+              List<int> listAreaId = await getAreaForStaff(query['id']);
               await getMachineToUnit(listAreaId);
               await getOperatorsToUnit();
               break;
-            //ИНАЧЕ
+          //ИНАЧЕ
             default:
               break;
           }
@@ -108,11 +109,10 @@ class CubitMain extends Cubit<StateMain> {
   Future fetchUnitId(int staffId) async {
     final positionStaffTable = PositionStaffTable();
     var fetchedList =
-        await positionStaffTable.selectByStaffId(staffId: staffId);
-    print(fetchedList.first);
+    await positionStaffTable.selectByStaffId(staffId: staffId);
     final positionStaffDto = PositionStaffDTO.fromMap(fetchedList.first);
     final int unitId = positionStaffDto.unitId ?? 1;
-    emit(state.copyWith(unitId: unitId));
+    ChiefUnitService.instance.unitId = unitId;
   }
 
   // master
@@ -222,7 +222,7 @@ class CubitMain extends Cubit<StateMain> {
           areaId: user.areaId,
           photo: user.photo,
           positionModel:
-              Position(id: user.position.id, name: user.position.name)));
+          Position(id: user.position.id, name: user.position.name)));
     }
     emit(state.copyWith(operatorList: userList));
   }
@@ -247,7 +247,7 @@ class CubitMain extends Cubit<StateMain> {
           areaId: user.areaId,
           photo: user.photo,
           positionModel:
-              Position(id: user.position.id, name: user.position.name)));
+          Position(id: user.position.id, name: user.position.name)));
     }
     emit(state.copyWith(operatorList: userList));
   }
@@ -258,29 +258,29 @@ class CubitMain extends Cubit<StateMain> {
     final dateLast = DateTime(dateNow.year, dateNow.month, dateNow.day - 1);
 
     final dateChange1St =
-        DateTime(dateNow.year, dateNow.month, dateNow.day, 8, 0);
+    DateTime(dateNow.year, dateNow.month, dateNow.day, 8, 0);
     final dateChange1End =
-        DateTime(dateNow.year, dateNow.month, dateNow.day, 20, 0);
+    DateTime(dateNow.year, dateNow.month, dateNow.day, 20, 0);
 
     final dateShift1St =
-        DateTime(dateNow.year, dateNow.month, dateNow.day, 7, 50);
+    DateTime(dateNow.year, dateNow.month, dateNow.day, 7, 50);
     final dateShift1End =
-        DateTime(dateNow.year, dateNow.month, dateNow.day, 8, 10);
+    DateTime(dateNow.year, dateNow.month, dateNow.day, 8, 10);
 
     final dateShift2St =
-        DateTime(dateNow.year, dateNow.month, dateNow.day, 19, 50);
+    DateTime(dateNow.year, dateNow.month, dateNow.day, 19, 50);
     final dateShift2End =
-        DateTime(dateNow.year, dateNow.month, dateNow.day, 20, 10);
+    DateTime(dateNow.year, dateNow.month, dateNow.day, 20, 10);
 
     final dateChange2St =
-        DateTime(dateNow.year, dateNow.month, dateNow.day, 20, 0);
+    DateTime(dateNow.year, dateNow.month, dateNow.day, 20, 0);
     final dateChange2End =
-        DateTime(dateNow.year, dateNow.month, dateNow.day, 23, 59);
+    DateTime(dateNow.year, dateNow.month, dateNow.day, 23, 59);
 
     final dateChange2St2 =
-        DateTime(dateNow.year, dateNow.month, dateNow.day, 0, 0);
+    DateTime(dateNow.year, dateNow.month, dateNow.day, 0, 0);
     final dateChange2End2 =
-        DateTime(dateNow.year, dateNow.month, dateNow.day, 8, 0);
+    DateTime(dateNow.year, dateNow.month, dateNow.day, 8, 0);
 
     DateTime time = dateNow;
     int change = 1;
@@ -306,7 +306,7 @@ class CubitMain extends Cubit<StateMain> {
 
     final zshiftsDistributionTable = ShiftsDistributionTable();
     final zshiftsDistributionQuery =
-        await zshiftsDistributionTable.selectEqUser(userId, time, change);
+    await zshiftsDistributionTable.selectEqUser(userId, time, change);
     List<ShiftsDistribution> zshiftsDistributionList = [];
     List<int> machineListId = [];
     for (var shiftsDistr in zshiftsDistributionQuery) {

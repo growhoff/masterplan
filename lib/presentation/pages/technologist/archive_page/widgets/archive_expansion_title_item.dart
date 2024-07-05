@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:master_plan/domain/model/batch_archive.dart';
 
 import '../../../../../domain/model/batch.dart';
 
 class ArchiveExpansionTitleItem extends StatelessWidget {
   const ArchiveExpansionTitleItem(this.batch, {super.key});
 
-  final Batch batch;
+  final BatchArchive batch;
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +20,8 @@ class ArchiveExpansionTitleItem extends StatelessWidget {
             const SizedBox(height: 10,),
             Text('Наименование: ${batch.name}'),
             const SizedBox(height: 10,),
-            Text('Номер технологии: ${batch.technology}'),
+            Text('Номер технологии: ${batch.technologyNumber}'),
             const SizedBox(height: 10,),
-            Text('Код детали: ${batch.code}')
           ],
         ),
       ),

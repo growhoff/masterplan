@@ -60,7 +60,10 @@ class _ChooseReportPageViewState extends State<ChooseReportPageView> {
                           style: ButtonStyle(
                               padding:
                                   MaterialStateProperty.all(EdgeInsets.all(20))),
-                          onPressed: () {
+                          onPressed: () async{
+                            await context
+                                .read<AnalyticsCubit>()
+                                .fetchStagesForReport();
                             context
                                 .read<AnalyticsCubit>()
                                 .uploadOperationsReportToExcel();

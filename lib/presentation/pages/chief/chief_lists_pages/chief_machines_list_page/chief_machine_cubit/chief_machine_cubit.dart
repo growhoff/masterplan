@@ -36,7 +36,7 @@ class ChiefMachineCubit extends Cubit<ChiefMachineState> {
   }
 
   fetchAreas() async {
-    final areasFetchedList = await _areaTable.select();
+    final areasFetchedList = await _areaTable.selectByUnitId();
     List<Area> areasList = [];
     for (var item in areasFetchedList) {
       final areaDto = AreaDTO.fromMap(item);
@@ -75,7 +75,7 @@ class ChiefMachineCubit extends Cubit<ChiefMachineState> {
 
   Future<void> fetchDropDownItems({int? selectedAreaId}) async {
     List<String> areasNamesList = [];
-    var areasList = await _areaTable.select();
+    var areasList = await _areaTable.selectByUnitId();
     for (var area in areasList) {
       AreaDTO areaDto = AreaDTO.fromMap(area);
       String key = '${areaDto.number} ${areaDto.name}';

@@ -7,7 +7,6 @@ class ChiefListsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('со страницы: ${context.read<CubitMain>().state.unitId}');
     return const ChiefListsPageView();
   }
 }
@@ -32,15 +31,18 @@ class _ChiefListsPageViewState extends State<ChiefListsPageView> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
-                      onPressed: () => Navigator.pushNamed(context, '/chiefMachinesListPage'),
+                      onPressed: () => Navigator.pushNamed(
+                          context, '/chiefMachinesListPage'),
                       child: const Text('Список оборудования')),
                   const SizedBox(height: 8),
                   ElevatedButton(
-                      onPressed: () => Navigator.pushNamed(context, '/selectionStaffPositionPage'),
+                      onPressed: () => Navigator.pushNamed(
+                          context, '/selectionStaffPositionPage'),
                       child: const Text('Список персонала')),
                   const SizedBox(height: 8),
                   ElevatedButton(
-                      onPressed: () => Navigator.pushNamed(context, '/chiefAreasPage'),
+                      onPressed: () =>
+                          Navigator.pushNamed(context, '/chiefAreasPage'),
                       child: const Text('Список участков')),
                 ],
               ),

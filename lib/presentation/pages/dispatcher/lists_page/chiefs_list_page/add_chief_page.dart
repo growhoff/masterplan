@@ -4,8 +4,10 @@ import 'package:image_picker/image_picker.dart';
 
 import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_staff_list_page/chief_staff_cubit/chief_staff_cubit.dart';
 
+import '../../../../../domain/model/area.dart';
 import '../../../../../domain/model/unit.dart';
 import '../../../chief/chief_lists_pages/chief_staff_list_page/chief_staff_list_widgets/add_page_user_photo_widget.dart';
+import 'chiefs_list_cubit/chiefs_list_cubit.dart';
 
 class AddChiefPage extends StatelessWidget {
   const AddChiefPage({super.key});
@@ -14,7 +16,8 @@ class AddChiefPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => StaffCubit(isStaffCanBeChief: true))
+        BlocProvider(create: (context) => ChiefsListCubit()),
+        BlocProvider(create: (context) => StaffCubit())
       ],
       child: const AddChiefPageView(),
     );
@@ -32,7 +35,7 @@ class _AddChiefPageViewState extends State<AddChiefPageView> {
   @override
   void initState() {
     super.initState();
-    context.read<StaffCubit>().fetchDropDownsItems();
+    context.read<ChiefsListCubit>().fetchAreasAndUnits();
   }
 
   @override
@@ -43,7 +46,7 @@ class _AddChiefPageViewState extends State<AddChiefPageView> {
               onPressed: () => Navigator.pop(context, true),
               icon: const Icon(Icons.arrow_back_ios_new_rounded)),
           title: const Text('добавление персонала')),
-      body: BlocBuilder<StaffCubit, StaffState>(
+      body: BlocBuilder<ChiefsListCubit, ChiefsListState>(
         builder: (context, state) {
           return SafeArea(
             child: SingleChildScrollView(
@@ -76,7 +79,7 @@ class _AddChiefPageViewState extends State<AddChiefPageView> {
                       height: 5,
                     ),
                     TextField(
-                      controller: context.read<StaffCubit>().fioController,
+                      controller: context.read<ChiefsListCubit>().fioController,
                     ),
                     const SizedBox(
                       height: 20,
@@ -89,7 +92,8 @@ class _AddChiefPageViewState extends State<AddChiefPageView> {
                       height: 5,
                     ),
                     TextField(
-                      controller: context.read<StaffCubit>().numberController,
+                      controller:
+                          context.read<ChiefsListCubit>().numberController,
                     ),
                     const SizedBox(
                       height: 20,
@@ -102,7 +106,8 @@ class _AddChiefPageViewState extends State<AddChiefPageView> {
                       height: 5,
                     ),
                     TextField(
-                      controller: context.read<StaffCubit>().passwordController,
+                      controller:
+                          context.read<ChiefsListCubit>().passwordController,
                       decoration: const InputDecoration(
                           helperText:
                               'оставьте пустым для автоматической генерации'),
@@ -126,49 +131,36 @@ class _AddChiefPageViewState extends State<AddChiefPageView> {
                           shrinkWrap: true,
                           itemBuilder: (context, index) => index ==
                                   context
-                                      .read<StaffCubit>()
+                                      .read<ChiefsListCubit>()
                                       .selectedPositionsList
                                       .length
                               ? IconButton(
                                   onPressed: () {
-                                    context
-                                                .read<StaffCubit>()
-                                                .positionsToSelectList
-                                                .length ==
-                                            1
-                                        ? setState(() {
-                                            context
-                                                .read<StaffCubit>()
-                                                .addLastPositionElement();
-                                          })
-                                        : showDialog(
-                                            context: context,
-                                            builder: (ctx) => SimpleDialog(
-                                                  title: Text(
-                                                      'выберите должность'),
-                                                  children: List.generate(
-                                                      context
-                                                          .read<StaffCubit>()
-                                                          .positionsToSelectList
-                                                          .length,
-                                                      (index) =>
-                                                          SimpleDialogOption(
-                                                            onPressed: () =>
-                                                                setState(() {
-                                                              context
-                                                                  .read<
-                                                                      StaffCubit>()
-                                                                  .addPositionElement(
-                                                                      index);
-                                                              Navigator.pop(
-                                                                  ctx);
-                                                            }),
-                                                            child: Text(context
-                                                                .read<
-                                                                    StaffCubit>()
-                                                                .positionsToSelectList[index]),
-                                                          )),
-                                                ));
+                                    showDialog(
+                                        context: context,
+                                        builder: (ctx) => SimpleDialog(
+                                              title: Text('выберите должность'),
+                                              children: List.generate(
+                                                  context
+                                                      .read<ChiefsListCubit>()
+                                                      .positionsToSelectList
+                                                      .length,
+                                                  (index) => SimpleDialogOption(
+                                                        onPressed: () =>
+                                                            setState(() {
+                                                          context
+                                                              .read<
+                                                                  ChiefsListCubit>()
+                                                              .addPositionElement(
+                                                                  index);
+                                                          Navigator.pop(ctx);
+                                                        }),
+                                                        child: Text(context
+                                                            .read<
+                                                                ChiefsListCubit>()
+                                                            .positionsToSelectList[index]),
+                                                      )),
+                                            ));
                                   },
                                   icon: Icon(Icons.add))
                               : Column(
@@ -185,7 +177,7 @@ class _AddChiefPageViewState extends State<AddChiefPageView> {
                                         children: [
                                           Text(
                                             context
-                                                .read<StaffCubit>()
+                                                .read<ChiefsListCubit>()
                                                 .selectedPositionsList[index],
                                             textAlign: TextAlign.center,
                                           ),
@@ -193,14 +185,13 @@ class _AddChiefPageViewState extends State<AddChiefPageView> {
                                               onPressed: () {
                                                 setState(() {
                                                   context
-                                                      .read<StaffCubit>()
+                                                      .read<ChiefsListCubit>()
                                                       .deletePositionElement(
                                                           index,
                                                           context
-                                                                  .read<
-                                                                      StaffCubit>()
-                                                                  .selectedPositionsList[
-                                                              index]);
+                                                              .read<
+                                                                  ChiefsListCubit>()
+                                                              .selectedPositionsList[index]);
                                                 });
                                               },
                                               icon: Icon(Icons.delete))
@@ -211,18 +202,18 @@ class _AddChiefPageViewState extends State<AddChiefPageView> {
                                       height: 5,
                                     ),
                                     context
-                                                .read<StaffCubit>()
+                                                .read<ChiefsListCubit>()
                                                 .selectedPositionsList[index] ==
                                             'Начальник'
                                         ? DropdownButton<Unit>(
                                             isExpanded: true,
                                             value: context
-                                                .read<StaffCubit>()
-                                                .unitsForPositionsList[index],
+                                                .read<ChiefsListCubit>()
+                                                .selectedUnit,
                                             onChanged: (Unit? unit) =>
                                                 setState(() {
                                               context
-                                                  .read<StaffCubit>()
+                                                  .read<ChiefsListCubit>()
                                                   .changeUnitsDropDownValue(
                                                       index, unit);
                                             }),
@@ -235,23 +226,33 @@ class _AddChiefPageViewState extends State<AddChiefPageView> {
                                                     ))
                                                 .toList(),
                                           )
-                                        : DropdownButton<String>(
+                                        : DropdownButton<Area>(
                                             isExpanded: true,
-                                            value: context
-                                                .read<StaffCubit>()
-                                                .areasForPositionsList[index],
-                                            onChanged: (String? value) =>
+                                            value:state
+                                                    .areasList
+                                                    .isNotEmpty
+                                                ? context
+                                                        .read<ChiefsListCubit>()
+                                                        .areasForPositionsList[
+                                                    index]
+                                                : Area(
+                                                    id: 0,
+                                                    name: '',
+                                                    number: '',
+                                                    unitId: 0),
+                                            onChanged: (Area? area) =>
                                                 setState(() {
                                               context
-                                                  .read<StaffCubit>()
+                                                  .read<ChiefsListCubit>()
                                                   .changeAreasDropDownValue(
-                                                      index, value);
+                                                      index, area);
                                             }),
-                                            items: state.areasNamesList
-                                                .map((String area) =>
+                                            items: state.areasList
+                                                .map((Area area) =>
                                                     DropdownMenuItem(
                                                       value: area,
-                                                      child: Text(area),
+                                                      child: Text(
+                                                          '${area.number} ${area.name}'),
                                                     ))
                                                 .toList(),
                                           ),
@@ -261,7 +262,7 @@ class _AddChiefPageViewState extends State<AddChiefPageView> {
                                 height: 5,
                               ),
                           itemCount: context
-                                  .read<StaffCubit>()
+                                  .read<ChiefsListCubit>()
                                   .selectedPositionsList
                                   .length +
                               1),
@@ -276,7 +277,7 @@ class _AddChiefPageViewState extends State<AddChiefPageView> {
                         child: ElevatedButton(
                       onPressed: () {
                         setState(() {
-                          context.read<StaffCubit>().insertStaff();
+                          context.read<ChiefsListCubit>().insertStaff();
                           showModalBottomSheet(
                               context: context,
                               builder: (context) => Container(
@@ -284,7 +285,6 @@ class _AddChiefPageViewState extends State<AddChiefPageView> {
                                   height: 50,
                                   child: const Text('работник добавлен')));
                         });
-
                       },
                       child: const Text('добавить'),
                     ))

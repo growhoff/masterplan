@@ -27,13 +27,19 @@ class OrdersCubit extends Cubit<OrdersState> {
       var fetchedOrdersList = await _orderTable.select();
       for (var fetchedOrder in fetchedOrdersList) {
         final orderDto = OrderDTO.fromMap(fetchedOrder);
+
         final order = Order(
             id: orderDto.id,
             number: orderDto.number,
             dateReceipt: orderDto.dateReceipt,
             datePlanCompletion: orderDto.datePlanCompletion,
             priority: orderDto.priority,
-            isFormed: orderDto.isFormed);
+            statusId: orderDto.statusId,
+            status: OrderStatus(
+                id: orderDto.status?.id ?? 0,
+                name: orderDto.status?.name ?? ''));
+
+        print(order.status?.name);
         ordersList.add(order);
       }
 
@@ -51,7 +57,7 @@ class OrdersCubit extends Cubit<OrdersState> {
         dateReceipt: receiptDate.toString(),
         datePlanCompletion: planCompletionDate.toString(),
         priority: selectedPriority,
-        isFormed: false));
+        statusId: 1));
   }
 
   Future deleteOrder(int id) async {

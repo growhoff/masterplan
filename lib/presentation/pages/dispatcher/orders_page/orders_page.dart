@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/domain/model/order.dart';
 import 'package:master_plan/presentation/pages/dispatcher/orders_page/orders_cubit/orders_cubit.dart';
 import 'package:master_plan/presentation/pages/dispatcher/orders_page/widgets/priority_circle.dart';
 
@@ -35,106 +36,226 @@ class _OrdersPageViewState extends State<OrdersPageView> {
           return Container(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Container(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/addOrderPage').then(
-                          (_) => context.read<OrdersCubit>().fetchOrders());
-                    },
-                    style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 15, vertical: 10)),
-                    child: const Text('Добавить заказ',
-                        style: TextStyle(fontSize: 18)),
-                  ),
+                const SizedBox(
+                  height: 10,
                 ),
+                Flexible(
+                    child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Container(
+                            child: Text(
+                              '№ заказа',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 15),
+                            ),
+                          ),
+                          flex: 3,
+                        ),
+                        Expanded(
+                          child: Container(
+                            child: Text(
+                              'заказчик',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 15),
+                            ),
+                          ),
+                          flex: 4,
+                        ),
+                        Expanded(
+                          child: Container(
+                            child: Text(
+                              'приоритет',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 15),
+                            ),
+                          ),
+                          flex: 3,
+                        ),
+                        Expanded(
+                          child: Container(
+                            child: Text(
+                              'статус',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 15),
+                            ),
+                          ),
+                          flex: 3,
+                        )
+                      ],
+                    ),
+                  ),
+                )),
                 const SizedBox(height: 10),
-                Expanded(
-                  child: ListView.separated(
-                      physics: AlwaysScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) => Center(
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamed(context, '/batchesPage',
-                                        arguments: state.ordersList[index])
-                                    .then((_) => context
-                                        .read<OrdersCubit>()
-                                        .fetchOrders());
-                              },
-                              child: Card(
-                                child: Container(
-                                  padding: EdgeInsets.all(10),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
+                ListView.separated(
+                    physics: AlwaysScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) => Center(
+                          child: GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => SimpleDialog(
+                                        contentPadding: EdgeInsets.all(5),
                                         children: [
-                                          Text(
-                                              'номер: ${state.ordersList[index].number}'),
-                                          const SizedBox(
-                                            height: 10,
+                                          SimpleDialogOption(
+                                            onPressed: () {
+                                              Navigator.pop(context, false);
+                                            },
+                                            child: const Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Icon(Icons.info_rounded),
+                                                SizedBox(
+                                                  width: 8,
+                                                ),
+                                                Text(
+                                                  'инфо',
+                                                  style:
+                                                      TextStyle(fontSize: 18),
+                                                )
+                                              ],
+                                            ),
                                           ),
-                                          Text(
-                                              textAlign: TextAlign.center,
-                                              "дата поступления\n${state.ordersList[index].dateReceipt}"),
-                                          const SizedBox(
-                                            height: 10,
+                                          Divider(
+                                            height: 1,
                                           ),
-                                          Text(
-                                              textAlign: TextAlign.center,
-                                              "планируемая дата завершения\n${state.ordersList[index].datePlanCompletion}"),
-                                          const SizedBox(
-                                            height: 10,
+                                          SimpleDialogOption(
+                                            onPressed: () {
+                                              Navigator.pop(context, false);
 
+                                              Navigator.pushNamed(
+                                                      context, '/batchesPage',
+                                                      arguments: state
+                                                          .ordersList[index])
+                                                  .then((_) => context
+                                                      .read<OrdersCubit>()
+                                                      .fetchOrders());
+                                            },
+                                            child: const Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Icon(Icons.account_tree),
+                                                SizedBox(
+                                                  width: 8,
+                                                ),
+                                                Text('этапы',
+                                                    style: TextStyle(
+                                                        fontSize: 18)),
+                                              ],
+                                            ),
                                           ),
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      Column(
-                                        children: [
-                                          PriorityCircle(
-                                            state.ordersList[index].priority,
-                                            size: 20,
+                                          Divider(
+                                            height: 1,
                                           ),
-                                          const SizedBox(
-                                            height: 10,
+                                          SimpleDialogOption(
+                                            onPressed: () {
+                                              Navigator.pop(context, false);
+                                              setState(() {});
+                                            },
+                                            child: const Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Icon(Icons.edit_rounded),
+                                                SizedBox(
+                                                  width: 8,
+                                                ),
+                                                Text('редактировать',
+                                                    style: TextStyle(
+                                                        fontSize: 18)),
+                                              ],
+                                            ),
                                           ),
-                                          IconButton(
-                                              onPressed: () {},
-                                              icon: Icon(Icons.edit_rounded)),
-                                          IconButton(
-                                              onPressed: () {
+                                          Divider(
+                                            height: 1,
+                                          ),
+                                          SimpleDialogOption(
+                                            onPressed: () {
+                                              Navigator.pop(context, false);
+                                              setState(() {
                                                 context
                                                     .read<OrdersCubit>()
                                                     .deleteOrder(state
                                                         .ordersList[index].id);
-                                                context
-                                                    .read<OrdersCubit>()
-                                                    .fetchOrders();
-                                              },
-                                              icon: Icon(Icons.delete_rounded))
+                                              });
+                                            },
+                                            child: const Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Icon(Icons.delete_rounded),
+                                                SizedBox(
+                                                  width: 8,
+                                                ),
+                                                Text('удалить',
+                                                    style: TextStyle(
+                                                        fontSize: 18)),
+                                              ],
+                                            ),
+                                          )
                                         ],
+                                      ));
+                            },
+                            child: Card(
+                              child: Container(
+                                  padding: EdgeInsets.all(10),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          child: Text(
+                                            '${state.ordersList[index].number}',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(fontSize: 18),
+                                          ),
+                                        ),
+                                        flex: 3,
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          child: Text(
+                                            'заказчик',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(fontSize: 18),
+                                          ),
+                                        ),
+                                        flex: 4,
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          child: PriorityCircle(
+                                            state.ordersList[index].priority,
+                                            size: 22,
+                                          ),
+                                        ),
+                                        flex: 3,
+                                      ),
+                                      FittedBox(
+                                        fit: BoxFit.fill,
+                                        child: Text(
+                                          '${state.ordersList[index].status?.name}',
+                                          textAlign: TextAlign.center,
+
+                                        ),
                                       )
                                     ],
-                                  ),
-                                ),
-                              ),
+                                  )),
                             ),
                           ),
-                      separatorBuilder: (ctx, i) => SizedBox(
-                            height: 5,
-                          ),
-                      itemCount: state.ordersList.length),
-                ),
+                        ),
+                    separatorBuilder: (ctx, i) => SizedBox(
+                          height: 5,
+                        ),
+                    itemCount: state.ordersList.length),
               ],
             ),
           );

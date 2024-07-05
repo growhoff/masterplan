@@ -1,12 +1,14 @@
 import 'package:master_plan/data/repositories/supabase/dto/position_staff_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
+import 'package:master_plan/domain/usecase/chief_unit_service.dart';
 import 'package:master_plan/domain/usecase/company_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class PositionStaffTable extends SupabaseTable {
   final table = Supabase.instance.client.from('z_position_staff');
   final _companyId = CompanyService.instance.companyId ?? 1;
+  final _unitId = ChiefUnitService.instance.unitId ?? 1;
 
   @override
   Future<void> delete(int id) async {
@@ -34,7 +36,7 @@ class PositionStaffTable extends SupabaseTable {
         'position_id': dto.positionId,
         'staff_id': dto.staffId,
         'area_id': dto.areaId,
-        'unit_id': dto.unitId
+        'unit_id': _unitId,
       });
     }
   }
@@ -48,17 +50,23 @@ class PositionStaffTable extends SupabaseTable {
   Future<List<Map<String, dynamic>>> selectStaffByUnitsIdList(
       List<int> unitsIdList) async {
     return await table
-        .select('*,z_staff(*,z_user(*, z_position(*))), z_area!inner(*), z_position(*)')
+        .select(
+            '*,z_staff(*,z_user(*, z_position(*))), z_area!inner(*), z_position(*)')
         .inFilter('z_area.unit_id', unitsIdList);
   }
 
   Future<List<Map<String, dynamic>>> selectChiefOnUnit(int unitId) async {
-    return await table
+    print('unitId: $unitId');
+    print('company: $_companyId');
+    var res = await table
         .select(
             '*, z_area(*),z_position(*),z_staff!inner(*, z_user!inner(*, z_position(*)))')
         .eq('position_id', 2)
         .eq('z_staff.z_user.company_id', _companyId)
         .eq('unit_id', unitId);
+
+
+    return res;
   }
 
   Future<List<Map<String, dynamic>>> selectAllChiefs() async {
@@ -74,7 +82,26 @@ class PositionStaffTable extends SupabaseTable {
     return await table
         .select(
             '*,z_unit(*), z_position(*),z_staff(*, z_user(*, z_position(*))), z_area(*)')
-        .eq('staff_id', staffId);
+        .eq('staff_id', staffId)
+        .order('position_id', ascending: true);
+  }
+
+  Future<List<Map<String, dynamic>>> selectChiefAndMastersByStaffId(
+      {required int staffId}) async {
+    return await table
+        .select(
+            '*,z_unit(*), z_position(*),z_staff(*, z_user(*, z_position(*))), z_area(*)')
+        .eq('staff_id', staffId)
+        .inFilter('position_id', [2, 3]).order('position_id', ascending: true);
+  }
+
+  Future<List<Map<String, dynamic>>> selectChiefByStaffId(
+      {required int staffId}) async {
+    return await table
+        .select(
+            '*,z_unit(*), z_position(*),z_staff(*, z_user(*, z_position(*))), z_area(*)')
+        .eq('staff_id', staffId)
+        .eq('position_id', 2);
   }
 
   Future<List<Map<String, dynamic>>> selectMastersOnArea(

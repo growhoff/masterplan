@@ -1,6 +1,7 @@
 import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
+import 'package:master_plan/domain/usecase/chief_unit_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../domain/usecase/company_service.dart';
@@ -8,6 +9,7 @@ import '../../../../domain/usecase/company_service.dart';
 class AreaTable extends SupabaseTable {
   final table = Supabase.instance.client.from('z_area');
   final _companyId = CompanyService.instance.companyId ?? 1;
+  final _unitId = ChiefUnitService.instance.unitId ?? 1;
 
   @override
   Future<void> delete(int id) {
@@ -20,7 +22,7 @@ class AreaTable extends SupabaseTable {
       await table.insert({
         'name': dto.name,
         'number': dto.number,
-        'unit_id': _companyId == 1 ? 1 : 7,
+        'unit_id': _unitId,
         'company_id': _companyId
       });
     }
@@ -33,6 +35,12 @@ class AreaTable extends SupabaseTable {
         .eq('z_unit.company_id', _companyId);
   }
 
+  Future<List<Map<String, dynamic>>> selectByUnitId() {
+    return table
+        .select('*, z_unit!inner(*)')
+        .eq('z_unit.company_id', _companyId).eq('unit_id', _unitId);
+  }
+
   Future<List<Map<String, dynamic>>> selectId(int id) {
     return table.select().eq('id', id);
   }
@@ -41,7 +49,8 @@ class AreaTable extends SupabaseTable {
     return table.select().eq('unit_id', unitId);
   }
 
-  Future<List<Map<String, dynamic>>> selectByUnitIdList(List<int> unitIdList) async{
+  Future<List<Map<String, dynamic>>> selectByUnitIdList(
+      List<int> unitIdList) async {
     return await table.select().inFilter('unit_id', unitIdList);
   }
 
@@ -70,5 +79,10 @@ class AreaTable extends SupabaseTable {
 
   stream() {
     return table.stream(primaryKey: ['id']).eq('company_id', _companyId);
+  }
+
+  streamForChief() {
+    print(_unitId);
+    return table.stream(primaryKey: ['id']).eq('unit_id', _unitId);
   }
 }

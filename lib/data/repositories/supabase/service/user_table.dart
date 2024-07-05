@@ -17,12 +17,14 @@ class UserTable extends SupabaseTable {
 
   @override
   Future<int> insert(Dto dto) async {
+    print(_companyId);
     if (dto is UserDTO) {
       var data = await table.insert({
         'fio': dto.fio,
         'position_id': dto.positionId,
         'area_id': dto.areaId,
         'company_id': _companyId,
+        'unit_id': dto.unitId,
         'photo': dto.photo,
       }).select('id');
       return data[0]['id'];

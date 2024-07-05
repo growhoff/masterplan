@@ -16,6 +16,7 @@ import 'package:master_plan/data/repositories/supabase/service/area_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/chief_distribution_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/chief_operation_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
+import 'package:master_plan/domain/usecase/chief_unit_service.dart';
 import 'package:master_plan/presentation/pages/chief/model/distribution_operation_model.dart';
 
 import '../../../../../domain/model/chief_distribution_operations_model.dart';
@@ -23,7 +24,7 @@ import '../../../../../domain/model/chief_distribution_operations_model.dart';
 part 'chief_distribution_state.dart';
 
 class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
-  ChiefDistributionCubit({this.unitId})
+  ChiefDistributionCubit()
       : super(const ChiefDistributionState()) {
     _chiefDistributionOperationsTable.table
         .stream(primaryKey: ['id'])
@@ -33,7 +34,7 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
         });
   }
 
-  final int? unitId;
+  final int? unitId = ChiefUnitService.instance.unitId;
 
   final OperatorOperationsTable _operatorOperationsTable =
       OperatorOperationsTable();
@@ -67,7 +68,7 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
     List<ChiefDistributionOperation> chiefOperationsList = [];
     var fetchedChiefOperationsList =
         await _chiefDistributionOperationsTable.selectNotDistributed(
-          unitId: unitId ?? 1,
+            unitId: unitId ?? 1,
             maxRange: chiefOperationsSelectMaxRange,
             minRange: chiefOperationsSelectMinRange);
 

@@ -51,32 +51,28 @@ class _BatchesPageViewState extends State<BatchesPageView> {
               padding: const EdgeInsets.only(right: 10),
               child: IconButton(
                   onPressed: () {
-
-                    context.read<BatchesCubit>().isOrderFormed == false
-                        ? {
-                            context.read<BatchesCubit>().formOrder(),
-                            showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                      title: Center(
-                                          child: Text(
-                                              'заказ успешно сформирован')),
-                                      actions: [
-                                        Center(
-                                          child: MaterialButton(
-                                            onPressed: () =>
-                                                Navigator.pop(context),
-                                            child: Text(
-                                              'Ок',
-                                              style: TextStyle(fontSize: 24),
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                      elevation: 20,
-                                    ))
-                          }
-                        : {
+                    {
+                      context.read<BatchesCubit>().formOrder();
+                      showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                                title: Center(
+                                    child: Text('заказ успешно сформирован')),
+                                actions: [
+                                  Center(
+                                    child: MaterialButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: Text(
+                                        'Ок',
+                                        style: TextStyle(fontSize: 24),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                                elevation: 20,
+                              ));
+                    }
+                    /* {
                             showDialog(
                                 context: context,
                                 builder: (context) => AlertDialog(
@@ -96,7 +92,7 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                       ],
                                       elevation: 20,
                                     ))
-                          };
+                          };*/
                   },
                   icon: Icon(Icons.format_indent_increase_rounded)),
             )

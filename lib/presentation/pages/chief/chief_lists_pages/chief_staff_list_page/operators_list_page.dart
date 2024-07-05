@@ -25,9 +25,10 @@ class OperatorsListPageView extends StatefulWidget {
 class _OperatorsListPageViewState extends State<OperatorsListPageView> {
   @override
   void initState() {
-    context.read<StaffCubit>().fetchDropDownsItems();
+    context.read<StaffCubit>().initOperatorsPage();
+
+    //context.read<StaffCubit>().fetchOperators();
     super.initState();
-    context.read<StaffCubit>().fetchOperators();
   }
 
   @override
@@ -39,62 +40,72 @@ class _OperatorsListPageViewState extends State<OperatorsListPageView> {
       body: SafeArea(
         child: BlocBuilder<StaffCubit, StaffState>(
           builder: (context, state) {
-            return Container(
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 60,
-                    child: DropdownButton<String>(
-                      isExpanded: true,
-                      value: context.read<StaffCubit>().selectedArea,
-                      onChanged: (String? value) {
-                        setState(() => context
-                                .read<StaffCubit>()
-                                .selectedArea =
-                            value ??
-                                context.read<StaffCubit>().selectedArea);
-                        context.read<StaffCubit>().fetchOperators();
-                      },
-                      items: state.areasNamesList
-                          .map((String region) => DropdownMenuItem(
-                                value: region,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 10),
-                                  child: Text(region),
-                                ),
-                              ))
-                          .toList(),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  state.status == ChiefStaffStatus.success
-                      ? Expanded(
-                          child: ListView.separated(
-                              addAutomaticKeepAlives: false,
-                              itemBuilder: (context, index) => StaffListElement(
-                                  fetchStaff: () => context
-                                      .read<StaffCubit>()
-                                      .fetchOperators(),
-                                  positionStaff: state.positionStaffList[index],
-                                  deleteStaff: () {
-                                    context.read<StaffCubit>().deleteStaff(
-                                        positionStaff:
-                                            state.positionStaffList[index]);
-                                  }),
-                              separatorBuilder: (ctx, i) => SizedBox(
-                                    height: 10,
+            if (state.status == ChiefStaffStatus.success) {
+              return Container(
+                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 60,
+                      child: DropdownButton<String>(
+                        isExpanded: true,
+                        value: context.read<StaffCubit>().selectedArea,
+                        onChanged: (String? value) {
+                          setState(() => context
+                                  .read<StaffCubit>()
+                                  .selectedArea =
+                              value ?? context.read<StaffCubit>().selectedArea);
+                          context.read<StaffCubit>().fetchOperators();
+                        },
+                        items: state.areasNamesList
+                            .map((String region) => DropdownMenuItem(
+                                  value: region,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 10),
+                                    child: Text(region),
                                   ),
-                              itemCount: state.positionStaffList.length),
-                        )
-                      : Center(
-                          child: CircularProgressIndicator(),
-                        )
-                ],
-              ),
-            );
+                                ))
+                            .toList(),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    state.status == ChiefStaffStatus.success
+                        ? Expanded(
+                            child: ListView.separated(
+                                addAutomaticKeepAlives: false,
+                                itemBuilder: (context, index) =>
+                                    StaffListElement(
+                                        fetchStaff: () => context
+                                            .read<StaffCubit>()
+                                            .fetchOperators(),
+                                        positionStaff:
+                                            state.positionStaffList[index],
+                                        deleteStaff: () {
+                                          context
+                                              .read<StaffCubit>()
+                                              .deleteStaff(
+                                                  positionStaff:
+                                                      state.positionStaffList[
+                                                          index]);
+                                        }),
+                                separatorBuilder: (ctx, i) => SizedBox(
+                                      height: 10,
+                                    ),
+                                itemCount: state.positionStaffList.length),
+                          )
+                        : Center(
+                            child: CircularProgressIndicator(),
+                          )
+                  ],
+                ),
+              );
+            } else {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
           },
         ),
       ),

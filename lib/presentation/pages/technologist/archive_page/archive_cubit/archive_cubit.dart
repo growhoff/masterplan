@@ -4,6 +4,7 @@ import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operation_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/transfer_dto.dart';
+import 'package:master_plan/data/repositories/supabase/service/batch_archive_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/batch_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operation_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/stage_table.dart';
@@ -13,6 +14,8 @@ import 'package:master_plan/domain/model/stage.dart';
 import 'package:master_plan/domain/model/transfer.dart';
 
 import '../../../../../data/repositories/local/service/excel_service.dart';
+import '../../../../../data/repositories/supabase/dto/batch_archive_dto.dart';
+import '../../../../../domain/model/batch_archive.dart';
 import '../../../../../domain/model/operation.dart';
 
 part 'archive_state.dart';
@@ -20,24 +23,12 @@ part 'archive_state.dart';
 class ArchiveCubit extends Cubit<ArchiveState> {
   ArchiveCubit() : super(const ArchiveState());
 
-  // {
-  //   _batchTable.stream().listen((list) async {
-  //     print('list: $list');
-  //     await fetchBatches(list);
-  //   });
-  // }
-
   final _batchTable = BatchTable();
+  final _batchArchiveTable = BatchArchiveTable();
   final _stageTable = StageTable();
   final _operationTable = OperationTable();
   final _transferTable = TransferTable();
   final _excelService = ExcelService();
-
-  // @override
-  // Future<void> close() {
-  //   _batchTable.stream().close();
-  //   return super.close();
-  // }
 
   Future<void> fetchStages({required int batchId}) async {
     List<Stage> stagesList = [];
@@ -60,22 +51,21 @@ class ArchiveCubit extends Cubit<ArchiveState> {
   }
 
   Future<void> fetchBatches() async {
-    List<Batch> batchesList = [];
+    List<BatchArchive> batchesList = [];
 
-    var fetchedList = await _batchTable.select();
+    var fetchedList = await _batchArchiveTable.select();
 
     try {
       for (var fetchedBatch in fetchedList) {
-        final batchDto = BatchDTO.fromMap(fetchedBatch);
+        final batchArchiveDto = BatchArchiveDto.fromMap(fetchedBatch);
 
-        final batch = convertBatchDtoToModel(batchDto);
+        final batch = BatchArchive.fromDto(batchArchiveDto);
 
         batchesList.add(batch);
       }
 
       emit(state.copyWith(
           batchesList: batchesList, status: ArchiveStatus.success));
-      print('fetchDataFromStream success');
     } catch (e) {
       emit(state.copyWith(status: ArchiveStatus.failure));
     }

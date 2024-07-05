@@ -31,7 +31,7 @@ class BatchesCubit extends Cubit<BatchesState> {
   BatchesCubit(this.order) : super(const BatchesState());
 
   final Order? order;
-  bool? isOrderFormed = false;
+
 
   final _batchTable = BatchTable();
   final _chiefBatchTable = ChiefBatchTable();
@@ -44,9 +44,7 @@ class BatchesCubit extends Cubit<BatchesState> {
   TextEditingController optimalBatchController = TextEditingController();
 
   Future<void> fetchBatchesInOrder() async {
-    if (order?.isFormed == true) {
-      isOrderFormed = true;
-    }
+
     List<Batch> batchesList = [];
     try {
       var fetchedList = await _batchTable.selectByOrderId(order?.id ?? 0);
@@ -132,7 +130,7 @@ class BatchesCubit extends Cubit<BatchesState> {
       batchesArchiveIdList.add(batch.batchArchiveId ?? 0);
     }
     var fetchedChiefBatchedList =
-        await _chiefBatchTable.selectByBatchesIdList(batchesIdList);
+    await _chiefBatchTable.selectByBatchesIdList(batchesIdList);
 
     List<ChiefBatch> chiefBatchesList = [];
     for (var fetchedChiefBatch in fetchedChiefBatchedList) {
@@ -143,7 +141,7 @@ class BatchesCubit extends Cubit<BatchesState> {
 
     List<Stage> allStagesList = [];
     var fetchedLit =
-        await _stageTable.selectByBatchesArchiveIdList(batchesArchiveIdList);
+    await _stageTable.selectByBatchesArchiveIdList(batchesArchiveIdList);
 
     for (var fetchedStage in fetchedLit) {
       final stageDto = StageDTO.fromMap(fetchedStage);
@@ -166,7 +164,7 @@ class BatchesCubit extends Cubit<BatchesState> {
     await _distributionStageTable.bulkInsert(
         distributionStagesList: distributionStagesList);
 
-    await _orderTable.changeIsFormedToTrue(order?.id ?? 0);
+    await _orderTable.changeStatusToFormed(order?.id ?? 0);
 
     List<int> chiefBatchesIdList = [];
     for (var batch in chiefBatchesList) {
@@ -175,73 +173,5 @@ class BatchesCubit extends Cubit<BatchesState> {
 
     await _chiefBatchTable.updateChiefBatchStatusToInWorkList(
         chiefBatchIdList: chiefBatchesIdList);
-
-    isOrderFormed = true;
-
-    // List<int> batchesArchiveIdList = [];
-    // Map<int, int> batchIdToQuantityMap = {};
-    // Map<int, int> batchArchiveIdToBatchIdMap = {};
-    // for (var batch in state.batchesList) {
-    //   batchesArchiveIdList.add(batch.batchArchiveId ?? 0);
-    //   batchIdToQuantityMap[batch.batchArchiveId ?? 0] = batch.count;
-    //   batchArchiveIdToBatchIdMap[batch.batchArchiveId ?? 0] = batch.id;
-    // }
-    //
-    // List<Stage> stagesList = [];
-    // var fetchedLit =
-    //     await _stageTable.selectByBatchesArchiveIdList(batchesArchiveIdList);
-    //
-    // for (var fetchedStage in fetchedLit) {
-    //   final stageDto = StageDTO.fromMap(fetchedStage);
-    //   final stage = Stage.fromDto(stageDto);
-    //
-    //   stagesList.add(stage);
-    // }
-    //
-    // var stagesMap = groupBy(stagesList, (stage) => stage.batchArchiveId);
-    //
-    // List<DistributionStage> distributionStagesList = [];
-    //
-    // stagesMap.forEach((key, value) {
-    //   final int quantity = batchIdToQuantityMap[key] ?? 0;
-    //
-    //   for (int i = 0; i < quantity; i++) {
-    //     for (var stage in value) {
-    //       distributionStagesList.add(DistributionStage(
-    //           id: 0,
-    //           batchId: batchArchiveIdToBatchIdMap[stage.batchArchiveId] ?? 1,
-    //           stageId: stage.id,
-    //           statusId: 4,
-    //           unitId: 1));
-    //     }
-    //   }
-    // });
-    // await _distributionStageTable.bulkInsert(
-    //     distributionStagesList: distributionStagesList);
-    //
-    // await _orderTable.changeIsFormedToTrue(order?.id ?? 0);
-    //
-    // isOrderFormed = true;
   }
-
-// Future<void> addDetail() async {
-//   final chiefOperationTable = ChiefOperationTable();
-//   int batchId = 236;
-//   int stageId = 574;
-//   List<int> operationsIdsList = [1776, 1777, 1778];
-//   List<int> chiefDistributionOperationsList = [1557, 1558, 1559];
-//   for (int i = 0; i < 34; i++) {
-//     print(i);
-//     int chiefBatchId = await _chiefBatchTable.insert(
-//         ChiefBatchDTO(id: 0, batchId: batchId, batch: BatchDTO.empty));
-//     for (int j = 0; j < operationsIdsList.length; j++) {
-//       chiefOperationTable.insert(ChiefOperationDto(
-//           id: 0,
-//           operationId: operationsIdsList[j],
-//           stageId: stageId,
-//           chiefBatchId: chiefBatchId));
-//     }
-//   }
-//   print('закончили');
-// }
 }
