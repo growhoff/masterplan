@@ -7,6 +7,8 @@ import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/status.dart';
 import 'package:master_plan/domain/model/user.dart';
 
+import 'distribution_stage.dart';
+
 class OperatorOperations {
   final int id;
   final int timeplan;
@@ -30,6 +32,8 @@ class OperatorOperations {
   final bool? modific;
   final String? comment;
 
+  final DistributionStage? distributionStageDto;
+
   OperatorOperations({
     required this.id,
     required this.timeplan,
@@ -52,6 +56,7 @@ class OperatorOperations {
     this.chiefOperationId,
     this.modific,
     this.comment,
+    this.distributionStageDto
   });
 
 

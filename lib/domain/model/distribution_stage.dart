@@ -4,6 +4,7 @@ import 'package:master_plan/domain/model/chief_batch.dart';
 import 'package:master_plan/domain/model/stage.dart';
 import 'package:master_plan/domain/model/user.dart';
 
+import '../../data/repositories/supabase/dto/stage_status.dart';
 import 'batch.dart';
 
 class DistributionStage {
@@ -15,6 +16,7 @@ class DistributionStage {
     this.stage,
     required this.statusId,
     this.unitId,
+    this.stageStatus
   });
 
   final int id;
@@ -24,6 +26,7 @@ class DistributionStage {
   final Stage? stage;
   final int statusId;
   final int? unitId;
+  final StageStatus? stageStatus;
 
   factory DistributionStage.fromDto(DistributionStageDto dto) {
     return DistributionStage(
@@ -31,10 +34,12 @@ class DistributionStage {
         chiefBatchId: dto.chiefBatchId,
         stageId: dto.stageId,
         statusId: dto.statusId,
+        stageStatus: dto.stageStatus,
         unitId: dto.unitId,
         chiefBatch: dto.chiefBatchDto != null
             ? ChiefBatch(
                 id: 0,
+                batchStatusId: dto.chiefBatchDto?.batchStatusId,
                 batchId: dto.chiefBatchDto?.batchId ?? 0,
                 batch: dto.chiefBatchDto?.batch ??
                     BatchDTO(
@@ -44,7 +49,7 @@ class DistributionStage {
                         count: dto.chiefBatchDto?.batch.count ?? 0,
                         code: dto.chiefBatchDto?.batch.code ?? '',
                         technology: dto.chiefBatchDto?.batch.technology ?? '',
-                        order: dto.chiefBatchDto?.batch.order ?? 0,
+
                         isready: dto.chiefBatchDto?.batch.isready ?? false,
                         orderId: dto.chiefBatchDto?.orderId,
                         batchArchiveId:

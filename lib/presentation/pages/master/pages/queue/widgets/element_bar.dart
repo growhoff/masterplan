@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../widgets/drop_area.dart';
+import '../widgets/drop_machine.dart';
 import '../../queue/bloc/cubit.dart';
 import '../../queue/bloc/state.dart';
 import 'contetn_queue.dart';
@@ -10,26 +12,24 @@ class ElementBarQueue extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CubitQueueMaster, StateQueueMaster>(
-      builder:(context, state) => state.listMachine!.isNotEmpty 
+      builder:(context, state) => 
+      state.listItemMachine.isNotEmpty
       ? Column(
         children: [
-          SizedBox(
-            height: 60,
-            child: ListView.separated(
-              shrinkWrap: true,
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) => GestureDetector(
-                onTap: () => context.read<CubitQueueMaster>().setActivePage(index),
-                child: SizedBox(width: 200, child: Card(color: state.activePage == index ? Colors.blueGrey : const Color.fromARGB(0, 0, 0, 0), child: Center(child: Text(state.listMachine![index].machine.name, textAlign: TextAlign.center)))),
-              ), 
-              separatorBuilder: (context, index) => const SizedBox(width: 5),
-              itemCount: state.listMachine!.length),
-          ),
+            Visibility(
+              visible: state.listAreaMachine.length > 1,
+              child: DropAreaQueue(state.activeArea, state.listItemArea),
+            ),
+            const SizedBox(height: 8),
+            DropMachineQueue(state.activeMachine, state.listItemMachine),
             const SizedBox(height: 18),
-            ContetnQueue(itemMachine: state.listMachine![state.activePage])
+            state.listMachine!.isNotEmpty
+            ? ContetnQueue(itemMachine: state.listMachine![state.activeMachine])
+            : const Center(child: CircularProgressIndicator())
         ],
       )
-      : const Center(child: CircularProgressIndicator()),
+      : const Center(child: Text('Нет станков')),
     );
   }
 }
+

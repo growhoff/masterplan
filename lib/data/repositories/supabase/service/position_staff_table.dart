@@ -41,11 +41,24 @@ class PositionStaffTable extends SupabaseTable {
     }
   }
 
+
+  Future<void> insertChief(Dto dto) async {
+    if (dto is PositionStaffDTO) {
+      await table.insert({
+        'position_id': dto.positionId,
+        'staff_id': dto.staffId,
+        'area_id': dto.areaId,
+        'unit_id': dto.unitId,
+      });
+    }
+  }
+
   @override
   Future<List<Map<String, dynamic>>> select() async {
     return await table.select(
         '*,z_unit(*), z_area(*),z_position(*),z_staff(*, z_user(*, z_position(*)))');
   }
+
 
   Future<List<Map<String, dynamic>>> selectStaffByUnitsIdList(
       List<int> unitsIdList) async {

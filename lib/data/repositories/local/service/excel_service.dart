@@ -5,16 +5,19 @@ import 'package:lecle_downloads_path_provider/lecle_downloads_path_provider.dart
 import 'package:master_plan/data/repositories/supabase/dto/batch_archive_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/chief_batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/chief_distribution_operations_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/distribution_stage_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/transfer_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/chief_batch_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/chief_distribution_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/chief_operation_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/distribution_stage_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/transfer_table.dart';
 import 'package:master_plan/domain/usecase/chief_unit_service.dart';
 import 'package:master_plan/presentation/pages/master/pages/analytics_page/analytics_operation_model.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../../../domain/model/distribution_stage.dart';
 import '../../../../presentation/pages/chief/chief_analytics_page/chief_stage_report_model.dart';
 import '../../../../presentation/pages/chief/chief_analytics_page/statistics_stage_model.dart';
 import '../../supabase/dto/batch_dto.dart';
@@ -30,6 +33,7 @@ class ExcelService {
   final _batchTable = BatchTable();
   final _batchArchiveTable = BatchArchiveTable();
   final _stageTable = StageTable();
+  final _distributionStageTable = DistributionStageTable();
   final _operationTable = OperationTable();
   final _chiefDistributionOperationsTable = ChiefDistributionOperationsTable();
   final _chiefBatchTable = ChiefBatchTable();
@@ -38,6 +42,7 @@ class ExcelService {
   final _unitId = ChiefUnitService.instance.unitId ?? 1;
 
   List<ChiefOperationDto> chiefOperationsList = [];
+  List<int> stagesIdForDistributionStagesList = [];
   List<int> chiefDistributionsOperationsIdList = [];
   int serviceBatchId = 0;
   int serviceQuantity = 0;
@@ -139,6 +144,7 @@ class ExcelService {
 
         print('вставляю бетч архив');
         int batchArchiveId = await _batchArchiveTable.insert(BatchArchiveDto(
+            code: code,
             id: 0,
             number: planNumber,
             name: planName,
@@ -154,7 +160,6 @@ class ExcelService {
             count: quantity,
             code: code,
             technology: technologyNumber,
-            order: 1,
             isready: false,
             orderId: null,
             batchArchiveId: batchArchiveId));
@@ -175,6 +180,8 @@ class ExcelService {
             batchArchiveId: batchArchiveId));
 
         print('инсерт stage: $stageNumber,  $stageName, $stageId');
+
+        stagesIdForDistributionStagesList.add(stageId);
 
         String? operationCode =
             excel.tables[table]!.rows[1][6]?.value.toString();
@@ -254,6 +261,7 @@ class ExcelService {
                 batchId: batchId,
                 batchArchiveId: batchArchiveId));
 
+            stagesIdForDistributionStagesList.add(stageId);
             print('инсерт этап $stageNumber, $stageName, $stageId');
           }
 
@@ -330,6 +338,7 @@ class ExcelService {
     print('начали финищ лоадинг');
     List<ChiefBatchDTO> chiefBatchDtosList = [];
     List<ChiefOperationDto> chiefOperationDtosList = [];
+    List<DistributionStage> distributionStagesList = [];
     List<int> chiefBatchIdsList = [];
     for (int i = 0; i < serviceQuantity; i++) {
       print('$i');
@@ -341,25 +350,41 @@ class ExcelService {
     chiefBatchIdsList =
         await _chiefBatchTable.bulkInsertFromList(dtosList: chiefBatchDtosList);
 
+    int distributionStageId = 0;
     for (int chiefBatchId in chiefBatchIdsList) {
+      for (var stageId in stagesIdForDistributionStagesList) {
+        distributionStagesList.add(DistributionStage(
+            id: 0, chiefBatchId: chiefBatchId, stageId: stageId, statusId: 1));
+      }
+    }
+
+    var fetchedDistributionStagesList = await _distributionStageTable
+        .chiefBulkInsert(distributionStagesList: distributionStagesList);
+
+    for (var stage in fetchedDistributionStagesList) {
       for (var operation in chiefOperationsList) {
-        chiefOperationDtosList.add(ChiefOperationDto(
-            id: 0,
-            operation: OperationDTO.empty,
-            stage: StageDTO.empty,
-            operationId: operation.operationId,
-            stageId: operation.stageId,
-            chiefBatch: ChiefBatchDTO(id: 0, batchId: 0, batch: BatchDTO.empty),
-            chiefBatchId: chiefBatchId));
+        if (operation.stageId == stage['stage_id']) {
+          chiefOperationDtosList.add(ChiefOperationDto(
+              id: 0,
+              operation: OperationDTO.empty,
+              stage: StageDTO.empty,
+              operationId: operation.operationId,
+              stageId: operation.stageId,
+              distributionStageId: stage['id'],
+              chiefBatch:
+                  ChiefBatchDTO(id: 0, batchId: 0, batch: BatchDTO.empty),
+              chiefBatchId: stage['chief_batch_id']));
+        }
       }
     }
 
     print('финиш лоадинг булк инсерт начал');
     await _chiefOperationTable.bulkInsert(dtosList: chiefOperationDtosList);
-    chiefDistributionsOperationsIdList.forEach((element) {
+
+    for (var element in chiefDistributionsOperationsIdList) {
       _chiefDistributionOperationsTable.updateQuantity(
           chiefOperationId: element, newQuantity: serviceQuantity);
-    });
+    }
 
     serviceBatchId = 0;
     chiefOperationsList = [];
@@ -375,28 +400,28 @@ class ExcelService {
     );
 
     var path = pickedFile?.paths.first;
-
+    print('path: $path');
     if (pickedFile != null) {
       var bytes = File(path!).readAsBytesSync();
 
       var excel = Excel.decodeBytes(bytes);
-
+      int stageNumber = 1;
       for (var table in excel.tables.keys) {
-        int quantity =
-            int.parse(excel.tables[table]!.rows[1][13]!.value.toString());
-        serviceQuantity = quantity;
-
         String code = excel.tables[table]!.rows[1][0]!.value
             .toString(); // присваивается значение первой ячейки столбца номер чертежа
 
         String technologyNumber =
             excel.tables[table]!.rows[1][1]!.value.toString();
 
+        print('technology: $technologyNumber');
         String planNumber = excel.tables[table]!.rows[1][2]!.value.toString();
 
+        print(planNumber);
         String planName = excel.tables[table]!.rows[1][3]!.value.toString();
 
+        print(planName);
         int batchArchiveId = await _batchArchiveTable.insert(BatchArchiveDto(
+          code: code,
           id: 0,
           number: planNumber,
           name: planName,
@@ -404,19 +429,22 @@ class ExcelService {
           companyId: 0,
         ));
 
-        String? stageNumber =
-            excel.tables[table]!.rows[1][14]?.value.toString();
+        print(batchArchiveId);
         String? stageName = excel.tables[table]!.rows[1][5]?.value.toString();
 
+        print(stageName);
+        print('stageNumber: $stageNumber');
         int stageId = await _stageTable.insert(StageDTO(
           id: 0,
-          number: stageNumber ?? '',
+          number: stageNumber.toString(),
           name: stageName ?? '',
           isdistributed: false,
           areaId: 0,
           batchArchiveId: batchArchiveId,
-          batchId: 0,
+          batchId: null,
         ));
+
+        print(stageId);
 
         print('инсерт stage: $stageNumber,  $stageName, $stageId');
 
@@ -462,19 +490,20 @@ class ExcelService {
         }
 
         for (int i = 2; i < excel.tables[table]!.maxRows; i++) {
+          print('max rows: ${excel.tables[table]!.maxRows}');
           var row = excel.tables[table]!.rows;
 
           if (row[i][4]?.value != null) {
-            stageNumber = row[i][14]?.value.toString();
+            stageNumber++;
             stageName = row[i][5]?.value.toString();
             stageId = await _stageTable.insert(StageDTO(
                 id: 0,
-                number: stageNumber ?? '',
+                number: stageNumber.toString(),
                 name: stageName ?? '',
                 isdistributed: false,
                 areaId: 0,
                 batchArchiveId: batchArchiveId,
-                batchId: 0));
+                batchId: null));
 
             print('инсерт этап $stageNumber, $stageName, $stageId');
           }
@@ -822,7 +851,7 @@ class ExcelService {
                 '${stagesList[stageRowIndex].batchNumber} ${stagesList[stageRowIndex].batchName}');
 
           case 3:
-            cell.value = TextCellValue(stagesList[stageRowIndex].batchCode);
+            cell.value = TextCellValue(stagesList[stageRowIndex].code);
 
           case 4:
             cell.value =
@@ -1057,7 +1086,8 @@ class ExcelService {
             cell.value = IntCellValue(
                 analyticsOperationsList[operationRowIndex].quantity);
           case 16:
-            cell.value = TextCellValue('');
+            cell.value = TextCellValue(
+                analyticsOperationsList[operationRowIndex].comment);
         }
         cell.cellStyle = _cellTextStyle;
       }

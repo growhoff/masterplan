@@ -1,8 +1,13 @@
+
+
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
+import 'package:master_plan/presentation/pages/chief_master/pages/queue/queue_details/widgets/dialog_saver.dart';
+import './bloc/state.dart';
 import './bloc/cubit.dart';
-import 'widgets/element_bar.dart';
+import './widgets/element_bar.dart';
 
 class QueuePageMasterChM extends StatelessWidget {
   const QueuePageMasterChM({super.key});
@@ -10,8 +15,8 @@ class QueuePageMasterChM extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final stateMain = context.read<CubitMain>().state;
-    return BlocProvider<CubitQueueMasterChM>(
-      create: (context) => CubitQueueMasterChM(stateMain.queueList,  stateMain.user!.id, stateMain.listArea!, stateMain.listAreaMachineUser!),
+    return BlocProvider<CubitQueueMaster>(
+      create: (context) => CubitQueueMaster(stateMain.user!.id, stateMain.listAreaMachine!),
       child: const QueuePageMasterContent(),
     );
   }
@@ -22,12 +27,26 @@ class QueuePageMasterContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Очередь деталей')),
+      appBar: AppBar(
+        title: const Text('Очередь деталей'),
+        leading: BlocBuilder<CubitQueueMaster, StateQueueMaster>(
+          builder: (context, state) =>  BackButton(
+            onPressed: () => state.isSaver ? showDialog(
+                  context: context, 
+                  builder: (BuildContext innerContext) {
+                    return BlocProvider.value(value: context.watch<CubitQueueMaster>(),
+                    child: Material(
+                        child: BlocBuilder<CubitQueueMaster, StateQueueMaster>(builder: (context, state) => const DialogSaver()),
+                      ),
+                    );
+                  })
+                  : Navigator.pop(context),
+          ),
+        ),
+      ),
       body: const SafeArea(
         child: SingleChildScrollView(
-          child: Padding(
-              padding:  EdgeInsets.all(16),
-              child: ElementBarQueue()),
+          child: Padding(padding: EdgeInsets.all(16), child: ElementBarQueue()),
         ),
       ),
     );

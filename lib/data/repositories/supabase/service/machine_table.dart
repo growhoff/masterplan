@@ -1,10 +1,13 @@
 import 'package:master_plan/data/repositories/supabase/dto/machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
+import 'package:master_plan/domain/usecase/company_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class MachineTable extends SupabaseTable {
   final table = Supabase.instance.client.from('z_machine');
+
+  final _companyId = CompanyService.instance.companyId ?? 0;
 
   @override
   Future<void> delete(int id) {
@@ -29,6 +32,15 @@ class MachineTable extends SupabaseTable {
     return table.select();
   }
 
+  Future<int> fetchActivatedMachinesByCompanyId() async {
+    var res = await table
+        .select('*,z_area!inner(*)')
+        .eq('z_area.company_id', _companyId)
+        .eq('is_activated', true)
+        .count();
+    return res.count;
+  }
+
   Future<List<Map<String, dynamic>>> selectId(int id) {
     return table.select().eq('id', id);
   }
@@ -42,7 +54,8 @@ class MachineTable extends SupabaseTable {
     return table.select().inFilter('area_id', listAreaId);
   }
 
-  Future<List<Map<String, dynamic>>> selectByUnitIdList(List<int> unitIdList) async{
+  Future<List<Map<String, dynamic>>> selectByUnitIdList(
+      List<int> unitIdList) async {
     return await table
         .select('*, z_area!inner(*)')
         .inFilter('z_area.unit_id', unitIdList);

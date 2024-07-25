@@ -1,9 +1,7 @@
 import 'package:master_plan/domain/model/otp_path_operations.dart';
 import 'package:master_plan/presentation/pages/master/pages/tableInfo/table_info_page.dart';
 import 'package:master_plan/theme/theme.dart';
-
-// import './../model/item_oper.dart';
-import './../widgets/reorderable_icon_widget.dart';
+import './reorderable_icon_widget.dart';
 import '../bloc/cubit.dart';
 import 'row_list_four.dart';
 import 'package:flutter/material.dart';
@@ -40,9 +38,9 @@ class Reorder extends StatelessWidget {
               //инфо
               Expanded(child: IconButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => TableInfoPage(list[index].list),)), icon: const Icon(Icons.info, color: Colors.blue))),
               //передать на готовые детали
-              Expanded(child: IconButton(onPressed: () => context.read<CubitQueueMasterChM>().updateOperationReady(list[index].idPath), icon: const Icon(Icons.check_rounded, color: Colors.green))),
+              Expanded(child: IconButton(onPressed: () => context.read<CubitQueueMaster>().updateOperationReady(list[index].idPath), icon: const Icon(Icons.check_rounded, color: Colors.green))),
               //передать на распределение
-              Expanded(child: IconButton(onPressed: () => context.read<CubitQueueMasterChM>().updateOperationDistribMaster(list[index].idPath), icon: const Icon(Icons.close, color: Colors.red))),
+              Expanded(child: IconButton(onPressed: () => context.read<CubitQueueMaster>().updateOperationDistribMaster(list[index].idPath), icon: const Icon(Icons.close, color: Colors.red))),
             ],
                   ),
           );
@@ -51,6 +49,8 @@ class Reorder extends StatelessWidget {
           if (newIndex > oldIndex) {newIndex = newIndex - 1;}
           final element  = list.removeAt(oldIndex);
           list.insert(newIndex, element);
+          //save
+          context.read<CubitQueueMaster>().setIsSaver(true);
         }
       )
       ],

@@ -40,17 +40,20 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
     List<int> areasList = [];
 
     // получить список участков на которых работает мастер
+    print('staffId: $staffId');
     var fetchedList =
         await _positionStaffTable.selectByStaffId(staffId: staffId);
+
     for (var fetchedStaff in fetchedList) {
       final positionStaffDto = PositionStaffDTO.fromMap(fetchedStaff);
       final positionStaff = PositionStaffModel.fromDTO(positionStaffDto);
       areasList.add(positionStaff.areaId ?? 0);
     }
-
+    print('areasList: $areasList');
     var fetchedOperationsList = await _operatorOperationsTable
         .selectReadyDefectAndModificationOnArea(areasList);
 
+    print(fetchedOperationsList);
     for (var fetchedOperation in fetchedOperationsList) {
       final operationDto = OperatorOperationsDTO.fromMap(fetchedOperation);
 
@@ -59,8 +62,9 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
       if (timeStart != null && timeEnd != null) {
         print(
             'start: ${timeStart}  operation: ${operation.timeFirstStart} end: ${timeEnd}');
-        if (operation.timeFirstStart >= timeStart &&
-            operation.timeFirstStart <= timeEnd) {
+        if ((operation.timeFirstStart >= timeStart &&
+                operation.timeFirstStart <= timeEnd) ||
+            operation.timeFirstStart == 0) {
           operatorOperationsList.add(operation);
         }
       } else {
@@ -85,6 +89,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
       AnalyticsOperationModel analyticsOperation = AnalyticsOperationModel(
           operationId: value.first.operation.id,
           code: value.first.operation.code,
+          comment: value.first.comment ?? '',
           detailNumber: value.first.batch.number,
           operationNumber: value.first.operation.number,
           operationName: value.first.operation.name,
@@ -94,7 +99,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
               .convertTimeFromSeconds(value.first.timeworking ?? 0),
           machineName: value.first.machine?.name ?? '',
           machineInventoryNumber: value.first.machine?.inventoryNumber ?? 0,
-          fio: value.first.user?.fio ?? '',
+          fio: value.first.user?.fio ?? 'мастер',
           date: date,
           change: change,
           areaNumber: value.first.area.number,
@@ -153,6 +158,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
     return OperatorOperations(
         timeworking: dto.timeworking,
         optimalPart: dto.optimalPart,
+        comment: dto.comment,
         timeplan: dto.timeplan ?? 0,
         id: dto.id,
         timestop: dto.timestop,
@@ -169,7 +175,8 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
             id: 0,
             inventoryNumber: dto.machine?.inventoryNumber ?? 0,
             name: dto.machine?.name ?? 'empty_machine_name',
-            areaId: 0),
+            areaId: 0,
+            isActivated: dto.machine?.isActivated ?? false),
         timeFirstStart: dto.timeFirstStart ?? 0,
         status: Status(id: dto.status.id, name: dto.status.name),
         batch: Batch(
@@ -179,7 +186,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
             count: dto.batch.count,
             code: dto.batch.code,
             technology: dto.batch.technology,
-            order: dto.batch.order,
+
             isready: dto.batch.isready,
             orderId: dto.batch.orderId),
         stage: dto.stage ?? StageDTO.empty,

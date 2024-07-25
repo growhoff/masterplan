@@ -116,9 +116,9 @@ void setActiveMachine(int index) {
           chiefOperationId: dto.chiefOperationId,
           optimalPart: dto.optimalPart,
           status: Status(id: dto.status.id, name: dto.status.name), 
-          batch: Batch(id: dto.batch.id, number: dto.batch.number, name: dto.batch.name, count: dto.batch.count, code: dto.batch.code, orderId: dto.batch.orderId, technology: dto.batch.technology, order: dto.batch.order, isready: dto.batch.isready),
+          batch: Batch(id: dto.batch.id, number: dto.batch.number, name: dto.batch.name, count: dto.batch.count, code: dto.batch.code, orderId: dto.batch.orderId, technology: dto.batch.technology,  isready: dto.batch.isready),
           order: dto.order, 
-          machine: Machine(id: dto.machine!.id, inventoryNumber: dto.machine!.inventoryNumber, name: dto.machine!.name, areaId: dto.areaId),
+          machine: Machine(id: dto.machine!.id, isActivated: dto.machine!.isActivated,inventoryNumber: dto.machine!.inventoryNumber, name: dto.machine!.name, areaId: dto.areaId),
           );
   }
 

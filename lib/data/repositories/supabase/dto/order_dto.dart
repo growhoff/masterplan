@@ -7,7 +7,9 @@ class OrderDTO extends Dto {
   final int id;
   final String number;
   final String? dateReceipt;
-  final String? datePlanCompletion;
+  final String? requiredCompletionDate;
+  final String? calculatedCompletionDate;
+  final String? actualCompletionDate;
   final int priority;
   final int statusId;
   final OrderStatus? status;
@@ -16,8 +18,10 @@ class OrderDTO extends Dto {
       {required this.id,
       this.status,
       required this.number,
-      required this.dateReceipt,
-      required this.datePlanCompletion,
+       this.dateReceipt,
+       this.requiredCompletionDate,
+       this.calculatedCompletionDate,
+       this.actualCompletionDate,
       required this.priority,
       required this.statusId});
 
@@ -33,9 +37,13 @@ class OrderDTO extends Dto {
         id: map['id'] as int,
         number: map['number'] as String,
         dateReceipt: map['date_receipt'],
-        datePlanCompletion: map['date_plan_completion'],
+        requiredCompletionDate: map['required_completion_date'],
+        calculatedCompletionDate: map['calculated_completion_date'],
+        actualCompletionDate: map['actual_completion_date'],
         priority: map['priority'],
-        status: map['z_order_status'] != null ? OrderStatus.fromMap(map['z_order_status']) : null,
+        status: map['z_order_status'] != null
+            ? OrderStatus.fromMap(map['z_order_status'])
+            : null,
         statusId: map['order_status_id']);
   }
 

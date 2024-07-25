@@ -27,7 +27,7 @@ class ChiefOperationDistributionTitleItem extends StatelessWidget {
             Text(
                 'Операция: ${operation.operation.number} ${operation.operation.name}'),
             const SizedBox(height: 8),
-            Text('Кол-во деталей: ${operation.quantity}'),
+            Text('Кол-во деталей: ${operation.quantity} / ${operation.batch.count}'),
             const SizedBox(height: 8),
             Text(
                 'Т п.з.: ${operation.operation.timepz} / Т шт.: ${operation.operation.timeSH} / Т шт.к.: ${(operation.operation.timepz + operation.operation.timeSH) / operation.quantity}')

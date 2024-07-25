@@ -57,7 +57,6 @@ class _ChiefMachinesListPageViewState extends State<ChiefMachinesListPageView> {
                     height: 40,
                     child: ListView.separated(
                         shrinkWrap: true,
-
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) => GestureDetector(
                               onTap: () {

@@ -30,7 +30,8 @@ class ChiefOperationTable extends SupabaseTable {
       mapsList.add({
         'chief_batch_id': dto.chiefBatchId,
         'stage_id': dto.stageId,
-        'operation_id': dto.operationId
+        'operation_id': dto.operationId,
+        'distribution_stage_id': dto.distributionStageId ?? 0
       });
     }
 
@@ -47,7 +48,8 @@ class ChiefOperationTable extends SupabaseTable {
     return res;
   }
 
-  Future<Map<String, dynamic>> fetchLastOperationInBatch({required int chiefBatchId}) async {
+  Future<Map<String, dynamic>> fetchLastOperationInBatch(
+      {required int chiefBatchId}) async {
     print('chiefbatchId: $chiefBatchId');
     final res = await table
         .select()
@@ -56,7 +58,8 @@ class ChiefOperationTable extends SupabaseTable {
     return res.last;
   }
 
-  Future<List<Map<String, dynamic>>> fetchLastOperationInBatchList({required List<int> listChiefBatchId}) async {
+  Future<List<Map<String, dynamic>>> fetchLastOperationInBatchList(
+      {required List<int> listChiefBatchId}) async {
     print('chiefbatchId: $listChiefBatchId');
     final res = await table
         .select()

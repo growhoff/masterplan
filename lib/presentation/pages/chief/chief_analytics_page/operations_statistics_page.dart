@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
 import 'analytics_cubit/analytics_cubit.dart';
 import 'chief_stage_report_model.dart';
 
@@ -35,7 +34,6 @@ class _OperationsStatisticsPageViewState
     extends State<OperationsStatisticsPageView> {
   @override
   void initState() {
-    // context.read<StatisticsCubit>().fetchReadyPercent(stage: widget.statisticsStage);
     super.initState();
   }
 
@@ -67,7 +65,11 @@ class _OperationsStatisticsPageViewState
                                 height: 5,
                               ),
                               Text(
-                                  'Кол-во деталей: ${widget.statisticsStage.detailsQuantity}')
+                                  'Номер технологии: ${widget.statisticsStage.technologyNumber}'),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text('Код детали: ${widget.statisticsStage.code}')
                             ],
                           )),
                     ),
@@ -114,7 +116,8 @@ class _OperationsStatisticsPageViewState
                               TableCell(
                                 child: Container(
                                     alignment: Alignment.center,
-                                    padding: const EdgeInsets.symmetric(vertical: 8),
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 8),
                                     child: const RotatedBox(
                                       quarterTurns: 3,
                                       child: Text(
@@ -142,7 +145,7 @@ class _OperationsStatisticsPageViewState
                               ),
                               TableCell(
                                 child: Container(
-                                  color: Colors.blue[200],
+                                    color: Colors.blue[200],
                                     alignment: Alignment.center,
                                     padding:
                                         const EdgeInsets.symmetric(vertical: 8),
@@ -159,8 +162,8 @@ class _OperationsStatisticsPageViewState
                               ),
                               TableCell(
                                 child: Container(
-                                  height: 100,
-                                  color: Colors.blue[200],
+                                    height: 100,
+                                    color: Colors.blue[200],
                                     alignment: Alignment.center,
                                     padding:
                                         const EdgeInsets.symmetric(vertical: 8),
@@ -173,7 +176,8 @@ class _OperationsStatisticsPageViewState
                                     )),
                               ),
                               TableCell(
-                                child: Container( height: 100,
+                                child: Container(
+                                    height: 100,
                                     color: Colors.blue[200],
                                     alignment: Alignment.center,
                                     padding:
@@ -190,7 +194,8 @@ class _OperationsStatisticsPageViewState
                                     )),
                               ),
                               TableCell(
-                                child: Container( height: 100,
+                                child: Container(
+                                    height: 100,
                                     color: Colors.blue[200],
                                     alignment: Alignment.center,
                                     padding:
@@ -225,7 +230,8 @@ class _OperationsStatisticsPageViewState
                                     )),
                               ),
                               TableCell(
-                                child: Container( height: 100,
+                                child: Container(
+                                    height: 100,
                                     color: Colors.green[300],
                                     alignment: Alignment.center,
                                     padding: EdgeInsets.symmetric(vertical: 8),
@@ -233,7 +239,8 @@ class _OperationsStatisticsPageViewState
                                       quarterTurns: 3,
                                       child: FittedBox(
                                         fit: BoxFit.fill,
-                                        child: Text(softWrap: true,
+                                        child: Text(
+                                          softWrap: true,
                                           'годные\nоперации',
                                           textAlign: TextAlign.center,
                                           maxLines: 3,
@@ -246,7 +253,8 @@ class _OperationsStatisticsPageViewState
                                     height: 100,
                                     color: Colors.green[300],
                                     alignment: Alignment.center,
-                                    padding: const EdgeInsets.symmetric(vertical: 8),
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 8),
                                     child: RotatedBox(
                                       quarterTurns: 3,
                                       child: const Text(

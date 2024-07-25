@@ -7,9 +7,9 @@ class Stage {
   final int id;
   final String number;
   final String name;
-  final int areaId;
+  final int? areaId;
   final bool isdistributed;
-  final int batchId;
+  final int? batchId;
   final Batch? batch;
   final int? batchArchiveId;
 
@@ -17,9 +17,9 @@ class Stage {
     required this.id,
     required this.number,
     required this.name,
-    required this.areaId,
+    this.areaId,
     required this.isdistributed,
-    required this.batchId,
+     this.batchId,
     this.batch,
     this.batchArchiveId,
   });

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:master_plan/presentation/pages/chief_master/pages/changeChoise/change_choise.dart';
+
 
 class ChiefListsPageChM extends StatelessWidget {
   const ChiefListsPageChM({super.key});
@@ -41,7 +43,7 @@ class _ChiefListsPageViewState extends State<ChiefListsPageView> {
                       child: const Text('Список участков')),
                   const SizedBox(height: 8),
                   ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => const ChangeOperatorPageChM(),));},
                       child: const Text('Список смен')),
                 ],
               ),

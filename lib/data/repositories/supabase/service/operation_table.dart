@@ -35,8 +35,21 @@ class OperationTable extends SupabaseTable {
 
   Future<List<Map<String, dynamic>>> selectByStageIdList(
       List<int> stagesIdList) async {
-    return await table.select().inFilter('stage_id', stagesIdList);
+    return await table
+        .select()
+        .inFilter('stage_id', stagesIdList)
+        .order('id', ascending: true);
   }
+
+  Future<List<Map<String, dynamic>>> selectByBatchesIdsList(
+      List<int> batchesIdList) async {
+    return await table
+        .select('*, z_stage!inner(*)')
+        .inFilter('z_stage.batch_archive_id', batchesIdList)
+        .order('id', ascending: true);
+  }
+
+
 
   Future<List<Map<String, dynamic>>> selectId(int id) {
     return table.select().eq('id', id);
@@ -52,6 +65,12 @@ class OperationTable extends SupabaseTable {
       }
     }
     return table.select().or(filters);
+  }
+
+  Future selectByIdsList(List<int> idsList) async {
+    return await table
+        .select('*, z_stage(*, z_batch(*))')
+        .inFilter('id', idsList);
   }
 
   @override

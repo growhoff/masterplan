@@ -28,7 +28,7 @@ class ChiefDistributionPageView extends StatefulWidget {
 class _ChiefDistributionPageViewState extends State<ChiefDistributionPageView> {
   @override
   void initState() {
-    context.read<ChiefDistributionCubit>().fetchChiefOperations();
+   // context.read<ChiefDistributionCubit>().fetchChiefOperations();
     context.read<ChiefDistributionCubit>().fetchAreas();
 
     super.initState();

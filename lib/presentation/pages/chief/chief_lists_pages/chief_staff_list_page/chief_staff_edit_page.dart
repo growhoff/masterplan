@@ -36,9 +36,16 @@ class ChiefStaffEditPageView extends StatefulWidget {
 class _ChiefStaffEditPageViewState extends State<ChiefStaffEditPageView> {
   @override
   void initState() {
+    print('chief staff edit page');
     context
         .read<StaffCubit>()
         .fetchDropDownsItems(staffId: widget.positionStaff.staffId);
+    context.read<StaffCubit>().numberController.text =
+        widget.positionStaff.staff.login;
+    context.read<StaffCubit>().fioController.text =
+        widget.positionStaff.staff.user.fio;
+    context.read<StaffCubit>().passwordController.text =
+        widget.positionStaff.staff.password;
     super.initState();
   }
 
@@ -95,8 +102,7 @@ class _ChiefStaffEditPageViewState extends State<ChiefStaffEditPageView> {
                       TextField(
                         decoration: InputDecoration(
                             hintText: widget.positionStaff.staff.user.fio),
-                        controller:
-                            context.read<StaffCubit>().fioController,
+                        controller: context.read<StaffCubit>().fioController,
                       ),
                       const SizedBox(
                         height: 20,
@@ -111,8 +117,7 @@ class _ChiefStaffEditPageViewState extends State<ChiefStaffEditPageView> {
                       TextField(
                         decoration: InputDecoration(
                             hintText: widget.positionStaff.staff.login),
-                        controller:
-                            context.read<StaffCubit>().numberController,
+                        controller: context.read<StaffCubit>().numberController,
                       ),
                       const SizedBox(
                         height: 20,
@@ -217,8 +222,7 @@ class _ChiefStaffEditPageViewState extends State<ChiefStaffEditPageView> {
                                                     onPressed: () {
                                                       setState(() {
                                                         context
-                                                            .read<
-                                                                StaffCubit>()
+                                                            .read<StaffCubit>()
                                                             .deletePositionElement(
                                                                 index,
                                                                 context
@@ -270,7 +274,7 @@ class _ChiefStaffEditPageViewState extends State<ChiefStaffEditPageView> {
                       ),
                       Center(
                           child: ElevatedButton(
-                        onPressed: () async{
+                        onPressed: () async {
                           await context
                               .read<StaffCubit>()
                               .updateStaff(widget.positionStaff);

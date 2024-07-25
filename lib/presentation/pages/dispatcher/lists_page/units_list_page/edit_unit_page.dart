@@ -34,13 +34,27 @@ class EditUnitPageView extends StatefulWidget {
 class _EditUnitPageViewState extends State<EditUnitPageView> {
   @override
   void initState() {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-    ]);
+    // SystemChrome.setPreferredOrientations([
+    //   DeviceOrientation.portraitUp,
+    // ]);
 
     context
         .read<UnitsCubit>()
         .fetchChiefs(selectedStaffId: widget.unit.chiefId ?? 0);
+
+    context.read<UnitsCubit>().unitNumberController.text =
+        widget.unit.unitNumber;
+    context.read<UnitsCubit>().unitNameController.text = widget.unit.unitName;
+
+    context.read<UnitsCubit>().operatorsQuantityController.text =
+        widget.unit.operatorsQuantity.toString();
+
+    context.read<UnitsCubit>().areasQuantityController.text =
+        widget.unit.areasQuantity.toString();
+
+    context.read<UnitsCubit>().unitNumberController.text =
+        widget.unit.unitNumber;
+
     super.initState();
   }
 
@@ -65,7 +79,8 @@ class _EditUnitPageViewState extends State<EditUnitPageView> {
                     const Text('Номер цеха', style: TextStyle(fontSize: 18)),
                     const SizedBox(height: 5),
                     TextField(
-                      decoration: InputDecoration(hintText: widget.unit.unitNumber),
+                      decoration:
+                          InputDecoration(hintText: widget.unit.unitNumber),
                       controller:
                           context.read<UnitsCubit>().unitNumberController,
                     ),
@@ -73,7 +88,8 @@ class _EditUnitPageViewState extends State<EditUnitPageView> {
                     const Text('Название', style: TextStyle(fontSize: 18)),
                     const SizedBox(height: 5),
                     TextField(
-                      decoration: InputDecoration(hintText: widget.unit.unitName),
+                      decoration:
+                          InputDecoration(hintText: widget.unit.unitName),
                       controller: context.read<UnitsCubit>().unitNameController,
                     ),
                     const SizedBox(
@@ -137,9 +153,7 @@ class _EditUnitPageViewState extends State<EditUnitPageView> {
                     Center(
                         child: ElevatedButton(
                       onPressed: () {
-                            context
-                            .read<UnitsCubit>()
-                           .editUnit(unit: widget.unit);
+                        context.read<UnitsCubit>().editUnit(unit: widget.unit);
                         Navigator.pop(context, false);
                         showModalBottomSheet(
                             context: context,
@@ -162,9 +176,9 @@ class _EditUnitPageViewState extends State<EditUnitPageView> {
 
   @override
   void dispose() {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeRight,
-    ]);
+    // SystemChrome.setPreferredOrientations([
+    //   DeviceOrientation.landscapeRight,
+    // ]);
     super.dispose();
   }
 }

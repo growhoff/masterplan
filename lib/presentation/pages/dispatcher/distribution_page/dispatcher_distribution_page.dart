@@ -84,8 +84,10 @@ class _DispatcherDistributionPageViewState
           Container(
             alignment: Alignment.bottomCenter,
             child: ElevatedButton(
-              onPressed: () async{
-                await context.read<DispatcherDistributionCubit>().distributeStages();
+              onPressed: () async {
+                await context
+                    .read<DispatcherDistributionCubit>()
+                    .distributeStages();
                 setState(() {
                   context.read<DispatcherDistributionCubit>().fetchStages();
                 });

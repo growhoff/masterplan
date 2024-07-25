@@ -121,11 +121,12 @@ class CubitOperatQueueMasterChM extends Cubit<StateOperatQueueMasterChM> {
           code: dto.batch.code,
           orderId: dto.batch.orderId,
           technology: dto.batch.technology,
-          order: dto.batch.order,
+
           isready: dto.batch.isready),
       order: dto.order,
       machine: Machine(id: dto.machine!.id,
           inventoryNumber: dto.machine!.inventoryNumber,
+          isActivated: dto.machine!.isActivated,
           name: dto.machine!.name,
           areaId: dto.areaId),
       chiefBatchId: dto.chiefBatchId,

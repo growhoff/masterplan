@@ -44,6 +44,7 @@ class _ChiefMachineEditPageViewState extends State<ChiefMachineEditPageView> {
     context.read<ChiefMachineCubit>().nameController.text = widget.machine.name;
     context.read<ChiefMachineCubit>().numberController.text =
         '${widget.machine.inventoryNumber}';
+    context.read<ChiefMachineCubit>().isActivated = widget.machine.isActivated;
   }
 
   @override
@@ -114,6 +115,71 @@ class _ChiefMachineEditPageViewState extends State<ChiefMachineEditPageView> {
                                   child: Text(area),
                                 ))
                             .toList(),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            'активировать',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Checkbox(
+                              value:
+                                  context.read<ChiefMachineCubit>().isActivated,
+                              onChanged: (value) {
+                                print(context
+                                    .read<ChiefMachineCubit>()
+                                    .isActivated);
+                                context.read<ChiefMachineCubit>().isActivated ==
+                                        true
+                                    ? (setState(() {
+                                        context
+                                                .read<ChiefMachineCubit>()
+                                                .isActivated =
+                                            !context
+                                                .read<ChiefMachineCubit>()
+                                                .isActivated;
+
+                                        context
+                                            .read<ChiefMachineCubit>()
+                                            .activatedMachinesQuantity = context
+                                                .read<ChiefMachineCubit>()
+                                                .activatedMachinesQuantity -
+                                            1;
+                                      }))
+                                    : ((context
+                                                .read<ChiefMachineCubit>()
+                                                .activatedMachinesQuantity <
+                                            context
+                                                .read<ChiefMachineCubit>()
+                                                .paidMachinesQuantity)
+                                        ? (setState(() {
+                                            context
+                                                    .read<ChiefMachineCubit>()
+                                                    .isActivated =
+                                                !context
+                                                    .read<ChiefMachineCubit>()
+                                                    .isActivated;
+
+                                            context
+                                                .read<ChiefMachineCubit>()
+                                                .activatedMachinesQuantity = context
+                                                    .read<ChiefMachineCubit>()
+                                                    .activatedMachinesQuantity +
+                                                1;
+                                          }))
+                                        : (ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                                content: Text(
+                                            'активировать невозможно\nоплатите больше рабочих мест',
+                                          )))));
+                              })
+                        ],
                       ),
                       const SizedBox(
                         height: 20,

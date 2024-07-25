@@ -5,7 +5,7 @@ import 'package:master_plan/presentation/app/bloc/state.dart';
 import 'package:master_plan/presentation/pages/master/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/master/bloc/state.dart';
 import 'package:master_plan/presentation/pages/master/data/data_master.dart';
-import 'package:master_plan/presentation/pages/master/widgets/dialog_version.dart';
+import 'package:master_plan/presentation/pages/master/widgets/dialog_saver.dart';
 
 class NavbarMaster extends StatelessWidget {
   const NavbarMaster({super.key});

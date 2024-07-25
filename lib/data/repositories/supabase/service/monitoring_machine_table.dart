@@ -39,8 +39,25 @@ class MonitoringMachineTable extends SupabaseTable {
     return table.select('*, z_status_machine(*), z_user($userSelect), z_machine(*), z_batch(*)').inFilter('id',listId);
   }
 
-  Future<List<Map<String, dynamic>>> selectIdMonitor(int userId, int machineId, int batchId, int optPathOper) {
-    return table.select('*, z_status_machine(*), z_user($userSelect), z_machine(*), z_batch(*)').eq('operation_id', optPathOper).eq('batch_id', batchId);
+  Future<List<Map<String, dynamic>>> selectListIdMachineChange(List<int> listIdMachine, int change, String date, int userId) {
+    return table.select('*, z_status_machine(*), z_user($userSelect), z_machine(*), z_batch(*)').inFilter('machine_id',listIdMachine).eq('change_id', change).eq('date', date).eq('user_id', userId).order('id', ascending: true);
+  }
+
+  Future<List<Map<String, dynamic>>> selectListIdMachineChangeLastDay(List<int> listIdMachine) {
+    return table.select('*, z_status_machine(*), z_user($userSelect), z_machine(*), z_batch(*)').inFilter('machine_id',listIdMachine).eq('time_stop', 0) .order('id', ascending: true);
+  }
+
+  Future<List<Map<String, dynamic>>> selectStatus(String date, int change, int idMachine) {
+    return table.select('*').eq('date',date).eq('status_machine_id', 8).eq('change_id', change).eq('machine_id', idMachine);
+  }
+
+  Future<Map<String, dynamic>> selectStatusLastMachine(int idMachine) async{
+    final queue = await table.select('*, z_status_machine(*), z_user($userSelect), z_machine(*), z_batch(*)').eq('machine_id', idMachine).order('id', ascending: true);
+    return queue.last;
+  }
+
+  Future<List<Map<String, dynamic>>> selectIdMonitor(int machineId, int batchId, int optPathOper) {
+    return table.select('*, z_status_machine(*), z_user($userSelect), z_machine(*), z_batch(*)').eq('operation_id', optPathOper).eq('batch_id', batchId).eq('machine_id', machineId);
   }
 
   Future<List<Map<String, dynamic>>> selectList(List<int> listId) {
@@ -86,6 +103,10 @@ class MonitoringMachineTable extends SupabaseTable {
 
   Future<void> updateId(int id, int time) async{
     return table.update({'time_stop': time}).eq('id', id);
+  }
+
+  Future<void> updateIdComment(int id, int time, String comment) async{
+    return table.update({'time_stop': time, 'comment': comment}).eq('id', id);
   }
 
   stream() {

@@ -5,10 +5,12 @@ class Machine{
   final int inventoryNumber;
   final String name;
   final int areaId;
+  final bool isActivated;
   Machine({
     required this.id,
     required this.inventoryNumber,
     required this.name,
-    required this.areaId
+    required this.areaId,
+    required this.isActivated
   });
 }

@@ -172,12 +172,19 @@ class ChiefsListCubit extends Cubit<ChiefsListState> {
   }
 
   Future<void> updateStaff(PositionStaffModel positionStaff) async {
+    int positionId = 2;
+    if (selectedPositionsList.contains('Начальник') &&
+        selectedPositionsList.contains('Мастер')) {
+      positionId = 7;
+    } else {
+      positionId = selectedPositionsList.contains('Начальник') ? 2 : 3;
+    }
     await _userTable.update(
         positionStaff.staff.userId,
         UserDTO(
             id: 0,
             fio: fioController.text,
-            positionId: selectedPositionsList.contains('Начальник') ? 2 : 3,
+            positionId: positionId,
             areaId: 1,
             companyId: 1,
             company: CompanyDTO.init(),
@@ -188,6 +195,7 @@ class ChiefsListCubit extends Cubit<ChiefsListState> {
     await _staffTable.update(
         positionStaff.staffId,
         StaffDTO(
+          fio: fioController.text,
             id: 0,
             login: numberController.text,
             password:
@@ -205,13 +213,13 @@ class ChiefsListCubit extends Cubit<ChiefsListState> {
     }
 
     for (int i = 0; i < selectedPositionsList.length; i++) {
-      await _positionStaffTable.insert(PositionStaffDTO(
+      await _positionStaffTable.insertChief(PositionStaffDTO(
           id: 0,
           positionId: selectedPositionsList[i] == 'Начальник' ? 2 : 3,
           staffId: positionStaff.staffId,
           position: PositionDTO(id: 0, name: ''),
           staff: StaffDTO(
-              id: 0, login: '', password: '', userId: 0, user: UserDTO.empty),
+              id: 0, login: '', password: '', userId: 0, user: UserDTO.empty, fio: ''),
           areaId: areasForPositionsList[i].id,
           unitId: selectedUnit.id,
           area: AreaDTO(id: 0, name: '', number: '', unitId: 0)));
@@ -224,27 +232,24 @@ class ChiefsListCubit extends Cubit<ChiefsListState> {
   }
 
   Future insertStaff() async {
-    print(selectedPositionsList);
-
     int positionId = 2;
 
     if (selectedPositionsList.contains('Начальник') &&
-        selectedPositionsList.contains('Мастер')){
+        selectedPositionsList.contains('Мастер')) {
       positionId = 7;
+    } else {
+      positionId = selectedPositionsList.contains('Начальник') ? 2 : 3;
     }
-    else{
-      positionId =  selectedPositionsList.contains('Начальник') ? 2 : 3;
-    }
-      var userId = await _userTable.insert(UserDTO(
-          id: 0,
-          fio: fioController.text,
-          positionId: positionId,
-          areaId: 1,
-          companyId: 1,
-          company: CompanyDTO.init(),
-          position: PositionDTO(id: 0, name: ''),
-          photo: null,
-          unitId: null));
+    var userId = await _userTable.insert(UserDTO(
+        id: 0,
+        fio: fioController.text,
+        positionId: positionId,
+        areaId: 1,
+        companyId: 1,
+        company: CompanyDTO.init(),
+        position: PositionDTO(id: 0, name: ''),
+        photo: null,
+        unitId: selectedUnit.id));
 
     var staffId = await _staffTable.insert(StaffDTO(
         id: 0,
@@ -254,17 +259,20 @@ class ChiefsListCubit extends Cubit<ChiefsListState> {
                 ? _password.generatePassword()
                 : passwordController.text,
         userId: userId,
+        fio: fioController.text,
         user: UserDTO.empty));
 
     for (int i = 0; i < selectedPositionsList.length; i++) {
-      await _positionStaffTable.insert(PositionStaffDTO(
+      await _positionStaffTable.insertChief(PositionStaffDTO(
           id: 0,
           positionId: selectedPositionsList[i] == 'Начальник' ? 2 : 3,
           staffId: staffId,
           position: PositionDTO(id: 0, name: ''),
           staff: StaffDTO(
-              id: 0, login: '', password: '', userId: 0, user: UserDTO.empty),
-          areaId: areasForPositionsList[i].id,
+              id: 0, login: '', password: '', userId: 0, user: UserDTO.empty, fio: ''),
+          areaId: areasForPositionsList.isNotEmpty
+              ? areasForPositionsList[i].id
+              : 1,
           unitId: selectedUnit.id,
           area: AreaDTO(id: 0, name: '', number: '', unitId: 0)));
     }
@@ -319,5 +327,15 @@ class ChiefsListCubit extends Cubit<ChiefsListState> {
     if (selectedPositionsList.isEmpty) {
       positionsToSelectList = ['Начальник'];
     }
+  }
+
+  Future deleteStaff(
+      {required int staffId,
+      required int positionStaffId,
+      required int userId}) async {
+    await _positionStaffTable.delete(positionStaffId);
+    await _staffTable.delete(staffId);
+    await _userTable.delete(userId);
+    await fetchChiefsList();
   }
 }

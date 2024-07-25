@@ -24,7 +24,6 @@ class OrdersPageView extends StatefulWidget {
 class _OrdersPageViewState extends State<OrdersPageView> {
   @override
   void initState() {
-    context.read<OrdersCubit>().fetchOrders();
     super.initState();
   }
 
@@ -36,12 +35,12 @@ class _OrdersPageViewState extends State<OrdersPageView> {
           return Container(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Column(
+              mainAxisSize: MainAxisSize.max,
               children: [
                 const SizedBox(
                   height: 10,
                 ),
-                Flexible(
-                    child: Card(
+                Card(
                   child: Padding(
                     padding: const EdgeInsets.all(10),
                     child: Row(
@@ -91,171 +90,173 @@ class _OrdersPageViewState extends State<OrdersPageView> {
                       ],
                     ),
                   ),
-                )),
+                ),
                 const SizedBox(height: 10),
-                ListView.separated(
-                    physics: AlwaysScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) => Center(
-                          child: GestureDetector(
-                            onTap: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) => SimpleDialog(
-                                        contentPadding: EdgeInsets.all(5),
-                                        children: [
-                                          SimpleDialogOption(
-                                            onPressed: () {
-                                              Navigator.pop(context, false);
-                                            },
-                                            child: const Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                Icon(Icons.info_rounded),
-                                                SizedBox(
-                                                  width: 8,
-                                                ),
-                                                Text(
-                                                  'инфо',
-                                                  style:
-                                                      TextStyle(fontSize: 18),
-                                                )
-                                              ],
+                Expanded(
+                  child: ListView.separated(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) => Center(
+                            child: GestureDetector(
+                              onTap: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (ctx) => SimpleDialog(
+                                          title: Text(
+                                              'заказ ${state.ordersList[index].number}'),
+                                          contentPadding: EdgeInsets.all(5),
+                                          children: [
+                                            SimpleDialogOption(
+                                              onPressed: () {
+                                                Navigator.pop(context, false);
+                                                Navigator.pushNamed(context,
+                                                    '/dispatcherOrderInfoPage',
+                                                    arguments: state
+                                                        .ordersList[index]);
+                                              },
+                                              child: const Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Icon(Icons.info_rounded),
+                                                  SizedBox(
+                                                    width: 8,
+                                                  ),
+                                                  Text(
+                                                    'инфо',
+                                                    style:
+                                                        TextStyle(fontSize: 18),
+                                                  )
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                          Divider(
-                                            height: 1,
-                                          ),
-                                          SimpleDialogOption(
-                                            onPressed: () {
-                                              Navigator.pop(context, false);
+                                            Divider(
+                                              height: 1,
+                                            ),
+                                            SimpleDialogOption(
+                                              onPressed: () {
+                                                Navigator.pop(context, false);
 
-                                              Navigator.pushNamed(
-                                                      context, '/batchesPage',
-                                                      arguments: state
-                                                          .ordersList[index])
-                                                  .then((_) => context
+                                                Navigator.pushNamed(
+                                                    context, '/batchesPage',
+                                                    arguments: state
+                                                        .ordersList[index]);
+                                              },
+                                              child: const Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Icon(Icons.account_tree),
+                                                  SizedBox(
+                                                    width: 8,
+                                                  ),
+                                                  Text('состав заказа',
+                                                      style: TextStyle(
+                                                          fontSize: 18)),
+                                                ],
+                                              ),
+                                            ),
+                                            Divider(
+                                              height: 1,
+                                            ),
+                                            SimpleDialogOption(
+                                              onPressed: () {
+                                                Navigator.pop(context, false);
+                                                setState(() {});
+                                              },
+                                              child: const Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Icon(Icons.edit_rounded),
+                                                  SizedBox(
+                                                    width: 8,
+                                                  ),
+                                                  Text('редактировать',
+                                                      style: TextStyle(
+                                                          fontSize: 18)),
+                                                ],
+                                              ),
+                                            ),
+                                            Divider(
+                                              height: 1,
+                                            ),
+                                            SimpleDialogOption(
+                                              onPressed: () {
+                                                setState(() {
+                                                  context
                                                       .read<OrdersCubit>()
-                                                      .fetchOrders());
-                                            },
-                                            child: const Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                Icon(Icons.account_tree),
-                                                SizedBox(
-                                                  width: 8,
-                                                ),
-                                                Text('этапы',
-                                                    style: TextStyle(
-                                                        fontSize: 18)),
-                                              ],
+                                                      .deleteOrder(state
+                                                          .ordersList[index]
+                                                          .id);
+                                                });
+                                                Navigator.pop(context, false);
+                                              },
+                                              child: const Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Icon(Icons.delete_rounded),
+                                                  SizedBox(
+                                                    width: 8,
+                                                  ),
+                                                  Text('удалить',
+                                                      style: TextStyle(
+                                                          fontSize: 18)),
+                                                ],
+                                              ),
+                                            )
+                                          ],
+                                        ));
+                              },
+                              child: Card(
+                                child: Container(
+                                    padding: EdgeInsets.all(10),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Container(
+                                            child: Text(
+                                              '${state.ordersList[index].number}',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(fontSize: 18),
                                             ),
                                           ),
-                                          Divider(
-                                            height: 1,
-                                          ),
-                                          SimpleDialogOption(
-                                            onPressed: () {
-                                              Navigator.pop(context, false);
-                                              setState(() {});
-                                            },
-                                            child: const Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                Icon(Icons.edit_rounded),
-                                                SizedBox(
-                                                  width: 8,
-                                                ),
-                                                Text('редактировать',
-                                                    style: TextStyle(
-                                                        fontSize: 18)),
-                                              ],
+                                          flex: 3,
+                                        ),
+                                        Expanded(
+                                          child: Container(
+                                            child: Text(
+                                              'заказчик',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(fontSize: 18),
                                             ),
                                           ),
-                                          Divider(
-                                            height: 1,
-                                          ),
-                                          SimpleDialogOption(
-                                            onPressed: () {
-                                              Navigator.pop(context, false);
-                                              setState(() {
-                                                context
-                                                    .read<OrdersCubit>()
-                                                    .deleteOrder(state
-                                                        .ordersList[index].id);
-                                              });
-                                            },
-                                            child: const Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                Icon(Icons.delete_rounded),
-                                                SizedBox(
-                                                  width: 8,
-                                                ),
-                                                Text('удалить',
-                                                    style: TextStyle(
-                                                        fontSize: 18)),
-                                              ],
+                                          flex: 4,
+                                        ),
+                                        Expanded(
+                                          child: Container(
+                                            child: PriorityCircle(
+                                              state.ordersList[index].priority,
+                                              size: 22,
                                             ),
-                                          )
-                                        ],
-                                      ));
-                            },
-                            child: Card(
-                              child: Container(
-                                  padding: EdgeInsets.all(10),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Container(
-                                          child: Text(
-                                            '${state.ordersList[index].number}',
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(fontSize: 18),
                                           ),
+                                          flex: 3,
                                         ),
-                                        flex: 3,
-                                      ),
-                                      Expanded(
-                                        child: Container(
-                                          child: Text(
-                                            'заказчик',
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(fontSize: 18),
-                                          ),
-                                        ),
-                                        flex: 4,
-                                      ),
-                                      Expanded(
-                                        child: Container(
-                                          child: PriorityCircle(
-                                            state.ordersList[index].priority,
-                                            size: 22,
-                                          ),
-                                        ),
-                                        flex: 3,
-                                      ),
-                                      FittedBox(
-                                        fit: BoxFit.fill,
-                                        child: Text(
+                                        Text(
                                           '${state.ordersList[index].status?.name}',
                                           textAlign: TextAlign.center,
-
-                                        ),
-                                      )
-                                    ],
-                                  )),
+                                        )
+                                      ],
+                                    )),
+                              ),
                             ),
                           ),
-                        ),
-                    separatorBuilder: (ctx, i) => SizedBox(
-                          height: 5,
-                        ),
-                    itemCount: state.ordersList.length),
+                      separatorBuilder: (ctx, i) => SizedBox(
+                            height: 5,
+                          ),
+                      itemCount: state.ordersList.length),
+                ),
               ],
             ),
           );

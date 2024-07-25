@@ -3,7 +3,9 @@ import 'package:master_plan/data/repositories/supabase/dto/chief_distribution_op
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/chief_distribution_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
-import 'package:master_plan/domain/model/machine.dart';
+import 'package:master_plan/domain/model/area_machine.dart';
+import 'package:master_plan/domain/model/name_index.dart';
+// import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/presentation/pages/master/pages/distributionDetails/model/distrib_item.dart';
 import 'package:master_plan/presentation/pages/master/pages/distributionDetails/model/set_model.dart';
 import 'package:master_plan/presentation/pages/master/pages/distributionDetails/model/set_model_chief.dart';
@@ -12,15 +14,28 @@ import 'package:collection/collection.dart';
 import 'dart:math';
 
 class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
-  final int areaIdUser;
-  final List<Machine> listMachine;
+  // final int areaIdUser;
+  // final List<Machine> listMachine;
+  final List<AreaMachine> listAreaMachine;
   final tableOperations = OperatorOperationsTable();
-  CubitDistributionDetails(this.areaIdUser, this.listMachine) : super(const StateDistributionDetails()){
-      tableOperations.table.stream(primaryKey: ['id']).inFilter('area_id', [areaIdUser]).listen((event){
+  CubitDistributionDetails(this.listAreaMachine) : super(const StateDistributionDetails()){
+      final List<NameIndex> listItemArea = getDistribItemName(listAreaMachine);
+      emit(state.copyWith(listAreaMachine: listAreaMachine, listItemArea: listItemArea));
+      tableOperations.table.stream(primaryKey: ['id']).inFilter('area_id', [state.listAreaMachine[state.activeArea].area.id]).listen((event){
       }).onData((data)async {
           emit(state.copyWith(isLoading: true));
           await getQuere(data);
       });
+  }
+
+  List<NameIndex> getDistribItemName(List<AreaMachine> listAreaMachine){
+    List<NameIndex> listItemArea = [];
+    if (listAreaMachine.isNotEmpty) {
+      for (var i = 0; i < listAreaMachine.length; i++) {
+        listItemArea.add(NameIndex(name: listAreaMachine[i].area.name, index: i));
+      }
+    }
+    return listItemArea;
   }
 
     Future<void> getQuere (List<Map<String, dynamic>>? data)async{
@@ -66,7 +81,7 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
             bool next = false;
             for (var item in iModBatch.list) {
               if (item.operationId == order) {
-                if ((item.statusId == 2 || item.statusId == 4) && item.areaId == areaIdUser) {listReady.add(item);break;}
+                if ((item.statusId == 2 || item.statusId == 4) && item.areaId == state.listAreaMachine[state.activeArea].area.id) {listReady.add(item);break;}
                 // if (item.statusId == 6 || item.statusId == 9) next = true;
                 if (item.statusId == 9) next = true;
               }
@@ -94,7 +109,7 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
       if (listTrue2.isNotEmpty) listResOper.add(convertToDistrib(listTrue2));
       if (listTrue4.isNotEmpty) listResOper.add(convertToDistrib(listTrue4));
     }
-    emit(state.copyWith(operList: listResOper, isLoading: false));
+    emit(state.copyWith(pathListOper: listResOper, isLoading: false));
   }
 
 
@@ -141,7 +156,7 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
     final newitem = item.copyWith(isSelected: !select);
     list.removeAt(index);
     list.insert(index,newitem);
-    emit(state.copyWith(operList: list));
+    emit(state.copyWith(pathListOper: list));
   }
 
   void setMachine(int index, String machine){
@@ -150,7 +165,7 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
     final newitem = item.copyWith(setMachine: machine);
     list.removeAt(index);
     list.insert(index,newitem);
-    emit(state.copyWith(operList: list));
+    emit(state.copyWith(pathListOper: list));
   }
 
   void setCount(int index, String countStr){
@@ -162,7 +177,7 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
       final newitem = item.copyWith(setCount: count);
       list.removeAt(index);
       list.insert(index,newitem);
-      emit(state.copyWith(operList: list));
+      emit(state.copyWith(pathListOper: list));
   }
 
   void setOptPath(int index, String countStr){
@@ -174,7 +189,7 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
       final newitem = item.copyWith(setOptPart: count);
       list.removeAt(index);
       list.insert(index,newitem);
-      emit(state.copyWith(operList: list));
+      emit(state.copyWith(pathListOper: list));
   }
 
   int getRandom(){
@@ -186,7 +201,7 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
       //проверяем заполнены ли поля
       if ((pathOper.setCount != null) && (pathOper.setCount != 0) && (pathOper.setMachine != '')) {
         //проходим по списку машин и сравниваем
-        for (var machine in listMachine) {
+        for (var machine in state.listAreaMachine[state.activeArea].listMachine) {
           if (machine.name == pathOper.setMachine) {
             //считаем остаток
             final int countRemains = pathOper.setCount! % pathOper.setOptPart!;
@@ -234,5 +249,12 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
         }
       }
     }
+  }
+
+  Future<void> setActiveArea(int index) async{
+    emit(state.copyWith(activeArea: index, isLoading: true));
+    final areaId = state.listAreaMachine[index].area.id;
+    final quere = await tableOperations.selectByAreaId(areaId: areaId);
+    await getQuere(quere);
   }
 }

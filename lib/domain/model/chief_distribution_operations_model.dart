@@ -10,7 +10,7 @@ class ChiefDistributionOperation {
   final OperationDTO operation;
   final int batchId;
   final BatchDTO batch;
-  final int quantity;
+  int quantity = 0;
 
   ChiefDistributionOperation(
       {required this.id,

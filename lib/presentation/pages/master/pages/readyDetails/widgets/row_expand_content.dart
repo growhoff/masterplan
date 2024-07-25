@@ -103,7 +103,7 @@ class RowExpandContent extends StatelessWidget {
                       }
                       
                     },
-                    child: const Tooltip(message: 'Доработка', child: Icon(Icons.refresh, color: Colors.amber,))
+                    child: const Tooltip(message: 'Доработка', child: Icon(Icons.close, color: Colors.amber,))
                     ),
                 ),
               ],

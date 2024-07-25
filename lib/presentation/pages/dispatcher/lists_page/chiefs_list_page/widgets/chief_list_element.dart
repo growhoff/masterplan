@@ -7,9 +7,9 @@ import '../../../../../../domain/model/staff.dart';
 class ChiefListElement extends StatefulWidget {
   const ChiefListElement(
       {required this.fetchStaff,
-        required this.deleteStaff,
-        required this.positionStaff,
-        super.key});
+      required this.deleteStaff,
+      required this.positionStaff,
+      super.key});
 
   final PositionStaffModel positionStaff;
   final VoidCallback fetchStaff;
@@ -34,27 +34,27 @@ class _ChiefListElementState extends State<ChiefListElement> {
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: widget.positionStaff.staff.user.photo == null
                     ? Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
-                      borderRadius: BorderRadius.circular(8)),
-                )
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                            color: Colors.grey.shade200,
+                            borderRadius: BorderRadius.circular(8)),
+                      )
                     : Container(
-                  width: 50,
-                  height: 50,
-                  clipBehavior: Clip.antiAlias,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8)),
-                  child: Image.network(
-                    Uri.parse(widget.positionStaff.staff.user.photo!)
-                        .replace(queryParameters: {
-                      't':
-                      DateTime.now().millisecondsSinceEpoch.toString()
-                    }).toString(),
-                    fit: BoxFit.cover,
-                  ),
-                ),
+                        width: 50,
+                        height: 50,
+                        clipBehavior: Clip.antiAlias,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8)),
+                        child: Image.network(
+                          Uri.parse(widget.positionStaff.staff.user.photo!)
+                              .replace(queryParameters: {
+                            't':
+                                DateTime.now().millisecondsSinceEpoch.toString()
+                          }).toString(),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
               ),
               Expanded(
                 flex: 3,
@@ -84,8 +84,9 @@ class _ChiefListElementState extends State<ChiefListElement> {
                     IconButton(
                         iconSize: 24,
                         onPressed: () {
-                          Navigator.pushNamed(context, '/dispatcherEditChiefPage',
-                              arguments: widget.positionStaff)
+                          Navigator.pushNamed(
+                                  context, '/dispatcherEditChiefPage',
+                                  arguments: widget.positionStaff)
                               .then((_) {
                             widget.fetchStaff();
                           });
@@ -97,39 +98,38 @@ class _ChiefListElementState extends State<ChiefListElement> {
                           showCupertinoDialog(
                               context: context,
                               builder: (context) => AlertDialog(
-                                title: Text('удалить?'),
-                                content: Column(
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    // Text(widget.staffModel.user.fio),
-                                    const SizedBox(
-                                      height: 5,
+                                    title: Text('удалить?'),
+                                    content: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        // Text(widget.staffModel.user.fio),
+                                        const SizedBox(
+                                          height: 5,
+                                        ),
+                                        Text(
+                                            'номер: ${widget.positionStaff.staff.login}')
+                                      ],
                                     ),
-                                    Text(
-                                        'номер: ${widget.positionStaff.staff.login}')
-                                  ],
-                                ),
-                                actions: [
-                                  TextButton(
-                                      onPressed: () {
-                                        widget.deleteStaff();
-                                        //widget.fetchStaff();
-                                        Navigator.pop(context, true);
-                                      },
-                                      child: Text(
-                                        'да',
-                                        style: TextStyle(fontSize: 18),
-                                      )),
-                                  TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context, false);
-                                      },
-                                      child: Text("нет",
-                                          style: TextStyle(fontSize: 18)))
-                                ],
-                              ));
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context, true);
+                                            widget.deleteStaff();
+                                          },
+                                          child: Text(
+                                            'да',
+                                            style: TextStyle(fontSize: 18),
+                                          )),
+                                      TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context, false);
+                                          },
+                                          child: Text("нет",
+                                              style: TextStyle(fontSize: 18)))
+                                    ],
+                                  ));
                         },
                         icon: const Icon(Icons.delete_rounded))
                   ],

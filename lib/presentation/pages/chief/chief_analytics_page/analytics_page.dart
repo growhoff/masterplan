@@ -9,7 +9,6 @@ class ChiefAnalyticsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return BlocProvider(
       create: (context) => AnalyticsCubit(),
       child: ChiefAnalyticsPageView(),
@@ -31,7 +30,6 @@ class _ChiefAnalyticsPageViewState extends State<ChiefAnalyticsPageView> {
 
   @override
   void initState() {
-
     context.read<AnalyticsCubit>().fetchStagesForReport();
 
     super.initState();
@@ -43,101 +41,124 @@ class _ChiefAnalyticsPageViewState extends State<ChiefAnalyticsPageView> {
       child: BlocBuilder<AnalyticsCubit, ChiefAnalyticsState>(
         builder: (context, state) {
           if (state.status == AnalyticsPageStatus.success) {
-            return Column(
+            return Stack(
               children: [
+                Column(
+                  children: [
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: ListView.separated(
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) => GestureDetector(
+                                  onTap: () => Navigator.pushNamed(
+                                      context, '/chiefOperationsStatisticsPage',
+                                      arguments: state.stagesList[index]),
+                                  child: Card(
+                                      child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                            'Этап №${state.stagesList[index].stageNumber}'),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Flexible(
+                                              child: Text(
+                                                  'Чертеж ${state.stagesList[index].batchNumber}\n${state.stagesList[index].batchName}'),
+                                            ),
+                                            Text(
+                                                'Код детали: ${state.stagesList[index].batchCode}'),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Row(
+                                          children: [
+                                            Text('Детали'),
+                                            const SizedBox(
+                                              width: 20,
+                                            ),
+                                            Text(
+                                                'кол-во: ${state.stagesList[index].detailsQuantity}')
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                                'Выполненно: ${state.stagesList[index].readyDetailsQuantity}'),
+                                            Text(
+                                                '${state.stagesList[index].readyDetailsPercent}%'),
+                                            Text(
+                                                'Бракованных: ${state.stagesList[index].defectDetailsQuantity}'),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Row(
+                                          children: [
+                                            Text('Операции'),
+                                            const SizedBox(
+                                              width: 20,
+                                            ),
+                                            Text(
+                                                'кол-во: ${state.stagesList[index].operationsQuantity}'),
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                                'Выполнено: ${state.stagesList[index].readyOperationsQuantity}'),
+                                            Text(
+                                                '${state.stagesList[index].readyOperationsPercent}%'),
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  )),
+                                ),
+                            separatorBuilder: (context, i) => SizedBox(
+                                  height: 10,
+                                ),
+                            itemCount: state.stagesList.length),
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  alignment: Alignment.bottomCenter,
+                  child: ElevatedButton(
+                    onPressed: () {
+                    },
+                    style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 15)),
+                    child: Text(
+                      'выгрузить диспетчеру',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  ),
+                ),
                 const SizedBox(
                   height: 10,
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: ListView.separated(
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) => GestureDetector(
-                              onTap: () => Navigator.pushNamed(
-                                  context, '/chiefOperationsStatisticsPage',
-                                  arguments: state.stagesList[index]),
-                              child: Card(
-                                  child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                        'Этап №${state.stagesList[index].stageNumber}'),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Flexible(
-                                          child: Text(
-                                              'Чертеж ${state.stagesList[index].batchNumber}\n${state.stagesList[index].batchName}'),
-                                        ),
-                                        Text(
-                                            'Код детали: ${state.stagesList[index].batchCode}'),
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Row(
-                                      children: [
-                                        Text('Детали'),
-                                        const SizedBox(
-                                          width: 20,
-                                        ),
-                                        Text(
-                                            'кол-во: ${state.stagesList[index].detailsQuantity}')
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                            'Выполненно: ${state.stagesList[index].readyDetailsQuantity}'),
-                                        Text(
-                                            '${state.stagesList[index].readyDetailsPercent}%'),
-                                        Text(
-                                            'Бракованных: ${state.stagesList[index].defectDetailsQuantity}'),
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Row(
-                                      children: [
-                                        Text('Операции'),
-                                        const SizedBox(
-                                          width: 20,
-                                        ),
-                                        Text(
-                                            'кол-во: ${state.stagesList[index].operationsQuantity}'),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                            'Выполнено: ${state.stagesList[index].readyOperationsQuantity}'),
-                                        Text(
-                                            '${state.stagesList[index].readyOperationsPercent}%'),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              )),
-                            ),
-                        separatorBuilder: (context, i) => SizedBox(
-                              height: 10,
-                            ),
-                        itemCount: state.stagesList.length),
-                  ),
                 )
               ],
             );

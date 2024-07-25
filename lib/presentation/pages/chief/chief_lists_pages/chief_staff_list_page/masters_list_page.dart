@@ -26,8 +26,9 @@ class _MastersListPageViewState extends State<MastersListPageView> {
   @override
   void initState() {
     context.read<StaffCubit>().fetchDropDownsItems();
-    super.initState();
     context.read<StaffCubit>().fetchMasters();
+    super.initState();
+
   }
 
   @override

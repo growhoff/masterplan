@@ -23,21 +23,64 @@ class AnalyticsPageView extends StatefulWidget {
 }
 
 class _AnalyticsPageViewState extends State<AnalyticsPageView> {
-
+  @override
+  void initState() {
+    context.read<AnalyticsCubit>().fetchStagesForReport();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AnalyticsCubit, AnalyticsState>(
       builder: (context, state) {
-        return Center(
-          child: ElevatedButton(
-            style: ButtonStyle(
-                padding: MaterialStateProperty.all<EdgeInsets>(
-                    EdgeInsets.all(10))),
-            onPressed: () {context.read<AnalyticsCubit>().uploadReadyOperationsReport();},
-            child: Text('Выполненные операции (отчет)'),
-          ),
-        );
+        if (state.status == AnalyticsPageStatus.success) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  style: ButtonStyle(
+                      padding: WidgetStateProperty.all<EdgeInsets>(
+                          EdgeInsets.all(10))),
+                  onPressed: () {
+                    context
+                        .read<AnalyticsCubit>()
+                        .uploadReadyOperationsReport(context);
+                  },
+                  child: Text('Выполненные операции (отчет)'),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                ElevatedButton(
+                  style: ButtonStyle(
+                      padding: WidgetStateProperty.all<EdgeInsets>(
+                          EdgeInsets.all(10))),
+                  onPressed: () { context
+                      .read<AnalyticsCubit>()
+                      .uploadStagesReportToExcel();},
+                  child: Text('Поэтапный отчет начальника'),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                ElevatedButton(
+                  style: ButtonStyle(
+                      padding: WidgetStateProperty.all<EdgeInsets>(
+                          EdgeInsets.all(10))),
+                  onPressed: () {context
+                      .read<AnalyticsCubit>()
+                      .uploadOperationsReportToExcel();},
+                  child: Text('Ход выполнения операций'),
+                ),
+              ],
+            ),
+          );
+        } else {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
       },
     );
   }

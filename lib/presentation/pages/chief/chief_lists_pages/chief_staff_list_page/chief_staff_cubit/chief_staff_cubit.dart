@@ -87,12 +87,14 @@ class StaffCubit extends Cubit<StaffState> {
     }
     activeAreaId = areasList[0].id;
     emit(state.copyWith(areasList: areasList));
+    print('fetch areas закочнилось');
   }
 
   Future<void> fetchMasters() async {
     List<PositionStaffModel> positionStaffList = [];
 
     final areaId = areasMap[selectedArea] ?? 1;
+    print(areaId);
     var fetchedList =
         await _positionStaffTable.selectMastersOnArea(areaId: areaId);
 
@@ -163,9 +165,12 @@ class StaffCubit extends Cubit<StaffState> {
 
     if (staffId != null) {
       await fetchStaffPositions(staffId: staffId);
+      print('staffId not null : $staffId');
+      print(selectedPosition);
     }
 
-    emit(state.copyWith(areasNamesList: areasNamesList));
+    emit(state.copyWith(
+        areasNamesList: areasNamesList, status: ChiefStaffStatus.success));
   }
 
   Future<List<Position>> fetchPositions() async {
@@ -192,13 +197,11 @@ class StaffCubit extends Cubit<StaffState> {
           (position) => position != positionStaffDto.position.name);
       areasForPositionsList.add(
           '${positionStaffDto.area?.number} ${positionStaffDto.area?.name}');
-      print(areasForPositionsList);
     }
   }
 
   Future insertStaff() async {
     final String? imageUrl;
-
 
     if (loadedProfileImage != null) {
       final imageBytes = await loadedProfileImage?.readAsBytes();
@@ -231,10 +234,12 @@ class StaffCubit extends Cubit<StaffState> {
     var staffId = await _staffTable.insert(StaffDTO(
         id: 0,
         login: numberController.text,
+        fio: fioController.text,
         password:
             passwordController.text == '' || passwordController.text == ' '
                 ? _password.generatePassword()
                 : passwordController.text,
+        photo: imageUrl,
         userId: userId,
         user: UserDTO.empty));
 
@@ -245,7 +250,12 @@ class StaffCubit extends Cubit<StaffState> {
           staffId: staffId,
           position: PositionDTO(id: 0, name: ''),
           staff: StaffDTO(
-              id: 0, login: '', password: '', userId: 0, user: UserDTO.empty),
+              id: 0,
+              login: '',
+              password: '',
+              userId: 0,
+              user: UserDTO.empty,
+              fio: ''),
           areaId: areasMap[areasForPositionsList[i]] ?? 1,
           area: AreaDTO(id: 0, name: '', number: '', unitId: 0)));
     }
@@ -253,8 +263,6 @@ class StaffCubit extends Cubit<StaffState> {
     fioController.clear();
     numberController.clear();
     passwordController.clear();
-    selectedPositionsList.clear();
-    positionsToSelectList.clear();
     loadedProfileImage = null;
     positionsToSelectList = positionsToSelectStartValue;
   }
@@ -293,10 +301,13 @@ class StaffCubit extends Cubit<StaffState> {
       final imageUrl = await imageStorage.getPublicUrl(path: supabaseImagePath);
 
       await _userTable.updatePhoto(userId: userId, photoUrl: imageUrl);
+      await _staffTable.updatePhoto(staffId: userId, photoUrl: imageUrl);
     }
   }
 
   Future<void> updateStaff(PositionStaffModel positionStaff) async {
+    print('positionstaff: ${positionStaff.positionId}');
+    print('selectedPosition: $selectedPosition');
     await _userTable.update(
         positionStaff.staff.userId,
         UserDTO(
@@ -304,7 +315,8 @@ class StaffCubit extends Cubit<StaffState> {
             fio: fioController.text == ''
                 ? positionStaff.staff.user.fio
                 : fioController.text,
-            positionId: positionsMap[selectedPosition] ?? 1,
+            positionId: positionsMap[selectedPositionsList.first] ??
+                positionStaff.positionId,
             areaId: areasMap[selectedArea],
             companyId: positionStaff.staff.user.companyId,
             position: PositionDTO(id: 0, name: ''),
@@ -318,6 +330,9 @@ class StaffCubit extends Cubit<StaffState> {
     await _staffTable.update(
         positionStaff.staffId,
         StaffDTO(
+            fio: fioController.text == ''
+                ? positionStaff.staff.user.fio
+                : fioController.text,
             id: positionStaff.staff.id,
             login: numberController.text == ''
                 ? positionStaff.staff.login
@@ -342,7 +357,12 @@ class StaffCubit extends Cubit<StaffState> {
           staffId: positionStaff.staffId,
           position: PositionDTO(id: 0, name: ''),
           staff: StaffDTO(
-              id: 0, login: '', password: '', userId: 0, user: UserDTO.empty),
+              id: 0,
+              login: '',
+              password: '',
+              userId: 0,
+              user: UserDTO.empty,
+              fio: ''),
           areaId: areasMap[areasForPositionsList[i]] ?? 1,
           area: AreaDTO(id: 0, name: '', number: '', unitId: 0)));
     }

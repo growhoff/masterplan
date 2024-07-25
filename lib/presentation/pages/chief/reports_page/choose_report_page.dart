@@ -25,6 +25,7 @@ class ChooseReportPageView extends StatefulWidget {
 class _ChooseReportPageViewState extends State<ChooseReportPageView> {
   @override
   void initState() {
+    context.read<AnalyticsCubit>().fetchStagesForReport();
     super.initState();
   }
 
@@ -38,40 +39,39 @@ class _ChooseReportPageViewState extends State<ChooseReportPageView> {
             child: Center(
               child: BlocBuilder<AnalyticsCubit, ChiefAnalyticsState>(
                 builder: (context, state) {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                          style: ButtonStyle(
-                              padding:
-                                  MaterialStateProperty.all(EdgeInsets.all(20))),
-                          onPressed: () async {
-                            await context
-                                .read<AnalyticsCubit>()
-                                .fetchStagesForReport();
-
-                            context
-                                .read<AnalyticsCubit>()
-                                .uploadStagesReportToExcel();
-                          },
-                          child: const Text('Поэтапный отчет начальника')),
-                      const SizedBox(height: 8),
-                      ElevatedButton(
-                          style: ButtonStyle(
-                              padding:
-                                  MaterialStateProperty.all(EdgeInsets.all(20))),
-                          onPressed: () async{
-                            await context
-                                .read<AnalyticsCubit>()
-                                .fetchStagesForReport();
-                            context
-                                .read<AnalyticsCubit>()
-                                .uploadOperationsReportToExcel();
-                          },
-                          child: const Text('Ход выполнения операций')),
-                      const SizedBox(height: 8),
-                    ],
-                  );
+                  if (state.status == AnalyticsPageStatus.success) {
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                            style: ButtonStyle(
+                                padding: WidgetStateProperty.all(
+                                    EdgeInsets.all(20))),
+                            onPressed: () {
+                              context
+                                  .read<AnalyticsCubit>()
+                                  .uploadStagesReportToExcel();
+                            },
+                            child: const Text('Поэтапный отчет начальника')),
+                        const SizedBox(height: 8),
+                        ElevatedButton(
+                            style: ButtonStyle(
+                                padding: WidgetStateProperty.all(
+                                    EdgeInsets.all(20))),
+                            onPressed: () {
+                              context
+                                  .read<AnalyticsCubit>()
+                                  .uploadOperationsReportToExcel();
+                            },
+                            child: const Text('Ход выполнения операций')),
+                        const SizedBox(height: 8),
+                      ],
+                    );
+                  } else {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
                 },
               ),
             )),

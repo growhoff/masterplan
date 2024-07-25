@@ -2,11 +2,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/data/repositories/supabase/dto/chief_operation_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/chief_operation_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/distribution_stage_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
 import 'package:master_plan/domain/model/batch.dart';
 import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/domain/model/status.dart';
+import 'package:master_plan/presentation/pages/master/pages/readyDetails/model/batch_to_stage.dart';
 import '../model/item_id.dart';
 import '../model/item_machine.dart';
 import '../model/item_oper.dart';
@@ -84,9 +86,9 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
       chiefOperationId: dto.chiefOperationId,
       optimalPart: dto.optimalPart,
       status: Status(id: dto.status.id, name: dto.status.name),
-      batch: Batch(id: dto.batch.id, number: dto.batch.number, name: dto.batch.name, count: dto.batch.count, code: dto.batch.code, orderId: dto.batch.orderId, technology: dto.batch.technology, order: dto.batch.order, isready: dto.batch.isready),
+      batch: Batch(id: dto.batch.id, number: dto.batch.number, name: dto.batch.name, count: dto.batch.count, code: dto.batch.code, orderId: dto.batch.orderId, technology: dto.batch.technology,  isready: dto.batch.isready),
       order: dto.order,
-      machine: Machine(id: dto.machine!.id, inventoryNumber: dto.machine!.inventoryNumber, name: dto.machine!.name, areaId: dto.areaId),
+      machine: Machine(id: dto.machine!.id, isActivated: dto.machine!.isActivated,inventoryNumber: dto.machine!.inventoryNumber, name: dto.machine!.name, areaId: dto.areaId),
     );
   }
 
@@ -135,8 +137,8 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
     if (listOper.isNotEmpty) {
       final listStatus = state.statusList[state.activePage];
       final List<int> listIdStatusReady = [];
-      final List<int> listChiefBatchId = [];
-      final List<int> listChiefOperationId = [];
+      final List<OperatorOperations> listChiefBatchId = [];
+      // final List<int> listChiefOperationId = [];
       for (var i = 0; i < listOper.length; i++) {
 
         //доработка
@@ -144,7 +146,7 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
           List<int> listSt2 = [];
           int count = listStatus[i].count;
           for (var e in listOper[i].list) {
-            if (count == 0) {listIdStatusReady.add(e.id); listChiefBatchId.add(e.chiefBatchId!);listChiefOperationId.add(e.chiefOperationId!);}
+            if (count == 0) {listIdStatusReady.add(e.id); listChiefBatchId.add(e);}
             else{
               listSt2.add(e.id);
               count --;
@@ -159,7 +161,7 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
           int count = listStatus[i].count;
 
           for (var j = 0; j < listOper[i].list.length; j++) {
-            if (count == 0){listIdStatusReady.add(listOper[i].listId[j]);listChiefBatchId.add(listOper[i].list[j].chiefBatchId!);listChiefOperationId.add(listOper[i].list[j].chiefOperationId!);}
+            if (count == 0){listIdStatusReady.add(listOper[i].listId[j]);listChiefBatchId.add(listOper[i].list[j]);}
             else{
               listSt1.add(listOper[i].listId[j]);
               count--;
@@ -179,12 +181,12 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
         if (listStatus[i].status == 0) {
           listIdStatusReady.addAll(listOper[i].listId);
           for (var element in listOper[i].list) {
-            listChiefBatchId.add(element.chiefBatchId!); listChiefOperationId.add(element.chiefOperationId!);
+            listChiefBatchId.add(element);
           }
         }
       }
       //тут выгрузка
-      checkIsDetailReady(listChiefBatchId: listChiefBatchId, listChiefOperationId: listChiefOperationId);
+      checkIsDetailReady(listChiefBatch: listChiefBatchId);
       await table.updateMasterStatisticReadyList(listIdStatusReady);
     }
     List<ItemMachine> listMachine = state.listMachine!;
@@ -209,36 +211,84 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
   }
 
   // проверка на готовность детали
-  Future<void> checkIsDetailReady({required List<int> listChiefBatchId, required List<int> listChiefOperationId})async
+  Future<void> checkIsDetailReady({required List<OperatorOperations> listChiefBatch})async
   {
+    List<int> listId = [];
+    for (var element in listChiefBatch) {
+      listId.add(element.chiefBatchId!);
+    }
+    //new
+    final tableStage = DistributionStageTable();
+    //по chief_batch_id выгрузку. меняем статус status_id на 3. сравнение со stage_id
+    //надо сделать что б при выгрузке у мастера еще в таблице distribution_stage статус менялся
+    //если операция последняя в этапе и она готова то статус меняется на готово(3)
     final chiefOperationTable = ChiefOperationTable();
     final chiefBatchTable = ChiefBatchTable();
-    // получает последнюю операцию в детали
-    final fetchedLastOperationInBatch = await chiefOperationTable.fetchLastOperationInBatchList(listChiefBatchId: listChiefBatchId);
-    //создаём список с последними операциями и заносим их соотвественно
-    List<ChiefOperationDto> listLast = [];
-    int chifBatch = fetchedLastOperationInBatch.first['chief_batch_id'];
-    for (var i = 0; i < fetchedLastOperationInBatch.length; i++) {
-      final model = ChiefOperationDto.fromMap(fetchedLastOperationInBatch[i]);
-      if (i == fetchedLastOperationInBatch.length - 1){
-        listLast.add(ChiefOperationDto.fromMap(fetchedLastOperationInBatch[i]));
-      }
-      else{
-        if (model.chiefBatchId != chifBatch){
-          listLast.add(ChiefOperationDto.fromMap(fetchedLastOperationInBatch[i-1]));
-          chifBatch = model.chiefBatchId;
+    // получает лист операциюй в деталях
+    final litOperationInBatch = await chiefOperationTable.fetchLastOperationInBatchList(listChiefBatchId: listId);
+    List<BatchToStage> listBatchToStage = [];
+    var groupChiefBatch = groupBy(litOperationInBatch, (el) => el['chief_batch_id']);
+    groupChiefBatch.forEach((keyBatch, valueChief) {
+      var groupStage = groupBy(valueChief, (el) => el['stage_id']);
+      List<ChiefOperationDto> listDto = [];
+      groupStage.forEach((key, valueStage){
+        final model = ChiefOperationDto.fromMap(valueStage.last);
+        listDto.add(model);        
+      });
+      listBatchToStage.add(BatchToStage(chiefBatchId: keyBatch, listDto: listDto));
+    });
+    List<int> listStageId = [];
+    List<ChiefOperationDto> lastIdStage = [];
+    List<ChiefOperationDto> lastIdBatch = [];
+    for (var i = 0; i < listChiefBatch.length; i++) {
+      for (var batchToStage in listBatchToStage) {
+        if (listChiefBatch[i].chiefBatchId == batchToStage.chiefBatchId) {
+          //проверка конечных stage
+          for (var element in batchToStage.listDto) {
+            if (element.operationId == listChiefBatch[i].operation.id){lastIdStage.add(element);listStageId.add(listChiefBatch[i].stage.id);}
+          }
+          //проверка на конец
+          if (batchToStage.listDto.last.operationId == listChiefBatch[i].operation.id){lastIdBatch.add(batchToStage.listDto.last);}
         }
       }
+    }
 
+    // //создаём список с последними операциями и заносим их соотвественно
+    // List<ChiefOperationDto> listLast = [];
+    // int chifBatch = litOperationInBatch.first['chief_batch_id'];
+    // for (var i = 0; i < litOperationInBatch.length; i++) {
+    //   final model = ChiefOperationDto.fromMap(litOperationInBatch[i]);
+    //   if (i == litOperationInBatch.length - 1){
+    //     listLast.add(ChiefOperationDto.fromMap(litOperationInBatch[i]));
+    //   }
+    //   else{
+    //     if (model.chiefBatchId != chifBatch){
+    //       listLast.add(ChiefOperationDto.fromMap(litOperationInBatch[i-1]));
+    //       chifBatch = model.chiefBatchId;
+    //     }
+    //   }
+
+    // }
+    // // final lastOperationInBatchDto = ChiefOperationDto.fromMap(fetchedLastOperationInBatch);
+    // List<int> listChiefBatchLast = [];
+    // for (var elLast in listLast) {
+    //   for (var elChiefOper in listChiefBatch) {
+    //     if (elLast.id == elChiefOper.chiefOperationId) listChiefBatchLast.add(elLast.chiefBatchId);
+    //   }
+    // }
+    List<int> listStagechiefBatchIdLast = [];
+    for (var stage in lastIdStage) {
+      listStagechiefBatchIdLast.add(stage.chiefBatchId);
     }
-    // final lastOperationInBatchDto = ChiefOperationDto.fromMap(fetchedLastOperationInBatch);
+    for (var i = 0; i < listStageId.length; i++) {
+      await tableStage.updateStatus(listStageId[i], listStagechiefBatchIdLast[i]);
+    }
+
     List<int> listChiefBatchLast = [];
-    for (var elLast in listLast) {
-      for (var elChiefOper in listChiefOperationId) {
-        if (elLast.id == elChiefOper) listChiefBatchLast.add(elLast.chiefBatchId);
-      }
+    for (var batch in lastIdBatch) {
+      listChiefBatchLast.add(batch.chiefBatchId);
     }
-    chiefBatchTable.updateChiefBatchStatusToReadyList(listChiefBatchId: listChiefBatchLast);
+    await chiefBatchTable.updateChiefBatchStatusToReadyList(listChiefBatchId: listChiefBatchLast);
     // если id последней операции в детали равен chiefOperationId у операции из operator_operations, то меняет статус детали на готово(2)
     // if (lastOperationInBatchDto.id == chiefOperationId){
 

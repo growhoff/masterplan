@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/domain/model/monitoring_machine.dart';
-// import '../model/item_machine.dart';
 import '../bloc/cubit.dart';
 
 class StatusLine extends StatelessWidget {

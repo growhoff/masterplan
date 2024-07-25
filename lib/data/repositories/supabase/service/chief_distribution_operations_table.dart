@@ -39,9 +39,10 @@ class ChiefDistributionOperationsTable extends SupabaseTable {
             '*, z_batch:batch_id!inner(*), z_stage:stage_id(*, z_area(*)), z_operation:operation_id(*)')
         .eq('z_batch.company_id', _companyId ?? 1)
         .inFilter('unit_id', [0, _unitId]).order('id', ascending: true);
-     print(res);
+    print(res);
     return res;
   }
+
 
   Future<List<Map<String, dynamic>>> selectListBatchId(
       List<int> batchId) async {
@@ -49,6 +50,7 @@ class ChiefDistributionOperationsTable extends SupabaseTable {
         .select(
             '*, z_batch:batch_id!inner(*), z_stage:stage_id(*, z_area(*)), z_operation:operation_id(*)')
         .inFilter('batch_id', batchId)
+        .eq('z_batch.company_id', _companyId ?? 1)
         .order('id', ascending: true);
     return res;
   }

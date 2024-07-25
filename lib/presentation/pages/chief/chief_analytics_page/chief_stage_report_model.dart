@@ -4,6 +4,8 @@ class ChiefStageForReportModel {
   final String batchNumber;
   final String batchName;
   final String batchCode;
+  final String technologyNumber;
+  final String code;
 
   int detailsQuantity = 0;
 
@@ -25,11 +27,12 @@ class ChiefStageForReportModel {
   int semisQuantity = 0;
   int missingSemisQuantity = 0;
 
-
   List<ChiefOperationForReportModel> operationsList = [];
 
   ChiefStageForReportModel(
       {required this.batchId,
+      required this.technologyNumber,
+      required this.code,
       required this.batchNumber,
       required this.batchName,
       required this.batchCode,
@@ -58,6 +61,4 @@ class ChiefOperationForReportModel {
   int modificationQuantity = 0;
   int onMachinesQuantity = 0;
   int onCheckQuantity = 0;
-
-
 }

@@ -4,7 +4,7 @@ import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import 'package:master_plan/presentation/app/bloc/state.dart';
 import '../bloc/cubit.dart';
 import '../bloc/state.dart';
-import '../data/data_master.dart';
+import '../data/data_chief_master.dart';
 
 class NavbarChiefMaster extends StatelessWidget {
   const NavbarChiefMaster({super.key});

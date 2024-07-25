@@ -33,7 +33,6 @@ class _AnalyticsPageViewState extends State<AnalyticsPageView> {
                 padding:
                     MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(10))),
             onPressed: () async{
-
               context.read<AnalyticsCubit>().uploadReadyOperationsReport(context);
             },
             child: Text('Выполненные операции (отчет)'),

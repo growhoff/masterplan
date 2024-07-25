@@ -1,26 +1,24 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
-import 'package:master_plan/domain/model/batch.dart';
-import 'package:master_plan/domain/model/machine.dart';
+import 'package:master_plan/domain/model/area_machine.dart';
+import 'package:master_plan/domain/model/name_index.dart';
 import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/domain/model/otp_path_operations.dart';
-import 'package:master_plan/domain/model/status.dart';
+import 'package:master_plan/domain/usecase/convert_dto_model.dart';
 import '../model/item_machine.dart';
-// import '../model/item_oper.dart';
-// import '../model/item_saver.dart';
 import 'state.dart';
 import 'package:collection/collection.dart';
 
 class CubitQueueMaster extends Cubit<StateQueueMaster> {
-  final List<Machine>? machineList;
-  final List<OperatorOperations>? queueList;
-  final List<int> machineIdList;
+  // final List<OperatorOperations>? queueList;
   final int userId;
   final tableOperations = OperatorOperationsTable();
-
-  CubitQueueMaster(this.machineList, this.queueList, this.machineIdList, this.userId) : super(const StateQueueMaster()) {
-    tableOperations.table.stream(primaryKey: ['id']).inFilter('machine_id', machineIdList).listen((event) {}).onData((data) async {
+  final List<AreaMachine> listAreaMachine;
+  CubitQueueMaster(this.userId, this.listAreaMachine) : super(const StateQueueMaster()) {
+    emit(state.copyWith(listAreaMachine: listAreaMachine));
+    setListItemDrop();
+    tableOperations.table.stream(primaryKey: ['id']).inFilter('machine_id', listAreaMachine[state.activeArea].idListMachine).listen((event) {}).onData((data) async {
       await getQuere(data);
     });
   }
@@ -42,7 +40,7 @@ class CubitQueueMaster extends Cubit<StateQueueMaster> {
       List<OperatorOperations> list = [];
       int time = 0;
       for (var element in value) {
-        list.add(convertDto(element));
+        list.add(ConvertDtoModel.convertToOperatorOperations(element));
         if (element.timeplan != null) {time += element.timeplan!;}
       }
       listB.add(OptPathOperations(idPath: key!, list: list, order: list.first.order!, time: time, active: list.first.status.id == 7));
@@ -51,7 +49,7 @@ class CubitQueueMaster extends Cubit<StateQueueMaster> {
     listB.sort((a, b) => a.order!.compareTo(b.order!));
 
     List<ItemMachine> listItem = [];
-    for (var machine in machineList!) {
+    for (var machine in listAreaMachine[state.activeArea].listMachine) {
       List<OptPathOperations> listQueue = [];
       int time = 0;
       OptPathOperations? activeOper;
@@ -70,39 +68,6 @@ class CubitQueueMaster extends Cubit<StateQueueMaster> {
     emit(state.copyWith(listMachine: listItem));
   }
 
-  OperatorOperations convertDto(OperatorOperationsDTO dto) {
-    return OperatorOperations(
-      id: dto.id,
-      area: dto.area!,
-      operation: dto.operation,
-      stage: dto.stage!,
-      timeplan: dto.timeplan ?? 0,
-      timeFirstStart: dto.timeFirstStart ?? 0,
-      timestart: dto.timestart,
-      timestop: dto.timestop,
-      timeworking: dto.timeworking,
-      status: Status(id: dto.status.id, name: dto.status.name),
-      batch: Batch(id: dto.batch.id,
-          number: dto.batch.number,
-          name: dto.batch.name,
-          count: dto.batch.count,
-          code: dto.batch.code,
-          orderId: dto.batch.orderId,
-          technology: dto.batch.technology,
-          order: dto.batch.order,
-          isready: dto.batch.isready),
-      order: dto.order,
-      machine: Machine(id: dto.machine!.id,
-          inventoryNumber: dto.machine!.inventoryNumber,
-          name: dto.machine!.name,
-          areaId: dto.areaId),
-      chiefBatchId: dto.chiefBatchId,
-      chiefOperationId: dto.chiefOperationId,
-      optimalPart: dto.optimalPart,
-      modific: dto.modific,
-    );
-  }
-
   void updateOperationDistribMaster(int id) {
     tableOperations.updateMasterDistribMasterEqOptimalPart(id);
   }
@@ -111,8 +76,32 @@ class CubitQueueMaster extends Cubit<StateQueueMaster> {
     tableOperations.updateMasterReadyEqOptimalPart(idPath, userId);
   }
 
-  void setActivePage(int index) {
-    emit(state.copyWith(activePage: index));
+  void setListItemDrop() {
+    List<NameIndex> listItemArea = [];
+    List<NameIndex> listItemMachine = [];
+    if (state.listAreaMachine.isNotEmpty) {
+      for (var i = 0; i < state.listAreaMachine.length; i++) {
+        listItemArea.add(NameIndex(name: state.listAreaMachine[i].area.name, index: i));
+      }
+
+      if (state.listAreaMachine[state.activeArea].listMachine.isNotEmpty) {
+        var listMachine = state.listAreaMachine[state.activeArea].listMachine;
+        for (var i = 0; i < listMachine.length; i++) {
+          listItemMachine.add(NameIndex(name: listMachine[i].name, index: i));
+        }
+      }
+    }
+    emit(state.copyWith(listItemArea: listItemArea, listItemMachine: listItemMachine));
+  }
+
+  void setActiveMachine(int index) {
+    emit(state.copyWith(activeMachine: index));
+  }
+
+  Future<void> setActiveArea(int index) async{
+    emit(state.copyWith(activeArea: index, activeMachine: 0, listMachine: []));
+    final queue = await tableOperations.selectListMachineId(state.listAreaMachine[index].idListMachine);
+    await getQuere(queue);
   }
 
   // Future<void> saveDate(List<OptPathOperations> operList) async {

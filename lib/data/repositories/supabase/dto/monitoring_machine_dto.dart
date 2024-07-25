@@ -17,12 +17,13 @@ class MonitoringMachineDTO extends Dto {
   final UserDTO? user;
   final int machineId;
   final MachineDTO? machine;
-  final int batchId;
+  final int? batchId;
   final BatchDTO? batch;
   final String comment;
   final DateTime date;
   final int changeId;
   final int operationId;
+  final int? firstStartBatch;
   MonitoringMachineDTO({
     required this.id,
     required this.timeStart,
@@ -33,12 +34,13 @@ class MonitoringMachineDTO extends Dto {
     this.user,
     required this.machineId,
     this.machine,
-    required this.batchId,
+    this.batchId,
     this.batch,
     required this.comment,
     required this.date,
     required this.changeId,
     required this.operationId,
+    this.firstStartBatch,
   });
 
 
@@ -54,6 +56,7 @@ class MonitoringMachineDTO extends Dto {
       'date': DateFormat('yyyy-MM-dd').format(date),
       'change_id': changeId,
       'operation_id':operationId,
+      'first_start_batch': firstStartBatch,
     };
   }
 
@@ -69,12 +72,13 @@ class MonitoringMachineDTO extends Dto {
       user: map['z_user'] != null ? UserDTO.fromMap(map['z_user'] as Map<String,dynamic>) : null,
       machineId: map['machine_id'] as int,
       machine: map['z_machine'] != null ? MachineDTO.fromMap(map['z_machine'] as Map<String,dynamic>) : null,
-      batchId: map['batch_id'] as int,
+      batchId: map['batch_id'] != null ? map['batch_id'] as int : null,
       batch: map['z_batch'] != null ? BatchDTO.fromMap(map['z_batch'] as Map<String,dynamic>) : null,
       comment: map['comment'] as String,
       date: DateTime.tryParse(map['date'] as String) ?? DateTime(int.parse(listTime[0]), int.parse(listTime[1]), int.parse(listTime[2])),
       changeId: map['change_id'] as int,
       operationId: map['operation_id'] as int,
+      firstStartBatch: map['first_start_batch'] != null ? map['first_start_batch'] as int : null,
     );
   }
 

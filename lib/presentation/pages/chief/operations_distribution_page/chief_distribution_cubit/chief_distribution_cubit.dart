@@ -1,20 +1,26 @@
 import 'package:bloc/bloc.dart';
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:master_plan/data/repositories/local/service/excel_service.dart';
 import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/chief_batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/chief_distribution_operations_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/distribution_stage_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operation_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/status_dto.dart';
 
 import 'package:master_plan/data/repositories/supabase/service/area_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/chief_batch_table.dart';
 
 import 'package:master_plan/data/repositories/supabase/service/chief_distribution_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/chief_operation_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/distribution_stage_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/operation_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
 import 'package:master_plan/domain/usecase/chief_unit_service.dart';
 import 'package:master_plan/presentation/pages/chief/model/distribution_operation_model.dart';
@@ -24,8 +30,7 @@ import '../../../../../domain/model/chief_distribution_operations_model.dart';
 part 'chief_distribution_state.dart';
 
 class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
-  ChiefDistributionCubit()
-      : super(const ChiefDistributionState()) {
+  ChiefDistributionCubit() : super(const ChiefDistributionState()) {
     _chiefDistributionOperationsTable.table
         .stream(primaryKey: ['id'])
         .neq('quantity', 0)
@@ -41,6 +46,9 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
 
   final AreaTable _areaTable = AreaTable();
   final ChiefOperationTable _chiefOperationTable = ChiefOperationTable();
+  final operationsTable = OperationTable();
+  final distributionStageTable = DistributionStageTable();
+
   final listController = ScrollController();
 
   final ChiefDistributionOperationsTable _chiefDistributionOperationsTable =
@@ -65,6 +73,7 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
     emit(state.copyWith(
         chiefOperationsList: [], status: DistributionPageStatus.loading));
     isElementOpenList = [];
+    List<int> batchesIdsList = [];
     List<ChiefDistributionOperation> chiefOperationsList = [];
     var fetchedChiefOperationsList =
         await _chiefDistributionOperationsTable.selectNotDistributed(
@@ -75,7 +84,7 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
     for (var operation in fetchedChiefOperationsList) {
       final chiefOperationDto =
           ChiefDistributionOperationsDTO.fromMap(operation);
-      chiefOperationsList.add(ChiefDistributionOperation(
+      final chiefDistributionOperation = ChiefDistributionOperation(
           operationId: chiefOperationDto.operationId,
           stageId: chiefOperationDto.stageId,
           stage: chiefOperationDto.stage,
@@ -83,11 +92,56 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
           batchId: chiefOperationDto.batchId,
           batch: chiefOperationDto.batch,
           quantity: chiefOperationDto.quantity,
-          id: chiefOperationDto.id));
-      isElementOpenList.add(false);
+          id: chiefOperationDto.id);
+      batchesIdsList.add(chiefDistributionOperation.stage.batchArchiveId ?? 1);
+      chiefOperationsList.add(chiefDistributionOperation);
     }
+
+    var fetchedOperationList =
+        await operationsTable.selectByBatchesIdsList(batchesIdsList);
+
+    List<StageDTO> stagesDtoList = [];
+    List<int> stagesIdsList = [];
+    for (var operation in fetchedOperationList) {
+      final operationDto = OperationDTO.fromMap(operation);
+
+      if (!stagesIdsList.contains(operationDto.stageId)) {
+        stagesDtoList.add(operationDto.stage ??
+            StageDTO(id: 0, number: '', name: '', isdistributed: false));
+        stagesIdsList.add(operationDto.stageId);
+      }
+    }
+
+    var stagesMap = groupBy(stagesDtoList, (stage) => stage.batchArchiveId);
+
+    List<ChiefDistributionOperation> finalList = [];
+
+    for (var operation in chiefOperationsList) {
+      if (stagesMap[operation.stage.batchArchiveId]?.length == 1) {
+        finalList.add(operation);
+      } else {
+        final index = stagesMap[operation.stage.batchArchiveId]
+            ?.indexWhere((value) => value.id == operation.stageId);
+
+        if (index == 0) {
+          finalList.add(operation);
+        } else {
+          print(operation.stage.batchArchiveId);
+          var fetchedStagesList =
+              await distributionStageTable.selectUploadedByStageId(
+                  stagesMap[operation.stage.batchArchiveId]![index! - 1].id );
+          print('operationId: ${operation.id}  ${fetchedStagesList}');
+
+          if (fetchedStagesList.isNotEmpty) {
+            operation.quantity = fetchedStagesList.length;
+            finalList.add(operation);
+          }
+        }
+      }
+    }
+
     emit(state.copyWith(
-        chiefOperationsList: chiefOperationsList,
+        chiefOperationsList: finalList,
         status: DistributionPageStatus.success));
   }
 

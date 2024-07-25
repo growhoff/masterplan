@@ -1,6 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:master_plan/data/repositories/supabase/service/company_table.dart';
+import 'package:master_plan/domain/usecase/company_service.dart';
 
 import '../../../../../../data/repositories/supabase/dto/area_dto.dart';
 import '../../../../../../data/repositories/supabase/dto/machine_dto.dart';
@@ -15,12 +17,19 @@ class ChiefMachineCubit extends Cubit<ChiefMachineState> {
   ChiefMachineCubit() : super(const ChiefMachineState());
 
   final machineTableStream = MachineTable().stream();
+  final _companyTable = CompanyTable();
   final areaStream = AreaTable().stream();
   final AreaTable _areaTable = AreaTable();
   final MachineTable _machineTable = MachineTable();
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController numberController = TextEditingController();
+
+  bool isActivated = false;
+  int paidMachinesQuantity = 0;
+  int activatedMachinesQuantity = 0;
+
+  final int? _companyId = CompanyService.instance.companyId;
 
   String selectedArea = '';
   Map<String, int> areasMap =
@@ -32,7 +41,6 @@ class ChiefMachineCubit extends Cubit<ChiefMachineState> {
     await fetchAreas();
 
     fetchMachinesList();
-
   }
 
   fetchAreas() async {
@@ -59,8 +67,9 @@ class ChiefMachineCubit extends Cubit<ChiefMachineState> {
       for (var item in list) {
         final machineDto = MachineDTO.fromMap(item);
         {
-          if (machineDto.areaId == activeAreaId){
+          if (machineDto.areaId == activeAreaId) {
             machinesList.add(Machine(
+              isActivated: machineDto.isActivated,
                 id: machineDto.id,
                 inventoryNumber: machineDto.inventoryNumber,
                 name: machineDto.name,
@@ -93,6 +102,15 @@ class ChiefMachineCubit extends Cubit<ChiefMachineState> {
         }
       }
     }
+
+    paidMachinesQuantity = await _companyTable
+        .fetchPaidMachinesQuantityByCompanyId(_companyId ?? 0);
+
+    activatedMachinesQuantity =
+        await _machineTable.fetchActivatedMachinesByCompanyId();
+    print('paid : $paidMachinesQuantity');
+
+    print('activated : $activatedMachinesQuantity');
     emit(state.copyWith(areasNamesList: areasNamesList));
   }
 
@@ -102,9 +120,9 @@ class ChiefMachineCubit extends Cubit<ChiefMachineState> {
           id: 0,
           inventoryNumber: int.parse(numberController.text),
           name: nameController.text,
+          isActivated: isActivated,
           areaId: areasMap[selectedArea] ?? 1),
     );
-
 
     nameController.clear();
 
@@ -118,11 +136,11 @@ class ChiefMachineCubit extends Cubit<ChiefMachineState> {
   Future updateMachine({
     required Machine machine,
   }) async {
-
     await _machineTable.update(
         machine.id,
         MachineDTO(
             id: machine.id,
+            isActivated: isActivated,
             inventoryNumber: numberController.text == ''
                 ? machine.inventoryNumber
                 : int.parse(numberController.text),

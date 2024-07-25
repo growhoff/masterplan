@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:master_plan/domain/model/order.dart';
 
 import 'package:master_plan/presentation/pages/dispatcher/orders_page/orders_cubit/orders_cubit.dart';
 import 'package:master_plan/presentation/pages/dispatcher/orders_page/widgets/priority_circle.dart';
-
-import '../../../../domain/model/batch.dart';
 
 class AddOrderPage extends StatelessWidget {
   const AddOrderPage({super.key});
@@ -13,7 +10,7 @@ class AddOrderPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-        create: (context) => OrdersCubit(), child: const AddOrderPageView());
+        create: (context) => OrdersCubit(), child: AddOrderPageView());
   }
 }
 
@@ -91,7 +88,6 @@ class _AddOrderPageViewState extends State<AddOrderPageView> {
                         GestureDetector(
                           onTap: () async {
                             var pickedDate = await showDatePicker(
-                              initialDate: DateTime.now(),
                                 context: context,
                                 firstDate: DateTime(2024),
                                 lastDate: DateTime.now());
@@ -153,14 +149,14 @@ class _AddOrderPageViewState extends State<AddOrderPageView> {
                         GestureDetector(
                           onTap: () async {
                             var pickedDate = await showDatePicker(
-                              initialDate: DateTime.now(),
                                 context: context,
                                 firstDate: DateTime(2024),
                                 lastDate: DateTime(2100));
                             setState(() {
                               if (pickedDate != null) {
-                                context.read<OrdersCubit>().planCompletionDate =
-                                    pickedDate;
+                                context
+                                    .read<OrdersCubit>()
+                                    .requiredCompletionDate = pickedDate;
                               }
                             });
                           },
@@ -191,7 +187,7 @@ class _AddOrderPageViewState extends State<AddOrderPageView> {
                                     fit: BoxFit.fill,
                                     child: Text(
                                       softWrap: true,
-                                      '${context.read<OrdersCubit>().planCompletionDate.day}.${context.read<OrdersCubit>().planCompletionDate.month}.${context.read<OrdersCubit>().planCompletionDate.year}',
+                                      '${context.read<OrdersCubit>().requiredCompletionDate.day}.${context.read<OrdersCubit>().requiredCompletionDate.month}.${context.read<OrdersCubit>().requiredCompletionDate.year}',
                                       style: TextStyle(fontSize: 18),
                                     ),
                                   )
@@ -249,7 +245,7 @@ class _AddOrderPageViewState extends State<AddOrderPageView> {
                     ),
                     ElevatedButton(
                         style: ButtonStyle(
-                            padding: MaterialStateProperty.all(
+                            padding: WidgetStateProperty.all(
                                 EdgeInsets.symmetric(
                                     vertical: 10, horizontal: 20))),
                         onPressed: () {

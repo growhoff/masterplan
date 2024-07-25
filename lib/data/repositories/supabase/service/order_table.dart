@@ -1,10 +1,13 @@
 import 'package:master_plan/data/repositories/supabase/dto/order_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
+import 'package:master_plan/domain/usecase/company_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class OrderTable extends SupabaseTable {
   final table = Supabase.instance.client.from('z_order');
+
+  final _companyId = CompanyService.instance.companyId ?? 1;
 
   @override
   Future<void> delete(int id) async {
@@ -17,16 +20,22 @@ class OrderTable extends SupabaseTable {
       await table.insert({
         'number': dto.number,
         'date_receipt': dto.dateReceipt,
-        'date_plan_completion': dto.datePlanCompletion,
+        'required_completion_date': dto.requiredCompletionDate,
+        'calculated_completion_date': dto.calculatedCompletionDate,
+        'actual_completion_date': dto.actualCompletionDate,
         'priority': dto.priority,
-        'order_status_id': dto.statusId,
+        'order_status_id': 1,
+        'company_id': _companyId,
       });
     }
   }
 
   @override
   Future<List<Map<String, dynamic>>> select() {
-    return table.select('*, z_order_status(*)').order('priority', ascending: true);
+    return table
+        .select('*, z_order_status(*)')
+        .eq('company_id', _companyId)
+        .order('priority', ascending: true);
   }
 
   Future changeStatusToFormed(int orderId) async {
@@ -52,5 +61,12 @@ class OrderTable extends SupabaseTable {
   @override
   Future<void> update(int id, Dto dto) {
     return table.update({'name': '1'}).eq('id', id);
+  }
+
+  stream() {
+    return table
+        .stream(primaryKey: ['id'])
+        .eq('company_id', _companyId)
+        .order('priority', ascending: true);
   }
 }

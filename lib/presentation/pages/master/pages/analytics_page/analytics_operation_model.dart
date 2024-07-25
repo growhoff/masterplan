@@ -3,6 +3,7 @@ class AnalyticsOperationModel {
       {
         required this.operationId,
         required this.code,
+        required this.comment,
         required this.detailNumber,
         required this.detailName,
         required this.operationNumber,
@@ -24,11 +25,12 @@ class AnalyticsOperationModel {
   final String operationNumber;
   final String operationName;
   final String timePlan;
-  final String  timeFact;
+  final String timeFact;
   final String machineName;
   final int machineInventoryNumber;
   final String fio;
   final String date;
+  final String comment;
   final int change;
   final String areaNumber;
 

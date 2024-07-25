@@ -1,9 +1,7 @@
 import 'package:master_plan/domain/model/otp_path_operations.dart';
 import 'package:master_plan/presentation/pages/master/bloc/cubit.dart';
 import 'package:master_plan/theme/theme.dart';
-
-// import '../../queue/model/item_oper.dart';
-import '../../queue/widgets/reorderable_icon_widget.dart';
+import './reorderable_icon_widget.dart';
 import '../../tableInfo/table_info_page.dart';
 import '../bloc/cubit.dart';
 import 'row_list_four.dart';

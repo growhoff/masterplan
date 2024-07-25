@@ -17,6 +17,7 @@ class MonitoringMachine {
   final DateTime date;
   final int changeId;
   final int? operationId;
+  final int? firstStartBatch;
   MonitoringMachine({
     this.id,
     required this.timeStart,
@@ -30,5 +31,6 @@ class MonitoringMachine {
     required this.date,
     required this.changeId,
     this.operationId,
+    this.firstStartBatch,
   });
 }

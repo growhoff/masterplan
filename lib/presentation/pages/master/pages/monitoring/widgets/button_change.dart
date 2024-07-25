@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:master_plan/presentation/pages/master/pages/monitoring/bloc/cubit.dart';
-import 'package:master_plan/presentation/pages/master/pages/monitoring/bloc/state.dart';
+import '../../monitoring/bloc/cubit.dart';
+import '../../monitoring/bloc/state.dart';
 
 
 class ButtonChange extends StatelessWidget {
@@ -16,9 +16,9 @@ class ButtonChange extends StatelessWidget {
                 onPressed: () => context.read<CubitMonitoring>().setChange(change),
                 style: ElevatedButton.styleFrom(
                     backgroundColor:
-                        state.change == change ? Colors.blue : Colors.blueGrey,
+                        state.change == change ? const Color.fromARGB(255, 155, 235, 157) : const Color.fromARGB(255, 185, 208, 219),
                     padding: const EdgeInsets.symmetric(
                         vertical: 16, horizontal: 5)),
-                child: Text('$change смена'))));
+                child: Text('$change смена', style: const TextStyle(color: Colors.black),))));
   }
 }

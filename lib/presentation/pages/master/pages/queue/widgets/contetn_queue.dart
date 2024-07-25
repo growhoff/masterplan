@@ -1,21 +1,12 @@
 import 'package:flutter/material.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/usecase/time_converter.dart';
-// import 'package:master_plan/presentation/app/bloc/cubit.dart';
-// import 'package:master_plan/presentation/pages/master/bloc/cubit.dart';
-// import 'package:master_plan/domain/model/operator_operations.dart';
-// import '../model/item_oper.dart';
-// import '../bloc/cubit.dart';
 import 'reorder_widget.dart';
 import 'row_list_four.dart';
-import 'package:master_plan/presentation/pages/master/pages/queue/model/item_machine.dart';
+import '../../queue/model/item_machine.dart';
 
 class ContetnQueue extends StatelessWidget {
   const ContetnQueue({super.key, required this.itemMachine});
   final ItemMachine itemMachine;
-  // final Machine machine;
-  // final int timeWorking;
 
   @override
   Widget build(BuildContext context) {

@@ -144,7 +144,7 @@ class _AddBatchPagePageViewState extends State<AddBatchPagePageView> {
                         style: TextStyle(fontSize: 20),
                       ),
                       style: ButtonStyle(
-                          padding: MaterialStateProperty.all(EdgeInsets.all(10))),
+                          padding: WidgetStateProperty.all(EdgeInsets.all(10))),
                     )
                   ],
                 ),

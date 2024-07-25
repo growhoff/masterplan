@@ -1,6 +1,13 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/chief_batch_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/distribution_stage_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
+import 'package:master_plan/data/repositories/supabase/service/batch_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/chief_batch_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/distribution_stage_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/stage_table.dart';
 import 'package:master_plan/domain/usecase/company_service.dart';
 import 'package:master_plan/data/repositories/local/service/excel_service.dart';
 import 'package:master_plan/data/repositories/local/service/notification_service.dart';
@@ -15,7 +22,6 @@ import 'package:master_plan/data/repositories/supabase/service/operator_operatio
 
 import 'package:master_plan/domain/model/chief_distribution_operations_model.dart';
 
-
 import 'package:open_filex/open_filex.dart';
 
 import '../../chief_analytics_page/chief_stage_report_model.dart';
@@ -29,8 +35,6 @@ class AnalyticsCubit extends Cubit<ChiefAnalyticsState> {
 
   final ChiefDistributionOperationsTable _chiefDistributionOperationsTable =
       ChiefDistributionOperationsTable();
-
-  final ChiefOperationTable _chiefOperationTable = ChiefOperationTable();
 
   final OperatorOperationsTable _operatorOperationsTable =
       OperatorOperationsTable();
@@ -62,6 +66,10 @@ class AnalyticsCubit extends Cubit<ChiefAnalyticsState> {
 
       if (!stagesMap.containsKey(chiefOperation.stageId)) {
         stagesMap[chiefOperation.stageId] = ChiefStageForReportModel(
+            code: chiefOperation.batch.code != ''
+                ? chiefOperation.batch.code
+                : chiefOperation.batch.batchArchive?.code ?? '',
+            technologyNumber: chiefOperation.batch.technology,
             batchId: chiefOperation.batchId,
             batchNumber: chiefOperation.batch.number,
             batchName: chiefOperation.batch.name,
@@ -82,8 +90,8 @@ class AnalyticsCubit extends Cubit<ChiefAnalyticsState> {
       stagesMap[chiefOperation.stageId]?.operationsQuantity++;
     }
 
-    var fetchedOperatorOperationsList =
-        await _operatorOperationsTable.selectOrderedByChiefOperation();
+    var fetchedOperatorOperationsList = await _operatorOperationsTable
+        .selectOrderedByChiefBatchIdAndChiefOperationId();
 
     OperatorOperationsDTO prevOperation = OperatorOperationsDTO.empty;
 
@@ -186,7 +194,14 @@ class AnalyticsCubit extends Cubit<ChiefAnalyticsState> {
     stagesMap.forEach((key, value) {
       stagesList.add(value);
     });
-    emit(state.copyWith(stagesList: stagesList, status: AnalyticsPageStatus.success));
+    emit(state.copyWith(
+        stagesList: stagesList, status: AnalyticsPageStatus.success));
+  }
+
+  Future stageReport() async {
+    await fetchStagesForReport();
+
+    await uploadStagesReportToExcel();
   }
 
   Future<void> uploadStagesReportToExcel() async {
@@ -226,4 +241,55 @@ class AnalyticsCubit extends Cubit<ChiefAnalyticsState> {
       OpenFilex.open(event);
     });
   }
+
+// Future addStages() async {
+//   int i = 0;
+//   final batchTable = BatchTable();
+//   final chiefBatchTable = ChiefBatchTable();
+//   final stageTable = StageTable();
+//   final distributionStageTable = DistributionStageTable();
+//
+//   List<int> batchesIdsList = [];
+//
+//   var fetchedBatchesList = await batchTable.select();
+//
+//   for (var batch in fetchedBatchesList) {
+//     final batchDto = BatchDTO.fromMap(batch);
+//     batchesIdsList.add(batchDto.id);
+//   }
+//
+//   var fetchedChiefBatchList =
+//       await chiefBatchTable.selectByBatchesIdList(batchesIdsList);
+//
+//   for (var chiefBatch in fetchedChiefBatchList) {
+//     final chiefBatchDto = ChiefBatchDTO.fromMap(chiefBatch);
+//     print(chiefBatchDto.batchId);
+//     var stagesList =
+//         await stageTable.selectByBatchId(batchId: chiefBatchDto.batchId);
+//
+//     for (var stage in stagesList) {
+//
+//       final stageDto = StageDTO.fromMap(stage);
+//       distributionStageTable.insert(DistributionStageDto(
+//           id: 0,
+//           chiefBatchId: chiefBatchDto.id,
+//           stageId: stageDto.id,
+//           statusId: 2));
+//     }
+//
+//   }
+//   print('закончили');
+// }
+
+// Future updateUnits()async{
+//
+//   final distributionStageTable = DistributionStageTable();
+//   var fetchedStagesList = await distributionStageTable.select();
+//   List<int> stagesIdList = [];
+//   for (var stage in fetchedStagesList){
+//     final distributionStageDto = DistributionStageDto.fromMap(stage);
+//     stagesIdList.add(distributionStageDto.id);
+//   }
+//   distributionStageTable.bulkUpdate(stagesIdList);
+// }
 }

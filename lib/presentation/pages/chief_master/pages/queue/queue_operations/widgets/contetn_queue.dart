@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:master_plan/domain/usecase/time_converter.dart';
 // import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/pages/chief/queue_operations/model/distrib_item.dart';
 // import '../bloc/cubit.dart';
@@ -17,6 +18,7 @@ class ContetnQueue extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        /*
         SizedBox(
           child: Row(
             children: [
@@ -45,7 +47,8 @@ class ContetnQueue extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        Text('Общая загрузка участка: ${time.round()} мин.', style: const TextStyle(fontWeight: FontWeight.bold)),
+        */
+        Text('Общая загрузка участка: ${TimeConverter().convertTimeMinHMin(time.round())}', style: const TextStyle(fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         const Divider(),
         const SizedBox(height: 8),

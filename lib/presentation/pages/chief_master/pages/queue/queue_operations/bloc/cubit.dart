@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
 import 'package:master_plan/domain/model/area.dart';
@@ -7,20 +6,12 @@ import 'package:master_plan/domain/model/area_machine.dart';
 import 'package:master_plan/domain/model/batch.dart';
 import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/operator_operations.dart';
-// import 'package:master_plan/domain/model/otp_path_operations.dart';
 import 'package:master_plan/domain/model/status.dart';
 import 'package:master_plan/presentation/pages/chief/queue_operations/model/distrib_item.dart';
-// import 'package:master_plan/presentation/pages/chief_master/pages/queue/queue_details/model/item_area.dart';
-// import '../model/item_machine.dart';
-// import '../model/item_oper.dart';
-// import '../model/item_saver.dart';
 import 'state.dart';
-// import 'package:collection/collection.dart';
 
 class CubitOperatQueueMasterChM extends Cubit<StateOperatQueueMasterChM> {
-  // final List<Machine>? machineList;
   final List<OperatorOperations>? queueList;
-  // final List<int> machineIdList;
   final int userId;
   final List<Area> listArea;
    final List<AreaMachine> listAreaMachine;
@@ -84,7 +75,7 @@ class CubitOperatQueueMasterChM extends Cubit<StateOperatQueueMasterChM> {
   }
 
     DistribItem convertToDistrib(List<OperatorOperationsDTO> operOperat) {
-      int timeSH = operOperat.first.operation.timeSH ?? 0;
+      int timeSH = operOperat.first.operation.timeSH;
       int timePZ = operOperat.first.operation.timepz;
       List<OperatorOperations> list = [];
       for (var element in operOperat) {
@@ -121,11 +112,11 @@ class CubitOperatQueueMasterChM extends Cubit<StateOperatQueueMasterChM> {
           code: dto.batch.code,
           orderId: dto.batch.orderId,
           technology: dto.batch.technology,
-          order: dto.batch.order,
           isready: dto.batch.isready),
       order: dto.order,
       machine: Machine(id: dto.machine!.id,
           inventoryNumber: dto.machine!.inventoryNumber,
+          isActivated: dto.machine!.isActivated,
           name: dto.machine!.name,
           areaId: dto.areaId),
       chiefBatchId: dto.chiefBatchId,

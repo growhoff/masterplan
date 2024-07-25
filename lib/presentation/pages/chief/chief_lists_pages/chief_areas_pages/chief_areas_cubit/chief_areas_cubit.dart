@@ -1,7 +1,11 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:master_plan/data/repositories/supabase/dto/staff_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/user_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/machine_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/staff_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/user_table.dart';
 import 'package:master_plan/domain/usecase/chief_unit_service.dart';
 import 'package:master_plan/domain/usecase/company_service.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
@@ -69,5 +73,23 @@ class ChiefAreasCubit extends Cubit<ChiefAreasState> {
     );
 
     await _areaTable.update(area.id, newArea);
+  }
+
+  Future fio() async {
+    final staffTable = StaffTable();
+    final userTable = UserTable();
+
+    var fetchedStaffList = await staffTable.select();
+
+    for (var staff in fetchedStaffList) {
+      final staffDto = StaffDTO.fromMap(staff);
+
+      final fetchedUser = await userTable.selectId(staffDto.userId);
+
+      final userDto = UserDTO.fromMap(fetchedUser.first);
+
+      await staffTable.updateFio(staffDto.id, userDto.fio);
+      print(staffDto.id);
+    }
   }
 }

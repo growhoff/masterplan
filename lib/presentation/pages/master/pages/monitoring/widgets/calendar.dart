@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:master_plan/presentation/pages/master/pages/monitoring/bloc/cubit.dart';
-import 'package:master_plan/presentation/pages/master/pages/monitoring/bloc/state.dart';
+import '../../monitoring/bloc/cubit.dart';
+import '../../monitoring/bloc/state.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter/material.dart';
 

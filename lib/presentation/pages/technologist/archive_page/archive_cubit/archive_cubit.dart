@@ -124,7 +124,7 @@ class ArchiveCubit extends Cubit<ArchiveState> {
         count: dto.count,
         code: dto.code,
         technology: dto.technology,
-        order: dto.order,
+
         isready: dto.isready,
         orderId: dto.orderId);
   }

@@ -1,35 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:master_plan/presentation/pages/master/pages/monitoring/bloc/cubit.dart';
-import 'package:master_plan/presentation/pages/master/pages/monitoring/bloc/state.dart';
+import 'package:master_plan/presentation/pages/master/pages/monitoring/widgets/drop_area.dart';
+import 'package:master_plan/presentation/pages/master/pages/monitoring/widgets/drop_machine.dart';
+import '../../monitoring/bloc/cubit.dart';
+import '../../monitoring/bloc/state.dart';
 import 'content_monitoring.dart';
 
 class ElementBarMonitor extends StatelessWidget {
-  const ElementBarMonitor({super.key});
-
+  const ElementBarMonitor(this.oneArea, {super.key});
+  final bool oneArea;
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CubitMonitoring, StateMonitoring>(
-      builder:(context, state) => state.listBar!.isNotEmpty 
+      builder:(context, state) => 
+      state.listItemMachine.isNotEmpty
       ? Column(
         children: [
-          SizedBox(
-            height: 60,
-            child: ListView.separated(
-              shrinkWrap: true,
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) => GestureDetector(
-                onTap: () => context.read<CubitMonitoring>().setActivePage(index),
-                child: SizedBox(width: 200, child: Card(color: state.activePage == index ? Colors.blueGrey : const Color.fromARGB(0, 0, 0, 0), child: Center(child: Text(state.listBar![index].machine.name, textAlign: TextAlign.center)))),
-              ), 
-              separatorBuilder: (context, index) => const SizedBox(width: 5),
-              itemCount: state.listBar!.length),
-          ),
+            Visibility(
+              visible: !oneArea,
+              child: DropArea(state.activeArea, state.listItemArea),
+            ),
+            const SizedBox(height: 8),
+            DropMachine(state.activeMachine, state.listItemMachine),
             const SizedBox(height: 18),
-            ContentListWidgetMaster(state.listBar![state.activePage], state.change)
+            state.listMonitor!.isNotEmpty
+            ? ContentListWidgetMaster(state.listMonitor![state.activeMachine], state.change, state.listStatusActive, state.statusActive!)
+            : const Center(child: CircularProgressIndicator())
         ],
       )
-      : const Center(child: CircularProgressIndicator()),
+      : const Center(child: Text('Нет станков')),
     );
   }
 }

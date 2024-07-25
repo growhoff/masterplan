@@ -2,9 +2,8 @@ import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class CompanyTable extends SupabaseTable{
-
-    final table = Supabase.instance.client.from('z_company');
+class CompanyTable extends SupabaseTable {
+  final table = Supabase.instance.client.from('z_company');
 
   @override
   Future<void> delete(int id) {
@@ -25,9 +24,13 @@ class CompanyTable extends SupabaseTable{
     return table.select().eq('id', id);
   }
 
-  @override
-  Future<void> update(int id, Dto dto) {
-   return table.update({'name': '1'}).eq('id', id);
+  Future<int> fetchPaidMachinesQuantityByCompanyId(int companyId) async {
+    var company = await table.select().eq('id', companyId);
+    return company.first['paid_machines_quantity'];
   }
 
+  @override
+  Future<void> update(int id, Dto dto) {
+    return table.update({'name': '1'}).eq('id', id);
+  }
 }

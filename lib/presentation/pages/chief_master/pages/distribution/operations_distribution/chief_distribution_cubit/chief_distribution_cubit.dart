@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,10 @@ import 'package:master_plan/data/repositories/supabase/service/operator_operatio
 import 'package:master_plan/domain/model/chief_distribution_operations_model.dart';
 import 'package:master_plan/presentation/pages/chief/model/distribution_operation_model.dart';
 
+import '../../../../../../../data/repositories/supabase/service/distribution_stage_table.dart';
+import '../../../../../../../data/repositories/supabase/service/operation_table.dart';
+import '../../../../../../../domain/usecase/chief_unit_service.dart';
+
 
 part 'chief_distribution_state.dart';
 
@@ -32,15 +37,20 @@ class ChiefDistributionChMCubit extends Cubit<ChiefDistributionChMState> {
         });
   }
 
+  final int? unitId = ChiefUnitService.instance.unitId;
+
   final OperatorOperationsTable _operatorOperationsTable =
-      OperatorOperationsTable();
+  OperatorOperationsTable();
 
   final AreaTable _areaTable = AreaTable();
   final ChiefOperationTable _chiefOperationTable = ChiefOperationTable();
+  final operationsTable = OperationTable();
+  final distributionStageTable = DistributionStageTable();
+
   final listController = ScrollController();
 
   final ChiefDistributionOperationsTable _chiefDistributionOperationsTable =
-      ChiefDistributionOperationsTable();
+  ChiefDistributionOperationsTable();
 
   List<bool> isElementOpenList = [];
 
@@ -53,7 +63,7 @@ class ChiefDistributionChMCubit extends Cubit<ChiefDistributionChMState> {
   int chiefOperationsSelectMaxRange = 9;
 
   Map<String, dynamic> areasMap =
-      {}; // ключ - номер участка + его имя, значение - id
+  {}; // ключ - номер участка + его имя, значение - id
 
   final _excelStageLoadService = ExcelService();
 
@@ -61,16 +71,18 @@ class ChiefDistributionChMCubit extends Cubit<ChiefDistributionChMState> {
     emit(state.copyWith(
         chiefOperationsList: [], status: DistributionPageStatus.loading));
     isElementOpenList = [];
+    List<int> operationsIdsList = [];
     List<ChiefDistributionOperation> chiefOperationsList = [];
     var fetchedChiefOperationsList =
-        await _chiefDistributionOperationsTable.selectNotDistributed(
-            maxRange: chiefOperationsSelectMaxRange,
-            minRange: chiefOperationsSelectMinRange, unitId: 1);
+    await _chiefDistributionOperationsTable.selectNotDistributed(
+        unitId: unitId ?? 1,
+        maxRange: chiefOperationsSelectMaxRange,
+        minRange: chiefOperationsSelectMinRange);
 
     for (var operation in fetchedChiefOperationsList) {
       final chiefOperationDto =
-          ChiefDistributionOperationsDTO.fromMap(operation);
-      chiefOperationsList.add(ChiefDistributionOperation(
+      ChiefDistributionOperationsDTO.fromMap(operation);
+      final chiefDistributionOperation = ChiefDistributionOperation(
           operationId: chiefOperationDto.operationId,
           stageId: chiefOperationDto.stageId,
           stage: chiefOperationDto.stage,
@@ -78,11 +90,54 @@ class ChiefDistributionChMCubit extends Cubit<ChiefDistributionChMState> {
           batchId: chiefOperationDto.batchId,
           batch: chiefOperationDto.batch,
           quantity: chiefOperationDto.quantity,
-          id: chiefOperationDto.id));
-      isElementOpenList.add(false);
+          id: chiefOperationDto.id);
+      operationsIdsList.add(chiefDistributionOperation.operationId);
+      chiefOperationsList.add(chiefDistributionOperation);
+      //isElementOpenList.add(false);
     }
+
+    var fetchedOperationList =
+    await operationsTable.selectByIdsList(operationsIdsList);
+
+    List<StageDTO> stagesDtoList = [];
+    List<int> stagesIdsList = [];
+    for (var operation in fetchedOperationList) {
+      final operationDto = OperationDTO.fromMap(operation);
+
+      if (!stagesIdsList.contains(operationDto.stageId)) {
+        stagesDtoList.add(operationDto.stage ??
+            StageDTO(id: 0, number: '', name: '', isdistributed: false));
+        stagesIdsList.add(operationDto.stageId);
+      }
+    }
+
+    var stagesMap = groupBy(stagesDtoList, (stage) => stage.batchId);
+
+    List<ChiefDistributionOperation> finalList = [];
+
+    for (var operation in chiefOperationsList) {
+      if (stagesMap[operation.batchId]?.length == 1) {
+        finalList.add(operation);
+      } else {
+        final index = stagesMap[operation.batchId]
+            ?.indexWhere((value) => value.id == operation.stageId);
+
+        if (index == 0) {
+          finalList.add(operation);
+        } else {
+          var fetchedStagesList =
+          await distributionStageTable.selectUploadedByStageId(
+              stagesMap[operation.batchId]![index! - 1].id);
+          print(fetchedStagesList);
+          if (fetchedStagesList.isNotEmpty) {
+            finalList.add(operation);
+          }
+        }
+      }
+    }
+
     emit(state.copyWith(
-        chiefOperationsList: chiefOperationsList,
+        chiefOperationsList: finalList,
         status: DistributionPageStatus.success));
   }
 
@@ -116,8 +171,8 @@ class ChiefDistributionChMCubit extends Cubit<ChiefDistributionChMState> {
       final quantity = operation.quantity;
 
       var fetchedChiefOperationsList =
-          await _chiefOperationTable.fetchOperationsByOperationIdWithLimit(
-              limit: quantity, operationId: operation.operationId);
+      await _chiefOperationTable.fetchOperationsByOperationIdWithLimit(
+          limit: quantity, operationId: operation.operationId);
 
       int orderNumber = 1;
       for (var chiefOperation in fetchedChiefOperationsList) {

@@ -19,7 +19,7 @@ class ChiefBatchTable extends SupabaseTable {
   Future<int> insert(Dto dto) async {
     if (dto is ChiefBatchDTO) {
       var chiefBatch =
-          await table.insert({'batch_id': dto.batchId}).select('id');
+      await table.insert({'batch_id': dto.batchId}).select('id');
       return chiefBatch[0]['id'];
     }
     return 0;
@@ -48,7 +48,7 @@ class ChiefBatchTable extends SupabaseTable {
   }) async {
     List<Map<String, Object>> mapsList = [];
     for (int i = 0; i < quantity; i++) {
-      mapsList.add({'batch_id': batchId, 'batch_status_id': 4});
+      mapsList.add({'batch_id': batchId, 'batch_status_id': 1});
     }
 
     await table.insert(mapsList);
@@ -67,12 +67,14 @@ class ChiefBatchTable extends SupabaseTable {
   }
 
   Future<int> fetchReadyDetailsCount({required int batchId}) async {
+
     final res = await table
         .select('*, z_batch!inner(*)')
         .eq('batch_id', batchId)
         .eq('batch_status_id', 2)
         .eq('z_batch.company_id', _companyId)
         .count();
+
     return res.count;
   }
 
@@ -113,6 +115,6 @@ class ChiefBatchTable extends SupabaseTable {
 
   Future<void> updateChiefBatchStatusToReadyList(
       {required List<int> listChiefBatchId}) async {
-    await table.update({'batch_status_id': 2}).inFilter('id', listChiefBatchId);
+    await table.update({'batch_status_id': 2}).inFilter('id', listChiefBatchId).eq('batch_status_id', 1);
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/presentation/app/bloc/cubit.dart';
 
 import 'chief_machine_cubit/chief_machine_cubit.dart';
 
@@ -30,7 +31,6 @@ class _ChiefMachineInsertPageViewState
   void initState() {
     context.read<ChiefMachineCubit>().fetchDropDownItems();
     super.initState();
-
   }
 
   @override
@@ -73,9 +73,8 @@ class _ChiefMachineInsertPageViewState
                         height: 5,
                       ),
                       TextField(
-                        controller: context
-                            .read<ChiefMachineCubit>()
-                            .numberController,
+                        controller:
+                            context.read<ChiefMachineCubit>().numberController,
                         keyboardType: TextInputType.number,
                       ),
                       SizedBox(
@@ -86,17 +85,15 @@ class _ChiefMachineInsertPageViewState
                         style: TextStyle(fontSize: 18),
                       ),
                       DropdownButton<String>(
-                        value: context
-                            .read<ChiefMachineCubit>()
-                            .selectedArea,
-                        onChanged: (String? value) { setState(() => context
-                                .read<ChiefMachineCubit>()
-                                .selectedArea =
-                            value ??
-                                context
-                                    .read<ChiefMachineCubit>()
-                                    .selectedArea);
-                          },
+                        value: context.read<ChiefMachineCubit>().selectedArea,
+                        onChanged: (String? value) {
+                          setState(() =>
+                              context.read<ChiefMachineCubit>().selectedArea =
+                                  value ??
+                                      context
+                                          .read<ChiefMachineCubit>()
+                                          .selectedArea);
+                        },
                         items: state.areasNamesList
                             .map((String area) => DropdownMenuItem(
                                   value: area,
@@ -107,12 +104,54 @@ class _ChiefMachineInsertPageViewState
                       const SizedBox(
                         height: 20,
                       ),
+                      Row(
+                        children: [
+                          Text(
+                            'активировать',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Checkbox(
+                              value:
+                                  context.read<ChiefMachineCubit>().isActivated,
+                              onChanged: (value) {
+                                print(context
+                                    .read<ChiefMachineCubit>()
+                                    .activatedMachinesQuantity);
+                                print(context
+                                    .read<ChiefMachineCubit>()
+                                    .paidMachinesQuantity);
+                                (context
+                                            .read<ChiefMachineCubit>()
+                                            .activatedMachinesQuantity <
+                                        context
+                                            .read<ChiefMachineCubit>()
+                                            .paidMachinesQuantity)
+                                    ? (setState(() {
+                                        context
+                                                .read<ChiefMachineCubit>()
+                                                .isActivated =
+                                            !context
+                                                .read<ChiefMachineCubit>()
+                                                .isActivated;
+                                      }))
+                                    : (ScaffoldMessenger.of(context)
+                                        .showSnackBar(SnackBar(
+                                            content: Text(
+                                        'активировать невозможно\nоплатите больше рабочих мест',
+                                      ))));
+                              })
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
                       Center(
                           child: ElevatedButton(
                         onPressed: () {
-                          context
-                              .read<ChiefMachineCubit>()
-                              .insertMachine();
+                          context.read<ChiefMachineCubit>().insertMachine();
                           showModalBottomSheet(
                               context: context,
                               builder: (context) => Container(

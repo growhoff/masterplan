@@ -24,7 +24,6 @@ class BatchTable extends SupabaseTable {
         'technology': dto.technology,
         'isready': false,
         'order_id': dto.orderId,
-        'order': 0,
         'count': dto.count,
         'company_id': _companyId,
         'batch_archive_id': dto.batchArchiveId
@@ -45,7 +44,10 @@ class BatchTable extends SupabaseTable {
   }
 
   Future<List<Map<String, dynamic>>> selectByOrderId(int orderId) async {
-    return table.select().eq('order_id', orderId).order('id', ascending: true);
+    return table
+        .select('*,z_order(*)')
+        .eq('order_id', orderId)
+        .order('id', ascending: true);
   }
 
   @override

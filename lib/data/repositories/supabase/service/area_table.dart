@@ -32,7 +32,7 @@ class AreaTable extends SupabaseTable {
   Future<List<Map<String, dynamic>>> select() {
     return table
         .select('*, z_unit!inner(*)')
-        .eq('z_unit.company_id', _companyId);
+        .eq('z_unit.company_id', _companyId).eq('unit_id', _unitId);
   }
 
   Future<List<Map<String, dynamic>>> selectByUnitId() {

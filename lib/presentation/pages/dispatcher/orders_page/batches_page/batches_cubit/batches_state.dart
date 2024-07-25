@@ -5,22 +5,28 @@ enum BatchesStatus { initial, loading, failure, success }
 final class BatchesState extends Equatable {
   const BatchesState({this.status = BatchesStatus.initial,
     this.batchesList = const [],
-    this.batchesArchiveList = const []});
+  this.stagesInBatchList = const [],
+    this.batchesArchiveList = const [],
+  });
 
-  final List<Batch> batchesList;
+  final List<BatchModel> batchesList;
 
   final BatchesStatus status;
+
+  final List<StageInBatchModel> stagesInBatchList;
 
   final List<BatchArchive> batchesArchiveList;
 
   BatchesState copyWith({
-    List<Batch>? batchesList,
+    List<BatchModel>? batchesList,
     BatchesStatus? status,
+    List<StageInBatchModel>? stagesInBatchList,
     List<BatchArchive>? batchesArchiveList
   }) {
     return BatchesState(
         batchesList: batchesList ?? this.batchesList,
         status: status ?? this.status,
+        stagesInBatchList: stagesInBatchList ?? this.stagesInBatchList,
         batchesArchiveList: batchesArchiveList ?? this.batchesArchiveList
     );
   }
@@ -30,6 +36,7 @@ final class BatchesState extends Equatable {
       [
         batchesList,
         status,
-        batchesArchiveList
+        batchesArchiveList,
+        stagesInBatchList,
       ];
 }

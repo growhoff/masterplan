@@ -11,7 +11,7 @@ class MonitoringPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final stateMain = context.read<CubitMain>().state;
     return BlocProvider<CubitMonitoring>(
-      create: (context) => CubitMonitoring(stateMain.machineList,  stateMain.machineIdList!),
+      create: (context) => CubitMonitoring(stateMain.listAreaMachine!),
       child: const MonitoringPageContent(),
     );
   }
@@ -26,7 +26,7 @@ class MonitoringPageContent extends StatelessWidget {
       child: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(16),
-          child: ElementBarMonitor(),
+          child: ElementBarMonitor(true),
         ),
       ),
     );

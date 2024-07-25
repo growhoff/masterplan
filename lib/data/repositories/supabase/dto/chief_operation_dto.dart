@@ -11,9 +11,11 @@ class ChiefOperationDto extends Dto {
       required this.operationId,
       required this.stageId,
       this.chiefBatch,
+        this.distributionStageId,
       required this.chiefBatchId});
 
   final int id;
+  final int? distributionStageId;
   final int chiefBatchId;
   final int stageId;
   final int operationId;
@@ -46,6 +48,7 @@ class ChiefOperationDto extends Dto {
           ? ChiefBatchDTO.fromMap(map['z_chief_batch'])
           : null,
       chiefBatchId: map['chief_batch_id'],
+        distributionStageId: map['distribution_stage_id']
     );
   }
 }

@@ -55,7 +55,8 @@ class CubitMain extends Cubit<StateMain> {
               break;
           //мастер
             case 3:
-              await getMachineToArea(state.user!.area!.id);
+              await getMachineToArea(state.user!.area!);
+              // await getMachineToUnit([state.user!.area!.id]);
               await getOperators();
               final staffDto = StaffDTO.fromMap(query);
               final staffModel = Staff(
@@ -73,6 +74,7 @@ class CubitMain extends Cubit<StateMain> {
               break;
           //начальник мастер
             case 7:
+              await fetchUnitId(query['id']);
               List<int> listAreaId = await getAreaForStaff(query['id']);
               await getMachineToUnit(listAreaId);
               await getOperatorsToUnit();
@@ -116,14 +118,15 @@ class CubitMain extends Cubit<StateMain> {
   }
 
   // master
-  Future<void> getMachineToArea(int areaId) async {
+  Future<void> getMachineToArea(AreaDTO area) async {
     final machineTable = MachineTable();
-    final machineQuery = await machineTable.selectMachineToArea(areaId);
+    final machineQuery = await machineTable.selectMachineToArea(area.id);
     List<Machine> listMachine = [];
     for (var machine in machineQuery) {
       final model = MachineDTO.fromMap(machine);
       listMachine.add(Machine(
           id: model.id,
+          isActivated: model.isActivated,
           inventoryNumber: model.inventoryNumber,
           name: model.name,
           areaId: model.areaId));
@@ -132,7 +135,15 @@ class CubitMain extends Cubit<StateMain> {
     for (var machine in listMachine) {
       listId.add(machine.id);
     }
-    emit(state.copyWith(machineList: listMachine, machineIdList: listId));
+
+    List<AreaMachine> listAreaMachine = [AreaMachine(
+      area: Area(id: area.id, name: area.name, number: area.number, unitId: area.unitId),
+      listMachine: listMachine,
+      idListMachine: listId,
+    )];
+
+
+    emit(state.copyWith(machineList: listMachine, machineIdList: listId, listAreaMachine: listAreaMachine));
   }
 
   // chief && chief-master
@@ -156,6 +167,7 @@ class CubitMain extends Cubit<StateMain> {
     for (var machine in machineQuery) {
       final model = MachineDTO.fromMap(machine);
       listMachine.add(Machine(
+        isActivated: model.isActivated,
           id: model.id,
           inventoryNumber: model.inventoryNumber,
           name: model.name,
@@ -326,6 +338,7 @@ class CubitMain extends Cubit<StateMain> {
         id: model.id,
         date: model.date,
         machine: Machine(
+          isActivated: model.machine!.isActivated,
             id: model.machine!.id,
             inventoryNumber: model.machine!.inventoryNumber,
             name: model.machine!.name,

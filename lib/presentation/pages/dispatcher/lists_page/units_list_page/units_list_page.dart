@@ -26,9 +26,9 @@ class UnitsListPageView extends StatefulWidget {
 class _UnitsListPageViewState extends State<UnitsListPageView> {
   @override
   void initState() {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeRight,
-    ]);
+    // SystemChrome.setPreferredOrientations([
+    //   DeviceOrientation.landscapeRight,
+    // ]);
     context.read<UnitsCubit>().fetchUnits();
     super.initState();
   }
@@ -246,9 +246,9 @@ class _UnitsListPageViewState extends State<UnitsListPageView> {
 
   @override
   void dispose() {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-    ]);
+    // SystemChrome.setPreferredOrientations([
+    //   DeviceOrientation.portraitUp,
+    // ]);
     super.dispose();
   }
 }

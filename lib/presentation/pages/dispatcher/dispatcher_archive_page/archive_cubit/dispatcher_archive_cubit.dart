@@ -110,7 +110,9 @@ class DispatcherArchiveCubit extends Cubit<DispatcherArchiveState> {
   Future<void> loadDetailToArchive() async {
     emit(state.copyWith(status: DispatcherArchiveStatus.loading));
     try {
+      print('трай');
       await _excelService.loadDetailToArchive();
+      print('загрузили');
       fetchBatches();
     } catch (e) {}
   }

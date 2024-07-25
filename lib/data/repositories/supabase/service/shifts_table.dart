@@ -31,17 +31,21 @@ class ShiftsTable extends SupabaseTable{
     return table.select();
   }
 
-    Future<List<Map<String, dynamic>>> selectId(int id) {
+  Future<List<Map<String, dynamic>>> selectId(int id) {
     return table.select().eq('id', id);
+  }
+
+  Future<List<Map<String, dynamic>>> selectNew(int userId, int changeId, String date) {
+    return table.select().eq('user_id', userId).eq('change_id', changeId).eq('date', date);
   }
 
   @override
   Future<void> update(int id, Dto dto) {
-   return table.update({'name': '1'}).eq('id', id);
+    return table.update({'name': '1'}).eq('id', id);
   }
 
-  Future<void> updateId(int id, DateTime time) {
-   return table.update({'time_end': time.millisecondsSinceEpoch}).eq('id', id);
+  Future<void> updateId(int id, DateTime time, bool isActive) {
+    return table.update({'time_end': time.millisecondsSinceEpoch, 'isActive': isActive}).eq('id', id);
   }
 
 }

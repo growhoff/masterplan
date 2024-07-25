@@ -57,6 +57,7 @@ class UnitsCubit extends Cubit<UnitsState> {
           supportStaffQuantity: unitDto.supportStaffQuantity,
           chief: Staff.fromDTO(unitDto.staff ??
               StaffDTO(
+                fio: '',
                   id: 0,
                   login: 'login',
                   password: 'password',

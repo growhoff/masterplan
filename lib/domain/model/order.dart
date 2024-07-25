@@ -6,17 +6,21 @@ class Order {
   final int id;
   final String number;
   final String? dateReceipt;
-  final String? datePlanCompletion;
+  final String? requiredCompletionDate;
+  final String? calculatedCompletionDate;
+  final String? actualCompletionDate;
   final int priority;
   final int statusId;
   final OrderStatus? status;
 
   Order(
       {required this.id,
+      this.status,
       required this.number,
-      required this.dateReceipt,
-      required this.datePlanCompletion,
+      this.dateReceipt,
+      this.requiredCompletionDate,
+      this.calculatedCompletionDate,
+      this.actualCompletionDate,
       required this.priority,
-      required this.statusId,
-       this.status});
+      required this.statusId});
 }

@@ -5,12 +5,14 @@ class BatchArchiveDto extends Dto{
       {required this.id,
       required this.number,
       required this.name,
+        required this.code,
       required this.technologyNumber,
       required this.companyId});
 
   final int id;
   final String name;
   final String number;
+  final String? code;
   final String technologyNumber;
   final int companyId;
 
@@ -18,6 +20,7 @@ class BatchArchiveDto extends Dto{
     return BatchArchiveDto(
         id: map['id'] as int,
         name: map['name'] as String,
+        code: map['code'],
         number: map['number'] as String,
         technologyNumber: map['technology_number'],
         companyId: map['company_id']);

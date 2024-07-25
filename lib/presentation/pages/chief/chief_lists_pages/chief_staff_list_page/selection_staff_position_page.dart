@@ -15,7 +15,7 @@ class SelectionStaffPositionPage extends StatelessWidget {
             children: [
               ElevatedButton(
                   style: ButtonStyle(
-                    padding: MaterialStateProperty.all<EdgeInsets>(
+                    padding: WidgetStateProperty.all<EdgeInsets>(
                         EdgeInsets.symmetric(vertical: 10, horizontal: 20)),
                   ),
                   onPressed: () =>
@@ -26,7 +26,7 @@ class SelectionStaffPositionPage extends StatelessWidget {
               ),
               ElevatedButton(
                   style: ButtonStyle(
-                    padding: MaterialStateProperty.all<EdgeInsets>(
+                    padding: WidgetStateProperty.all<EdgeInsets>(
                         EdgeInsets.symmetric(vertical: 10, horizontal: 20)),
                   ),
                   onPressed: () =>
@@ -37,7 +37,7 @@ class SelectionStaffPositionPage extends StatelessWidget {
               ),
               ElevatedButton(
                   style: ButtonStyle(
-                    padding: MaterialStateProperty.all<EdgeInsets>(
+                    padding: WidgetStateProperty.all<EdgeInsets>(
                         EdgeInsets.symmetric(vertical: 10, horizontal: 20)),
                   ),
                   onPressed: () {},
@@ -47,7 +47,7 @@ class SelectionStaffPositionPage extends StatelessWidget {
               ),
               ElevatedButton(
                   style: ButtonStyle(
-                    padding: MaterialStateProperty.all<EdgeInsets>(
+                    padding: WidgetStateProperty.all<EdgeInsets>(
                         EdgeInsets.symmetric(vertical: 10, horizontal: 20)),
                   ),
                   onPressed: () =>

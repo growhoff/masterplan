@@ -6,13 +6,14 @@ import 'package:master_plan/presentation/pages/operator/pages/work/model/page_it
 class StateWork extends Equatable {
     final List<PageItem> pageData;
     final int activePage;
-    final List<int> statusBtn;
+    final List<String> statusBtn;
     final int? monitorId;
     final List<bool> listStartBtn;
     final List<int> timeActive;
     final List<bool> listStartTime;
     final int count;
     final bool exit;
+    final bool visibleStatus;
   const StateWork({
     this.pageData = const [],
     this.activePage = 0,
@@ -23,22 +24,24 @@ class StateWork extends Equatable {
     this.listStartTime = const [],
     this.count = 0,
     this.exit = false,
+    this.visibleStatus = false,
   });
 
   @override
-  List<Object> get props => [pageData, activePage, statusBtn, monitorId ?? 0, listStartBtn, timeActive, listStartTime, count, exit];
+  List<Object> get props => [pageData, activePage, statusBtn, monitorId ?? 0, listStartBtn, timeActive, listStartTime, count, exit, visibleStatus];
 
   StateWork copyWith({
     List<PageItem>? pageData,
     List<Timer>? timer,
     int? activePage,
-    List<int>? statusBtn,
+    List<String>? statusBtn,
     int? monitorId,
     List<bool>? listStartBtn,
     List<int>? timeActive,
     List<bool>? listStartTime,
     int? count,
     bool? exit,
+    bool? visibleStatus,
   }) {
     return StateWork(
       pageData: pageData ?? this.pageData,
@@ -50,6 +53,7 @@ class StateWork extends Equatable {
       listStartTime: listStartTime ?? this.listStartTime,
       count: count ?? this.count,
       exit: exit ?? this.exit,
+      visibleStatus: visibleStatus ?? this.visibleStatus,
     );
   }
 }

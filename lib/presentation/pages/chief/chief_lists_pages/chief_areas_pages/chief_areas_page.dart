@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'chief_areas_cubit/chief_areas_cubit.dart';
 import 'chief_areas_page_widgets/areas_table_row_dialog.dart';
 
-
 class ChiefAreasPage extends StatelessWidget {
   const ChiefAreasPage({super.key});
 
@@ -46,7 +45,9 @@ class _ChiefAreasPageViewState extends State<ChiefAreasPageView> {
                 child: Column(
                   children: [
                     ElevatedButton(
-                      onPressed: () => {Navigator.pushNamed(context, '/chiefAreaInsertPage')},
+                      onPressed: () => {
+                        Navigator.pushNamed(context, '/chiefAreaInsertPage')
+                      },
                       child: Text('добавить'),
                     ),
                     const SizedBox(
@@ -106,9 +107,8 @@ class _ChiefAreasPageViewState extends State<ChiefAreasPageView> {
                                             deleteRegion: () => context
                                                 .read<ChiefAreasCubit>()
                                                 .deleteArea(
-                                                    areaId: state
-                                                        .areas[index].id)
-                                          ),
+                                                    areaId:
+                                                        state.areas[index].id)),
                                       );
                                     },
                                     child: Container(
@@ -125,13 +125,13 @@ class _ChiefAreasPageViewState extends State<ChiefAreasPageView> {
                                       showDialog(
                                         context: context,
                                         builder: (ctx) => AreasTableDialog(
-                                            area: state.areas[index],
-                                            deleteRegion: () => context
-                                                .read<ChiefAreasCubit>()
-                                                .deleteArea(
-                                                    areaId: state
-                                                        .areas[index].id),
-                                           ),
+                                          area: state.areas[index],
+                                          deleteRegion: () => context
+                                              .read<ChiefAreasCubit>()
+                                              .deleteArea(
+                                                  areaId:
+                                                      state.areas[index].id),
+                                        ),
                                       );
                                     },
                                     child: Container(
@@ -147,12 +147,12 @@ class _ChiefAreasPageViewState extends State<ChiefAreasPageView> {
                                       showDialog(
                                         context: context,
                                         builder: (ctx) => AreasTableDialog(
-                                            area: state.areas[index],
-                                            deleteRegion: () => context
-                                                .read<ChiefAreasCubit>()
-                                                .deleteArea(
-                                                    areaId: state
-                                                        .areas[index].id),
+                                          area: state.areas[index],
+                                          deleteRegion: () => context
+                                              .read<ChiefAreasCubit>()
+                                              .deleteArea(
+                                                  areaId:
+                                                      state.areas[index].id),
                                         ),
                                       );
                                     },

@@ -1,6 +1,11 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/data/repositories/supabase/dto/monitoring_machine_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
+import 'package:master_plan/data/repositories/supabase/service/monitoring_machine_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
+import 'package:master_plan/domain/usecase/change_logic.dart';
+import 'package:master_plan/domain/usecase/time_converter.dart';
 import 'state.dart';
 
 class CubitTimer extends Cubit<StateTimer> {
@@ -15,19 +20,13 @@ class CubitTimer extends Cubit<StateTimer> {
   void init(){
       List<int> listTick = [];
       List<String> listRes = [];
-      // List<bool> listState = [];
       for (var tick in timeActive) {
         if (tick == 0){
           listTick.add(0);
           listRes.add('00:00:00');
-          // listState.add(false);
         } else {
-          // final date1 = DateTime.fromMillisecondsSinceEpoch(tick).toUtc();
-          // final date2 = DateTime.now().toUtc();
-          // final difference = (date2.difference(date1)).inSeconds;
           listTick.add(tick);
           listRes.add(convertTime(tick));
-          // listState.add(true);
         }
       }
       emit(state.copyWith(listTick: listTick, listState: listStartTime, listRes: listRes));
@@ -50,18 +49,56 @@ class CubitTimer extends Cubit<StateTimer> {
       operatorOperTable.setFirstTimeStart(idOptPath, DateTime.now().millisecondsSinceEpoch);
     emit(state.copyWith(listState: listState));
   }
-
-  void startOrStop(int index, bool isStart, int idOptPath, int userId){
+//
+  Future<void> startOrStop(int index, bool isStart, int idOptPath, int userId, int machineId, int batchId, int firstTimeBatch)async{
+    final monitorTable = MonitoringMachineTable();
     List<bool> listState = [...state.listState];
     if (isStart){
+
+      final lastStatusMap = await monitorTable.selectStatusLastMachine(machineId);
+      final dtoLast = MonitoringMachineDTO.fromMap(lastStatusMap);
+      await monitorTable.updateId(dtoLast.id, DateTime.now().millisecondsSinceEpoch);
+      await monitorTable.insert(MonitoringMachineDTO(id: 0, operationId: idOptPath, date: DateTime.now(), changeId: ChangeLogic(count: 2, firstTime: 8).getChange(), timeStart: DateTime.now().millisecondsSinceEpoch, timeStop: 0, statusMachineId: 1, userId: userId, machineId: machineId, batchId: batchId, comment: 'Продолжение обработки', firstStartBatch: firstTimeBatch));
+      
       listState[index] = true;
-      operatorOperTable.updateTimeStart(idOptPath, DateTime.now().millisecondsSinceEpoch, userId);
+      await operatorOperTable.updateTimeStart(idOptPath, DateTime.now().millisecondsSinceEpoch, userId);
     }
     else {
+      
+      final lastStatusMap = await monitorTable.selectStatusLastMachine(machineId);
+      final dtoLast = MonitoringMachineDTO.fromMap(lastStatusMap);
+      await monitorTable.updateId(dtoLast.id, DateTime.now().millisecondsSinceEpoch);
+      await monitorTable.insert(getMonitoringStatus2(userId, machineId));
+      
+
       listState[index] = false;
-      operatorOperTable.updateTimeStop(idOptPath, DateTime.now().millisecondsSinceEpoch, state.listTick[index]);
+      //
+      final quereOper = await operatorOperTable.selectOptPath(idOptPath);
+      final modelOper = OperatorOperationsDTO.fromMap(quereOper);
+      int timeWork = modelOper.timeworking ?? 0;
+      int? timeStart = modelOper.timestart;
+      int seconds = TimeConverter().getTimeWorking(timeStart!, DateTime.now().millisecondsSinceEpoch);
+      int tick = timeWork + seconds;
+      await operatorOperTable.updateTimeStop(modelOper.optimalPart!, DateTime.now().millisecondsSinceEpoch, tick);
+      //
+      // await operatorOperTable.updateTimeStop(idOptPath, DateTime.now().millisecondsSinceEpoch, state.listTick[index]);
     }
     emit(state.copyWith(listState: listState));
+  }
+
+    MonitoringMachineDTO getMonitoringStatus2(int userId, int machineId){
+    return MonitoringMachineDTO(
+          id: 0,
+          operationId: -1,
+          date: DateTime.now(),
+          changeId: ChangeLogic(count: 2, firstTime: 8).getChange(),
+          timeStart: DateTime.now().millisecondsSinceEpoch,
+          timeStop: 0,
+          statusMachineId: 2,
+          userId: userId,
+          machineId: machineId,
+          batchId: null,
+          comment: '-');
   }
 
   void refresh(index) {

@@ -27,6 +27,7 @@ class _MachinesListElementState extends State<MachinesListElement> {
   Widget build(BuildContext context) {
     return StatefulBuilder(
       builder: (context, setState) => Card(
+        color: widget.machineModel.isActivated == true ? Colors.green[200] : Colors.white54,
         child: Container(
           width: double.maxFinite,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
