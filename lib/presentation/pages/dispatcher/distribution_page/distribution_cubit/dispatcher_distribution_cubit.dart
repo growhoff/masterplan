@@ -37,9 +37,10 @@ class DispatcherDistributionCubit extends Cubit<DispatcherDistributionState> {
   Future fetchStages() async {
     emit(state.copyWith(status: DispatcherDistributionStatus.loading));
     var fetchedList = await _distributionStageTable.selectNotDistributed();
-    print(fetchedList);
+
     List<DistributionStage> stagesList = [];
     for (var fetchedStage in fetchedList) {
+
       final stageDto = DistributionStageDto.fromMap(fetchedStage);
 
       final stage = DistributionStage.fromDto(stageDto);
@@ -50,12 +51,12 @@ class DispatcherDistributionCubit extends Cubit<DispatcherDistributionState> {
 
     List<DistributionStageModel> distributionStagesList = [];
     stagesMap.forEach((key, value) {
-      print('value batch id: ${value.first.chiefBatch?.batchId}');
+
       final distributionStage = DistributionStageModel(
           stageArchiveId: value.first.stageId,
           quantity: value.first.chiefBatch?.batch.count ?? 0,
           batchName: value.first.chiefBatch?.batch.name ?? '',
-          batchNumber: value.first.chiefBatch?.batch.number ?? '',
+          batchNumber: value.first.chiefBatch?.batch.numberRS ?? '',
           stageName: value.first.stage?.name ?? '',
           stageNumber: value.first.stage?.number ?? '',
           batchId: value.first.chiefBatch?.batchId ?? 0);

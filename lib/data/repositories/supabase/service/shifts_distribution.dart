@@ -5,9 +5,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ShiftsDistributionTable extends SupabaseTable{
 
-  final table = Supabase.instance.client.from('z_shifts_distribution');
-  static const selectUser = '*, z_position(*), z_company(*), z_unit(*), z_area(*)';
-
+  final table = Supabase.instance.client.from('z_shifts_distribution2');
+  static const selectStaff = '*, z_position(*), z_company(*)';
+  static const selectShifts = '*, z_staff($selectStaff), z_change(*), z_machine(*)';
   @override
   Future<void> delete(int id) async{
     await table.delete().eq('id', id);
@@ -21,7 +21,7 @@ class ShiftsDistributionTable extends SupabaseTable{
   }
 
   Future<List<Map<String, dynamic>>> selectListIdNew(List<int> listId, DateTime date) {
-    return table.select('*, z_user($selectUser), z_change(*), z_machine(*)').inFilter('id',listId).eq('date', date);
+    return table.select(selectShifts).inFilter('id',listId).eq('date', date);
   }
 
   Future<List<Map<String, dynamic>>> selectListId(List<int> listId, DateTime date) {
@@ -33,7 +33,7 @@ class ShiftsDistributionTable extends SupabaseTable{
         filters += 'id.eq.${listId[i]},';
       }
     }
-    return table.select('*, z_user($selectUser), z_change(*), z_machine(*)').or(filters).eq('date', date);
+    return table.select(selectShifts).or(filters).eq('date', date);
   }
 
   @override
@@ -42,7 +42,7 @@ class ShiftsDistributionTable extends SupabaseTable{
   }
 
   Future<List<Map<String, dynamic>>> selectEqUser(int userId, DateTime time, int change) {
-    return table.select('*, z_user($selectUser), z_change(*), z_machine(*)').eq('user_id', userId).eq('date', time).eq('change_id', change);
+    return table.select(selectShifts).eq('staff_id', userId).eq('date', time).eq('change_id', change);
   }
 
   Future<List<Map<String, dynamic>>> selectListIdMachine(List<int> machineListId, DateTime date) {
@@ -54,7 +54,7 @@ class ShiftsDistributionTable extends SupabaseTable{
         filters += 'machine_id.eq.${machineListId[i]},';
       }
     }
-    return table.select('*, z_user($selectUser), z_change(*), z_machine(*)').or(filters).eq('date', date);
+    return table.select(selectShifts).or(filters).eq('date', date);
   }
 
   @override

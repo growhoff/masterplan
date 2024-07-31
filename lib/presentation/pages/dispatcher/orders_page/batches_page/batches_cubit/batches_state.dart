@@ -3,10 +3,12 @@ part of 'batches_cubit.dart';
 enum BatchesStatus { initial, loading, failure, success }
 
 final class BatchesState extends Equatable {
-  const BatchesState({this.status = BatchesStatus.initial,
+  const BatchesState({
+    this.status = BatchesStatus.initial,
     this.batchesList = const [],
-  this.stagesInBatchList = const [],
+    this.stagesInBatchList = const [],
     this.batchesArchiveList = const [],
+    this.operationsInStageList = const [],
   });
 
   final List<BatchModel> batchesList;
@@ -15,25 +17,28 @@ final class BatchesState extends Equatable {
 
   final List<StageInBatchModel> stagesInBatchList;
 
+  final List<OperationInStageModel> operationsInStageList;
+
   final List<BatchArchive> batchesArchiveList;
 
   BatchesState copyWith({
     List<BatchModel>? batchesList,
     BatchesStatus? status,
     List<StageInBatchModel>? stagesInBatchList,
-    List<BatchArchive>? batchesArchiveList
+    List<BatchArchive>? batchesArchiveList,
+    List<OperationInStageModel>? operationsInStageList,
   }) {
     return BatchesState(
         batchesList: batchesList ?? this.batchesList,
         status: status ?? this.status,
         stagesInBatchList: stagesInBatchList ?? this.stagesInBatchList,
-        batchesArchiveList: batchesArchiveList ?? this.batchesArchiveList
-    );
+        batchesArchiveList: batchesArchiveList ?? this.batchesArchiveList,
+        operationsInStageList:
+            operationsInStageList ?? this.operationsInStageList,);
   }
 
   @override
-  List<Object> get props =>
-      [
+  List<Object> get props => [
         batchesList,
         status,
         batchesArchiveList,

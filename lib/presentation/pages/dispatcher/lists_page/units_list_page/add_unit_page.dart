@@ -117,7 +117,7 @@ class _AddUnitPageViewState extends State<AddUnitPageView> {
                         value: context.read<UnitsCubit>().selectedStaff,
                         items: state.chiefsList
                             .map((Staff staff) => DropdownMenuItem(
-                            value: staff, child: Text(staff.user.fio)))
+                            value: staff, child: Text(staff.fio)))
                             .toList(),
                         onChanged: (value) => {
                           setState(() {

@@ -2,8 +2,9 @@
 import 'dart:convert';
 import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/machine_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/staff_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/status_machine_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto/user_dto.dart';
+// import 'package:master_plan/data/repositories/supabase/dto/user_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:intl/intl.dart';
 
@@ -14,7 +15,7 @@ class MonitoringMachineDTO extends Dto {
   final int statusMachineId;
   final StatusMachineDTO? statusMachine;
   final int userId;
-  final UserDTO? user;
+  final StaffDTO? user;
   final int machineId;
   final MachineDTO? machine;
   final int? batchId;
@@ -49,7 +50,7 @@ class MonitoringMachineDTO extends Dto {
       'time_start': timeStart,
       'time_stop': timeStop,
       'status_machine_id': statusMachineId,
-      'user_id': userId,
+      'staff_id': userId,
       'machine_id': machineId,
       'batch_id': batchId,
       'comment': comment,
@@ -68,8 +69,8 @@ class MonitoringMachineDTO extends Dto {
       timeStop: map['time_stop'] as int,
       statusMachineId: map['status_machine_id'] as int,
       statusMachine: map['z_status_machine'] != null ? StatusMachineDTO.fromMap(map['z_status_machine'] as Map<String,dynamic>) : null,
-      userId: map['user_id'] as int,
-      user: map['z_user'] != null ? UserDTO.fromMap(map['z_user'] as Map<String,dynamic>) : null,
+      userId: map['staff_id'] as int,
+      user: map['z_staff'] != null ? StaffDTO.fromMap(map['z_staff'] as Map<String,dynamic>) : null,
       machineId: map['machine_id'] as int,
       machine: map['z_machine'] != null ? MachineDTO.fromMap(map['z_machine'] as Map<String,dynamic>) : null,
       batchId: map['batch_id'] != null ? map['batch_id'] as int : null,

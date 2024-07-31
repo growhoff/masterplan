@@ -96,8 +96,7 @@ class _ChiefsListPageViewState extends State<ChiefsListPageView> {
                                 context.read<ChiefsListCubit>().deleteStaff(
                                     staffId: state.chiefsList[index].staffId,
                                     positionStaffId: state.chiefsList[index].id,
-                                    userId:
-                                        state.chiefsList[index].staff.userId);
+                                );
                               }),
                             ),
                         separatorBuilder: (ctx, i) => SizedBox(

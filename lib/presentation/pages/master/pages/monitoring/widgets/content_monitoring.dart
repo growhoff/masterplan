@@ -17,13 +17,19 @@ class ContentListWidgetMaster extends StatelessWidget {
   final List<MonitoringMachine> listStatusActive;
   @override
   Widget build(BuildContext context) {
-
+    String nameOperator = '-';
+    if (listStatusActive.isNotEmpty){
+      if (listStatusActive.first.user != null){
+        nameOperator = listStatusActive.first.user!.fio;
+      }
+      
+    }
     return Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('${monitor.machine.name} станок / Оператор: ${listStatusActive.isNotEmpty ? listStatusActive.first.user!.fio : '-'} ', textAlign: TextAlign.left, style: const TextStyle(fontWeight: FontWeight.bold)),
+            Text('${monitor.machine.name} станок / Оператор: $nameOperator', textAlign: TextAlign.left, style: const TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(width: 10),
             Visibility(visible: statusActive.id != -1, child: Card(
               color: statusActive.id != -1 ? context.read<CubitMonitoring>().convertColor(statusActive.id) : Colors.white, 

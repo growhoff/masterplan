@@ -13,7 +13,7 @@ class OperationsInStagePage extends StatelessWidget {
     ModalRoute
         .of(context)!
         .settings
-        .arguments as StagesInUnitModel;
+        .arguments as StageInUnitModel;
     return BlocProvider(
         create: (context) => StagesInUnitCubit(),
         child: OperationsInStagePageView(
@@ -25,7 +25,7 @@ class OperationsInStagePage extends StatelessWidget {
 class OperationsInStagePageView extends StatefulWidget {
   const OperationsInStagePageView({required this.stagesInUnitModel, super.key});
 
-  final StagesInUnitModel stagesInUnitModel;
+  final StageInUnitModel stagesInUnitModel;
 
   @override
   State<OperationsInStagePageView> createState() =>
@@ -35,6 +35,8 @@ class OperationsInStagePageView extends StatefulWidget {
 class _OperationsInStagePageViewState extends State<OperationsInStagePageView> {
   @override
   void initState() {
+  print(widget.stagesInUnitModel.readyDetailsPercent);
+    print(widget.stagesInUnitModel.readyDetailsQuantity);
     super.initState();
   }
 

@@ -44,7 +44,7 @@ abstract class DataChief {
         page: const ChooseReportPage(),
         icon: Icons.analytics_rounded),
     TabBarModel(
-        title: 'Мониторинг',
+        title: 'Мониторинг цеха',
         actions: [],
         page: const MonitoringPageChief(),
         icon: Icons.camera_alt_outlined),

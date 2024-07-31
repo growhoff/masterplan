@@ -12,6 +12,7 @@ import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/position_staff_table.dart';
 import 'package:master_plan/domain/model/batch.dart';
+import 'package:master_plan/domain/model/company.dart';
 import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/position.dart';
 
@@ -99,10 +100,12 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
       (hours >= 8 && hours <= 20) ? change = 1 : change = 2;
 
       AnalyticsOperationModel analyticsOperation = AnalyticsOperationModel(
-          comment: value.first.comment ?? '',
+          batch: value.first.batch,
+          stage: value.first.stage,
           operationId: value.first.operation.id,
           code: value.first.operation.code,
-          detailNumber: value.first.batch.number,
+          comment: value.first.comment ?? '',
+          detailNumber: value.first.batch.numberRS,
           operationNumber: value.first.operation.number,
           operationName: value.first.operation.name,
           timePlan: TimeConverter.instance
@@ -188,10 +191,12 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
 
       if (!stagesMap.containsKey(chiefOperation.stageId)) {
         stagesMap[chiefOperation.stageId] = ChiefStageForReportModel(
-            code: chiefOperation.batch.code,
+            code: chiefOperation.batch.code != ''
+                ? chiefOperation.batch.code
+                : chiefOperation.batch.batchArchive?.code ?? '',
             technologyNumber: chiefOperation.batch.technology,
             batchId: chiefOperation.batchId,
-            batchNumber: chiefOperation.batch.number,
+            batchNumber: chiefOperation.batch.numberRS,
             batchName: chiefOperation.batch.name,
             batchCode: chiefOperation.batch.code,
             stageNumber: chiefOperation.stage.number);
@@ -365,14 +370,18 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
         id: dto.id,
         timestop: dto.timestop,
         user: User(
-            id: 0,
-            fio: dto.user?.fio ?? 'empty',
-            positionId: 0,
-            companyId: 0,
-            unitId: 0,
-            areaId: 0,
-            photo: '',
-            positionModel: Position(id: 0, name: '')),
+          id: 0,
+          fio: dto.staff?.fio ?? 'empty',
+          positionId: 0,
+          companyId: 0,
+          unitId: 0,
+          areaId: 0,
+          photo: '',
+          company: Company(id: 0, name: '', code: ''),
+          position: Position(
+              id: dto.staff?.position.id ?? 0,
+              name: dto.staff?.position.name ?? ''),
+        ),
         machine: Machine(
             id: 0,
             isActivated: dto.machine?.isActivated ?? false,
@@ -383,7 +392,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
         status: Status(id: dto.status.id, name: dto.status.name),
         batch: Batch(
             id: dto.batch.id,
-            number: dto.batch.number,
+            numberRS: dto.batch.numberRS,
             name: dto.batch.name,
             count: dto.batch.count,
             code: dto.batch.code,

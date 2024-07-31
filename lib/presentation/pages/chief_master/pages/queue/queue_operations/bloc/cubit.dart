@@ -83,7 +83,7 @@ class CubitOperatQueueMasterChM extends Cubit<StateOperatQueueMasterChM> {
       }
     return DistribItem(
         stageNumber: '${operOperat.first.stage!.number} ${operOperat.first.stage!.name}',
-        detailNumber: '${operOperat.first.batch.number} ${operOperat.first.batch.name}',
+        detailNumber: '${operOperat.first.batch.numberRS} ${operOperat.first.batch.name}',
         operationName: '${operOperat.first.operation.number} ${operOperat.first.operation.name}',
         count: operOperat.length,
         listOperat: list,
@@ -106,7 +106,7 @@ class CubitOperatQueueMasterChM extends Cubit<StateOperatQueueMasterChM> {
       timeworking: dto.timeworking,
       status: Status(id: dto.status.id, name: dto.status.name),
       batch: Batch(id: dto.batch.id,
-          number: dto.batch.number,
+          numberRS: dto.batch.numberRS,
           name: dto.batch.name,
           count: dto.batch.count,
           code: dto.batch.code,

@@ -71,7 +71,7 @@ class ChiefDistributionChMCubit extends Cubit<ChiefDistributionChMState> {
     emit(state.copyWith(
         chiefOperationsList: [], status: DistributionPageStatus.loading));
     isElementOpenList = [];
-    List<int> operationsIdsList = [];
+    List<int> batchesIdsList = [];
     List<ChiefDistributionOperation> chiefOperationsList = [];
     var fetchedChiefOperationsList =
     await _chiefDistributionOperationsTable.selectNotDistributed(
@@ -91,13 +91,12 @@ class ChiefDistributionChMCubit extends Cubit<ChiefDistributionChMState> {
           batch: chiefOperationDto.batch,
           quantity: chiefOperationDto.quantity,
           id: chiefOperationDto.id);
-      operationsIdsList.add(chiefDistributionOperation.operationId);
+      batchesIdsList.add(chiefDistributionOperation.stage.batchArchiveId ?? 1);
       chiefOperationsList.add(chiefDistributionOperation);
-      //isElementOpenList.add(false);
     }
 
     var fetchedOperationList =
-    await operationsTable.selectByIdsList(operationsIdsList);
+    await operationsTable.selectByBatchesIdsList(batchesIdsList);
 
     List<StageDTO> stagesDtoList = [];
     List<int> stagesIdsList = [];
@@ -111,15 +110,16 @@ class ChiefDistributionChMCubit extends Cubit<ChiefDistributionChMState> {
       }
     }
 
-    var stagesMap = groupBy(stagesDtoList, (stage) => stage.batchId);
+    var stagesMap = groupBy(stagesDtoList, (stage) => stage.batchArchiveId);
 
     List<ChiefDistributionOperation> finalList = [];
 
     for (var operation in chiefOperationsList) {
-      if (stagesMap[operation.batchId]?.length == 1) {
+      print(operation.id);
+      if (stagesMap[operation.stage.batchArchiveId]?.length == 1) {
         finalList.add(operation);
       } else {
-        final index = stagesMap[operation.batchId]
+        final index = stagesMap[operation.stage.batchArchiveId]
             ?.indexWhere((value) => value.id == operation.stageId);
 
         if (index == 0) {
@@ -127,9 +127,10 @@ class ChiefDistributionChMCubit extends Cubit<ChiefDistributionChMState> {
         } else {
           var fetchedStagesList =
           await distributionStageTable.selectUploadedByStageId(
-              stagesMap[operation.batchId]![index! - 1].id);
-          print(fetchedStagesList);
+              stagesMap[operation.stage.batchArchiveId]![index! - 1].id);
+
           if (fetchedStagesList.isNotEmpty) {
+            operation.quantity = fetchedStagesList.length;
             finalList.add(operation);
           }
         }
@@ -185,6 +186,7 @@ class ChiefDistributionChMCubit extends Cubit<ChiefDistributionChMState> {
             status: StatusDTO(id: 0, name: ''),
             batchId: operation.batchId,
             batch: BatchDTO.empty,
+            distributionStageId: chiefOperation['distribution_stage_id'],
             stageId: operation.stageId,
             stage: StageDTO.empty,
             operationId: operation.operationId,

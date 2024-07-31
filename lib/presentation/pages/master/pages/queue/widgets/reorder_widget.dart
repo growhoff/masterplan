@@ -17,7 +17,13 @@ class Reorder extends StatelessWidget {
     ? const Center(child: Text('Список операций пуст')) 
     : Column(
       children: [
-        const RowListFour(text1: 'Деталь', text2: 'Номер операции', text3: 'Время обработки, мин.', text4: 'Кол. в оп. партии',),
+        const Card(
+          color: Colors.white38,
+          child: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: RowListFour(text0: '№ этапа', text1: 'Деталь', text2: 'Номер операции', text3: 'Время обработки, мин.', text4: 'Кол. в оп. партии',),
+          ),
+        ),
         const SizedBox(height: 8),
         ReorderableListView.builder(
         buildDefaultDragHandles: false,
@@ -32,9 +38,10 @@ class Reorder extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(child: ReorderableIconWidget(index)),
-              Expanded(flex: 3, child: Text('${list[index].list.first.batch.number} ${list[index].list.first.batch.name}', textAlign: TextAlign.center)),
+              Expanded(flex: 2, child: Text(list[index].list.first.stage.number, textAlign: TextAlign.center)),
+              Expanded(flex: 4, child: Text('${list[index].list.first.batch.number} ${list[index].list.first.batch.name}', textAlign: TextAlign.center)),
               Expanded(flex: 4, child: Text('${list[index].list.first.operation.number} ${list[index].list.first.operation.name}', textAlign: TextAlign.center)),
-              Expanded(flex: 2, child: Text('${list[index].time}', textAlign: TextAlign.center)),
+              Expanded(flex: 3, child: Text('${list[index].time}', textAlign: TextAlign.center)),
               Expanded(flex: 2, child: Text('${list[index].list.length}', textAlign: TextAlign.center)),
               //инфо
               Expanded(child: IconButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => TableInfoPage(list[index].list),)), icon: const Icon(Icons.info, color: Colors.blue))),

@@ -8,7 +8,7 @@ class ElevatedButtonCastom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      style: ButtonStyle(backgroundColor: MaterialStateProperty.all(color)), 
+      style: ButtonStyle(backgroundColor: WidgetStateProperty.all(color)), 
       onPressed: onPressed, 
       child: Text(text));
   }

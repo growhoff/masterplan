@@ -9,6 +9,7 @@ class PositionStaffTable extends SupabaseTable {
   final table = Supabase.instance.client.from('z_position_staff');
   final _companyId = CompanyService.instance.companyId ?? 1;
   final _unitId = ChiefUnitService.instance.unitId ?? 1;
+  final tableSelect = '*,z_unit(*), z_position(*),z_staff(*, z_company(*), z_position(*)), z_area(*)';
 
   @override
   Future<void> delete(int id) async {
@@ -55,16 +56,19 @@ class PositionStaffTable extends SupabaseTable {
 
   @override
   Future<List<Map<String, dynamic>>> select() async {
-    return await table.select(
-        '*,z_unit(*), z_area(*),z_position(*),z_staff(*, z_user(*, z_position(*)))');
+    return await table.select(tableSelect);
+  }
+
+
+  Future<List<Map<String, dynamic>>> selectAreasForMaster(int staffId) async {
+    return await table.select(tableSelect).eq('staff_id', staffId).eq('position_id', 3);
   }
 
 
   Future<List<Map<String, dynamic>>> selectStaffByUnitsIdList(
       List<int> unitsIdList) async {
     return await table
-        .select(
-            '*,z_staff(*,z_user(*, z_position(*))), z_area!inner(*), z_position(*)')
+        .select(tableSelect)
         .inFilter('z_area.unit_id', unitsIdList);
   }
 
@@ -72,10 +76,9 @@ class PositionStaffTable extends SupabaseTable {
     print('unitId: $unitId');
     print('company: $_companyId');
     var res = await table
-        .select(
-            '*, z_area(*),z_position(*),z_staff!inner(*, z_user!inner(*, z_position(*)))')
+        .select(tableSelect)
         .eq('position_id', 2)
-        .eq('z_staff.z_user.company_id', _companyId)
+        // .eq('z_staff.company_id', _companyId)
         .eq('unit_id', unitId);
 
 
@@ -84,17 +87,15 @@ class PositionStaffTable extends SupabaseTable {
 
   Future<List<Map<String, dynamic>>> selectAllChiefs() async {
     return await table
-        .select(
-            '*, z_area(*),z_position(*),z_staff!inner(*, z_user!inner(*, z_position(*)))')
+        .select(tableSelect)
         .eq('position_id', 2)
-        .eq('z_staff.z_user.company_id', _companyId);
+        .eq('z_staff.company_id', _companyId);
   }
 
   Future<List<Map<String, dynamic>>> selectByStaffId(
       {required int staffId}) async {
     return await table
-        .select(
-            '*,z_unit(*), z_position(*),z_staff(*, z_user(*, z_position(*))), z_area(*)')
+        .select(tableSelect)
         .eq('staff_id', staffId)
         .order('position_id', ascending: true);
   }
@@ -102,8 +103,7 @@ class PositionStaffTable extends SupabaseTable {
   Future<List<Map<String, dynamic>>> selectChiefAndMastersByStaffId(
       {required int staffId}) async {
     return await table
-        .select(
-            '*,z_unit(*), z_position(*),z_staff(*, z_user(*, z_position(*))), z_area(*)')
+        .select(tableSelect)
         .eq('staff_id', staffId)
         .inFilter('position_id', [2, 3]).order('position_id', ascending: true);
   }
@@ -111,8 +111,7 @@ class PositionStaffTable extends SupabaseTable {
   Future<List<Map<String, dynamic>>> selectChiefByStaffId(
       {required int staffId}) async {
     return await table
-        .select(
-            '*,z_unit(*), z_position(*),z_staff(*, z_user(*, z_position(*))), z_area(*)')
+        .select(tableSelect)
         .eq('staff_id', staffId)
         .eq('position_id', 2);
   }
@@ -120,21 +119,19 @@ class PositionStaffTable extends SupabaseTable {
   Future<List<Map<String, dynamic>>> selectMastersOnArea(
       {required int areaId}) async {
     return await table
-        .select(
-            '*, z_position(*),z_staff!inner(*, z_user!inner(*, z_position(*)))')
+        .select(tableSelect)
         .eq('position_id', 3)
-        .eq('z_staff.z_user.company_id', _companyId)
+        // .eq('z_staff.company_id', _companyId)
         .eq('area_id', areaId);
   }
 
   Future<List<Map<String, dynamic>>> selectOperatorsOnArea(
       {required int areaId}) async {
     return await table
-        .select(
-            '*, z_position(*),z_staff!inner(*, z_user!inner(*, z_position(*)))')
+        .select(tableSelect)
         .eq('position_id', 4)
-        .eq('z_staff.z_user.company_id', _companyId)
-        .eq('area_id', areaId);
+        // .eq('z_staff.company_id', _companyId)
+        .eq('area_id', areaId).order('staff_id', ascending: true);
   }
 
   Future<List<Map<String, dynamic>>> selectOperators() async {

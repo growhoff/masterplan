@@ -43,7 +43,7 @@ class _ChiefStaffEditPageViewState extends State<ChiefStaffEditPageView> {
     context.read<StaffCubit>().numberController.text =
         widget.positionStaff.staff.login;
     context.read<StaffCubit>().fioController.text =
-        widget.positionStaff.staff.user.fio;
+        widget.positionStaff.staff.fio;
     context.read<StaffCubit>().passwordController.text =
         widget.positionStaff.staff.password;
     super.initState();
@@ -69,13 +69,13 @@ class _ChiefStaffEditPageViewState extends State<ChiefStaffEditPageView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       EditPageUserPhotoWidget(
-                        imageUrl: widget.positionStaff.staff.user.photo,
+                        imageUrl: widget.positionStaff.staff.photo,
                         downloadImageFromGallery: () {
                           context
                               .read<StaffCubit>()
                               .updateProfileImageFromGallery(
                                   imageName: widget.positionStaff.staff.login,
-                                  userId: widget.positionStaff.staff.userId,
+                                  staffId: widget.positionStaff.staffId,
                                   imageSource: ImageSource.gallery);
                           setState(() {});
                         },
@@ -84,7 +84,7 @@ class _ChiefStaffEditPageViewState extends State<ChiefStaffEditPageView> {
                               .read<StaffCubit>()
                               .updateProfileImageFromGallery(
                                   imageName: widget.positionStaff.staff.login,
-                                  userId: widget.positionStaff.staff.userId,
+                                  staffId: widget.positionStaff.staffId,
                                   imageSource: ImageSource.camera)
                               .then((_) => setState(() {}));
                         },
@@ -101,7 +101,7 @@ class _ChiefStaffEditPageViewState extends State<ChiefStaffEditPageView> {
                       ),
                       TextField(
                         decoration: InputDecoration(
-                            hintText: widget.positionStaff.staff.user.fio),
+                            hintText: widget.positionStaff.staff.fio),
                         controller: context.read<StaffCubit>().fioController,
                       ),
                       const SizedBox(

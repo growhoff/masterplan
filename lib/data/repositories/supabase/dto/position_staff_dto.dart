@@ -1,7 +1,7 @@
 import 'package:master_plan/data/repositories/supabase/dto/position_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/staff_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/unit_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto/user_dto.dart';
+// import 'package:master_plan/data/repositories/supabase/dto/user_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 
 import 'area_dto.dart';

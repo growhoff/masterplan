@@ -27,6 +27,7 @@ class ChiefOperationTable extends SupabaseTable {
     List<Map<String, Object>> mapsList = [];
 
     for (var dto in dtosList) {
+      print('distribution_stage_id: ${dto.distributionStageId}');
       mapsList.add({
         'chief_batch_id': dto.chiefBatchId,
         'stage_id': dto.stageId,

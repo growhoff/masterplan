@@ -6,9 +6,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../dto/monitoring_machine_dto.dart';
 
 class MonitoringMachineTable extends SupabaseTable {
-  final table = Supabase.instance.client.from('z_monitoring_machine');
-  static const userSelect = '*, z_position(*), z_company(*), z_unit(*), z_area(*)';
-
+  final table = Supabase.instance.client.from('z_monitoring_machine2');
+  static const userStaff = '*, z_position(*), z_company(*)';
+  static const userMonitor = '*, z_status_machine(*), z_staff($userStaff), z_machine(*), z_batch(*)';
   @override
   Future<void> delete(int id) {
     return table.delete().eq('id', id);
@@ -31,33 +31,40 @@ class MonitoringMachineTable extends SupabaseTable {
 
   @override
   Future<List<Map<String, dynamic>>> select() async {
-    var res = await table.select('*, z_status_machine(*), z_user($userSelect), z_machine(*), z_batch(*)');
+    var res = await table.select(userMonitor);
     return res;
   }
 
   Future<List<Map<String, dynamic>>> selectListIdNew(List<int> listId) {
-    return table.select('*, z_status_machine(*), z_user($userSelect), z_machine(*), z_batch(*)').inFilter('id',listId);
+    return table.select(userMonitor).inFilter('id',listId);
   }
 
   Future<List<Map<String, dynamic>>> selectListIdMachineChange(List<int> listIdMachine, int change, String date, int userId) {
-    return table.select('*, z_status_machine(*), z_user($userSelect), z_machine(*), z_batch(*)').inFilter('machine_id',listIdMachine).eq('change_id', change).eq('date', date).eq('user_id', userId).order('id', ascending: true);
+    return table.select(userMonitor).inFilter('machine_id',listIdMachine).eq('change_id', change).eq('date', date).eq('user_id', userId).order('id', ascending: true);
   }
 
   Future<List<Map<String, dynamic>>> selectListIdMachineChangeLastDay(List<int> listIdMachine) {
-    return table.select('*, z_status_machine(*), z_user($userSelect), z_machine(*), z_batch(*)').inFilter('machine_id',listIdMachine).eq('time_stop', 0) .order('id', ascending: true);
+    return table.select(userMonitor).inFilter('machine_id',listIdMachine).eq('time_stop', 0) .order('id', ascending: true);
   }
 
   Future<List<Map<String, dynamic>>> selectStatus(String date, int change, int idMachine) {
     return table.select('*').eq('date',date).eq('status_machine_id', 8).eq('change_id', change).eq('machine_id', idMachine);
   }
 
-  Future<Map<String, dynamic>> selectStatusLastMachine(int idMachine) async{
-    final queue = await table.select('*, z_status_machine(*), z_user($userSelect), z_machine(*), z_batch(*)').eq('machine_id', idMachine).order('id', ascending: true);
-    return queue.last;
+  Future<Map<String, dynamic>?> selectStatusLastMachine(int idMachine) async{
+    final queue = await table.select(userMonitor).eq('machine_id', idMachine).order('id', ascending: true);
+    if (queue.isEmpty){ return null;}
+    else{return queue.last;}
+  }
+
+  Future<Map<String, dynamic>?> selectStatusLastMachineDate(int idMachine, DateTime date) async{
+    final queue = await table.select(userMonitor).eq('machine_id', idMachine).lte('date', date) .order('id', ascending: true);
+    if (queue.isEmpty){ return null;}
+    else{return queue.last;}
   }
 
   Future<List<Map<String, dynamic>>> selectIdMonitor(int machineId, int batchId, int optPathOper) {
-    return table.select('*, z_status_machine(*), z_user($userSelect), z_machine(*), z_batch(*)').eq('operation_id', optPathOper).eq('batch_id', batchId).eq('machine_id', machineId);
+    return table.select(userMonitor).eq('operation_id', optPathOper).eq('batch_id', batchId).eq('machine_id', machineId);
   }
 
   Future<List<Map<String, dynamic>>> selectList(List<int> listId) {
@@ -69,7 +76,7 @@ class MonitoringMachineTable extends SupabaseTable {
         filters += 'machine_id.eq.${listId[i]},';
       }
     }
-    return table.select('*, z_status_machine(*), z_user($userSelect), z_machine(*), z_batch(*)').or(filters);
+    return table.select(userMonitor).or(filters);
   }
 
   Future<List<Map<String, dynamic>>> selectListIdMachine(List<int> listId, DateTime date) {
@@ -81,7 +88,7 @@ class MonitoringMachineTable extends SupabaseTable {
         filters += 'machine_id.eq.${listId[i]},';
       }
     }
-    return table.select('*, z_status_machine(*), z_user($userSelect), z_machine(*), z_batch(*)').or(filters).eq('date', date);
+    return table.select(userMonitor).or(filters).eq('date', date);
   }
 
   Future<List<Map<String, dynamic>>> selectListId(List<int> listId, DateTime date) {
@@ -93,7 +100,7 @@ class MonitoringMachineTable extends SupabaseTable {
         filters += 'id.eq.${listId[i]},';
       }
     }
-    return table.select('*, z_status_machine(*), z_user($userSelect), z_machine(*), z_batch(*)').or(filters).eq('date', date).order('time_start', ascending: true);
+    return table.select(userMonitor).or(filters).eq('date', date).order('time_start', ascending: true);
   }
 
   @override

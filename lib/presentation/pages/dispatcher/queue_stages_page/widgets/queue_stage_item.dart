@@ -12,7 +12,7 @@ class QueueStageItem extends StatelessWidget {
     super.key,
   });
 
-  final StagesInUnitModel stagesInUnitModel;
+  final StageInUnitModel stagesInUnitModel;
   final VoidCallback setState;
 
   @override
@@ -34,7 +34,7 @@ class QueueStageItemView extends StatefulWidget {
     super.key,
   });
 
-  final StagesInUnitModel stagesInUnitModel;
+  final StageInUnitModel stagesInUnitModel;
   final VoidCallback setState;
 
   @override

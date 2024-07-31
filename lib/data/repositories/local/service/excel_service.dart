@@ -52,12 +52,53 @@ class ExcelService {
     bold: true,
     horizontalAlign: HorizontalAlign.Center,
     verticalAlign: VerticalAlign.Center,
+    leftBorder: Border(borderStyle: BorderStyle.Thin),
+    rightBorder: Border(borderStyle: BorderStyle.Thin),
+    topBorder: Border(borderStyle: BorderStyle.Thin),
+    bottomBorder: Border(borderStyle: BorderStyle.Thin),
   );
 
   final CellStyle _cellTextStyle = CellStyle(
     textWrapping: TextWrapping.WrapText,
     horizontalAlign: HorizontalAlign.Center,
     verticalAlign: VerticalAlign.Center,
+    leftBorder: Border(borderStyle: BorderStyle.Thin),
+    rightBorder: Border(borderStyle: BorderStyle.Thin),
+    topBorder: Border(borderStyle: BorderStyle.Thin),
+    bottomBorder: Border(borderStyle: BorderStyle.Thin),
+  );
+
+  final CellStyle _cellDefectTextStyle = CellStyle(
+    backgroundColorHex: ExcelColor.red100,
+    textWrapping: TextWrapping.WrapText,
+    horizontalAlign: HorizontalAlign.Center,
+    verticalAlign: VerticalAlign.Center,
+    leftBorder: Border(borderStyle: BorderStyle.Thin),
+    rightBorder: Border(borderStyle: BorderStyle.Thin),
+    topBorder: Border(borderStyle: BorderStyle.Thin),
+    bottomBorder: Border(borderStyle: BorderStyle.Thin),
+  );
+
+  final CellStyle _cellModificationTextStyle = CellStyle(
+    backgroundColorHex: ExcelColor.yellow50,
+    textWrapping: TextWrapping.WrapText,
+    horizontalAlign: HorizontalAlign.Center,
+    verticalAlign: VerticalAlign.Center,
+    leftBorder: Border(borderStyle: BorderStyle.Thin),
+    rightBorder: Border(borderStyle: BorderStyle.Thin),
+    topBorder: Border(borderStyle: BorderStyle.Thin),
+    bottomBorder: Border(borderStyle: BorderStyle.Thin),
+  );
+
+  final CellStyle _cellFocusTextStyle = CellStyle(
+    backgroundColorHex: ExcelColor.orange100,
+    textWrapping: TextWrapping.WrapText,
+    horizontalAlign: HorizontalAlign.Center,
+    verticalAlign: VerticalAlign.Center,
+    leftBorder: Border(borderStyle: BorderStyle.Thin),
+    rightBorder: Border(borderStyle: BorderStyle.Thin),
+    topBorder: Border(borderStyle: BorderStyle.Thin),
+    bottomBorder: Border(borderStyle: BorderStyle.Thin),
   );
 
   static const List<String> stagesHeaderList = [
@@ -94,7 +135,7 @@ class ExcelService {
   ];
 
   static const List<String> readyOperationsHeaderList = [
-    'номер операции',
+    '№ этапа',
     '№ детали',
     'наименование операции',
     'наименование перехода',
@@ -111,6 +152,16 @@ class ExcelService {
     'Доработка',
     'Кол-во',
     'Комментарий'
+  ];
+
+  static const List<String> totalNumberReadyOperationsReportHeadersList = [
+    '№ этапа',
+    '№ детали',
+    'Наименование операции',
+    'Код',
+    'Брак',
+    'Доработка',
+    'Кол-во',
   ];
 
   Future<int> stageExcelFunction() async {
@@ -138,7 +189,9 @@ class ExcelService {
         String technologyNumber =
             excel.tables[table]!.rows[1][1]!.value.toString();
 
-        String planNumber = excel.tables[table]!.rows[1][2]!.value.toString();
+        String planNumberRS = excel.tables[table]!.rows[1][2]!.value.toString();
+
+        int batchNumber = 1;
 
         String planName = excel.tables[table]!.rows[1][3]!.value.toString();
 
@@ -146,7 +199,7 @@ class ExcelService {
         int batchArchiveId = await _batchArchiveTable.insert(BatchArchiveDto(
             code: code,
             id: 0,
-            number: planNumber,
+            number: planNumberRS,
             name: planName,
             technologyNumber: technologyNumber,
             companyId: 0));
@@ -155,7 +208,8 @@ class ExcelService {
 
         int batchId = await _batchTable.insert(BatchDTO(
             id: 0,
-            number: planNumber,
+            numberRS: planNumberRS,
+            number: batchNumber.toString(),
             name: planName,
             count: quantity,
             code: code,
@@ -350,7 +404,6 @@ class ExcelService {
     chiefBatchIdsList =
         await _chiefBatchTable.bulkInsertFromList(dtosList: chiefBatchDtosList);
 
-    int distributionStageId = 0;
     for (int chiefBatchId in chiefBatchIdsList) {
       for (var stageId in stagesIdForDistributionStagesList) {
         distributionStagesList.add(DistributionStage(
@@ -414,16 +467,16 @@ class ExcelService {
             excel.tables[table]!.rows[1][1]!.value.toString();
 
         print('technology: $technologyNumber');
-        String planNumber = excel.tables[table]!.rows[1][2]!.value.toString();
+        String planNumberRS = excel.tables[table]!.rows[1][2]!.value.toString();
 
-        print(planNumber);
+        print(planNumberRS);
         String planName = excel.tables[table]!.rows[1][3]!.value.toString();
 
         print(planName);
         int batchArchiveId = await _batchArchiveTable.insert(BatchArchiveDto(
           code: code,
           id: 0,
-          number: planNumber,
+          number: planNumberRS,
           name: planName,
           technologyNumber: technologyNumber,
           companyId: 0,
@@ -614,9 +667,9 @@ class ExcelService {
           //   cell.cellStyle = _cellTextStyle;
           case 2:
             cell.value = TextCellValue(
-                '${stagesList[stageRowIndex].stage.batch?.number} ${stagesList[stageRowIndex].stage.name}');
+                '${stagesList[stageRowIndex].stage.batch?.numberRS} ${stagesList[stageRowIndex].stage.name}');
             operationCell.value = TextCellValue(
-                '${stagesList[stageRowIndex].stage.batch?.number} ${stagesList[stageRowIndex].stage.name}');
+                '${stagesList[stageRowIndex].stage.batch?.numberRS} ${stagesList[stageRowIndex].stage.name}');
           //    cell.cellStyle = _cellTextStyle;
           case 3:
             cell.value =
@@ -760,10 +813,7 @@ class ExcelService {
 
                 case 11:
                   cell.value = TextCellValue(operation
-                          .readyOperationsList[readyOperationRowIndex]
-                          .user
-                          ?.fio ??
-                      'нет данных');
+                      .readyOperationsList[readyOperationRowIndex].staff.fio);
                   cell.cellStyle = _cellTextStyle;
               }
             }
@@ -1037,59 +1087,74 @@ class ExcelService {
 
         switch (operationColumnIndex) {
           case 0:
-            cell.value =
-                TextCellValue(analyticsOperationsList[operationRowIndex].code);
+            cell.value = TextCellValue(
+                '${analyticsOperationsList[operationRowIndex].batch.order?.number ?? '_'}.${analyticsOperationsList[operationRowIndex].batch.number}.${analyticsOperationsList[operationRowIndex].stage.number}');
+            cell.cellStyle = _cellTextStyle;
           case 1:
             cell.value = TextCellValue(
                 '${analyticsOperationsList[operationRowIndex].detailNumber} ${analyticsOperationsList[operationRowIndex].detailName}');
-
+            cell.cellStyle = _cellHeaderStyle;
           case 2:
             cell.value = TextCellValue(
                 '${analyticsOperationsList[operationRowIndex].operationNumber} ${analyticsOperationsList[operationRowIndex].operationName}');
+            cell.cellStyle = _cellTextStyle;
           case 3:
             cell.value = TextCellValue('');
+            cell.cellStyle = _cellTextStyle;
           case 4:
             cell.value = TextCellValue(
                 analyticsOperationsList[operationRowIndex].timePlan);
+            cell.cellStyle = _cellFocusTextStyle;
           case 5:
             cell.value = TextCellValue(
                 analyticsOperationsList[operationRowIndex].timeFact);
+            cell.cellStyle = _cellFocusTextStyle;
           case 6:
             cell.value = TextCellValue(
                 analyticsOperationsList[operationRowIndex].machineName);
+            cell.cellStyle = _cellTextStyle;
           case 7:
             cell.value = IntCellValue(analyticsOperationsList[operationRowIndex]
                 .machineInventoryNumber);
+            cell.cellStyle = _cellTextStyle;
           case 8:
             cell.value =
                 TextCellValue(analyticsOperationsList[operationRowIndex].fio);
+            cell.cellStyle = _cellTextStyle;
           case 9:
             cell.value =
                 TextCellValue(analyticsOperationsList[operationRowIndex].code);
+            cell.cellStyle = _cellTextStyle;
           case 10:
             cell.value =
                 TextCellValue(analyticsOperationsList[operationRowIndex].date);
+            cell.cellStyle = _cellTextStyle;
           case 11:
             cell.value =
                 IntCellValue(analyticsOperationsList[operationRowIndex].change);
+            cell.cellStyle = _cellTextStyle;
           case 12:
             cell.value = TextCellValue(
                 analyticsOperationsList[operationRowIndex].areaNumber);
+            cell.cellStyle = _cellTextStyle;
           case 13:
             cell.value = IntCellValue(
                 analyticsOperationsList[operationRowIndex].defectQuantity);
+            cell.cellStyle = _cellDefectTextStyle;
 
           case 14:
             cell.value = IntCellValue(analyticsOperationsList[operationRowIndex]
                 .modificationQuantity);
+            cell.cellStyle = _cellModificationTextStyle;
           case 15:
             cell.value = IntCellValue(
                 analyticsOperationsList[operationRowIndex].quantity);
+            cell.cellStyle = _cellFocusTextStyle;
           case 16:
             cell.value = TextCellValue(
                 analyticsOperationsList[operationRowIndex].comment);
+            cell.cellStyle = _cellTextStyle;
         }
-        cell.cellStyle = _cellTextStyle;
       }
     }
 
@@ -1101,6 +1166,88 @@ class ExcelService {
           (await DownloadsPath.downloadsDirectory())?.path;
       print(downloadsDirectoryPath);
       final fileName = '${downloadsDirectoryPath}/Выполненные операции.xlsx';
+
+      File(fileName).writeAsBytes(fileBytes!);
+
+      print('вывелось');
+      return downloadsDirectoryPath ?? '';
+    }
+
+    return '';
+  }
+
+  Future<String> uploadTotalNumberReadyOperationsReport(
+      {required List<AnalyticsOperationModel> analyticsOperationsList}) async {
+    var excel = Excel.createExcel();
+    excel.rename('Sheet1', 'Отчет суммарного количества выполненных операций');
+
+    Sheet totalNumberReadyOperationsExcel =
+        excel['Отчет суммарного количества выполненных операций'];
+
+    for (int operationRowIndex = 0;
+        operationRowIndex < analyticsOperationsList.length;
+        operationRowIndex++) {
+      for (int operationColumnIndex = 0;
+          operationColumnIndex <
+              totalNumberReadyOperationsReportHeadersList.length;
+          operationColumnIndex++) {
+        if (operationRowIndex == 0) {
+          final cell = totalNumberReadyOperationsExcel.cell(
+              CellIndex.indexByColumnRow(
+                  columnIndex: operationColumnIndex, rowIndex: 0));
+
+          cell.value = TextCellValue(
+              totalNumberReadyOperationsReportHeadersList[
+                  operationColumnIndex]);
+          cell.cellStyle = _cellHeaderStyle;
+        }
+        final cell = totalNumberReadyOperationsExcel.cell(
+            CellIndex.indexByColumnRow(
+                columnIndex: operationColumnIndex,
+                rowIndex: operationRowIndex + 1));
+
+        switch (operationColumnIndex) {
+          case 0:
+            cell.value = TextCellValue(
+                '${analyticsOperationsList[operationRowIndex].batch.order?.number ?? '_'}.${analyticsOperationsList[operationRowIndex].batch.number}.${analyticsOperationsList[operationRowIndex].stage.number}');
+            cell.cellStyle = _cellTextStyle;
+          case 1:
+            cell.value = TextCellValue(
+                '${analyticsOperationsList[operationRowIndex].detailNumber} ${analyticsOperationsList[operationRowIndex].detailName}');
+            cell.cellStyle = _cellHeaderStyle;
+          case 2:
+            cell.value = TextCellValue(
+                '${analyticsOperationsList[operationRowIndex].operationNumber} ${analyticsOperationsList[operationRowIndex].operationName}');
+            cell.cellStyle = _cellTextStyle;
+          case 3:
+            cell.value = TextCellValue(
+                '${analyticsOperationsList[operationRowIndex].code}');
+            cell.cellStyle = _cellTextStyle;
+          case 4:
+            cell.value = TextCellValue(
+                '${analyticsOperationsList[operationRowIndex].defectQuantity}');
+            cell.cellStyle = _cellDefectTextStyle;
+          case 5:
+            cell.value = TextCellValue(
+                '${analyticsOperationsList[operationRowIndex].modificationQuantity}');
+            cell.cellStyle = _cellModificationTextStyle;
+          case 6:
+            cell.value = TextCellValue(
+                '${analyticsOperationsList[operationRowIndex].quantity}');
+            cell.cellStyle = _cellFocusTextStyle;
+        }
+      }
+    }
+
+    var fileBytes = excel.save();
+
+    final granted = await requestPermissions();
+    if (granted) {
+      String? downloadsDirectoryPath =
+          (await DownloadsPath.downloadsDirectory())?.path;
+      print(downloadsDirectoryPath);
+      final fileName =
+          '${downloadsDirectoryPath}/Отчет суммарного количества выполненных операций.xlsx';
 
       File(fileName).writeAsBytes(fileBytes!);
 

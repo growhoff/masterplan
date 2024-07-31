@@ -3,11 +3,11 @@ import 'dart:core';
 import 'package:master_plan/domain/model/chief_batch.dart';
 import 'package:master_plan/domain/model/distribution_stage.dart';
 
-class StagesInUnitModel {
-  StagesInUnitModel(
+class StageInUnitModel {
+  StageInUnitModel(
       {required this.batchId,
-        required this.stageId,
-        required this.stageNumber,
+      required this.stageId,
+      required this.stageNumber,
       required this.batchNumber,
       required this.batchName,
       required this.code,
@@ -52,17 +52,15 @@ class StagesInUnitModel {
   List<DistributionStage> stagesList = [];
 
   List<OperationInStageModel> operationsList = [];
-
-
 }
 
-class OperationInStageModel{
+class OperationInStageModel {
   OperationInStageModel(
       {required this.stageId,
-        required this.name,
-        required this.number,
-        required this.operationId,
-        required this.code});
+      required this.name,
+      required this.number,
+      required this.operationId,
+      required this.code});
 
   final int stageId;
   final int operationId;
@@ -81,4 +79,3 @@ class OperationInStageModel{
   int onMachinesQuantity = 0;
   int onCheckQuantity = 0;
 }
-

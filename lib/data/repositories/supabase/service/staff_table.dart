@@ -7,8 +7,7 @@ import '../../../../domain/usecase/company_service.dart';
 
 class StaffTable extends SupabaseTable {
   final table = Supabase.instance.client.from('z_staff');
-  static const selectUser =
-      '*, z_position(*), z_company(*), z_unit(*), z_area(*), z_company(*)';
+  static const selectUser = '*, z_position(*), z_company(*)';
 
   final _companyId = CompanyService.instance.companyId ?? 1;
 
@@ -23,7 +22,7 @@ class StaffTable extends SupabaseTable {
       var res = await table.insert({
         'login': dto.login,
         'password': dto.password,
-        'user_id': dto.userId,
+        // 'user_id': dto.userId,
         'fio': dto.fio,
         'company_id': _companyId,
         'photo': dto.photo,
@@ -35,7 +34,7 @@ class StaffTable extends SupabaseTable {
 
   @override
   Future<List<Map<String, dynamic>>> select() {
-    return table.select('*, z_user(*, z_position(*))');
+    return table.select(selectUser);
   }
 
   Future updateFio(int id, String fio) async {
@@ -46,7 +45,7 @@ class StaffTable extends SupabaseTable {
       {required String login, required String company}) async {
     Map<String, dynamic>? res;
     final queue = await table
-        .select('*,z_user(*, z_position(*)), z_company(*)')
+        .select(selectUser)
         .eq('login', login);
     for (var el in queue) {
       final comp = el['z_company']['code'] as String;

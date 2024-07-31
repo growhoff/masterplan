@@ -44,9 +44,9 @@ class StagesInUnitCubit extends Cubit<StagesInUnitState> {
   Future fetchStages() async {
     List<DistributionStage> distributionStagesList = [];
 
-    List<StagesInUnitModel> stagesList = [];
+    List<StageInUnitModel> stagesList = [];
 
-    Map<int, StagesInUnitModel> stagesMap = {};
+    Map<int, StageInUnitModel> stagesMap = {};
     List<int> stagesIdList = [];
 
     var fetchedStagesList = await _distributionStageTable.select();
@@ -60,11 +60,11 @@ class StagesInUnitCubit extends Cubit<StagesInUnitState> {
       distributionStagesList.add(stage);
 
       if ((!stagesMap.containsKey(stage.stageId)) && stage.unitId == _unitId) {
-        final stageUnitModel = StagesInUnitModel(
+        final stageUnitModel = StageInUnitModel(
             batchId: stage.chiefBatch?.batchId ?? 0,
             stageId: stage.stageId,
             stageNumber: stage.stage?.number ?? '',
-            batchNumber: stage.chiefBatch?.batch.number ?? '',
+            batchNumber: stage.chiefBatch?.batch.numberRS ?? '',
             batchName: stage.chiefBatch?.batch.name ?? '',
             code: stage.chiefBatch?.batch.code ?? '',
             technologyNumber: stage.chiefBatch?.batch.technology ?? '',
@@ -105,9 +105,6 @@ class StagesInUnitCubit extends Cubit<StagesInUnitState> {
 
       prevDistributionStage = stage;
     }
-
-    var batchesMap =
-        groupBy(distributionStagesList, (stage) => stage.chiefBatchId);
 
     var fetchedOperationsList =
         await _operationTable.selectByStageIdList(stagesIdList);
@@ -231,13 +228,14 @@ class StagesInUnitCubit extends Cubit<StagesInUnitState> {
       value.availableDetailsQuantity =
           value.totalDetailsQuantity - value.defectDetailsQuantity;
 
+
       value.readyDetailsPercent =
           ((value.readyDetailsQuantity + value.uploadedDetailsQuantity) /
                   value.availableDetailsQuantity *
                   100)
               .round();
 
-      if (value.uploadedDetailsQuantity != value.totalDetailsQuantity) {
+      if (value.uploadedDetailsQuantity != value.availableDetailsQuantity) {
         stagesList.add(value);
       }
     });

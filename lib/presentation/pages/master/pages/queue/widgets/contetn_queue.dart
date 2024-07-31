@@ -14,9 +14,11 @@ class ContetnQueue extends StatelessWidget {
     String activeOper = '';
     String activeTime = '';
     String activeCount = '';
+    String activeStage = '';
     if (itemMachine.activeOper != null){
       final batch = itemMachine.activeOper!.list.first.batch;
       final oper = itemMachine.activeOper!.list.first.operation;
+      activeStage = itemMachine.activeOper!.list.first.stage.number;
       activeBatch = '${batch.code} ${batch.name}';
       activeOper = '${oper.code} ${oper.name}';
       activeTime = '${itemMachine.activeOper!.time}';
@@ -26,7 +28,7 @@ class ContetnQueue extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text('Время работы ${itemMachine.machine.name}: ${TimeConverter().convertTimeMinHMin(itemMachine.time)}', style: const TextStyle(fontWeight: FontWeight.bold)),
-        const SizedBox(height: 8),
+        // const SizedBox(height: 2),
         /*
         SizedBox(
           child: Row(
@@ -56,9 +58,9 @@ class ContetnQueue extends StatelessWidget {
           ),
         ),
         */
-        const SizedBox(height: 8),
-        const Divider(),
-        const SizedBox(height: 8),
+
+        // const Divider(),
+        // const SizedBox(height: 8),
         Visibility(
           visible: itemMachine.activeOper != null,
           child: Card(
@@ -67,8 +69,8 @@ class ContetnQueue extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Column(
             children: [
-              const RowListFour(text1: 'Деталь', text2: 'Номер операции', text3: 'Время обработки, мин.', text4: 'Кол. в оп. партии',),
-              RowListFour(text1: activeBatch, text2: activeOper, text3: activeTime, text4: activeCount,),
+              const RowListFour(text0: '№ этапа', text1: 'Деталь', text2: 'Номер операции', text3: 'Время обработки, мин.', text4: 'Кол. в оп. партии',),
+              RowListFour(text0: activeStage, text1: activeBatch, text2: activeOper, text3: activeTime, text4: activeCount,),
             ],
                   ),
           )),),

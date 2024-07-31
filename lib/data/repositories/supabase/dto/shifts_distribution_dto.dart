@@ -2,14 +2,15 @@
 import 'dart:convert';
 import 'package:master_plan/data/repositories/supabase/dto/change_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/machine_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto/user_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/staff_dto.dart';
+// import 'package:master_plan/data/repositories/supabase/dto/user_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:intl/intl.dart';
 
 class ShiftsDistributionDTO extends Dto {
   final int id;
   final DateTime date;
-  final UserDTO? user;
+  final StaffDTO? user;
   final ChangeDTO? change;
   final MachineDTO? machine;
   final int userId;
@@ -30,7 +31,7 @@ class ShiftsDistributionDTO extends Dto {
   Map<String, Object> toMap() {
     return <String, Object>{
       'date': DateFormat('yyyy-MM-dd').format(date),
-      'user_id': userId,
+      'staff_id': userId,
       'change_id': changeId,
       'machine_id': machineId,
     };
@@ -41,10 +42,10 @@ class ShiftsDistributionDTO extends Dto {
     return ShiftsDistributionDTO(
       id: map['id'] as int,
       date: DateTime.tryParse(map['date'] as String) ?? DateTime(int.parse(listTime[0]), int.parse(listTime[1]), int.parse(listTime[2])),
-      user: UserDTO.fromMap(map['z_user'] as Map<String,dynamic>),
+      user: StaffDTO.fromMap(map['z_staff'] as Map<String,dynamic>),
       change: ChangeDTO.fromMap(map['z_change'] as Map<String,dynamic>),
       machine: MachineDTO.fromMap(map['z_machine'] as Map<String,dynamic>),
-      userId: map['user_id'] as int,
+      userId: map['staff_id'] as int,
       changeId: map['change_id'] as int,
       machineId: map['machine_id'] as int,
     );

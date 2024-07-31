@@ -71,7 +71,7 @@ class AnalyticsCubit extends Cubit<ChiefAnalyticsState> {
                 : chiefOperation.batch.batchArchive?.code ?? '',
             technologyNumber: chiefOperation.batch.technology,
             batchId: chiefOperation.batchId,
-            batchNumber: chiefOperation.batch.number,
+            batchNumber: chiefOperation.batch.numberRS,
             batchName: chiefOperation.batch.name,
             batchCode: chiefOperation.batch.code,
             stageNumber: chiefOperation.stage.number);

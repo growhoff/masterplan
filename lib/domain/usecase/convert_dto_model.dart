@@ -44,7 +44,7 @@ class ConvertDtoModel {
       status: Status(id: dto.status.id, name: dto.status.name),
       batch: Batch(
           id: dto.batch.id,
-          number: dto.batch.number,
+          numberRS: dto.batch.numberRS,
           name: dto.batch.name,
           count: dto.batch.count,
           code: dto.batch.code,

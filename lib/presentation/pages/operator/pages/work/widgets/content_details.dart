@@ -24,9 +24,30 @@ class ContentDetail extends StatelessWidget {
     final operation = pageData.operActive;
     final visibl = context.read<CubitWork>().state.visibleStatus;
     return  operation == null
-        ? const Center(
-            child: Text('Нет деталей/операций на станке'),
-          ) 
+        ? Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('Нет деталей/операций на станке'),
+            const Time(true),
+            const SizedBox(height: 8),
+            SizedBox(
+            width: double.maxFinite,
+            child: ElevatedButtonCastom(
+                text: 'Поломка',
+                isActive: (statusBtn == 'Все') || (statusBtn == 'В работе') || (statusBtn == 'Простой') || (statusBtn == 'Поломка'),
+                color: ButtonStatus().getColorStatus('Поломка'),
+                onPressed: () async{
+                  String? val = '';
+                  if (statusBtn != 'Поломка') {val = await showDialog<String>(context: context,builder: (BuildContext context) => const DialogInputComment());}
+                  else{val = '-';}
+                  if (val != ''){
+                    // if (context.mounted) await context.read<CubitWork>().setError(context.read<CubitTimer>().state.listTick[astivePage], operation.idPath);
+                    if (context.mounted) await context.read<CubitWork>().setMonitor('Поломка', val!, statusBtn != 'Поломка', -1);
+                    if (context.mounted) context.read<CubitTimer>().refreshAndStartStop(astivePage, statusBtn != 'Поломка');
+                  }
+                })),
+          ],
+        )
         : Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -55,7 +76,7 @@ class ContentDetail extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 20),
-              const Time(),
+              const Time(false),
               const SizedBox(height: 12),
               const Divider(),
               const SizedBox(height: 12),

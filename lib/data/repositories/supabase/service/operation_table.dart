@@ -49,8 +49,6 @@ class OperationTable extends SupabaseTable {
         .order('id', ascending: true);
   }
 
-
-
   Future<List<Map<String, dynamic>>> selectId(int id) {
     return table.select().eq('id', id);
   }
@@ -84,7 +82,10 @@ class OperationTable extends SupabaseTable {
 
   Future<List<Map<String, dynamic>>> selectByStageId(
       {required int stageId}) async {
-    return await table.select().eq('stage_id', stageId);
+    return await table
+        .select()
+        .eq('stage_id', stageId)
+        .order('id', ascending: true);
   }
 
   Future<int> fetchOperationsQuantityInStage({required int stageId}) async {

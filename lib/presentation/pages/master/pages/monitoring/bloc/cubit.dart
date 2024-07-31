@@ -42,13 +42,15 @@ class CubitMonitoring extends Cubit<StateMonitoring> {
     }
     List<ItemMachineMonitorMaster> listMonitor = getListMonitor(queueList);
     final listStatus = listMonitor[state.activeMachine].listStatus;
-    getListMonitorChange(listStatus);
+    final machineId = listMonitor[state.activeMachine].machine.id;
+    await getListMonitorChange(listStatus, machineId);
     emit(state.copyWith(listMonitor: listMonitor));
     setListItemDrop();
   }
 
 
   Future<void> setDate(DateTime date) async {
+    emit(state.copyWith(days: date));
     final quere = await tableMonitoring.selectListIdMachine(listAreaMachine[state.activeArea].idListMachine, date);
     List<MonitoringMachineDTO> queueList = [];
     for (var item in quere) {
@@ -56,17 +58,24 @@ class CubitMonitoring extends Cubit<StateMonitoring> {
     }
     List<ItemMachineMonitorMaster> listMonitor = getListMonitor(queueList);
     final listStatus = listMonitor[state.activeMachine].listStatus;
-    getListMonitorChange(listStatus);
-    emit(state.copyWith(days: date, listMonitor: listMonitor));
+    final machineId = listMonitor[state.activeMachine].machine.id;
+    await getListMonitorChange(listStatus, machineId);
+    emit(state.copyWith(listMonitor: listMonitor));
   }
 
 
-  void getListMonitorChange(List<MonitoringMachine> listStatus){
-    List<MonitoringMachine> listStatusNew;
+  Future<void> getListMonitorChange(List<MonitoringMachine> listStatus, int machineId) async{
+    List<MonitoringMachine> listStatusNew = [];
       if (listStatus.isNotEmpty) {
         listStatusNew = MonitoringTimeList(listTime: [8,20]).convertTimeStatusLast(listStatus, state.change);
       } else {
-        listStatusNew = [];
+        final quere = await tableMonitoring.selectStatusLastMachineDate(machineId, state.days);
+        if (quere != null){
+          final lastStatusItem = ConvertDtoModel.converterToMonitorMachine(MonitoringMachineDTO.fromMap(quere));
+          listStatusNew = MonitoringTimeList(listTime: [8,20]).convertTimeStatusLastItem(lastStatusItem, state.change, state.days);
+        } else {
+          listStatusNew = MonitoringTimeList(listTime: [8,20]).convertTimeStatusNull(state.change, state.days);
+        }
       }
       final statusActive = getActiveStatus(listStatusNew);
       emit(state.copyWith(statusActive: statusActive, listStatusActive: listStatusNew));
@@ -74,8 +83,7 @@ class CubitMonitoring extends Cubit<StateMonitoring> {
   }
 
 
-  List<ItemMachineMonitorMaster> getListMonitor(
-      List<MonitoringMachineDTO> queueList) {
+  List<ItemMachineMonitorMaster> getListMonitor(List<MonitoringMachineDTO> queueList) {
     List<ItemMachineMonitorMaster> listMonitor = [];
     for (var machine in listAreaMachine[state.activeArea].listMachine) {
       List<MonitoringMachine> listStatus = [];
@@ -111,7 +119,8 @@ class CubitMonitoring extends Cubit<StateMonitoring> {
   void setChange(int change) {
     emit(state.copyWith(change: change));
     final listStatus = state.listMonitor![state.activeMachine].listStatus;
-    getListMonitorChange(listStatus);
+    final machineId = state.listMonitor![state.activeMachine].machine.id;
+    getListMonitorChange(listStatus, machineId);
   }
 
   // void setActivePage(int index) {
@@ -122,7 +131,8 @@ class CubitMonitoring extends Cubit<StateMonitoring> {
 
     void setActiveMachine(int index) {
     final listStatus = state.listMonitor![index].listStatus;
-    getListMonitorChange(listStatus);
+    final machineId = state.listMonitor![index].machine.id;
+    getListMonitorChange(listStatus, machineId);
     emit(state.copyWith(activeMachine: index));
     setListItemDrop();
   }

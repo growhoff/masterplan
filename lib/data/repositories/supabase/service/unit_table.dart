@@ -30,7 +30,7 @@ class UnitTable extends SupabaseTable {
   @override
   Future<List<Map<String, dynamic>>> select() async {
     return await table
-        .select('*, z_staff(*, z_user(*, z_position(*)))')
+        .select('*, z_staff(*, z_position(*))')
         .eq('company_id', _companyId);
   }
 

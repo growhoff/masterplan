@@ -32,7 +32,7 @@ class _ChiefListElementState extends State<ChiefListElement> {
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: widget.positionStaff.staff.user.photo == null
+                child: widget.positionStaff.staff.photo == null
                     ? Container(
                         width: 50,
                         height: 50,
@@ -47,7 +47,7 @@ class _ChiefListElementState extends State<ChiefListElement> {
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8)),
                         child: Image.network(
-                          Uri.parse(widget.positionStaff.staff.user.photo!)
+                          Uri.parse(widget.positionStaff.staff.photo ?? '')
                               .replace(queryParameters: {
                             't':
                                 DateTime.now().millisecondsSinceEpoch.toString()
@@ -63,7 +63,7 @@ class _ChiefListElementState extends State<ChiefListElement> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      widget.positionStaff.staff.user.fio,
+                      widget.positionStaff.staff.fio,
                       style: TextStyle(fontSize: 18),
                     ),
                     const SizedBox(

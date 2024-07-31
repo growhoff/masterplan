@@ -51,7 +51,7 @@ class _EditChiefPageViewState extends State<EditChiefPageView> {
         .read<ChiefsListCubit>()
         .initEditPage(widget.positionStaff.staffId);
     context.read<ChiefsListCubit>().fioController.text =
-        widget.positionStaff.staff.user.fio;
+        widget.positionStaff.staff.fio;
     context.read<ChiefsListCubit>().passwordController.text =
         widget.positionStaff.staff.password;
     context.read<ChiefsListCubit>().numberController.text =

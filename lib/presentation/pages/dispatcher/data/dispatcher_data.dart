@@ -6,6 +6,7 @@ import 'package:master_plan/presentation/pages/dispatcher/orders_page/orders_cub
 import 'package:master_plan/presentation/pages/dispatcher/orders_page/orders_page.dart';
 import 'package:master_plan/presentation/pages/dispatcher/queue_stages_page/queue_stages_page.dart';
 
+import '../../../widgets/in_development_page.dart';
 import '../../chief/model/tab_bar_model.dart';
 import '../distribution_page/dispatcher_distribution_page.dart';
 import '../lists_page/lists_page.dart';
@@ -20,18 +21,16 @@ abstract class DispatcherData {
     TabBarModel(
         title: 'Заказы на производство',
         actions: [
-          Builder(
-            builder: (context) {
-              return IconButton(
-                icon: Icon(
-                  Icons.add_rounded,
-                ),
-                onPressed: () {
-                  Navigator.pushNamed( context, '/addOrderPage');
-                },
-              );
-            }
-          ),
+          Builder(builder: (context) {
+            return IconButton(
+              icon: Icon(
+                Icons.add_rounded,
+              ),
+              onPressed: () {
+                Navigator.pushNamed(context, '/addOrderPage');
+              },
+            );
+          }),
         ],
         page: const OrdersPage(),
         icon: Icons.all_inbox_rounded),
@@ -46,14 +45,24 @@ abstract class DispatcherData {
         page: QueueStagesPage(),
         icon: Icons.library_add),
     TabBarModel(
+        title: 'Задания на производство',
+        actions: [],
+        page: InDevelopmentPage(),
+        icon: Icons.task_rounded),
+    TabBarModel(
+        title: 'Отбракованные детали',
+        actions: [],
+        page: InDevelopmentPage(),
+        icon: Icons.broken_image),
+    TabBarModel(
         title: 'Готовые заказы',
         actions: [],
-        page: Container(),
+        page: InDevelopmentPage(),
         icon: Icons.check_box),
     TabBarModel(
         title: 'Аналитика',
         actions: [],
-        page: Container(),
+        page:InDevelopmentPage(),
         icon: Icons.fact_check_sharp),
     TabBarModel(
         title: 'Архив',

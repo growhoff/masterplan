@@ -3,10 +3,10 @@ import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
 import '../../../../data/repositories/supabase/dto/batch_dto.dart';
 import '../../../../data/repositories/supabase/dto/operation_dto.dart';
 
-import '../../../../data/repositories/supabase/dto/user_dto.dart';
 import '../../../../domain/model/area.dart';
 import '../../../../domain/model/machine.dart';
 
+import '../../../../domain/model/staff.dart';
 import '../../../../domain/model/status.dart';
 
 class StatisticsStageModel {
@@ -72,7 +72,7 @@ class ReadyOperationModel {
   final int? timeStart;
   final int? timeStop;
   final int? timeWorking;
-  final UserDTO? user;
+  final Staff staff;
 
   ReadyOperationModel(
       {this.status,
@@ -82,6 +82,7 @@ class ReadyOperationModel {
       this.timeStart,
       this.timeStop,
       this.timeWorking,
-        this.user,
+        required this.staff,
+
       });
 }

@@ -15,7 +15,7 @@ class ArchiveExpansionTitleItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('№ чертежа: ${batch.number}'),
+            Text('№ чертежа: ${batch.numberRS}'),
             const SizedBox(height: 10,),
             Text('Наименование: ${batch.name}'),
             const SizedBox(height: 10,),

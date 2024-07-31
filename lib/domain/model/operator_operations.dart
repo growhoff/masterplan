@@ -21,6 +21,7 @@ class OperatorOperations {
   final AreaDTO area;
   final Machine? machine;
   final int? order;
+  final int? distributionStageId;
   final int? optimalPart;
 
   final int? timestart;
@@ -32,7 +33,7 @@ class OperatorOperations {
   final bool? modific;
   final String? comment;
 
-  final DistributionStage? distributionStageDto;
+  final DistributionStage? distributionStage;
 
   OperatorOperations({
     required this.id,
@@ -46,6 +47,7 @@ class OperatorOperations {
     required this.area,
     this.machine,
     this.order,
+    this.distributionStageId,
     this.optimalPart,
 
     this.timestart,
@@ -56,7 +58,7 @@ class OperatorOperations {
     this.chiefOperationId,
     this.modific,
     this.comment,
-    this.distributionStageDto
+    this.distributionStage
   });
 
 
@@ -72,6 +74,7 @@ class OperatorOperations {
     AreaDTO? area,
     Machine? machine,
     int? order,
+    int? distributionStageId,
     int? optimalPart,
     int? timestart,
     int? timestop,
@@ -93,6 +96,7 @@ class OperatorOperations {
       operation: operation ?? this.operation,
       area: area ?? this.area,
       machine: machine ?? this.machine,
+      distributionStageId: distributionStageId ?? this.distributionStageId,
       order: order ?? this.order,
       optimalPart: optimalPart ?? this.optimalPart,
       timestart: timestart ?? this.timestart,

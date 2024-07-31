@@ -38,6 +38,9 @@ class OrderTable extends SupabaseTable {
         .order('priority', ascending: true);
   }
 
+
+
+
   Future changeStatusToFormed(int orderId) async {
     await table.update({'order_status_id': 2}).eq('id', orderId);
   }

@@ -22,6 +22,7 @@ class BatchArchiveTable extends SupabaseTable {
         'name': dto.name,
         'number': dto.number,
         'technology_number': dto.technologyNumber,
+        'code': dto.code,
         'company_id': _companyId
       }).select('id');
 

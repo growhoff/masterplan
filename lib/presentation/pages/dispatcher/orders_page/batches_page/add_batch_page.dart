@@ -16,7 +16,7 @@ class AddBatchPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final order = ModalRoute.of(context)?.settings.arguments as Order?;
     return BlocProvider(
-        create: (context) => BatchesCubit(order),
+        create: (context) => BatchesCubit(order: order),
         child: const AddBatchPagePageView());
   }
 }

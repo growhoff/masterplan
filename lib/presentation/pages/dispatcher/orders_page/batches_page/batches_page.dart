@@ -12,13 +12,13 @@ class BatchesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final order = ModalRoute.of(context)?.settings.arguments as Order?;
     return BlocProvider(
-        create: (context) => BatchesCubit(order),
+        create: (context) => BatchesCubit(order: order),
         child: BatchesPageView(order: order));
   }
 }
 
 class BatchesPageView extends StatefulWidget {
-  const BatchesPageView({required this.order,super.key});
+  const BatchesPageView({required this.order, super.key});
 
   final Order? order;
 
@@ -113,8 +113,8 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                     columnWidths: const {
                       0: FlexColumnWidth(1),
                       1: FlexColumnWidth(1),
-                      2: FlexColumnWidth(1),
-                      3: FlexColumnWidth(3),
+                      2: FlexColumnWidth(3),
+                      3: FlexColumnWidth(1),
                       4: FlexColumnWidth(1),
                       5: FlexColumnWidth(1),
                       6: FlexColumnWidth(1),
@@ -123,7 +123,6 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                       9: FlexColumnWidth(1),
                       10: FlexColumnWidth(1),
                       11: FlexColumnWidth(1),
-                      12: FlexColumnWidth(1),
                     },
                     defaultColumnWidth: const FlexColumnWidth(),
                     border: TableBorder.all(color: Colors.black),
@@ -135,23 +134,12 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                             TableCell(
                               child: Container(
                                   alignment: Alignment.center,
-                                  child: RotatedBox(
-                                    quarterTurns: 3,
-                                    child: Text(
-                                      '№ заказа',
-                                      softWrap: true,
-                                    ),
-                                  )),
-                            ),
-                            TableCell(
-                              child: Container(
-                                  alignment: Alignment.center,
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 8),
                                   child: const RotatedBox(
                                     quarterTurns: 3,
                                     child: Text(
-                                      '№ операции',
+                                      '№ партии',
                                       softWrap: true,
                                       textAlign: TextAlign.center,
                                     ),
@@ -227,8 +215,8 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                     child: RotatedBox(
                                       quarterTurns: 3,
                                       child: Text(
-                                        'этап в замен дефицита',
-                                        //textAlign: TextAlign.center,
+                                        'этап в замен\nдефицита',
+                                        textAlign: TextAlign.center,
                                       ),
                                     ),
                                   )),
@@ -303,7 +291,7 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                 quarterTurns: 3,
                                 child: Text(
                                   '% выполнения партии',
-                                  //textAlign: TextAlign.center,
+                                  textAlign: TextAlign.center,
                                 ),
                               ),
                             ),
@@ -312,30 +300,22 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                           state.batchesList.length,
                           (index) => TableRow(children: [
                                 TableRowInkWell(
-                                  onTap: () => Navigator.pushNamed(context,
-                                      '/dispatcherStagesInBatchesPage', arguments: state.batchesList[index]),
+                                  onTap: () => Navigator.pushNamed(
+                                      context, '/dispatcherStagesInBatchesPage',
+                                      arguments: state.batchesList[index]),
                                   child: Container(
                                     padding:
                                         const EdgeInsets.symmetric(vertical: 5),
                                     child: Text(
-                                      '${state.batchesList[index].batch.order?.number}',
+                                      '${state.batchesList[index].batch.order?.number}.${state.batchesList[index].batch.number}',
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
                                 ),
-                                TableRowInkWell(onTap: () => Navigator.pushNamed(context,
-                                    '/dispatcherStagesInBatchesPage', arguments: state.batchesList[index]),
-                                  child: Container(
-                                    padding:
-                                        const EdgeInsets.symmetric(vertical: 5),
-                                    child: Text(
-                                      '${state.batchesList[index].batch.number}',
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                ),
-                                TableRowInkWell(onTap: () => Navigator.pushNamed(context,
-                                    '/dispatcherStagesInBatchesPage', arguments: state.batchesList[index]),
+                                TableRowInkWell(
+                                  onTap: () => Navigator.pushNamed(
+                                      context, '/dispatcherStagesInBatchesPage',
+                                      arguments: state.batchesList[index]),
                                   child: Container(
                                     padding:
                                         const EdgeInsets.symmetric(vertical: 5),
@@ -345,8 +325,10 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                     ),
                                   ),
                                 ),
-                                TableRowInkWell(onTap: () => Navigator.pushNamed(context,
-                                    '/dispatcherStagesInBatchesPage', arguments: state.batchesList[index]),
+                                TableRowInkWell(
+                                  onTap: () => Navigator.pushNamed(
+                                      context, '/dispatcherStagesInBatchesPage',
+                                      arguments: state.batchesList[index]),
                                   child: Container(
                                     padding:
                                         const EdgeInsets.symmetric(vertical: 5),
@@ -356,8 +338,10 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                     ),
                                   ),
                                 ),
-                                TableRowInkWell(onTap: () => Navigator.pushNamed(context,
-                                    '/dispatcherStagesInBatchesPage', arguments: state.batchesList[index]),
+                                TableRowInkWell(
+                                  onTap: () => Navigator.pushNamed(
+                                      context, '/dispatcherStagesInBatchesPage',
+                                      arguments: state.batchesList[index]),
                                   child: Container(
                                     padding:
                                         const EdgeInsets.symmetric(vertical: 5),
@@ -367,8 +351,10 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                     ),
                                   ),
                                 ),
-                                TableRowInkWell(onTap: () => Navigator.pushNamed(context,
-                                    '/dispatcherStagesInBatchesPage', arguments: state.batchesList[index]),
+                                TableRowInkWell(
+                                  onTap: () => Navigator.pushNamed(
+                                      context, '/dispatcherStagesInBatchesPage',
+                                      arguments: state.batchesList[index]),
                                   child: Container(
                                     padding:
                                         const EdgeInsets.symmetric(vertical: 5),
@@ -378,8 +364,10 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                     ),
                                   ),
                                 ),
-                                TableRowInkWell(onTap: () => Navigator.pushNamed(context,
-                                    '/dispatcherStagesInBatchesPage', arguments: state.batchesList[index]),
+                                TableRowInkWell(
+                                  onTap: () => Navigator.pushNamed(
+                                      context, '/dispatcherStagesInBatchesPage',
+                                      arguments: state.batchesList[index]),
                                   child: Container(
                                     padding:
                                         const EdgeInsets.symmetric(vertical: 5),
@@ -389,8 +377,10 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                     ),
                                   ),
                                 ),
-                                TableRowInkWell(onTap: () => Navigator.pushNamed(context,
-                                    '/dispatcherStagesInBatchesPage', arguments: state.batchesList[index]),
+                                TableRowInkWell(
+                                  onTap: () => Navigator.pushNamed(
+                                      context, '/dispatcherStagesInBatchesPage',
+                                      arguments: state.batchesList[index]),
                                   child: Container(
                                     padding:
                                         const EdgeInsets.symmetric(vertical: 5),
@@ -400,8 +390,10 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                     ),
                                   ),
                                 ),
-                                TableRowInkWell(onTap: () => Navigator.pushNamed(context,
-                                    '/dispatcherStagesInBatchesPage', arguments: state.batchesList[index]),
+                                TableRowInkWell(
+                                  onTap: () => Navigator.pushNamed(
+                                      context, '/dispatcherStagesInBatchesPage',
+                                      arguments: state.batchesList[index]),
                                   child: Container(
                                     padding:
                                         const EdgeInsets.symmetric(vertical: 5),
@@ -412,20 +404,23 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                   ),
                                 ),
                                 TableRowInkWell(
-                                  onTap: () => Navigator.pushNamed(context,
-                                      '/dispatcherStagesInBatchesPage', arguments: state.batchesList[index]),
+                                  onTap: () => Navigator.pushNamed(
+                                      context, '/dispatcherStagesInBatchesPage',
+                                      arguments: state.batchesList[index]),
                                   child: Container(
                                     alignment: Alignment.center,
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 5),
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 5),
                                     child: Text(
                                       '${state.batchesList[index].defectQuantity}',
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
                                 ),
-                                TableRowInkWell(onTap: () => Navigator.pushNamed(context,
-                                    '/dispatcherStagesInBatchesPage', arguments: state.batchesList[index]),
+                                TableRowInkWell(
+                                  onTap: () => Navigator.pushNamed(
+                                      context, '/dispatcherStagesInBatchesPage',
+                                      arguments: state.batchesList[index]),
                                   child: Container(
                                     padding:
                                         const EdgeInsets.symmetric(vertical: 5),
@@ -435,8 +430,10 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                     ),
                                   ),
                                 ),
-                                TableRowInkWell(onTap: () => Navigator.pushNamed(context,
-                                    '/dispatcherStagesInBatchesPage', arguments: state.batchesList[index]),
+                                TableRowInkWell(
+                                  onTap: () => Navigator.pushNamed(
+                                      context, '/dispatcherStagesInBatchesPage',
+                                      arguments: state.batchesList[index]),
                                   child: Container(
                                     padding:
                                         const EdgeInsets.symmetric(vertical: 5),

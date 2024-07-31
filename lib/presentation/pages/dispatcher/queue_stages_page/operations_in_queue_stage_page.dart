@@ -13,7 +13,7 @@ class OperationsInQueueStagePage extends StatelessWidget {
     ModalRoute
         .of(context)!
         .settings
-        .arguments as StagesInUnitModel;
+        .arguments as StageInUnitModel;
     return BlocProvider(
         create: (context) => StagesInUnitCubit(),
         child: OperationsInQueueStagePageView(
@@ -25,7 +25,7 @@ class OperationsInQueueStagePage extends StatelessWidget {
 class OperationsInQueueStagePageView extends StatefulWidget {
   const OperationsInQueueStagePageView({required this.stagesInUnitModel, super.key});
 
-  final StagesInUnitModel stagesInUnitModel;
+  final StageInUnitModel stagesInUnitModel;
 
   @override
   State<OperationsInQueueStagePageView> createState() =>

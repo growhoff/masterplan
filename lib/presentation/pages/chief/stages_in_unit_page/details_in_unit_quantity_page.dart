@@ -8,7 +8,7 @@ class DetailsInUnitQuantityPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final stageInUnitModel =
-        ModalRoute.of(context)?.settings.arguments as StagesInUnitModel;
+        ModalRoute.of(context)?.settings.arguments as StageInUnitModel;
 
     return DetailsInUnitQuantityPageView(
       stageInUnitModel: stageInUnitModel,
@@ -22,7 +22,7 @@ class DetailsInUnitQuantityPageView extends StatefulWidget {
     super.key,
   });
 
-  final StagesInUnitModel stageInUnitModel;
+  final StageInUnitModel stageInUnitModel;
 
   @override
   State<DetailsInUnitQuantityPageView> createState() =>

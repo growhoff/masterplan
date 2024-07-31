@@ -4,11 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
 
 import 'package:master_plan/data/repositories/supabase/dto/unit_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto/user_dto.dart';
+
 import 'package:master_plan/data/repositories/supabase/service/position_staff_table.dart';
 
 import 'package:master_plan/data/repositories/supabase/service/unit_table.dart';
-import 'package:master_plan/data/repositories/supabase/service/user_table.dart';
 import 'package:master_plan/domain/model/position_staff.dart';
 import 'package:master_plan/domain/model/unit.dart';
 
@@ -34,7 +33,7 @@ class ChiefsListCubit extends Cubit<ChiefsListState> {
 
   final _unitTable = UnitTable();
   final _areaTable = AreaTable();
-  final _userTable = UserTable();
+
   final _staffTable = StaffTable();
   final _positionStaffTable = PositionStaffTable();
 
@@ -179,31 +178,20 @@ class ChiefsListCubit extends Cubit<ChiefsListState> {
     } else {
       positionId = selectedPositionsList.contains('Начальник') ? 2 : 3;
     }
-    await _userTable.update(
-        positionStaff.staff.userId,
-        UserDTO(
-            id: 0,
-            fio: fioController.text,
-            positionId: positionId,
-            areaId: 1,
-            companyId: 1,
-            company: CompanyDTO.init(),
-            position: PositionDTO(id: 0, name: ''),
-            photo: null,
-            unitId: null));
 
     await _staffTable.update(
         positionStaff.staffId,
         StaffDTO(
           fio: fioController.text,
-            id: 0,
-            login: numberController.text,
-            password:
-                passwordController.text == '' || passwordController.text == ' '
-                    ? _password.generatePassword()
-                    : passwordController.text,
-            userId: 0,
-            user: UserDTO.empty));
+          id: 0,
+          login: numberController.text,
+          password:
+              passwordController.text == '' || passwordController.text == ' '
+                  ? _password.generatePassword()
+                  : passwordController.text,
+          positionId: positionId,
+          position: PositionDTO(id: 0, name: ''),
+        ));
 
     var fetchedList = await _positionStaffTable.selectByStaffId(
         staffId: positionStaff.staffId);
@@ -219,7 +207,12 @@ class ChiefsListCubit extends Cubit<ChiefsListState> {
           staffId: positionStaff.staffId,
           position: PositionDTO(id: 0, name: ''),
           staff: StaffDTO(
-              id: 0, login: '', password: '', userId: 0, user: UserDTO.empty, fio: ''),
+              id: 0,
+              login: '',
+              password: '',
+              position:PositionDTO(id: 0, name: ''),
+              positionId: 0,
+              fio: ''),
           areaId: areasForPositionsList[i].id,
           unitId: selectedUnit.id,
           area: AreaDTO(id: 0, name: '', number: '', unitId: 0)));
@@ -240,16 +233,6 @@ class ChiefsListCubit extends Cubit<ChiefsListState> {
     } else {
       positionId = selectedPositionsList.contains('Начальник') ? 2 : 3;
     }
-    var userId = await _userTable.insert(UserDTO(
-        id: 0,
-        fio: fioController.text,
-        positionId: positionId,
-        areaId: 1,
-        companyId: 1,
-        company: CompanyDTO.init(),
-        position: PositionDTO(id: 0, name: ''),
-        photo: null,
-        unitId: selectedUnit.id));
 
     var staffId = await _staffTable.insert(StaffDTO(
         id: 0,
@@ -258,9 +241,10 @@ class ChiefsListCubit extends Cubit<ChiefsListState> {
             passwordController.text == '' || passwordController.text == ' '
                 ? _password.generatePassword()
                 : passwordController.text,
-        userId: userId,
+       positionId: positionId,
+        position:  PositionDTO(id: 0, name: ''),
         fio: fioController.text,
-        user: UserDTO.empty));
+       ));
 
     for (int i = 0; i < selectedPositionsList.length; i++) {
       await _positionStaffTable.insertChief(PositionStaffDTO(
@@ -269,7 +253,12 @@ class ChiefsListCubit extends Cubit<ChiefsListState> {
           staffId: staffId,
           position: PositionDTO(id: 0, name: ''),
           staff: StaffDTO(
-              id: 0, login: '', password: '', userId: 0, user: UserDTO.empty, fio: ''),
+              id: 0,
+              login: '',
+              password: '',
+             positionId: 0,
+              position: PositionDTO(id: 0, name: ''),
+              fio: ''),
           areaId: areasForPositionsList.isNotEmpty
               ? areasForPositionsList[i].id
               : 1,
@@ -332,10 +321,10 @@ class ChiefsListCubit extends Cubit<ChiefsListState> {
   Future deleteStaff(
       {required int staffId,
       required int positionStaffId,
-      required int userId}) async {
+     }) async {
     await _positionStaffTable.delete(positionStaffId);
     await _staffTable.delete(staffId);
-    await _userTable.delete(userId);
+
     await fetchChiefsList();
   }
 }

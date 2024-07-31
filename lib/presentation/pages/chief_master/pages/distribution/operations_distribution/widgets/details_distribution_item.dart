@@ -22,7 +22,7 @@ class ChiefOperationDistributionTitleItem extends StatelessWidget {
             Text('Этап № ${operation.stage.number}\n${operation.stage.name}'),
             const SizedBox(height: 8),
             Text(
-                'Деталь № ${operation.batch.technology}\n${operation.batch.name} ${operation.batch.number}'),
+                'Деталь № ${operation.batch.technology}\n${operation.batch.name} ${operation.batch.numberRS}'),
             const SizedBox(height: 8),
             Text(
                 'Операция: ${operation.operation.number} ${operation.operation.name}'),

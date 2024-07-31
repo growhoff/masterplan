@@ -13,10 +13,17 @@ class ReadyPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(onPressed: () {}, child: const Text('Готовые этапы')),
+            ElevatedButton(
+                onPressed: () {}, child: const Text('Готовые этапы')),
             const SizedBox(height: 16),
-            ElevatedButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ReadyDetailsPageChM(),)), child: const Text('Готовые детали')),
-            ],
+            ElevatedButton(
+                onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ReadyDetailsPageChM(),
+                    )),
+                child: const Text('Готовые детали')),
+          ],
         ),
       ),
     ));

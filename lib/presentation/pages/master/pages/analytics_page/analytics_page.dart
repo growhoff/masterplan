@@ -28,14 +28,41 @@ class _AnalyticsPageViewState extends State<AnalyticsPageView> {
     return BlocBuilder<AnalyticsCubit, AnalyticsState>(
       builder: (context, state) {
         return Center(
-          child: ElevatedButton(
-            style: ButtonStyle(
-                padding:
-                    MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(10))),
-            onPressed: () async{
-              context.read<AnalyticsCubit>().uploadReadyOperationsReport(context);
-            },
-            child: Text('Выполненные операции (отчет)'),
+          child: Container(
+            padding: EdgeInsets.all(10),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  style: ButtonStyle(
+                      padding: WidgetStateProperty.all<EdgeInsets>(
+                          EdgeInsets.all(10))),
+                  onPressed: () async {
+                    context
+                        .read<AnalyticsCubit>()
+                        .uploadReadyOperationsReport(context);
+                  },
+                  child: Text('Отчет о выполненных операциях'),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                ElevatedButton(
+                  style: ButtonStyle(
+                      padding: WidgetStateProperty.all<EdgeInsets>(
+                          EdgeInsets.all(10))),
+                  onPressed: () async {
+                    context
+                        .read<AnalyticsCubit>()
+                        .uploadTotalNumberReadyOperationsReport(context);
+                  },
+                  child: Text(
+                    'Отчет\nсуммарного количества\nвыполненных операций',
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },

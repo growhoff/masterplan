@@ -8,6 +8,7 @@ class DistributionOperationModel {
   final StageDTO stage;
   final int operationId;
   final OperationDTO operation;
+
   final int batchId;
   final BatchDTO batch;
   final int totalQuantity;
@@ -16,6 +17,7 @@ class DistributionOperationModel {
   DistributionOperationModel(
       {required this.id,
       required this.operationId,
+
       required this.stageId,
       required this.stage,
       required this.operation,

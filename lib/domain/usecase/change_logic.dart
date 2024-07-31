@@ -30,12 +30,11 @@ class ChangeLogic {
     late DateTime date;
     if (time == null){
       date = dateNow;
-      print('Now: $date');
-    }
-    else{
+      // print('Now: $date');
+    } else{
       date = DateTime.fromMillisecondsSinceEpoch(time);
       //  date = DateTime.parse(time);
-      print('Start: $date');
+      // print('Start: $date');
     }
 
     int change = 1;
@@ -48,8 +47,33 @@ class ChangeLogic {
         }
       }
     }
-    print('change $change');
+    print('${time == null ? 'Now:' : 'Start:'} $date / change $change');
     return change;
+  }
+
+    DateTime getDayChange({int? time}){
+    late DateTime date;
+    if (time == null){
+      date = dateNow;
+      // print('Now: $date');
+    } else{
+      date = DateTime.fromMillisecondsSinceEpoch(time);
+      // print('Start: $date');
+    }
+
+    int day = 0;
+    if (!(listTime.length == 1)){
+      for (var i = 0; i < listTime.length; i++) {
+        if (listTime.length - 1 == i){
+          if (date.hour >= listTime[i] && date.hour <= 24) day = 0;
+          if (date.hour >= 0 && date.hour < listTime[0]) day = 1;
+        } else {
+          if (date.hour >= listTime[i] && date.hour < listTime[i+1]) day = 0;
+        }
+      }
+    }
+    print('${time == null ? 'Now:' : 'Start:'} $date / day $day');
+    return DateTime(date.year, date.month, day);
   }
 
   bool getTimePeresmen(DateTime nowDat){

@@ -12,7 +12,7 @@ class StagesInUnitTitleItem extends StatelessWidget {
     super.key,
   });
 
-  final StagesInUnitModel stagesInUnitModel;
+  final StageInUnitModel stagesInUnitModel;
   final VoidCallback setState;
 
   @override
@@ -34,7 +34,7 @@ class StagesInUnitTitleItemView extends StatefulWidget {
     super.key,
   });
 
-  final StagesInUnitModel stagesInUnitModel;
+  final StageInUnitModel stagesInUnitModel;
   final VoidCallback setState;
 
   @override
@@ -160,7 +160,7 @@ class _StagesInUnitTitleItemViewState extends State<StagesInUnitTitleItemView> {
                                                     style: TextStyle(
                                                         fontSize: 16)),
                                                 Text(
-                                                    '${widget.stagesInUnitModel.readyDetailsQuantity} / ${widget.stagesInUnitModel.totalDetailsQuantity}',
+                                                    '${widget.stagesInUnitModel.readyDetailsQuantity} / ${widget.stagesInUnitModel.availableDetailsQuantity}',
                                                     style: TextStyle(
                                                         fontSize: 16,
                                                         fontWeight:

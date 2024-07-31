@@ -24,9 +24,9 @@ class RowExpandContent extends StatelessWidget {
                   flex: 3, 
                   child: ElevatedButton(
                     style: ButtonStyle(
-                      padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 5, horizontal: 5)),
-                      backgroundColor: MaterialStateProperty.all(Colors.blue),
-                      shape: MaterialStateProperty.all(
+                      padding: WidgetStateProperty.all(const EdgeInsets.symmetric(vertical: 5, horizontal: 5)),
+                      backgroundColor: WidgetStateProperty.all(Colors.blue),
+                      shape: WidgetStateProperty.all(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -40,9 +40,9 @@ class RowExpandContent extends StatelessWidget {
                   flex: 3,
                   child: ElevatedButton(
                     style: ButtonStyle(
-                      padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 5, horizontal: 5)),
-                      backgroundColor: MaterialStateProperty.all(intL == 5 ? Colors.blueGrey : Colors.blue),
-                      shape: MaterialStateProperty.all(
+                      padding: WidgetStateProperty.all(const EdgeInsets.symmetric(vertical: 5, horizontal: 5)),
+                      backgroundColor: WidgetStateProperty.all(intL == 5 ? Colors.blueGrey : Colors.blue),
+                      shape: WidgetStateProperty.all(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -75,9 +75,9 @@ class RowExpandContent extends StatelessWidget {
                   flex: 3,
                   child: ElevatedButton(
                     style: ButtonStyle(
-                      padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 5, horizontal: 5)),
-                      backgroundColor: MaterialStateProperty.all(intL == 4 ? Colors.blueGrey : Colors.blue),
-                      shape: MaterialStateProperty.all(
+                      padding: WidgetStateProperty.all(const EdgeInsets.symmetric(vertical: 5, horizontal: 5)),
+                      backgroundColor: WidgetStateProperty.all(intL == 4 ? Colors.blueGrey : Colors.blue),
+                      shape: WidgetStateProperty.all(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),

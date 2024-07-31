@@ -6,6 +6,7 @@ import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 
 class BatchDTO extends Dto {
   final int id;
+  final String numberRS;
   final String number;
   final String name;
   final int count;
@@ -21,6 +22,7 @@ class BatchDTO extends Dto {
 
   BatchDTO({
     required this.id,
+    required this.numberRS,
     required this.number,
     required this.name,
     required this.count,
@@ -37,8 +39,9 @@ class BatchDTO extends Dto {
 
   static final empty = BatchDTO(
     id: 0,
-    number: '',
+    numberRS: '',
     name: '',
+    number: '',
     count: 0,
     code: '',
     order: OrderDTO(id: 0, number: '', priority: 0, statusId: 0),
@@ -50,7 +53,7 @@ class BatchDTO extends Dto {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
-      'number': number,
+      'number': numberRS,
       'name': name,
       'count': count,
       'code': code,
@@ -63,7 +66,8 @@ class BatchDTO extends Dto {
   factory BatchDTO.fromMap(Map<String, dynamic> map) {
     return BatchDTO(
         id: map['id'] as int,
-        number: map['number'] as String,
+        numberRS: map['rs_number'] as String,
+        number: map['number'],
         name: map['name'] as String,
         count: map['count'] as int,
         code: map['code'] as String,

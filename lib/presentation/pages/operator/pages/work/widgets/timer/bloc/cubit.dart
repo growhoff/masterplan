@@ -9,11 +9,11 @@ import 'package:master_plan/domain/usecase/time_converter.dart';
 import 'state.dart';
 
 class CubitTimer extends Cubit<StateTimer> {
-  final int length;
+
   final List<int> timeActive;
   final List<bool> listStartTime;
   final operatorOperTable = OperatorOperationsTable();
-  CubitTimer(this.length, this.timeActive, this.listStartTime) : super(const StateTimer()){
+  CubitTimer(this.timeActive, this.listStartTime) : super(const StateTimer()){
     init();
   }
 
@@ -56,8 +56,10 @@ class CubitTimer extends Cubit<StateTimer> {
     if (isStart){
 
       final lastStatusMap = await monitorTable.selectStatusLastMachine(machineId);
-      final dtoLast = MonitoringMachineDTO.fromMap(lastStatusMap);
-      await monitorTable.updateId(dtoLast.id, DateTime.now().millisecondsSinceEpoch);
+      if (lastStatusMap != null){
+        final dtoLast = MonitoringMachineDTO.fromMap(lastStatusMap);
+        await monitorTable.updateId(dtoLast.id, DateTime.now().millisecondsSinceEpoch);
+      }
       await monitorTable.insert(MonitoringMachineDTO(id: 0, operationId: idOptPath, date: DateTime.now(), changeId: ChangeLogic(count: 2, firstTime: 8).getChange(), timeStart: DateTime.now().millisecondsSinceEpoch, timeStop: 0, statusMachineId: 1, userId: userId, machineId: machineId, batchId: batchId, comment: 'Продолжение обработки', firstStartBatch: firstTimeBatch));
       
       listState[index] = true;
@@ -66,8 +68,10 @@ class CubitTimer extends Cubit<StateTimer> {
     else {
       
       final lastStatusMap = await monitorTable.selectStatusLastMachine(machineId);
-      final dtoLast = MonitoringMachineDTO.fromMap(lastStatusMap);
-      await monitorTable.updateId(dtoLast.id, DateTime.now().millisecondsSinceEpoch);
+      if (lastStatusMap != null){
+        final dtoLast = MonitoringMachineDTO.fromMap(lastStatusMap);
+        await monitorTable.updateId(dtoLast.id, DateTime.now().millisecondsSinceEpoch);
+      }
       await monitorTable.insert(getMonitoringStatus2(userId, machineId));
       
 

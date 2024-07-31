@@ -119,7 +119,7 @@ class ArchiveCubit extends Cubit<ArchiveState> {
   convertBatchDtoToModel(BatchDTO dto) {
     return Batch(
         id: dto.id,
-        number: dto.number,
+        numberRS: dto.numberRS,
         name: dto.name,
         count: dto.count,
         code: dto.code,

@@ -28,7 +28,7 @@ class ChiefDistributionPageView extends StatefulWidget {
 class _ChiefDistributionPageViewState extends State<ChiefDistributionPageView> {
   @override
   void initState() {
-   // context.read<ChiefDistributionCubit>().fetchChiefOperations();
+    // context.read<ChiefDistributionCubit>().fetchChiefOperations();
     context.read<ChiefDistributionCubit>().fetchAreas();
 
     super.initState();
@@ -65,10 +65,9 @@ class _ChiefDistributionPageViewState extends State<ChiefDistributionPageView> {
                 ),
                 const SizedBox(height: 10),
                 state.status == DistributionPageStatus.success
-                    ?
-                    Expanded(
+                    ? Expanded(
                         child: ListView.separated(
-                          physics: AlwaysScrollableScrollPhysics(),
+                            physics: AlwaysScrollableScrollPhysics(),
                             controller: context
                                 .read<ChiefDistributionCubit>()
                                 .listController,
@@ -76,7 +75,7 @@ class _ChiefDistributionPageViewState extends State<ChiefDistributionPageView> {
                             itemBuilder: (context, index) => index <
                                     state.chiefOperationsList.length
                                 ? ExpansionTile(
-                              maintainState: true,
+                                    maintainState: true,
                                     tilePadding: EdgeInsets.all(0),
                                     title: ChiefOperationDistributionTitleItem(
                                         state.chiefOperationsList[index]),

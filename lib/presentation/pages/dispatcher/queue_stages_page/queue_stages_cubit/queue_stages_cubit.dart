@@ -55,9 +55,9 @@ class QueueStagesCubit extends Cubit<QueueStagesState> {
     emit(state.copyWith(status: QueueStagesPageStatus.loading));
     List<DistributionStage> distributionStagesList = [];
 
-    List<StagesInUnitModel> stagesList = [];
+    List<StageInUnitModel> stagesList = [];
 
-    Map<int, StagesInUnitModel> stagesMap = {};
+    Map<int, StageInUnitModel> stagesMap = {};
     List<int> stagesIdList = [];
 
     var fetchedStagesList = await _distributionStageTable.select();
@@ -74,11 +74,11 @@ class QueueStagesCubit extends Cubit<QueueStagesState> {
 
       if ((!stagesMap.containsKey(stage.stageId)) &&
           stage.unitId == selectedUnit.id) {
-        final stageUnitModel = StagesInUnitModel(
+        final stageUnitModel = StageInUnitModel(
             batchId: stage.chiefBatch?.batchId ?? 0,
             stageId: stage.stageId,
             stageNumber: stage.stage?.number ?? '',
-            batchNumber: stage.chiefBatch?.batch.number ?? '',
+            batchNumber: stage.chiefBatch?.batch.numberRS ?? '',
             batchName: stage.chiefBatch?.batch.name ?? '',
             code: stage.chiefBatch?.batch.code ?? '',
             technologyNumber: stage.chiefBatch?.batch.technology ?? '',
@@ -120,8 +120,6 @@ class QueueStagesCubit extends Cubit<QueueStagesState> {
       prevDistributionStage = stage;
     }
 
-    var batchesMap =
-        groupBy(distributionStagesList, (stage) => stage.chiefBatchId);
 
     var fetchedOperationsList =
         await _operationTable.selectByStageIdList(stagesIdList);
@@ -168,21 +166,25 @@ class QueueStagesCubit extends Cubit<QueueStagesState> {
             operationInList?.onDistribution++;
             stagesMap[operatorOperationsDto.stageId]
                 ?.onDistributionOperationsQuantity++;
+            print('1: ${operatorOperationsDto.id}');
           } else {
             if (operatorOperationsDto.chiefBatchId !=
                 prevOperation.chiefBatchId) {
               operationInList?.onDistribution++;
               stagesMap[operatorOperationsDto.stageId]
                   ?.onDistributionOperationsQuantity++;
+
+              print(
+                  '2: ${operatorOperationsDto.chiefBatchId}    ${prevOperation.chiefBatchId}');
             } else {
               if ((operatorOperationsDto.modific == false ||
-                      operatorOperationsDto.modific == null) &&
-                  (prevOperation.chiefOperationId ==
-                      operatorOperationsDto.chiefOperationId! - 1) &&
+                  operatorOperationsDto.modific == null) &&
                   (prevOperation.statusId == 9)) {
                 operationInList?.onDistribution++;
                 stagesMap[operatorOperationsDto.stageId]
                     ?.onDistributionOperationsQuantity++;
+
+                print('3: ${operatorOperationsDto.id}');
               }
             }
           }

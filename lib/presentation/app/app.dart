@@ -39,6 +39,7 @@ import '../pages/dispatcher/lists_page/units_list_page/add_unit_page.dart';
 import '../pages/dispatcher/lists_page/units_list_page/edit_unit_page.dart';
 import '../pages/dispatcher/orders_page/batches_page/add_batch_page.dart';
 import '../pages/dispatcher/orders_page/batches_page/batches_page.dart';
+import '../pages/dispatcher/orders_page/batches_page/dispatcher_operations_in_stage_page.dart';
 import '../pages/dispatcher/orders_page/order_info_page.dart';
 import '../pages/dispatcher/queue_stages_page/operations_in_queue_stage_page.dart';
 import '../pages/dispatcher/widgets/custom_navbar.dart';
@@ -126,12 +127,16 @@ class MyApp extends StatelessWidget {
           '/dispatcherOrderInfoPage': (BuildContext context) =>
               const OrderInfoPage(),
           '/operationInStagePage': (BuildContext context) =>
-          const OperationsInStagePage(),
+              const OperationsInStagePage(),
 
           '/detailsInUnitQuantityPage': (BuildContext context) =>
-          const DetailsInUnitQuantityPage(),
-          '/operationsInQueueStagePage':(BuildContext context) => const OperationsInQueueStagePage(),
-          '/dispatcherStagesInBatchesPage':(BuildContext context) => const StagesInBatchPage(),
+              const DetailsInUnitQuantityPage(),
+          '/operationsInQueueStagePage': (BuildContext context) =>
+              const OperationsInQueueStagePage(),
+          '/dispatcherStagesInBatchesPage': (BuildContext context) =>
+              const StagesInBatchPage(),
+          '/dispatcherOperationsInStagePage': (BuildContext context) =>
+              const DispatcherOperationsInStagePage(),
         },
         home: const LoginPage(),
       ),

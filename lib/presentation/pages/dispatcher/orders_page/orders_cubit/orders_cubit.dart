@@ -2,7 +2,10 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:master_plan/data/repositories/supabase/dto/order_dto.dart';
+
 import 'package:master_plan/data/repositories/supabase/service/order_table.dart';
+
+
 import 'package:master_plan/domain/model/order.dart';
 
 part 'orders_state.dart';
@@ -53,7 +56,6 @@ class OrdersCubit extends Cubit<OrdersState> {
 
       emit(
           state.copyWith(status: OrdersStatus.success, ordersList: ordersList));
-
     } catch (e) {
       emit(state.copyWith(status: OrdersStatus.failure));
     }
@@ -68,6 +70,7 @@ class OrdersCubit extends Cubit<OrdersState> {
         priority: selectedPriority,
         statusId: 1));
   }
+
 
   Future deleteOrder(int id) async {
     await _orderTable.delete(id);
@@ -91,5 +94,4 @@ class OrdersCubit extends Cubit<OrdersState> {
     }
     return statusName;
   }
-
 }

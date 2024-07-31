@@ -14,7 +14,7 @@ class Calendar extends StatelessWidget {
               headerStyle: const HeaderStyle(formatButtonVisible: false, titleCentered: true),
               rowHeight: 43,
               firstDay: DateTime.utc(2024, 1, 1),
-              lastDay: DateTime.utc(2030, 12, 30),
+              lastDay: DateTime.now(),
               focusedDay: state.days,
               selectedDayPredicate: (day) => isSameDay(day, state.days),
               onDaySelected: (selectedDay, focusedDay) {

@@ -5,11 +5,11 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/machine_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/position_dto.dart';
 
 import 'package:master_plan/data/repositories/supabase/dto/position_staff_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/staff_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/unit_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto/user_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/area_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/machine_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/position_staff_table.dart';
@@ -57,12 +57,12 @@ class UnitsCubit extends Cubit<UnitsState> {
           supportStaffQuantity: unitDto.supportStaffQuantity,
           chief: Staff.fromDTO(unitDto.staff ??
               StaffDTO(
-                fio: '',
+                  fio: '',
                   id: 0,
                   login: 'login',
                   password: 'password',
-                  userId: 0,
-                  user: UserDTO.empty)));
+                  positionId: 0,
+                  position: PositionDTO(id: 0, name: ''))));
 
       unitsIdList.add(unit.id);
       unitsList.add(UnitModel(
@@ -70,7 +70,7 @@ class UnitsCubit extends Cubit<UnitsState> {
           unitId: unit.id,
           unitName: unit.name ?? '',
           unitNumber: unit.number ?? '',
-          chiefFIO: unit.chief?.user.fio ?? ''));
+          chiefFIO: unit.chief?.fio ?? ''));
     }
 
     print(unitsIdList);
@@ -111,12 +111,10 @@ class UnitsCubit extends Cubit<UnitsState> {
       }
     }
 
-
     var operatorsMap =
         groupBy(operatorsList, (operator) => operator.area?.unitId);
 
-    operatorsMap.forEach((key, value){
-
+    operatorsMap.forEach((key, value) {
       print(key);
     });
 

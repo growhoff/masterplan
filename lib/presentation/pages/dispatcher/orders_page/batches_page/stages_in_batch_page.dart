@@ -13,7 +13,7 @@ class StagesInBatchPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final batch = ModalRoute.of(context)?.settings.arguments as BatchModel;
     return BlocProvider(
-      create: (context) => BatchesCubit(batch.batch.order),
+      create: (context) => BatchesCubit(order: batch.batch.order),
       child: StagesInBatchPageView(
         batch: batch,
       ),
@@ -31,7 +31,6 @@ class StagesInBatchPageView extends StatefulWidget {
 }
 
 class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
-
   @override
   void initState() {
     context.read<BatchesCubit>().fetchStagesInBatch(widget.batch.batch.id);
@@ -69,7 +68,7 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                                       width: 20,
                                     ),
                                     Text(
-                                        '${widget.batch.batch.number} ${widget.batch.batch.name}')
+                                        '${widget.batch.batch.numberRS} ${widget.batch.batch.name}')
                                   ],
                                 ),
                                 const SizedBox(
@@ -192,17 +191,16 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                         Table(
                           columnWidths: const {
                             0: FlexColumnWidth(1),
-                            1: FlexColumnWidth(1),
-                            2: FlexColumnWidth(3),
+                            1: FlexColumnWidth(3),
+                            2: FlexColumnWidth(1),
                             3: FlexColumnWidth(1),
                             4: FlexColumnWidth(1),
                             5: FlexColumnWidth(1),
                             6: FlexColumnWidth(1),
                             7: FlexColumnWidth(1),
                             8: FlexColumnWidth(1),
-                            9: FlexColumnWidth(1),
-                            10: FlexColumnWidth(1.5),
-                            11: FlexColumnWidth(3),
+                            9: FlexColumnWidth(1.5),
+                            10: FlexColumnWidth(3),
                           },
                           defaultColumnWidth: const FlexColumnWidth(),
                           border: TableBorder.all(color: Colors.black),
@@ -213,17 +211,6 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                                 decoration:
                                     const BoxDecoration(color: Colors.grey),
                                 children: [
-                                  TableCell(
-                                    child: Container(
-                                        alignment: Alignment.center,
-                                        child: RotatedBox(
-                                          quarterTurns: 3,
-                                          child: Text(
-                                            '№ п/п',
-                                            softWrap: true,
-                                          ),
-                                        )),
-                                  ),
                                   TableCell(
                                     child: Container(
                                         alignment: Alignment.center,
@@ -409,26 +396,28 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                                 state.stagesInBatchList.length,
                                 (index) => TableRow(children: [
                                       TableRowInkWell(
+                                        onTap: () {
+                                          Navigator.pushNamed(context,
+                                              '/dispatcherOperationsInStagePage',
+                                              arguments: state
+                                                  .stagesInBatchList[index]);
+                                        },
                                         child: Container(
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 5),
                                           child: Text(
-                                            '${index + 1}',
+                                            '${widget.batch.batch.order?.number}.${widget.batch.batch.number}.${state.stagesInBatchList[index].stageNumber}',
                                             textAlign: TextAlign.center,
                                           ),
                                         ),
                                       ),
                                       TableRowInkWell(
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 5),
-                                          child: Text(
-                                            '${state.stagesInBatchList[index].stageNumber}',
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ),
-                                      ),
-                                      TableRowInkWell(
+                                        onTap: () {
+                                          Navigator.pushNamed(context,
+                                              '/dispatcherOperationsInStagePage',
+                                              arguments: state
+                                                  .stagesInBatchList[index]);
+                                        },
                                         child: Container(
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 5),
@@ -439,6 +428,12 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                                         ),
                                       ),
                                       TableRowInkWell(
+                                        onTap: () {
+                                          Navigator.pushNamed(context,
+                                              '/dispatcherOperationsInStagePage',
+                                              arguments: state
+                                                  .stagesInBatchList[index]);
+                                        },
                                         child: Container(
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 5),
@@ -449,6 +444,12 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                                         ),
                                       ),
                                       TableRowInkWell(
+                                        onTap: () {
+                                          Navigator.pushNamed(context,
+                                              '/dispatcherOperationsInStagePage',
+                                              arguments: state
+                                                  .stagesInBatchList[index]);
+                                        },
                                         child: Container(
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 5),
@@ -459,6 +460,12 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                                         ),
                                       ),
                                       TableRowInkWell(
+                                        onTap: () {
+                                          Navigator.pushNamed(context,
+                                              '/dispatcherOperationsInStagePage',
+                                              arguments: state
+                                                  .stagesInBatchList[index]);
+                                        },
                                         child: Container(
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 5),
@@ -469,6 +476,12 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                                         ),
                                       ),
                                       TableRowInkWell(
+                                        onTap: () {
+                                          Navigator.pushNamed(context,
+                                              '/dispatcherOperationsInStagePage',
+                                              arguments: state
+                                                  .stagesInBatchList[index]);
+                                        },
                                         child: Container(
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 5),
@@ -479,6 +492,12 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                                         ),
                                       ),
                                       TableRowInkWell(
+                                        onTap: () {
+                                          Navigator.pushNamed(context,
+                                              '/dispatcherOperationsInStagePage',
+                                              arguments: state
+                                                  .stagesInBatchList[index]);
+                                        },
                                         child: Container(
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 5),
@@ -489,6 +508,12 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                                         ),
                                       ),
                                       TableRowInkWell(
+                                        onTap: () {
+                                          Navigator.pushNamed(context,
+                                              '/dispatcherOperationsInStagePage',
+                                              arguments: state
+                                                  .stagesInBatchList[index]);
+                                        },
                                         child: Container(
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 5),
@@ -499,6 +524,12 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                                         ),
                                       ),
                                       TableRowInkWell(
+                                        onTap: () {
+                                          Navigator.pushNamed(context,
+                                              '/dispatcherOperationsInStagePage',
+                                              arguments: state
+                                                  .stagesInBatchList[index]);
+                                        },
                                         child: Container(
                                           alignment: Alignment.center,
                                           padding: const EdgeInsets.symmetric(
@@ -510,6 +541,12 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                                         ),
                                       ),
                                       TableRowInkWell(
+                                        onTap: () {
+                                          Navigator.pushNamed(context,
+                                              '/dispatcherOperationsInStagePage',
+                                              arguments: state
+                                                  .stagesInBatchList[index]);
+                                        },
                                         child: Container(
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 5),
@@ -520,6 +557,12 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                                         ),
                                       ),
                                       TableRowInkWell(
+                                        onTap: () {
+                                          Navigator.pushNamed(context,
+                                              '/dispatcherOperationsInStagePage',
+                                              arguments: state
+                                                  .stagesInBatchList[index]);
+                                        },
                                         child: Container(
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 5),

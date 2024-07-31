@@ -5,7 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ShiftsTable extends SupabaseTable{
 
-  final table = Supabase.instance.client.from('z_shifts');
+  final table = Supabase.instance.client.from('z_shifts2');
 
   @override
   Future<void> delete(int id) {
@@ -35,8 +35,8 @@ class ShiftsTable extends SupabaseTable{
     return table.select().eq('id', id);
   }
 
-  Future<List<Map<String, dynamic>>> selectNew(int userId, int changeId, String date) {
-    return table.select().eq('user_id', userId).eq('change_id', changeId).eq('date', date);
+  Future<List<Map<String, dynamic>>> selectNew(int staffId, int changeId, String date) {
+    return table.select().eq('staff_id', staffId).eq('change_id', changeId).eq('date', date);
   }
 
   @override

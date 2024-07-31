@@ -2,22 +2,21 @@ import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/distribution_stage_dto.dart';
 import 'package:master_plan/domain/model/chief_batch.dart';
 import 'package:master_plan/domain/model/stage.dart';
-import 'package:master_plan/domain/model/user.dart';
+// import 'package:master_plan/domain/model/user.dart';
 
 import '../../data/repositories/supabase/dto/stage_status.dart';
-import 'batch.dart';
+// import 'batch.dart';
 
 class DistributionStage {
-  DistributionStage({
-    required this.id,
-    required this.chiefBatchId,
-    this.chiefBatch,
-    required this.stageId,
-    this.stage,
-    required this.statusId,
-    this.unitId,
-    this.stageStatus
-  });
+  DistributionStage(
+      {required this.id,
+      required this.chiefBatchId,
+      this.chiefBatch,
+      required this.stageId,
+      this.stage,
+      required this.statusId,
+      this.unitId,
+      this.stageStatus});
 
   final int id;
   final int chiefBatchId;
@@ -49,11 +48,10 @@ class DistributionStage {
                         count: dto.chiefBatchDto?.batch.count ?? 0,
                         code: dto.chiefBatchDto?.batch.code ?? '',
                         technology: dto.chiefBatchDto?.batch.technology ?? '',
-
                         isready: dto.chiefBatchDto?.batch.isready ?? false,
                         orderId: dto.chiefBatchDto?.orderId,
-                        batchArchiveId:
-                            dto.chiefBatchDto?.batch.batchArchiveId))
+                        batchArchiveId: dto.chiefBatchDto?.batch.batchArchiveId,
+                        numberRS: dto.chiefBatchDto?.batch.numberRS ?? ''))
             : null,
         stage: dto.stageDto != null
             ? Stage(

@@ -22,7 +22,7 @@ class ElementBarQueue extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             DropMachineQueue(state.activeMachine, state.listItemMachine),
-            const SizedBox(height: 18),
+            const SizedBox(height: 8),
             state.listMachine!.isNotEmpty
             ? ContetnQueue(itemMachine: state.listMachine![state.activeMachine])
             : const Center(child: CircularProgressIndicator())

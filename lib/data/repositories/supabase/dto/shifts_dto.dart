@@ -34,7 +34,7 @@ class ShiftsDTO extends Dto {
   factory ShiftsDTO.fromMap(Map<String, dynamic> map) {
     return ShiftsDTO(
       id: map['id'] as int,
-      userId: map['user_id'] as int,
+      userId: map['staff_id'] as int,
       timeStart: map['time_start'] as int,
       timeEnd: map['time_end'] as int,
       isActive: map['isActive'] as bool,

@@ -18,6 +18,7 @@ class BatchTable extends SupabaseTable {
   Future<int> insert(Dto dto) async {
     if (dto is BatchDTO) {
       var data = await table.insert({
+        'rs_number': dto.numberRS,
         'number': dto.number,
         'name': dto.name,
         'code': dto.code,
@@ -26,7 +27,8 @@ class BatchTable extends SupabaseTable {
         'order_id': dto.orderId,
         'count': dto.count,
         'company_id': _companyId,
-        'batch_archive_id': dto.batchArchiveId
+        'batch_archive_id': dto.batchArchiveId,
+        'batch_status_id': 5,
       }).select('id');
 
       return data[0]['id'];
@@ -37,6 +39,13 @@ class BatchTable extends SupabaseTable {
   @override
   Future<List<Map<String, dynamic>>> select() {
     return table.select().eq('company_id', _companyId ?? 1);
+  }
+
+  Future<int> fetchBatchesInOrderQuantity(int orderId) async {
+    var res =
+        await table.select().eq('order_id', orderId).count(CountOption.exact);
+
+    return res.count;
   }
 
   Future<List<Map<String, dynamic>>> selectId(int id) {

@@ -13,20 +13,18 @@ import 'package:mime/mime.dart';
 
 import '../../../../../../domain/usecase/generate_password_service.dart';
 import '../../../../../../data/repositories/supabase/dto/area_dto.dart';
-import '../../../../../../data/repositories/supabase/dto/company_dto.dart';
+
 import '../../../../../../data/repositories/supabase/dto/position_dto.dart';
 import '../../../../../../data/repositories/supabase/dto/staff_dto.dart';
-import '../../../../../../data/repositories/supabase/dto/user_dto.dart';
+
 import '../../../../../../data/repositories/supabase/service/area_table.dart';
 
 import '../../../../../../data/repositories/supabase/service/images_storage.dart';
 import '../../../../../../data/repositories/supabase/service/position_table.dart';
 import '../../../../../../data/repositories/supabase/service/staff_table.dart';
-import '../../../../../../data/repositories/supabase/service/user_table.dart';
 import '../../../../../../domain/model/area.dart';
 import '../../../../../../domain/model/position.dart';
-import '../../../../../../domain/model/staff.dart';
-import '../../../../../../domain/model/user.dart';
+
 
 part 'chief_staff_state.dart';
 
@@ -40,7 +38,6 @@ class StaffCubit extends Cubit<StaffState> {
   final AreaTable _areasTable = AreaTable();
 
   final StaffTable _staffTable = StaffTable();
-  final UserTable _userTable = UserTable();
   final PositionTable _positionTable = PositionTable();
   final PositionStaffTable _positionStaffTable = PositionStaffTable();
 
@@ -98,10 +95,10 @@ class StaffCubit extends Cubit<StaffState> {
     var fetchedList =
         await _positionStaffTable.selectMastersOnArea(areaId: areaId);
 
-    for (var fetchedUser in fetchedList) {
-      final userDto = PositionStaffDTO.fromMap(fetchedUser);
-      final user = PositionStaffModel.fromDTO(userDto);
-      positionStaffList.add(user);
+    for (var fetchedPositionStaff in fetchedList) {
+      final positionStaffDto = PositionStaffDTO.fromMap(fetchedPositionStaff);
+      final positionStaff = PositionStaffModel.fromDTO(positionStaffDto);
+      positionStaffList.add(positionStaff);
     }
 
     emit(state.copyWith(
@@ -118,10 +115,10 @@ class StaffCubit extends Cubit<StaffState> {
     var fetchedList =
         await _positionStaffTable.selectOperatorsOnArea(areaId: areaId);
 
-    for (var fetchedUser in fetchedList) {
-      final userDto = PositionStaffDTO.fromMap(fetchedUser);
-      final user = PositionStaffModel.fromDTO(userDto);
-      positionStaffList.add(user);
+    for (var fetchedPositionStaff in fetchedList) {
+      final positionStaffDto = PositionStaffDTO.fromMap(fetchedPositionStaff);
+      final positionStaff = PositionStaffModel.fromDTO(positionStaffDto);
+      positionStaffList.add(positionStaff);
     }
 
     emit(state.copyWith(
@@ -220,28 +217,17 @@ class StaffCubit extends Cubit<StaffState> {
       imageUrl = null;
     }
 
-    var userId = await _userTable.insert(UserDTO(
-        id: 0,
-        fio: fioController.text,
-        positionId: positionsMap[selectedPositionsList.first] ?? 1,
-        areaId: areasMap[selectedArea],
-        companyId: 1,
-        company: CompanyDTO.init(),
-        position: PositionDTO(id: 0, name: ''),
-        photo: imageUrl,
-        unitId: _unitId));
-
     var staffId = await _staffTable.insert(StaffDTO(
-        id: 0,
-        login: numberController.text,
-        fio: fioController.text,
-        password:
-            passwordController.text == '' || passwordController.text == ' '
-                ? _password.generatePassword()
-                : passwordController.text,
-        photo: imageUrl,
-        userId: userId,
-        user: UserDTO.empty));
+      id: 0,
+      login: numberController.text,
+      fio: fioController.text,
+      password: passwordController.text == '' || passwordController.text == ' '
+          ? _password.generatePassword()
+          : passwordController.text,
+      photo: imageUrl,
+      positionId: positionsMap[selectedPositionsList.first] ?? 1,
+      position: PositionDTO(id: 0, name: ''),
+    ));
 
     for (int i = 0; i < selectedPositionsList.length; i++) {
       await _positionStaffTable.insert(PositionStaffDTO(
@@ -253,8 +239,8 @@ class StaffCubit extends Cubit<StaffState> {
               id: 0,
               login: '',
               password: '',
-              userId: 0,
-              user: UserDTO.empty,
+              position: PositionDTO(id: 0, name: ''),
+              positionId: 0,
               fio: ''),
           areaId: areasMap[areasForPositionsList[i]] ?? 1,
           area: AreaDTO(id: 0, name: '', number: '', unitId: 0)));
@@ -280,7 +266,7 @@ class StaffCubit extends Cubit<StaffState> {
 
   Future updateProfileImageFromGallery(
       {required String imageName,
-      required int userId,
+      required int staffId,
       required ImageSource imageSource}) async {
     final XFile? image = await _imagePicker.pickImage(source: imageSource);
     if (image == null) {
@@ -300,48 +286,31 @@ class StaffCubit extends Cubit<StaffState> {
 
       final imageUrl = await imageStorage.getPublicUrl(path: supabaseImagePath);
 
-      await _userTable.updatePhoto(userId: userId, photoUrl: imageUrl);
-      await _staffTable.updatePhoto(staffId: userId, photoUrl: imageUrl);
+      await _staffTable.updatePhoto(staffId: staffId, photoUrl: imageUrl);
     }
   }
 
   Future<void> updateStaff(PositionStaffModel positionStaff) async {
     print('positionstaff: ${positionStaff.positionId}');
     print('selectedPosition: $selectedPosition');
-    await _userTable.update(
-        positionStaff.staff.userId,
-        UserDTO(
-            id: positionStaff.staff.user.id,
-            fio: fioController.text == ''
-                ? positionStaff.staff.user.fio
-                : fioController.text,
-            positionId: positionsMap[selectedPositionsList.first] ??
-                positionStaff.positionId,
-            areaId: areasMap[selectedArea],
-            companyId: positionStaff.staff.user.companyId,
-            position: PositionDTO(id: 0, name: ''),
-            photo: '',
-            company: CompanyDTO(
-              id: 0,
-              name: '',
-              code: '',
-            )));
 
     await _staffTable.update(
         positionStaff.staffId,
         StaffDTO(
-            fio: fioController.text == ''
-                ? positionStaff.staff.user.fio
-                : fioController.text,
-            id: positionStaff.staff.id,
-            login: numberController.text == ''
-                ? positionStaff.staff.login
-                : numberController.text,
-            password: passwordController.text == ''
-                ? positionStaff.staff.password
-                : passwordController.text,
-            userId: positionStaff.staff.userId,
-            user: UserDTO.empty));
+          fio: fioController.text == ''
+              ? positionStaff.staff.fio
+              : fioController.text,
+          id: positionStaff.staff.id,
+          login: numberController.text == ''
+              ? positionStaff.staff.login
+              : numberController.text,
+          password: passwordController.text == ''
+              ? positionStaff.staff.password
+              : passwordController.text,
+          positionId: positionsMap[selectedPositionsList.first] ??
+              positionStaff.positionId,
+          position: PositionDTO(id: 0, name: ''),
+        ));
 
     var fetchedList = await _positionStaffTable.selectByStaffId(
         staffId: positionStaff.staffId);
@@ -360,8 +329,8 @@ class StaffCubit extends Cubit<StaffState> {
               id: 0,
               login: '',
               password: '',
-              userId: 0,
-              user: UserDTO.empty,
+              positionId: 0,
+              position: PositionDTO(id: 0, name: ''),
               fio: ''),
           areaId: areasMap[areasForPositionsList[i]] ?? 1,
           area: AreaDTO(id: 0, name: '', number: '', unitId: 0)));
@@ -376,9 +345,8 @@ class StaffCubit extends Cubit<StaffState> {
     } else {
       await _positionStaffTable.deleteByStaffId(staffId: positionStaff.staffId);
       await _staffTable.delete(positionStaff.staffId);
-      await _userTable.delete(positionStaff.staff.userId);
 
-      final String? imagePath = positionStaff.staff.user.photo;
+      final String? imagePath = positionStaff.staff.photo;
 
       if (imagePath != null) {
         await imageStorage.remove(path: imagePath);

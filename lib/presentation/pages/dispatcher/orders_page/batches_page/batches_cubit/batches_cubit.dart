@@ -8,15 +8,20 @@ import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/chief_batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/chief_operation_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/distribution_stage_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/operation_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/batch_archive_table.dart';
 
 import 'package:master_plan/data/repositories/supabase/service/batch_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/chief_operation_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/distribution_stage_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/operation_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/stage_table.dart';
 import 'package:master_plan/domain/model/chief_batch.dart';
 import 'package:master_plan/domain/model/distribution_stage.dart';
+import 'package:master_plan/domain/model/operation.dart';
 
 import '../../../../../../data/repositories/supabase/dto/batch_archive_dto.dart';
 import '../../../../../../data/repositories/supabase/service/chief_batch_table.dart';
@@ -30,7 +35,9 @@ import '../batch_model.dart';
 part 'batches_state.dart';
 
 class BatchesCubit extends Cubit<BatchesState> {
-  BatchesCubit(this.order) : super(const BatchesState());
+  BatchesCubit({
+    this.order,
+  }) : super(const BatchesState());
 
   final Order? order;
 
@@ -40,6 +47,8 @@ class BatchesCubit extends Cubit<BatchesState> {
   final _orderTable = OrderTable();
   final _distributionStageTable = DistributionStageTable();
   final _stageTable = StageTable();
+  final _operatorOperationsTable = OperatorOperationsTable();
+  final _operationTable = OperationTable();
   BatchArchive selectedBatch = BatchArchive.empty;
   TextEditingController quantityController = TextEditingController();
   TextEditingController optimalBatchController = TextEditingController();
@@ -54,8 +63,9 @@ class BatchesCubit extends Cubit<BatchesState> {
         final batchDto = BatchDTO.fromMap(fetchedBatch);
         final batch = Batch(
             id: batchDto.id,
-            number: batchDto.number,
+            numberRS: batchDto.numberRS,
             name: batchDto.name,
+            number: batchDto.number,
             count: batchDto.count,
             batchStatusName: statusNameFromId(batchDto.batchStatusId),
             batchStatusId: batchDto.batchStatusId,
@@ -140,10 +150,15 @@ class BatchesCubit extends Cubit<BatchesState> {
   }
 
   Future<void> addBatch() async {
+    final int batchNumber =
+        await _batchTable.fetchBatchesInOrderQuantity(order?.id ?? 0) + 1;
+
+    print('batchNumber : $batchNumber');
     int batchId = await _batchTable.insert(BatchDTO(
         id: 0,
-        number: selectedBatch.number,
+        numberRS: selectedBatch.number,
         name: selectedBatch.name,
+        number: batchNumber.toString(),
         count: int.parse(quantityController.text),
         code: '',
         technology: selectedBatch.technologyNumber,
@@ -248,12 +263,15 @@ class BatchesCubit extends Cubit<BatchesState> {
 
     stagesMap.forEach((key, value) {
       final stageInBatchModel = StageInBatchModel(
+          stageId: value.first.stageId,
           stageNumber: value.first.stage?.number ?? '',
           stageName: value.first.stage?.name ?? '');
 
       stageInBatchModel.status = statusNameFromId(value.last.statusId);
 
       for (var stage in value) {
+        stageInBatchModel.distributionStagesIdsList.add(stage.id);
+
         switch (stage.statusId) {
           case 2:
             stageInBatchModel.inWorkQuantity++;
@@ -285,6 +303,101 @@ class BatchesCubit extends Cubit<BatchesState> {
 
       emit(state.copyWith(stagesInBatchList: stagesInBatchModelList));
     });
+  }
+
+  Future fetchOperationsInStage(StageInBatchModel stageInBatch) async {
+    List<OperationInStageModel> operationsInStageList = [];
+    List<int> operationsIdsList = [];
+
+    var fetchedOperationsList =
+        await _operationTable.selectByStageId(stageId: stageInBatch.stageId);
+
+    for (var fetchedOperation in fetchedOperationsList) {
+      final operationDto = OperationDTO.fromMap(fetchedOperation);
+
+      final operation = Operation(
+          id: operationDto.id,
+          number: operationDto.number,
+          name: operationDto.name,
+          code: operationDto.code,
+          timepz: operationDto.timepz,
+          stageId: operationDto.stageId);
+
+      final operationInStage = OperationInStageModel(operation: operation);
+      operationsInStageList.add(operationInStage);
+      operationsIdsList.add(operation.id);
+    }
+
+    var fetchedOperatorOperationsList = await _operatorOperationsTable
+        .selectByOperationIdListAndDistributionStagesIdList(
+            operationsIdsList: operationsIdsList,
+            distributionStageIdsList: stageInBatch.distributionStagesIdsList);
+
+    OperatorOperationsDTO prevOperation = OperatorOperationsDTO.empty;
+
+    for (int i = 0; i < fetchedOperatorOperationsList.length; i++) {
+      var operation = fetchedOperatorOperationsList[i];
+      final operatorOperationsDto = OperatorOperationsDTO.fromMap(operation);
+      final operationInStage = operationsInStageList.firstWhere((operation) =>
+          operation.operation.id == operatorOperationsDto.operationId);
+
+      operationInStage.areaNumber = operatorOperationsDto.area?.number ?? '_';
+
+      operationInStage.totalOperationsQuantity++;
+
+      switch (operatorOperationsDto.statusId) {
+        case 2:
+          if (i == 0) {
+            operationInStage.onDistribution++;
+
+            print('1: ${operatorOperationsDto.id}');
+          } else {
+            if (operatorOperationsDto.chiefBatchId !=
+                prevOperation.chiefBatchId) {
+              operationInStage.onDistribution++;
+
+              print(
+                  '2: ${operatorOperationsDto.chiefBatchId}    ${prevOperation.chiefBatchId}');
+            } else {
+              if ((operatorOperationsDto.modific == false ||
+                      operatorOperationsDto.modific == null) &&
+                  (prevOperation.statusId == 9)) {
+                operationInStage.onDistribution++;
+
+                print('3: ${operatorOperationsDto.id}');
+              }
+            }
+          }
+        case 3:
+          operationInStage.distributed++;
+
+        case 4:
+          operationInStage.modificationQuantity++;
+
+        case 5:
+          operationInStage.defectQuantity++;
+        case 6:
+          operationInStage.onCheckQuantity++;
+
+        case 7:
+          operationInStage.onMachinesQuantity++;
+        case 9:
+          operationInStage.readyQuantity++;
+      }
+      prevOperation = operatorOperationsDto;
+    }
+
+    for (var operation in operationsInStageList) {
+      if (operation.readyQuantity != 0 &&
+          operation.totalOperationsQuantity != 0) {
+        operation.readyPercent =
+            ((operation.readyQuantity / operation.totalOperationsQuantity) *
+                    100)
+                .round();
+      }
+    }
+
+    emit(state.copyWith(operationsInStageList: operationsInStageList));
   }
 
   String statusNameFromId(statusId) {

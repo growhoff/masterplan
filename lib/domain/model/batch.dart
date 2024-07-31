@@ -5,9 +5,10 @@ import 'order.dart';
 
 class Batch {
   final int id;
-  final String number;
+  final String numberRS;
   final String name;
   final int count;
+  final String? number;
   final String code;
   final String technology;
   final Order? order;
@@ -20,7 +21,8 @@ class Batch {
 
   Batch({
     required this.id,
-    required this.number,
+    required this.numberRS,
+    this.number,
     required this.name,
     required this.count,
     required this.code,
@@ -36,8 +38,9 @@ class Batch {
 
   static final empty = Batch(
       id: 0,
-      number: '',
+      numberRS: '',
       name: '',
+      number: '',
       count: 0,
       code: '',
       technology: '',
