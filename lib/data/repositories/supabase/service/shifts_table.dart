@@ -5,7 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ShiftsTable extends SupabaseTable{
 
-  final table = Supabase.instance.client.from('z_shifts2');
+  final table = Supabase.instance.client.from('z_shifts');
 
   @override
   Future<void> delete(int id) {

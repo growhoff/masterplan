@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
+import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/unit_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/distribution_stage_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operation_table.dart';
@@ -75,13 +76,10 @@ class QueueStagesCubit extends Cubit<QueueStagesState> {
       if ((!stagesMap.containsKey(stage.stageId)) &&
           stage.unitId == selectedUnit.id) {
         final stageUnitModel = StageInUnitModel(
-            batchId: stage.chiefBatch?.batchId ?? 0,
+          batch: stage.chiefBatch?.batch ?? BatchDTO.empty,
             stageId: stage.stageId,
             stageNumber: stage.stage?.number ?? '',
-            batchNumber: stage.chiefBatch?.batch.numberRS ?? '',
-            batchName: stage.chiefBatch?.batch.name ?? '',
             code: stage.chiefBatch?.batch.code ?? '',
-            technologyNumber: stage.chiefBatch?.batch.technology ?? '',
             stageStatusName: stage.stageStatus?.name ?? '');
 
         stagesMap[stage.stageId] = stageUnitModel;

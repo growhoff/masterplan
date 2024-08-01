@@ -9,7 +9,7 @@ class AnalyticsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final staffId = context.read<CubitMain>().state.staff?.id ?? 0;
+    final staffId = context.read<CubitMain>().state.user?.id ?? 0;
     return BlocProvider(
       create: (context) => AnalyticsCubit(staffId),
       child: AnalyticsPageView(),

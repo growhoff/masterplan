@@ -88,6 +88,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
       int change = 1;
       (hours >= 8 && hours <= 20) ? change = 1 : change = 2;
 
+
       AnalyticsOperationModel analyticsOperation = AnalyticsOperationModel(
           batch: value.first.batch,
           stage: value.first.stage,
@@ -133,6 +134,8 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
 
     // получить список участков на которых работает мастер
 
+
+    print('satffId: $staffId');
     var fetchedList =
         await _positionStaffTable.selectByStaffId(staffId: staffId);
 
@@ -141,10 +144,11 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
       final positionStaff = PositionStaffModel.fromDTO(positionStaffDto);
       areasList.add(positionStaff.areaId ?? 0);
     }
+    print('areasList: $areasList');
 
     var fetchedOperationsList = await _operatorOperationsTable
         .selectReadyDefectAndModificationOnAreaOrderedByBatch(areasList);
-
+    print('fetchOperations: $fetchedOperationsList');
     for (var fetchedOperation in fetchedOperationsList) {
       final operationDto = OperatorOperationsDTO.fromMap(fetchedOperation);
 
@@ -206,6 +210,8 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
     for (var op in analyticsOperationsList) {
       print(op.operationName);
     }
+
+    print('перед эмитом');
     emit(state.copyWith(analyticsOperationsList: analyticsOperationsList));
   }
 
@@ -309,6 +315,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
             id: dto.batch.id,
             numberRS: dto.batch.numberRS,
             name: dto.batch.name,
+            number: dto.batch.number,
             count: dto.batch.count,
             code: dto.batch.code,
             technology: dto.batch.technology,

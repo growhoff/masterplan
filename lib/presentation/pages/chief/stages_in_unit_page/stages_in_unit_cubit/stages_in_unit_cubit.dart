@@ -1,28 +1,29 @@
 import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto/chief_batch_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto/chief_distribution_operations_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto/chief_operation_dto.dart';
+
 import 'package:master_plan/data/repositories/supabase/dto/distribution_stage_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/chief_batch_table.dart';
-import 'package:master_plan/data/repositories/supabase/service/chief_distribution_operations_table.dart';
-import 'package:master_plan/data/repositories/supabase/service/chief_operation_table.dart';
+
 import 'package:master_plan/data/repositories/supabase/service/distribution_stage_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operation_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
-import 'package:master_plan/domain/model/chief_batch.dart';
-import 'package:master_plan/domain/model/chief_distribution_operations_model.dart';
+
 import 'package:master_plan/domain/model/operation.dart';
 import 'package:master_plan/domain/usecase/chief_unit_service.dart';
 import 'package:meta/meta.dart';
 
+import '../../../../../data/repositories/supabase/dto/batch_dto.dart';
+import '../../../../../data/repositories/supabase/dto/chief_batch_dto.dart';
 import '../../../../../data/repositories/supabase/dto/operation_dto.dart';
 import '../../../../../data/repositories/supabase/dto/operator_operations_dto.dart';
 import '../../../../../domain/model/batch.dart';
 import '../../../../../domain/model/distribution_stage.dart';
+
+import '../../../dispatcher/orders_page/batches_page/batch_model.dart'
+    hide OperationInStageModel;
 import '../stages_in_unit_model.dart';
 
 part 'stages_in_unit_state.dart';
@@ -35,6 +36,8 @@ class StagesInUnitCubit extends Cubit<StagesInUnitState> {
   final _distributionStageTable = DistributionStageTable();
 
   final _operationTable = OperationTable();
+
+  final _chiefBatchTable = ChiefBatchTable();
 
   final _operatorOperationsTable = OperatorOperationsTable();
 
@@ -61,13 +64,10 @@ class StagesInUnitCubit extends Cubit<StagesInUnitState> {
 
       if ((!stagesMap.containsKey(stage.stageId)) && stage.unitId == _unitId) {
         final stageUnitModel = StageInUnitModel(
-            batchId: stage.chiefBatch?.batchId ?? 0,
+            batch: stage.chiefBatch?.batch ?? BatchDTO.empty,
             stageId: stage.stageId,
             stageNumber: stage.stage?.number ?? '',
-            batchNumber: stage.chiefBatch?.batch.numberRS ?? '',
-            batchName: stage.chiefBatch?.batch.name ?? '',
             code: stage.chiefBatch?.batch.code ?? '',
-            technologyNumber: stage.chiefBatch?.batch.technology ?? '',
             stageStatusName: stage.stageStatus?.name ?? '');
 
         stagesMap[stage.stageId] = stageUnitModel;
@@ -228,7 +228,6 @@ class StagesInUnitCubit extends Cubit<StagesInUnitState> {
       value.availableDetailsQuantity =
           value.totalDetailsQuantity - value.defectDetailsQuantity;
 
-
       value.readyDetailsPercent =
           ((value.readyDetailsQuantity + value.uploadedDetailsQuantity) /
                   value.availableDetailsQuantity *
@@ -264,32 +263,94 @@ class StagesInUnitCubit extends Cubit<StagesInUnitState> {
     uploadStagesQuantityController.clear();
   }
 
-// Future add() async {
-//   List<int> operationsIdList = [
-//     1984,
-//     1985,
-//     1986,
-//     1987,
-//     1988,
-//     1989,
-//     1990,
-//     1991
-//   ];
-//   int batchId = 345;
-//   int stageId = 632;
-//   final chiefBatchTable = ChiefBatchTable();
-//   final chiefOperationsTable = ChiefOperationTable();
-//   for (int i = 0; i < 33; i++) {
-//     print(i);
-//     int chiefBatchId = await chiefBatchTable.insert(
-//         ChiefBatchDTO(id: 0, batchId: batchId, batch: BatchDTO.empty));
-//     for (int operationId in operationsIdList) {
-//       await chiefOperationsTable.insert(ChiefOperationDto(
-//           id: 0,
-//           operationId: operationId,
-//           stageId: stageId,
-//           chiefBatchId: chiefBatchId));
-//     }
-//   }
-// }
+  Future fetchStagesInBatch(int batchId) async {
+    List<DistributionStage> distributionStagesList = [];
+    List<StageInBatchModel> stagesInBatchModelList = [];
+    var fetchedChiefBatchesList =
+        await _chiefBatchTable.selectByBatchesIdList([batchId]);
+    List<int> chiefBatchesIdsList = [];
+    for (var fetchedChiefBatch in fetchedChiefBatchesList) {
+      final chiefBatchDto = ChiefBatchDTO.fromMap(fetchedChiefBatch);
+      chiefBatchesIdsList.add(chiefBatchDto.id);
+    }
+
+    var fetchedStagesList = await _distributionStageTable
+        .selectByChiefBatchIdsList(chiefBatchesIdsList);
+
+    for (var fetchedStage in fetchedStagesList) {
+      final fetchedStageDto = DistributionStageDto.fromMap(fetchedStage);
+
+      final distributionStage = DistributionStage.fromDto(fetchedStageDto);
+
+      distributionStagesList.add(distributionStage);
+    }
+
+    var stagesMap = groupBy(distributionStagesList, (stage) => stage.stageId);
+
+    stagesMap.forEach((key, value) {
+      final stageInBatchModel = StageInBatchModel(
+          stageId: value.first.stageId,
+          stageNumber: value.first.stage?.number ?? '',
+          stageName: value.first.stage?.name ?? '');
+
+      stageInBatchModel.status = statusNameFromId(value.last.statusId);
+
+      for (var stage in value) {
+        stageInBatchModel.distributionStagesIdsList.add(stage.id);
+
+        switch (stage.statusId) {
+          case 2:
+            stageInBatchModel.inWorkQuantity++;
+          case 3:
+            stageInBatchModel.readyToUploadQuantity++;
+
+          case 4:
+            stageInBatchModel.uploadedQuantity++;
+          case 5:
+            stageInBatchModel.defectQuantity++;
+        }
+      }
+
+      stageInBatchModel.allOnStageQuantity = stageInBatchModel.inWorkQuantity +
+          stageInBatchModel.readyToUploadQuantity;
+
+      stageInBatchModel.readyQuantity =
+          stageInBatchModel.readyToUploadQuantity +
+              stageInBatchModel.uploadedQuantity;
+      stagesInBatchModelList.add(stageInBatchModel);
+
+      if (stageInBatchModel.uploadedQuantity != 0 &&
+          stageInBatchModel.readyQuantity != 0) {
+        stageInBatchModel.readyPercent = ((stageInBatchModel.uploadedQuantity /
+                    stageInBatchModel.readyQuantity) *
+                100)
+            .round();
+      }
+
+      emit(state.copyWith(stagesInBatchList: stagesInBatchModelList));
+    });
+  }
+
+  String statusNameFromId(statusId) {
+    String statusName = '';
+    switch (statusId) {
+      case 1:
+        statusName = 'В работе';
+      case 2:
+        statusName = 'Готово';
+      case 3:
+        statusName = 'Брак';
+      case 4:
+        statusName = 'Выгружен диспетчеру';
+      case 5:
+        statusName = 'Выполняется';
+      case 6:
+        statusName = 'Дефицит';
+      case 7:
+        statusName = 'Выполнена';
+      case 8:
+        statusName = 'Выполнена (с дефицитом)';
+    }
+    return statusName;
+  }
 }

@@ -27,7 +27,7 @@ class _NavBarCustomChiefState extends State<DispatcherCustomNavBar> {
               children: [
                 Text(DispatcherData.listPage[selectedIndex].title),
                 Text(
-                    ' ${user.fio} / ${user.position.name} / ${user.unit!.name}',
+                    ' ${user.fio} / ${user.position.name} / ${user.unit?.name}',
                     style: const TextStyle(fontSize: 12)),
               ],
             );

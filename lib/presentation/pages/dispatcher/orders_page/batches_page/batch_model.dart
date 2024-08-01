@@ -10,6 +10,7 @@ class BatchModel {
   int readyPercent = 0;
 
   BatchModel({required this.batch});
+
 }
 
 class StageInBatchModel {

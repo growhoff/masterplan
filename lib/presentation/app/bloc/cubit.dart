@@ -53,7 +53,7 @@ class CubitMain extends Cubit<StateMain> {
           switch (state.user!.position.id) {
             //начальник
             case 2:
-              ChiefUnitService.instance.unitId = state.user!.unitId;
+              await fetchUnitId(state.user!.id);
               List<int> listAreaId = await getAreaForStaff(query['id']);
               await getMachineToUnit(listAreaId);
               break;
@@ -121,6 +121,7 @@ class CubitMain extends Cubit<StateMain> {
     var fetchedList =
         await positionStaffTable.selectByStaffId(staffId: staffId);
     final positionStaffDto = PositionStaffDTO.fromMap(fetchedList.first);
+    print('posStaffDto: ${positionStaffDto.unitId}');
     final int unitId = positionStaffDto.unitId ?? 1;
     ChiefUnitService.instance.unitId = unitId;
   }
@@ -222,12 +223,12 @@ class CubitMain extends Cubit<StateMain> {
   Future<List<int>> getAreaForStaff(int staffId) async {
     final posStaffTable = PositionStaffTable();
     final posStafQuery = await posStaffTable.selectByStaffId(staffId: staffId);
-    List<int> listIdArea = [];
+    Set<int> listIdArea = {};
     for (var pos in posStafQuery) {
       final model = PositionStaffDTO.fromMap(pos);
       listIdArea.add(model.areaId!);
     }
-    return listIdArea;
+    return listIdArea.toList();
   }
 
   Future<List<PositionStaffDTO>> getStaffPosition(int staffId) async {

@@ -1,26 +1,24 @@
 import 'dart:core';
 
+import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
 import 'package:master_plan/domain/model/chief_batch.dart';
 import 'package:master_plan/domain/model/distribution_stage.dart';
 
+import '../../../../domain/model/batch.dart';
+
 class StageInUnitModel {
   StageInUnitModel(
-      {required this.batchId,
-      required this.stageId,
+      {required this.stageId,
       required this.stageNumber,
-      required this.batchNumber,
-      required this.batchName,
       required this.code,
-      required this.technologyNumber,
+      required this.batch,
+
       required this.stageStatusName});
 
-  final int batchId;
   final int stageId;
+  final BatchDTO batch;
   final String stageNumber;
-  final String batchNumber;
-  final String batchName;
   final String code;
-  final String technologyNumber;
   final String stageStatusName;
 
   int totalDetailsQuantity = 0;

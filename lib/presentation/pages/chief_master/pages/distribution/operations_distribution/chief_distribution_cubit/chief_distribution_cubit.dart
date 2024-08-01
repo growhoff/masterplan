@@ -19,11 +19,11 @@ import 'package:master_plan/data/repositories/supabase/service/chief_operation_t
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
 import 'package:master_plan/domain/model/chief_distribution_operations_model.dart';
 import 'package:master_plan/presentation/pages/chief/model/distribution_operation_model.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../../../../data/repositories/supabase/service/distribution_stage_table.dart';
 import '../../../../../../../data/repositories/supabase/service/operation_table.dart';
 import '../../../../../../../domain/usecase/chief_unit_service.dart';
-
 
 part 'chief_distribution_state.dart';
 
@@ -40,7 +40,7 @@ class ChiefDistributionChMCubit extends Cubit<ChiefDistributionChMState> {
   final int? unitId = ChiefUnitService.instance.unitId;
 
   final OperatorOperationsTable _operatorOperationsTable =
-  OperatorOperationsTable();
+      OperatorOperationsTable();
 
   final AreaTable _areaTable = AreaTable();
   final ChiefOperationTable _chiefOperationTable = ChiefOperationTable();
@@ -50,7 +50,7 @@ class ChiefDistributionChMCubit extends Cubit<ChiefDistributionChMState> {
   final listController = ScrollController();
 
   final ChiefDistributionOperationsTable _chiefDistributionOperationsTable =
-  ChiefDistributionOperationsTable();
+      ChiefDistributionOperationsTable();
 
   List<bool> isElementOpenList = [];
 
@@ -63,7 +63,7 @@ class ChiefDistributionChMCubit extends Cubit<ChiefDistributionChMState> {
   int chiefOperationsSelectMaxRange = 9;
 
   Map<String, dynamic> areasMap =
-  {}; // ключ - номер участка + его имя, значение - id
+      {}; // ключ - номер участка + его имя, значение - id
 
   final _excelStageLoadService = ExcelService();
 
@@ -74,14 +74,14 @@ class ChiefDistributionChMCubit extends Cubit<ChiefDistributionChMState> {
     List<int> batchesIdsList = [];
     List<ChiefDistributionOperation> chiefOperationsList = [];
     var fetchedChiefOperationsList =
-    await _chiefDistributionOperationsTable.selectNotDistributed(
-        unitId: unitId ?? 1,
-        maxRange: chiefOperationsSelectMaxRange,
-        minRange: chiefOperationsSelectMinRange);
+        await _chiefDistributionOperationsTable.selectNotDistributed(
+            unitId: unitId ?? 1,
+            maxRange: chiefOperationsSelectMaxRange,
+            minRange: chiefOperationsSelectMinRange);
 
     for (var operation in fetchedChiefOperationsList) {
       final chiefOperationDto =
-      ChiefDistributionOperationsDTO.fromMap(operation);
+          ChiefDistributionOperationsDTO.fromMap(operation);
       final chiefDistributionOperation = ChiefDistributionOperation(
           operationId: chiefOperationDto.operationId,
           stageId: chiefOperationDto.stageId,
@@ -96,7 +96,7 @@ class ChiefDistributionChMCubit extends Cubit<ChiefDistributionChMState> {
     }
 
     var fetchedOperationList =
-    await operationsTable.selectByBatchesIdsList(batchesIdsList);
+        await operationsTable.selectByBatchesIdsList(batchesIdsList);
 
     List<StageDTO> stagesDtoList = [];
     List<int> stagesIdsList = [];
@@ -126,8 +126,8 @@ class ChiefDistributionChMCubit extends Cubit<ChiefDistributionChMState> {
           finalList.add(operation);
         } else {
           var fetchedStagesList =
-          await distributionStageTable.selectUploadedByStageId(
-              stagesMap[operation.stage.batchArchiveId]![index! - 1].id);
+              await distributionStageTable.selectUploadedByStageId(
+                  stagesMap[operation.stage.batchArchiveId]![index! - 1].id);
 
           if (fetchedStagesList.isNotEmpty) {
             operation.quantity = fetchedStagesList.length;
@@ -172,8 +172,8 @@ class ChiefDistributionChMCubit extends Cubit<ChiefDistributionChMState> {
       final quantity = operation.quantity;
 
       var fetchedChiefOperationsList =
-      await _chiefOperationTable.fetchOperationsByOperationIdWithLimit(
-          limit: quantity, operationId: operation.operationId);
+          await _chiefOperationTable.fetchOperationsByOperationIdWithLimit(
+              limit: quantity, operationId: operation.operationId);
 
       int orderNumber = 1;
       for (var chiefOperation in fetchedChiefOperationsList) {
@@ -234,4 +234,7 @@ class ChiefDistributionChMCubit extends Cubit<ChiefDistributionChMState> {
       }
     });
   }
+
+
+
 }

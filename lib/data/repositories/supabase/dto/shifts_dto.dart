@@ -22,7 +22,7 @@ class ShiftsDTO extends Dto {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'user_id': userId,
+      'staff_id': userId,
       'time_start': timeStart,
       'time_end': timeEnd,
       'isActive': isActive,

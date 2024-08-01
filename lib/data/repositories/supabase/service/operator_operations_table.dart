@@ -6,7 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../domain/usecase/company_service.dart';
 
 class OperatorOperationsTable extends SupabaseTable {
-  final table = Supabase.instance.client.from('z_operator_operations2');
+  final table = Supabase.instance.client.from('z_operator_operations');
   static const selectStaff = '*, z_position(*), z_company(*)';
   static const selectOperOperat =
       '*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*), z_staff($selectStaff), z_machine(*), z_area!inner(*), z_chief_operation(*), z_chief_batch(*), z_distribution_stage(*)';
@@ -51,6 +51,7 @@ class OperatorOperationsTable extends SupabaseTable {
         'operation_id': operation.operationId,
         'area_id': operation.areaId,
         'order': operation.order,
+        'distribution_stage_id': operation.distributionStageId,
         'chief_operation_id': operation.chiefOperationId,
         'chief_batch_id': operation.chiefBatchId
       });
@@ -87,11 +88,9 @@ class OperatorOperationsTable extends SupabaseTable {
   Future<List<Map<String, dynamic>>>
       selectReadyDefectAndModificationOnAreaOrderedByBatch(
           List<int> areasIdList) {
-    print('_unitId : $_unitId');
     return table
         .select(
-            '*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*,z_order(*)), z_staff(*) z_machine(*), z_area!inner(*), z_chief_operation(*), z_chief_batch(*), z_distribution_stage()')
-        .eq('z_area.company_id', _companyId)
+            '*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*,z_order(*)), z_staff(*,z_position(*)) z_machine(*), z_area!inner(*), z_chief_operation(*), z_chief_batch(*), z_distribution_stage()')
         .inFilter('area_id', areasIdList)
         .inFilter('status_id', [4, 5, 9])
         .order('batch_id', ascending: true)
@@ -99,12 +98,12 @@ class OperatorOperationsTable extends SupabaseTable {
   }
 
   Future<List<Map<String, dynamic>>>
-  selectByOperationIdListAndDistributionStagesIdList(
-      {required List<int> operationsIdsList,
-        required List<int> distributionStageIdsList}) {
+      selectByOperationIdListAndDistributionStagesIdList(
+          {required List<int> operationsIdsList,
+          required List<int> distributionStageIdsList}) {
     return table
         .select(
-        '*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*), z_staff(*), z_machine(*), z_area!inner(*), z_chief_operation!inner(*), z_chief_batch(*)')
+            '*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*), z_staff(*, z_position(*)), z_machine(*), z_area!inner(*), z_chief_operation!inner(*), z_chief_batch(*)')
         .eq('z_area.company_id', _companyId)
         .inFilter('operation_id', operationsIdsList)
         .order('chief_batch_id', ascending: true)
@@ -283,11 +282,11 @@ class OperatorOperationsTable extends SupabaseTable {
 
   Future<void> updateMasterReadyEqOptimalPart(
     int optPath,
-    int userId,
+    int staffId,
   ) async {
     await table.update({
       'status_id': 6,
-      'user_id': userId,
+      'staff_id': staffId,
       'time_working': 0,
       'time_first_start': 0
     }).eq('optimal_part', optPath);
@@ -306,11 +305,12 @@ class OperatorOperationsTable extends SupabaseTable {
     await table.update({'order': order}).eq('optimal_part', idPath);
   }
 
-  Future<void> updateTimeStart(int idOptPath, int timeStart, int userId) async {
+  Future<void> updateTimeStart(
+      int idOptPath, int timeStart, int staffId) async {
     await table.update({
       'time_start': timeStart,
       'pause': false,
-      'user_id': userId
+      'staff_id': staffId
     }).eq('optimal_part', idOptPath);
   }
 
@@ -332,12 +332,12 @@ class OperatorOperationsTable extends SupabaseTable {
   }
 
   Future<void> updateTimeStopAndReady(int idOptPath, int timeStop, int seconds,
-      int userId, String comment) async {
+      int staffId, String comment) async {
     await table.update({
       'time_stop': timeStop,
       'status_id': 6,
       'time_working': seconds,
-      'user_id': userId,
+      'staff_id': staffId,
       'pause': true,
       'comment': comment
     }).eq('optimal_part', idOptPath);
@@ -354,13 +354,13 @@ class OperatorOperationsTable extends SupabaseTable {
   }
 
   Future<void> updateTimeStopAndReadyCount(List<int> listId0, List<int> listId5,
-      int timeStop, int seconds, int userId) async {
+      int timeStop, int seconds, int staffId) async {
     if (listId0.isNotEmpty) {
       await table.update({
         'time_stop': timeStop,
         'status_id': 6,
         'time_working': seconds,
-        'user_id': userId,
+        'staff_id': staffId,
         'pause': true
       }).inFilter('id', listId0);
     }
@@ -369,7 +369,7 @@ class OperatorOperationsTable extends SupabaseTable {
         'time_stop': timeStop,
         'status_id': 5,
         'time_working': seconds,
-        'user_id': userId,
+        'staff_id': staffId,
         'pause': true,
       }).inFilter('id', listId5);
     }

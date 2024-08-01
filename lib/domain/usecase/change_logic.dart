@@ -51,7 +51,7 @@ class ChangeLogic {
     return change;
   }
 
-    DateTime getDayChange({int? time}){
+  DateTime getDayChange({int? time}){
     late DateTime date;
     if (time == null){
       date = dateNow;
@@ -73,7 +73,7 @@ class ChangeLogic {
       }
     }
     print('${time == null ? 'Now:' : 'Start:'} $date / day $day');
-    return DateTime(date.year, date.month, day);
+    return DateTime(date.year, date.month,  date.day + day);
   }
 
   bool getTimePeresmen(DateTime nowDat){

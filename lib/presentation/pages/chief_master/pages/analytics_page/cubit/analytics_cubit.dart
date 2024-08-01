@@ -53,20 +53,19 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
     List<int> areasList = [];
 
     // получить список участков на которых работает мастер
-    print('staffId: $staffId');
+
     var fetchedList =
-        await _positionStaffTable.selectByStaffId(staffId: staffId);
+    await _positionStaffTable.selectByStaffId(staffId: staffId);
 
     for (var fetchedStaff in fetchedList) {
       final positionStaffDto = PositionStaffDTO.fromMap(fetchedStaff);
       final positionStaff = PositionStaffModel.fromDTO(positionStaffDto);
       areasList.add(positionStaff.areaId ?? 0);
     }
-    print('areasList: $areasList');
+
     var fetchedOperationsList = await _operatorOperationsTable
         .selectReadyDefectAndModificationOnArea(areasList);
 
-    print(fetchedOperationsList);
     for (var fetchedOperation in fetchedOperationsList) {
       final operationDto = OperatorOperationsDTO.fromMap(fetchedOperation);
 
@@ -76,7 +75,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
         print(
             'start: ${timeStart}  operation: ${operation.timeFirstStart} end: ${timeEnd}');
         if ((operation.timeFirstStart >= timeStart &&
-                operation.timeFirstStart <= timeEnd) ||
+            operation.timeFirstStart <= timeEnd) ||
             operation.timeFirstStart == 0) {
           operatorOperationsList.add(operation);
         }
@@ -86,14 +85,14 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
     }
 
     var operationsMap =
-        groupBy(operatorOperationsList, (operation) => operation.optimalPart);
+    groupBy(operatorOperationsList, (operation) => operation.optimalPart);
 
     operationsMap.forEach((key, value) {
       var hours =
           DateTime.fromMillisecondsSinceEpoch(value.first.timestop ?? 0).hour;
 
       var dateTime =
-          DateTime.fromMillisecondsSinceEpoch(value.first.timestop ?? 0);
+      DateTime.fromMillisecondsSinceEpoch(value.first.timestop ?? 0);
       String date = '${dateTime.day}.${dateTime.month}.${dateTime.year}';
 
       int change = 1;
@@ -323,6 +322,95 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
         stagesList: stagesList, status: AnalyticsPageStatus.success));
   }
 
+
+  Future<void> fetchGroupedReadyOperations(
+      {int? timeStart, int? timeEnd}) async {
+    List<AnalyticsOperationModel> analyticsOperationsList = [];
+
+    List<OperatorOperations> operatorOperationsList = [];
+    List<int> areasList = [];
+
+    // получить список участков на которых работает мастер
+
+    var fetchedList =
+    await _positionStaffTable.selectByStaffId(staffId: staffId);
+
+    for (var fetchedStaff in fetchedList) {
+      final positionStaffDto = PositionStaffDTO.fromMap(fetchedStaff);
+      final positionStaff = PositionStaffModel.fromDTO(positionStaffDto);
+      areasList.add(positionStaff.areaId ?? 0);
+    }
+
+    var fetchedOperationsList = await _operatorOperationsTable
+        .selectReadyDefectAndModificationOnAreaOrderedByBatch(areasList);
+
+    for (var fetchedOperation in fetchedOperationsList) {
+      final operationDto = OperatorOperationsDTO.fromMap(fetchedOperation);
+
+      final operation = convertOperationDtoToModel(dto: operationDto);
+
+      if (timeStart != null && timeEnd != null) {
+        // print(
+        //     'start: ${timeStart}  operation: ${operation.timeFirstStart} end: ${timeEnd}');
+        if ((operation.timeFirstStart >= timeStart &&
+            operation.timeFirstStart <= timeEnd) ||
+            operation.timeFirstStart == 0) {
+          operatorOperationsList.add(operation);
+        }
+      } else {
+        operatorOperationsList.add(operation);
+      }
+    }
+
+    var batchesMap =
+    groupBy(operatorOperationsList, (operation) => operation.batch.id);
+
+    batchesMap.forEach((key, value) {
+      var operationsMap = groupBy(value, (operation) => operation.operation.id);
+
+      operationsMap.forEach((key, value) {
+        final analyticsOperation = AnalyticsOperationModel(
+            batch: value.first.batch,
+            stage: value.first.stage,
+            operationId: 0,
+            code: value.first.operation.code,
+            comment: '',
+            detailNumber: value.first.batch.number ?? '_',
+            detailName: value.first.batch.name,
+            operationNumber: value.first.operation.number,
+            operationName: value.first.operation.name,
+            timePlan: '',
+            timeFact: '',
+            machineName: '',
+            machineInventoryNumber: 0,
+            fio: '',
+            date: '',
+            change: 0,
+            areaNumber: '');
+
+        for (var operation in value) {
+          analyticsOperation.quantity++;
+          switch (operation.status.id) {
+            case 4:
+              analyticsOperation.modificationQuantity++;
+            case 5:
+              analyticsOperation.defectQuantity++;
+          }
+        }
+
+        analyticsOperationsList.add(analyticsOperation);
+      });
+    });
+
+    for (var op in analyticsOperationsList) {
+      print(op.operationName);
+    }
+    emit(state.copyWith(analyticsOperationsList: analyticsOperationsList));
+  }
+
+
+
+
   Future<void> uploadStagesReportToExcel() async {
     String filePath = await _excelService.uploadChiefStagesReport(
         stagesList: state.stagesList);
@@ -361,6 +449,43 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
     });
   }
 
+
+  Future<void> uploadTotalNumberReadyOperationsReport(
+      BuildContext context) async {
+    DateTime start = DateTime(2024);
+    DateTime end = DateTime.now();
+
+    final dateTimeRange = await showDateRangePicker(
+        context: context, firstDate: start, lastDate: end);
+    if (dateTimeRange != null) {
+      start = dateTimeRange.start;
+      end = dateTimeRange.end;
+    }
+    await fetchGroupedReadyOperations(
+        timeStart: start.millisecondsSinceEpoch,
+        timeEnd: end.millisecondsSinceEpoch + 86399000);
+
+    String filePath = await _excelService.uploadTotalNumberReadyOperationsReport(
+        analyticsOperationsList: state.analyticsOperationsList);
+    if (filePath == '') {
+      filePath = 'что-то пошло не так';
+    } else {
+      filePath =
+      '$filePath/Отчет суммарного количества выполненных операций.xlsx';
+    }
+    NotificationService.showNotification(
+        title: 'Отчет о производстве загружен',
+        body: 'путь: $filePath',
+        payload: filePath);
+
+    NotificationService.onClickNotification.stream.listen((event) {
+      print(event);
+      OpenFilex.open(event);
+    });
+  }
+
+
+
   OperatorOperations convertOperationDtoToModel(
       {required OperatorOperationsDTO dto}) {
     return OperatorOperations(
@@ -372,7 +497,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
         user: User(
           id: 0,
           fio: dto.staff?.fio ?? 'empty',
-          positionId: 0,
+          positionId: dto.staff?.positionId ?? 0,
           companyId: 0,
           unitId: 0,
           areaId: 0,

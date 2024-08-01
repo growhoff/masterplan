@@ -58,7 +58,7 @@ class _QueueStageItemViewState extends State<QueueStageItemView> {
                         children: [
                           Text('этап ${widget.stagesInUnitModel.stageNumber}'),
                           Text(
-                              'деталь ${widget.stagesInUnitModel.batchNumber} ${widget.stagesInUnitModel.batchName}')
+                              'деталь ${widget.stagesInUnitModel.batch.number} ${widget.stagesInUnitModel.batch.name}')
                         ],
                       ),
                       contentPadding: EdgeInsets.all(5),
@@ -148,7 +148,7 @@ class _QueueStageItemViewState extends State<QueueStageItemView> {
                                                             .start,
                                                     children: [
                                                       Text(
-                                                          'Номер чертежа: ${widget.stagesInUnitModel.batchNumber} ${widget.stagesInUnitModel.batchName}'),
+                                                          'Номер чертежа: ${widget.stagesInUnitModel.batch.number} ${widget.stagesInUnitModel.batch.name}'),
                                                       const SizedBox(
                                                         height: 5,
                                                       ),
@@ -158,7 +158,7 @@ class _QueueStageItemViewState extends State<QueueStageItemView> {
                                                         height: 5,
                                                       ),
                                                       Text(
-                                                          'Номер технологии: ${widget.stagesInUnitModel.technologyNumber}'),
+                                                          'Номер технологии: ${widget.stagesInUnitModel.batch.technology}'),
                                                       const SizedBox(
                                                         height: 5,
                                                       ),
@@ -221,7 +221,7 @@ class _QueueStageItemViewState extends State<QueueStageItemView> {
                       Expanded(
                         child: Container(
                           child: Text(
-                            '${widget.stagesInUnitModel.batchNumber}',
+                            '${widget.stagesInUnitModel.batch.number}',
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -230,7 +230,7 @@ class _QueueStageItemViewState extends State<QueueStageItemView> {
                       Expanded(
                         child: Container(
                           child: Text(
-                            '${widget.stagesInUnitModel.batchName}',
+                            '${widget.stagesInUnitModel.batch.name}',
                             textAlign: TextAlign.center,
                           ),
                         ),

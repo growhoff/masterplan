@@ -9,7 +9,7 @@ class PositionStaffTable extends SupabaseTable {
   final table = Supabase.instance.client.from('z_position_staff');
   final _companyId = CompanyService.instance.companyId ?? 1;
   final _unitId = ChiefUnitService.instance.unitId ?? 1;
-  final tableSelect = '*,z_unit(*), z_position(*),z_staff(*, z_company(*), z_position(*)), z_area(*)';
+  final tableSelect = '*,z_unit(*), z_position(*),z_staff!inner(*, z_company(*), z_position(*)), z_area(*)';
 
   @override
   Future<void> delete(int id) async {

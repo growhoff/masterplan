@@ -179,6 +179,7 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
 
       int orderNumber = 1;
       for (var chiefOperation in fetchedChiefOperationsList) {
+        print('distribution_stage_id: ${chiefOperation['distribution_stage_id']}');
         chiefOperationsIdList.add(chiefOperation['id']);
         operatorOperationsDtoList.add(OperatorOperationsDTO(
             id: 0,

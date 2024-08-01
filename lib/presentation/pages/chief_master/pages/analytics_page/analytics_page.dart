@@ -9,7 +9,7 @@ class AnalyticsPageChM extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final staffId = context.read<CubitMain>().state.staff?.id ?? 0;
+    final staffId = context.read<CubitMain>().state.user?.id ?? 0;
     return BlocProvider(
       create: (context) => AnalyticsCubit(staffId),
       child: AnalyticsPageView(),
@@ -47,10 +47,10 @@ class _AnalyticsPageViewState extends State<AnalyticsPageView> {
                         .read<AnalyticsCubit>()
                         .uploadReadyOperationsReport(context);
                   },
-                  child: Text('Выполненные операции (отчет)'),
+                  child: Text('Отчет о выполненных операциях'),
                 ),
                 const SizedBox(
-                  height: 10,
+                  height: 20,
                 ),
                 ElevatedButton(
                   style: ButtonStyle(
@@ -62,7 +62,7 @@ class _AnalyticsPageViewState extends State<AnalyticsPageView> {
                   child: Text('Поэтапный отчет начальника'),
                 ),
                 const SizedBox(
-                  height: 10,
+                  height: 20,
                 ),
                 ElevatedButton(
                   style: ButtonStyle(
@@ -72,6 +72,23 @@ class _AnalyticsPageViewState extends State<AnalyticsPageView> {
                       .read<AnalyticsCubit>()
                       .uploadOperationsReportToExcel();},
                   child: Text('Ход выполнения операций'),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                ElevatedButton(
+                  style: ButtonStyle(
+                      padding: WidgetStateProperty.all<EdgeInsets>(
+                          EdgeInsets.all(10))),
+                  onPressed: () async {
+                    context
+                        .read<AnalyticsCubit>()
+                        .uploadTotalNumberReadyOperationsReport(context);
+                  },
+                  child: Text(
+                    'Отчет\nсуммарного количества\nвыполненных операций',
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ],
             ),

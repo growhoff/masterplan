@@ -24,6 +24,7 @@ class StaffTable extends SupabaseTable {
         'password': dto.password,
         // 'user_id': dto.userId,
         'fio': dto.fio,
+        'position_id': dto.positionId,
         'company_id': _companyId,
         'photo': dto.photo,
       }).select('id');
@@ -69,14 +70,14 @@ class StaffTable extends SupabaseTable {
     return table.stream(primaryKey: ['id']);
   }
 
-  Future<List<Map<String, dynamic>>> selectByRegionId(
-      {required int regionId}) async {
-    var data = await table
-        .select(
-            '*, z_user:user_id!inner(*, z_position:position_id(*), z_unit:unit_id(*))')
-        .eq('z_user.area_id', regionId);
-    return data;
-  }
+  // Future<List<Map<String, dynamic>>> selectByRegionId(
+  //     {required int regionId}) async {
+  //   var data = await table
+  //       .select(
+  //           '*, z_user:user_id!inner(*, z_position:position_id(*), z_unit:unit_id(*))')
+  //       .eq('z_user.area_id', regionId);
+  //   return data;
+  // }
 
   Future updatePhoto({required int staffId, required String? photoUrl}) async {
     await table.update({'photo': photoUrl}).eq('id', staffId);

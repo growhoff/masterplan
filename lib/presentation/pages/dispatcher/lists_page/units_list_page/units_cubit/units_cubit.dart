@@ -139,7 +139,10 @@ class UnitsCubit extends Cubit<UnitsState> {
 
     List<Staff> staffList = [];
 
+
+
     for (var fetchedStaff in fetchedChiefList) {
+
       final positionStaffDto = PositionStaffDTO.fromMap(fetchedStaff);
       final staff = Staff.fromDTO(positionStaffDto.staff);
       if (staff.id == selectedStaffId) {

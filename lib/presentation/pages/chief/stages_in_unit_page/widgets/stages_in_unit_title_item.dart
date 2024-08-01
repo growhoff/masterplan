@@ -59,7 +59,7 @@ class _StagesInUnitTitleItemViewState extends State<StagesInUnitTitleItemView> {
                         children: [
                           Text('этап ${widget.stagesInUnitModel.stageNumber}'),
                           Text(
-                              'деталь ${widget.stagesInUnitModel.batchNumber} ${widget.stagesInUnitModel.batchName}')
+                              'деталь ${widget.stagesInUnitModel.batch.number} ${widget.stagesInUnitModel.batch.name}')
                         ],
                       ),
                       contentPadding: EdgeInsets.all(5),
@@ -146,7 +146,7 @@ class _StagesInUnitTitleItemViewState extends State<StagesInUnitTitleItemView> {
                                                   fontWeight: FontWeight.bold),
                                             ),
                                             Text(
-                                              'деталь ${widget.stagesInUnitModel.batchNumber} ${widget.stagesInUnitModel.batchName}',
+                                              'деталь ${widget.stagesInUnitModel.batch.number} ${widget.stagesInUnitModel.batch.name}',
                                               style: TextStyle(fontSize: 16),
                                             ),
                                             const SizedBox(
@@ -259,7 +259,7 @@ class _StagesInUnitTitleItemViewState extends State<StagesInUnitTitleItemView> {
                                                             .start,
                                                     children: [
                                                       Text(
-                                                          'Номер чертежа: ${widget.stagesInUnitModel.batchNumber} ${widget.stagesInUnitModel.batchName}'),
+                                                          'Номер чертежа: ${widget.stagesInUnitModel.batch.number} ${widget.stagesInUnitModel.batch.name}'),
                                                       const SizedBox(
                                                         height: 5,
                                                       ),
@@ -269,7 +269,7 @@ class _StagesInUnitTitleItemViewState extends State<StagesInUnitTitleItemView> {
                                                         height: 5,
                                                       ),
                                                       Text(
-                                                          'Номер технологии: ${widget.stagesInUnitModel.technologyNumber}'),
+                                                          'Номер технологии: ${widget.stagesInUnitModel.batch.technology}'),
                                                       const SizedBox(
                                                         height: 5,
                                                       ),
@@ -332,7 +332,7 @@ class _StagesInUnitTitleItemViewState extends State<StagesInUnitTitleItemView> {
                       Expanded(
                         child: Container(
                           child: Text(
-                            '${widget.stagesInUnitModel.batchNumber}',
+                            '${widget.stagesInUnitModel.batch.number}',
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -341,7 +341,7 @@ class _StagesInUnitTitleItemViewState extends State<StagesInUnitTitleItemView> {
                       Expanded(
                         child: Container(
                           child: Text(
-                            '${widget.stagesInUnitModel.batchName}',
+                            '${widget.stagesInUnitModel.batch.name}',
                             textAlign: TextAlign.center,
                           ),
                         ),

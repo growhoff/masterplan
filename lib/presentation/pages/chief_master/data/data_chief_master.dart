@@ -39,11 +39,11 @@ abstract class DataChiefMaster {
         title: 'Аналитика',
         actions: [],
         page: const AnalyticsPageChM(),
-        icon: Icons.personal_video),
+        icon: Icons.fact_check_sharp),
     TabBarDataChiefMaster(
         title: 'Мониторинг цеха и участков',
         actions: [],
         page: const MonitoringPageChM(),
-        icon: Icons.fact_check_sharp),
+        icon: Icons.personal_video),
   ];
 }

@@ -6,7 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../dto/monitoring_machine_dto.dart';
 
 class MonitoringMachineTable extends SupabaseTable {
-  final table = Supabase.instance.client.from('z_monitoring_machine2');
+  final table = Supabase.instance.client.from('z_monitoring_machine');
   static const userStaff = '*, z_position(*), z_company(*)';
   static const userMonitor = '*, z_status_machine(*), z_staff($userStaff), z_machine(*), z_batch(*)';
   @override
@@ -39,8 +39,8 @@ class MonitoringMachineTable extends SupabaseTable {
     return table.select(userMonitor).inFilter('id',listId);
   }
 
-  Future<List<Map<String, dynamic>>> selectListIdMachineChange(List<int> listIdMachine, int change, String date, int userId) {
-    return table.select(userMonitor).inFilter('machine_id',listIdMachine).eq('change_id', change).eq('date', date).eq('user_id', userId).order('id', ascending: true);
+  Future<List<Map<String, dynamic>>> selectListIdMachineChange(List<int> listIdMachine, int change, String date, int staffId) {
+    return table.select(userMonitor).inFilter('machine_id',listIdMachine).eq('change_id', change).eq('date', date).eq('staff_id', staffId).order('id', ascending: true);
   }
 
   Future<List<Map<String, dynamic>>> selectListIdMachineChangeLastDay(List<int> listIdMachine) {
