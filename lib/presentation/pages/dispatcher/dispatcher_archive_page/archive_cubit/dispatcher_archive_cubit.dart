@@ -117,6 +117,11 @@ class DispatcherArchiveCubit extends Cubit<DispatcherArchiveState> {
     } catch (e) {}
   }
 
+  Future deleteBatchArchive(int batchId)async{
+    await _batchArchiveTable.delete(batchId);
+    await fetchBatches();
+  }
+
   convertStageDtoToModel(StageDTO dto) {
     return Stage(
         id: dto.id,

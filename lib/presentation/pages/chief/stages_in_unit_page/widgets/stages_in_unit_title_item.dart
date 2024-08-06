@@ -5,14 +5,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/pages/chief/stages_in_unit_page/stages_in_unit_cubit/stages_in_unit_cubit.dart';
 import 'package:master_plan/presentation/pages/chief/stages_in_unit_page/stages_in_unit_model.dart';
 
+import '../../../dispatcher/orders_page/batches_page/batch_model.dart';
+import '../../../dispatcher/orders_page/batches_page/stages_in_batch_page.dart';
+
 class StagesInUnitTitleItem extends StatelessWidget {
   const StagesInUnitTitleItem(
-    this.stagesInUnitModel, {
+    this.stageModel, {
     required this.setState,
     super.key,
   });
 
-  final StageInUnitModel stagesInUnitModel;
+  final StageModel stageModel;
   final VoidCallback setState;
 
   @override
@@ -20,7 +23,7 @@ class StagesInUnitTitleItem extends StatelessWidget {
     return BlocProvider(
       create: (context) => StagesInUnitCubit(),
       child: StagesInUnitTitleItemView(
-        stagesInUnitModel: stagesInUnitModel,
+        stageModel: stageModel,
         setState: setState,
       ),
     );
@@ -29,12 +32,12 @@ class StagesInUnitTitleItem extends StatelessWidget {
 
 class StagesInUnitTitleItemView extends StatefulWidget {
   const StagesInUnitTitleItemView({
-    required this.stagesInUnitModel,
+    required this.stageModel,
     required this.setState,
     super.key,
   });
 
-  final StageInUnitModel stagesInUnitModel;
+  final StageModel stageModel;
   final VoidCallback setState;
 
   @override
@@ -43,7 +46,7 @@ class StagesInUnitTitleItemView extends StatefulWidget {
 }
 
 class _StagesInUnitTitleItemViewState extends State<StagesInUnitTitleItemView> {
-  bool isChecked = false;
+  bool _isValidate = true;
 
   @override
   Widget build(BuildContext context) {
@@ -57,70 +60,31 @@ class _StagesInUnitTitleItemViewState extends State<StagesInUnitTitleItemView> {
                       title: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('этап ${widget.stagesInUnitModel.stageNumber}'),
+                          Text('этап ${widget.stageModel.stageNumber}'),
                           Text(
-                              'деталь ${widget.stagesInUnitModel.batch.number} ${widget.stagesInUnitModel.batch.name}')
+                              'деталь ${widget.stageModel.batch.number} ${widget.stageModel.batch.name}')
                         ],
                       ),
                       contentPadding: EdgeInsets.all(5),
                       children: [
                         SimpleDialogOption(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 26, vertical: 5),
                           onPressed: () {
-                            Navigator.pop(context, false);
-                            Navigator.pushNamed(
-                                context, '/detailsInUnitQuantityPage',
-                                arguments: widget.stagesInUnitModel);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => StagesInBatchPage(
+                                          batch: widget.stageModel.batch,
+                                          selectedStageId:
+                                              widget.stageModel.stageId,
+                                        )));
                           },
                           child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Container(
-                                padding: EdgeInsets.all(3),
-                                child: Text('N'),
-                                decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                        width: 2, color: Colors.black)),
+                              Icon(Icons.ac_unit),
+                              const SizedBox(
+                                width: 10,
                               ),
-                              SizedBox(
-                                width: 8,
-                              ),
-                              Text('количество',
-                                  style: TextStyle(fontSize: 18)),
-                            ],
-                          ),
-                        ),
-                        Divider(
-                          height: 1,
-                        ),
-                        SimpleDialogOption(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 26, vertical: 5),
-                          onPressed: () {
-                            Navigator.pop(context, false);
-                            setState(() {
-                              Navigator.pushNamed(
-                                  context, '/operationInStagePage',
-                                  arguments: widget.stagesInUnitModel);
-                            });
-                          },
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(3),
-                                child: Text('O'),
-                                decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                        width: 2, color: Colors.black)),
-                              ),
-                              SizedBox(
-                                width: 8,
-                              ),
-                              Text('операции', style: TextStyle(fontSize: 18)),
+                              Text('подробная информация')
                             ],
                           ),
                         ),
@@ -141,12 +105,12 @@ class _StagesInUnitTitleItemViewState extends State<StagesInUnitTitleItemView> {
                                               height: 2,
                                             ),
                                             Text(
-                                              'этап ${widget.stagesInUnitModel.stageNumber}',
+                                              'этап ${widget.stageModel.stageNumber}',
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold),
                                             ),
                                             Text(
-                                              'деталь ${widget.stagesInUnitModel.batch.number} ${widget.stagesInUnitModel.batch.name}',
+                                              'деталь ${widget.stageModel.batch.number} ${widget.stageModel.batch.name}',
                                               style: TextStyle(fontSize: 16),
                                             ),
                                             const SizedBox(
@@ -160,7 +124,7 @@ class _StagesInUnitTitleItemViewState extends State<StagesInUnitTitleItemView> {
                                                     style: TextStyle(
                                                         fontSize: 16)),
                                                 Text(
-                                                    '${widget.stagesInUnitModel.readyDetailsQuantity} / ${widget.stagesInUnitModel.availableDetailsQuantity}',
+                                                    '${widget.stageModel.readyToUploadQuantity} / ${widget.stageModel.availableQuantity}',
                                                     style: TextStyle(
                                                         fontSize: 16,
                                                         fontWeight:
@@ -187,6 +151,12 @@ class _StagesInUnitTitleItemViewState extends State<StagesInUnitTitleItemView> {
                                                     SizedBox(
                                                         width: 100,
                                                         child: TextField(
+                                                          decoration: InputDecoration(
+                                                              fillColor: _isValidate
+                                                                  ? Colors
+                                                                      .white54
+                                                                  : Colors.red[
+                                                                      100]),
                                                           controller: context
                                                               .read<
                                                                   StagesInUnitCubit>()
@@ -203,14 +173,27 @@ class _StagesInUnitTitleItemViewState extends State<StagesInUnitTitleItemView> {
                                               ),
                                               ElevatedButton(
                                                   onPressed: () {
-                                                    context
-                                                        .read<
-                                                            StagesInUnitCubit>()
-                                                        .uploadStages(
-                                                            stagesList: widget
-                                                                .stagesInUnitModel
-                                                                .stagesList);
-                                                    widget.setState();
+                                                    int.parse(context
+                                                                .read<
+                                                                    StagesInUnitCubit>()
+                                                                .uploadStagesQuantityController
+                                                                .text) <=
+                                                            widget.stageModel
+                                                                .readyToUploadQuantity
+                                                        ? {
+                                                            _isValidate = true,
+                                                            context
+                                                                .read<
+                                                                    StagesInUnitCubit>()
+                                                                .uploadStages(
+                                                                    distributionStagesIdsList: widget
+                                                                        .stageModel
+                                                                        .distributionStagesIdsList),
+                                                            widget.setState()
+                                                          }
+                                                        : setState(() {
+                                                            _isValidate = false;
+                                                          });
                                                   },
                                                   child: Text('выгрузить'))
                                             ],
@@ -259,22 +242,22 @@ class _StagesInUnitTitleItemViewState extends State<StagesInUnitTitleItemView> {
                                                             .start,
                                                     children: [
                                                       Text(
-                                                          'Номер чертежа: ${widget.stagesInUnitModel.batch.number} ${widget.stagesInUnitModel.batch.name}'),
+                                                          'Номер чертежа: ${widget.stageModel.batch.number} ${widget.stageModel.batch.name}'),
                                                       const SizedBox(
                                                         height: 5,
                                                       ),
                                                       Text(
-                                                          '№ этапа: ${widget.stagesInUnitModel.stageNumber}'),
+                                                          '№ этапа: ${widget.stageModel.stageNumber}'),
                                                       const SizedBox(
                                                         height: 5,
                                                       ),
                                                       Text(
-                                                          'Номер технологии: ${widget.stagesInUnitModel.batch.technology}'),
+                                                          'Номер технологии: ${widget.stageModel.batch.technology}'),
                                                       const SizedBox(
                                                         height: 5,
                                                       ),
                                                       Text(
-                                                          'Код детали: ${widget.stagesInUnitModel.code}')
+                                                          'Код детали: ${widget.stageModel.batch.code}')
                                                     ],
                                                   )),
                                             ),
@@ -311,8 +294,7 @@ class _StagesInUnitTitleItemViewState extends State<StagesInUnitTitleItemView> {
                     ));
           },
           child: Card(
-            color: readyPercentToColor(
-                widget.stagesInUnitModel.readyDetailsPercent),
+            color: readyPercentToColor(widget.stageModel.readyPercent),
             child: Padding(
               padding: const EdgeInsets.all(5),
               child: Column(
@@ -323,7 +305,7 @@ class _StagesInUnitTitleItemViewState extends State<StagesInUnitTitleItemView> {
                       Expanded(
                         child: Container(
                           child: Text(
-                            '${widget.stagesInUnitModel.stageNumber}',
+                            '${widget.stageModel.stageNumber}',
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -332,7 +314,7 @@ class _StagesInUnitTitleItemViewState extends State<StagesInUnitTitleItemView> {
                       Expanded(
                         child: Container(
                           child: Text(
-                            '${widget.stagesInUnitModel.batch.number}',
+                            '${widget.stageModel.batch.number}',
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -341,7 +323,7 @@ class _StagesInUnitTitleItemViewState extends State<StagesInUnitTitleItemView> {
                       Expanded(
                         child: Container(
                           child: Text(
-                            '${widget.stagesInUnitModel.batch.name}',
+                            '${widget.stageModel.batch.name}',
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -350,7 +332,7 @@ class _StagesInUnitTitleItemViewState extends State<StagesInUnitTitleItemView> {
                       Expanded(
                         child: Container(
                           child: Text(
-                            '${widget.stagesInUnitModel.readyDetailsPercent}%',
+                            '${widget.stageModel.readyPercent}%',
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -359,7 +341,7 @@ class _StagesInUnitTitleItemViewState extends State<StagesInUnitTitleItemView> {
                       Expanded(
                         child: Container(
                           child: Text(
-                            '${widget.stagesInUnitModel.stageStatusName}',
+                            '${widget.stageModel.status}',
                             textAlign: TextAlign.center,
                           ),
                         ),

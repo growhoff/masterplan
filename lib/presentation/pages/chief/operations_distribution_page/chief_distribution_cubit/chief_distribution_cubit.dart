@@ -61,8 +61,8 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
   List<DistributionOperationModel> operationsForDistributionList = [];
 
   int chiefOperationsSelectMinRange = 0;
-  final int distributionPageElementsLimit = 9;
-  int chiefOperationsSelectMaxRange = 9;
+  final int distributionPageElementsLimit = 14;
+  int chiefOperationsSelectMaxRange = 14;
 
   Map<String, dynamic> areasMap =
       {}; // ключ - номер участка + его имя, значение - id

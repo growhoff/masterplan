@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/domain/model/batch_archive.dart';
 import 'package:master_plan/presentation/pages/technologist/archive_page/archive_cubit/archive_cubit.dart';
 
 import '../../../../domain/model/batch.dart';
@@ -10,7 +11,7 @@ class ArchiveStagesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final batch = ModalRoute.of(context)!.settings.arguments as Batch;
+    final batch = ModalRoute.of(context)!.settings.arguments as BatchArchive;
     return BlocProvider(
       create: (context) => ArchiveCubit(),
       child: ArchiveStagesPageView(
@@ -21,7 +22,7 @@ class ArchiveStagesPage extends StatelessWidget {
 }
 
 class ArchiveStagesPageView extends StatefulWidget {
-  final Batch batch;
+  final BatchArchive batch;
 
   const ArchiveStagesPageView({required this.batch, super.key});
 

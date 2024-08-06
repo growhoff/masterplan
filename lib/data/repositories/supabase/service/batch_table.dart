@@ -54,7 +54,7 @@ class BatchTable extends SupabaseTable {
 
   Future<List<Map<String, dynamic>>> selectByOrderId(int orderId) async {
     return table
-        .select('*,z_order(*)')
+        .select('*,z_order(*),z_batch_status(*)')
         .eq('order_id', orderId)
         .order('id', ascending: true);
   }
@@ -62,6 +62,10 @@ class BatchTable extends SupabaseTable {
   @override
   Future<void> update(int id, Dto dto) {
     return table.update({'name': '1'}).eq('id', id);
+  }
+
+  Future<void> updateStatusToIsFormedByBatchesIdsList(List<int> batchesIdsList) {
+    return table.update({'batch_status_id': 6}).inFilter('id', batchesIdsList);
   }
 
   stream() {

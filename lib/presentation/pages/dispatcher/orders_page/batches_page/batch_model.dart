@@ -1,4 +1,7 @@
+import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
+
 import '../../../../../domain/model/batch.dart';
+import '../../../../../domain/model/distribution_stage.dart';
 import '../../../../../domain/model/operation.dart';
 
 class BatchModel {
@@ -13,15 +16,19 @@ class BatchModel {
 
 }
 
-class StageInBatchModel {
-  StageInBatchModel(
+class StageModel {
+  StageModel(
       {required this.stageId,
+
       required this.stageNumber,
-      required this.stageName});
+      required this.stageName,
+      required this.batch
+      });
 
   final String stageNumber;
   final String stageName;
   final int stageId;
+  final Batch batch;
 
   List<int> distributionStagesIdsList = [];
 
@@ -33,6 +40,7 @@ class StageInBatchModel {
   int readyQuantity = 0;
   int defectQuantity = 0;
   int readyPercent = 0;
+  int availableQuantity = 0;
   String status = '';
 }
 

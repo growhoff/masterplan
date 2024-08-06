@@ -8,7 +8,7 @@ class QueueStagesState extends Equatable {
       this.unitsList = const [],
       this.status = QueueStagesPageStatus.initial});
 
-  final List<StageInUnitModel> stagesList;
+  final List<StageModel> stagesList;
 
   final List<Unit> unitsList;
 
@@ -18,7 +18,7 @@ class QueueStagesState extends Equatable {
   List<Object?> get props => [stagesList, unitsList, status];
 
   QueueStagesState copyWith({
-    List<StageInUnitModel>? stagesList,
+    List<StageModel>? stagesList,
     List<Unit>? unitsList,
     QueueStagesPageStatus? status,
   }) {

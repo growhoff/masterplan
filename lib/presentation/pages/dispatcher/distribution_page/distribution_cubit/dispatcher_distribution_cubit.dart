@@ -37,37 +37,40 @@ class DispatcherDistributionCubit extends Cubit<DispatcherDistributionState> {
   Future fetchStages() async {
     emit(state.copyWith(status: DispatcherDistributionStatus.loading));
     var fetchedList = await _distributionStageTable.selectNotDistributed();
-
+    List<DistributionStageModel> distributionStagesList = [];
     List<DistributionStage> stagesList = [];
     for (var fetchedStage in fetchedList) {
-
       final stageDto = DistributionStageDto.fromMap(fetchedStage);
 
       final stage = DistributionStage.fromDto(stageDto);
       stagesList.add(stage);
     }
 
-    var stagesMap = groupBy(stagesList, (stage) => stage.stageId);
+    var batchesMap = groupBy(stagesList, (stage) => stage.chiefBatch?.batchId);
 
-    List<DistributionStageModel> distributionStagesList = [];
-    stagesMap.forEach((key, value) {
+    batchesMap.forEach((batchesKey, batchesValue) {
 
-      final distributionStage = DistributionStageModel(
-          stageArchiveId: value.first.stageId,
-          quantity: value.first.chiefBatch?.batch.count ?? 0,
-          batchName: value.first.chiefBatch?.batch.name ?? '',
-          batchNumber: value.first.chiefBatch?.batch.numberRS ?? '',
-          stageName: value.first.stage?.name ?? '',
-          stageNumber: value.first.stage?.number ?? '',
-          batchId: value.first.chiefBatch?.batchId ?? 0);
+      var stagesMap = groupBy(batchesValue, (stage) => stage.stageId);
 
-      List<DistributionStage> stagesList = [];
-      for (var stage in value) {
-        stagesList.add(stage);
-      }
-      distributionStage.stagesList = stagesList;
+      stagesMap.forEach((stagesKey, stagesValue) {
+        print('batchesKey: $batchesKey   ,  stageKey: $stagesKey ');
+        final distributionStage = DistributionStageModel(
+            stageArchiveId: stagesValue.first.stageId,
+            quantity: stagesValue.first.chiefBatch?.batch.count ?? 0,
+            batchName: stagesValue.first.chiefBatch?.batch.name ?? '',
+            batchNumber: stagesValue.first.chiefBatch?.batch.numberRS ?? '',
+            stageName: stagesValue.first.stage?.name ?? '',
+            stageNumber: stagesValue.first.stage?.number ?? '',
+            batchId: stagesValue.first.chiefBatch?.batchId ?? 0);
 
-      distributionStagesList.add(distributionStage);
+        for (var stage in stagesValue) {
+          stagesList.add(stage);
+        }
+        distributionStage.stagesList = stagesList;
+        stagesList = [];
+
+        distributionStagesList.add(distributionStage);
+      });
     });
 
     emit(state.copyWith(
@@ -162,6 +165,4 @@ class DispatcherDistributionCubit extends Cubit<DispatcherDistributionState> {
 
     stagesForDistributionList = [];
   }
-
-
 }

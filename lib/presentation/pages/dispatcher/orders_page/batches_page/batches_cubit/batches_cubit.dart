@@ -30,16 +30,17 @@ import '../../../../../../domain/model/batch.dart';
 import '../../../../../../domain/model/batch_archive.dart';
 import '../../../../../../domain/model/order.dart';
 import '../../../../../../domain/model/stage.dart';
+import '../../../../../../domain/model/status.dart';
 import '../batch_model.dart';
 
 part 'batches_state.dart';
 
 class BatchesCubit extends Cubit<BatchesState> {
-  BatchesCubit({
-    this.order,
-  }) : super(const BatchesState());
+  BatchesCubit({this.order, this.selectedStageId})
+      : super(const BatchesState());
 
   final Order? order;
+  final int? selectedStageId;
 
   final _batchTable = BatchTable();
   final _chiefBatchTable = ChiefBatchTable();
@@ -49,15 +50,17 @@ class BatchesCubit extends Cubit<BatchesState> {
   final _stageTable = StageTable();
   final _operatorOperationsTable = OperatorOperationsTable();
   final _operationTable = OperationTable();
+
   BatchArchive selectedBatch = BatchArchive.empty;
   TextEditingController quantityController = TextEditingController();
   TextEditingController optimalBatchController = TextEditingController();
 
-  Future<void> fetchBatchesInOrder() async {
+  Future<void> fetchBatchesInOrder(int? orderId) async {
+    print('orderId : $orderId');
     List<BatchModel> batchesList = [];
     List<int> batchesIdsList = [];
     try {
-      var fetchedList = await _batchTable.selectByOrderId(order?.id ?? 0);
+      var fetchedList = await _batchTable.selectByOrderId(orderId ?? 0);
 
       for (var fetchedBatch in fetchedList) {
         final batchDto = BatchDTO.fromMap(fetchedBatch);
@@ -67,7 +70,9 @@ class BatchesCubit extends Cubit<BatchesState> {
             name: batchDto.name,
             number: batchDto.number,
             count: batchDto.count,
-            batchStatusName: statusNameFromId(batchDto.batchStatusId),
+            status: Status(
+                id: batchDto.status?.id ?? 0,
+                name: batchDto.status?.name ?? ''),
             batchStatusId: batchDto.batchStatusId,
             code: batchDto.code,
             technology: batchDto.technology,
@@ -115,7 +120,7 @@ class BatchesCubit extends Cubit<BatchesState> {
 
       emit(state.copyWith(
           batchesList: batchesList, status: BatchesStatus.success));
-      print(batchesList);
+      print('batchesList: $batchesList');
     } catch (e) {
       emit(state.copyWith(status: BatchesStatus.failure));
     }
@@ -160,7 +165,7 @@ class BatchesCubit extends Cubit<BatchesState> {
         name: selectedBatch.name,
         number: batchNumber.toString(),
         count: int.parse(quantityController.text),
-        code: '',
+        code: selectedBatch.code ?? '',
         technology: selectedBatch.technologyNumber,
         orderId: order?.id,
         batchArchiveId: selectedBatch.id,
@@ -177,6 +182,7 @@ class BatchesCubit extends Cubit<BatchesState> {
   }
 
   Future formOrder() async {
+    emit(state.copyWith(status: BatchesStatus.loading));
     print('начали формировать');
 
     List<int> batchesIdList = [];
@@ -235,11 +241,15 @@ class BatchesCubit extends Cubit<BatchesState> {
 
     await _chiefBatchTable.updateChiefBatchStatusToInWorkList(
         chiefBatchIdList: chiefBatchesIdList);
+
+    await _batchTable.updateStatusToIsFormedByBatchesIdsList(batchesIdList);
+
+    emit(state.copyWith(status: BatchesStatus.success));
   }
 
   Future fetchStagesInBatch(int batchId) async {
     List<DistributionStage> distributionStagesList = [];
-    List<StageInBatchModel> stagesInBatchModelList = [];
+    List<StageModel> stagesInBatchModelList = [];
     var fetchedChiefBatchesList =
         await _chiefBatchTable.selectByBatchesIdList([batchId]);
     List<int> chiefBatchesIdsList = [];
@@ -262,12 +272,21 @@ class BatchesCubit extends Cubit<BatchesState> {
     var stagesMap = groupBy(distributionStagesList, (stage) => stage.stageId);
 
     stagesMap.forEach((key, value) {
-      final stageInBatchModel = StageInBatchModel(
+      final stageInBatchModel = StageModel(
+          batch: Batch(
+              id: value.first.chiefBatch?.batch.id ?? 0,
+              numberRS: value.first.chiefBatch?.batch.numberRS ?? '',
+              name: value.first.chiefBatch?.batch.name ?? '',
+              count: value.first.chiefBatch?.batch.count ?? 0,
+              code: value.first.chiefBatch?.batch.code ?? '',
+              technology: value.first.chiefBatch?.batch.technology ?? '',
+              isready: value.first.chiefBatch?.batch.isready ?? false,
+              orderId: value.first.chiefBatch?.batch.orderId),
           stageId: value.first.stageId,
           stageNumber: value.first.stage?.number ?? '',
           stageName: value.first.stage?.name ?? '');
 
-      stageInBatchModel.status = statusNameFromId(value.last.statusId);
+      stageInBatchModel.status = value.last.stageStatus?.name ?? '';
 
       for (var stage in value) {
         stageInBatchModel.distributionStagesIdsList.add(stage.id);
@@ -305,7 +324,7 @@ class BatchesCubit extends Cubit<BatchesState> {
     });
   }
 
-  Future fetchOperationsInStage(StageInBatchModel stageInBatch) async {
+  Future fetchOperationsInStage(StageModel stageInBatch) async {
     List<OperationInStageModel> operationsInStageList = [];
     List<int> operationsIdsList = [];
 
@@ -338,6 +357,8 @@ class BatchesCubit extends Cubit<BatchesState> {
     for (int i = 0; i < fetchedOperatorOperationsList.length; i++) {
       var operation = fetchedOperatorOperationsList[i];
       final operatorOperationsDto = OperatorOperationsDTO.fromMap(operation);
+     // print(
+       //   'ID : ${operatorOperationsDto.id}  , name: ${operatorOperationsDto.operation.name}  ,  status: ${operatorOperationsDto.statusId}');
       final operationInStage = operationsInStageList.firstWhere((operation) =>
           operation.operation.id == operatorOperationsDto.operationId);
 
@@ -398,28 +419,5 @@ class BatchesCubit extends Cubit<BatchesState> {
     }
 
     emit(state.copyWith(operationsInStageList: operationsInStageList));
-  }
-
-  String statusNameFromId(statusId) {
-    String statusName = '';
-    switch (statusId) {
-      case 1:
-        statusName = 'В работе';
-      case 2:
-        statusName = 'Готово';
-      case 3:
-        statusName = 'Брак';
-      case 4:
-        statusName = 'Выгружен диспетчеру';
-      case 5:
-        statusName = 'Выполняется';
-      case 6:
-        statusName = 'Дефицит';
-      case 7:
-        statusName = 'Выполнена';
-      case 8:
-        statusName = 'Выполнена (с дефицитом)';
-    }
-    return statusName;
   }
 }

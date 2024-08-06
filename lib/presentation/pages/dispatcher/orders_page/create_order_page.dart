@@ -248,8 +248,8 @@ class _AddOrderPageViewState extends State<AddOrderPageView> {
                             padding: WidgetStateProperty.all(
                                 EdgeInsets.symmetric(
                                     vertical: 10, horizontal: 20))),
-                        onPressed: () {
-                          context.read<OrdersCubit>().createOrder();
+                        onPressed: () async{
+                          await context.read<OrdersCubit>().createOrder();
                           Navigator.pop(context, true);
                         },
                         child: Text(

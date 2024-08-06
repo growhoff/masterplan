@@ -32,7 +32,7 @@ class ButtonStatus {
     return res;
   }
 
-    String getStringStatus(int status){
+  String getStringStatus(int status){
     String res;
     switch (status) {
       case 1: res = 'В работе'; break;

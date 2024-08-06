@@ -17,7 +17,7 @@ class QueueStagesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => QueueStagesCubit(),
-      child: const QueueStagesPageView(),
+      child: QueueStagesPageView(),
     );
   }
 }
@@ -133,7 +133,7 @@ class _QueueStagesPageViewState extends State<QueueStagesPageView> {
                               state.stagesList[index],
                               setState: () => setState(() {
                                 Navigator.pop(context);
-                                 context.read<QueueStagesCubit>().fetchStages();
+                                context.read<QueueStagesCubit>().fetchStages();
                               }),
                             ),
                         separatorBuilder: (context, i) => SizedBox(height: 10),

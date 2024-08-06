@@ -8,14 +8,11 @@ import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_mac
 import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_machines_list_page/chief_machines_list_page.dart';
 import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_staff_list_page/chief_staff_add_page.dart';
 import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_staff_list_page/chief_staff_edit_page.dart';
-import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_staff_list_page/chief_staff_list_page.dart';
 import 'package:master_plan/presentation/pages/chief/chief_analytics_page/analytics_page.dart';
-import 'package:master_plan/presentation/pages/chief/stages_in_unit_page/operations_in_stage_page.dart';
 import 'package:master_plan/presentation/pages/chief/widgets/custom_navbar.dart';
 import 'package:master_plan/presentation/pages/dispatcher/lists_page/chiefs_list_page/add_chief_page.dart';
 import 'package:master_plan/presentation/pages/dispatcher/lists_page/chiefs_list_page/edit_chief_page.dart';
 import 'package:master_plan/presentation/pages/dispatcher/lists_page/units_list_page/units_list_page.dart';
-import 'package:master_plan/presentation/pages/dispatcher/orders_page/batches_page/stages_in_batch_page.dart';
 
 import 'package:master_plan/presentation/pages/dispatcher/orders_page/create_order_page.dart';
 import 'package:master_plan/presentation/pages/login/login_page.dart';
@@ -28,7 +25,6 @@ import '../pages/chief/chief_lists_pages/chief_staff_list_page/masters_list_page
 import '../pages/chief/chief_lists_pages/chief_staff_list_page/operators_list_page.dart';
 import '../pages/chief/chief_lists_pages/chief_staff_list_page/selection_staff_position_page.dart';
 import '../pages/chief/chief_analytics_page/operations_statistics_page.dart';
-import '../pages/chief/stages_in_unit_page/details_in_unit_quantity_page.dart';
 import '../pages/chief_master/chief_maste_page.dart';
 
 import '../pages/dispatcher/dispatcher_archive_page/dispatcher_archive_transfers_page.dart';
@@ -41,7 +37,6 @@ import '../pages/dispatcher/orders_page/batches_page/add_batch_page.dart';
 import '../pages/dispatcher/orders_page/batches_page/batches_page.dart';
 import '../pages/dispatcher/orders_page/batches_page/dispatcher_operations_in_stage_page.dart';
 import '../pages/dispatcher/orders_page/order_info_page.dart';
-import '../pages/dispatcher/queue_stages_page/operations_in_queue_stage_page.dart';
 import '../pages/dispatcher/widgets/custom_navbar.dart';
 import '../pages/master/maste_page.dart';
 import '../pages/technologist/archive_page/archive_operations_page.dart';
@@ -126,17 +121,11 @@ class MyApp extends StatelessWidget {
               const AddUnitPage(),
           '/dispatcherOrderInfoPage': (BuildContext context) =>
               const OrderInfoPage(),
-          '/operationInStagePage': (BuildContext context) =>
-              const OperationsInStagePage(),
 
-          '/detailsInUnitQuantityPage': (BuildContext context) =>
-              const DetailsInUnitQuantityPage(),
-          '/operationsInQueueStagePage': (BuildContext context) =>
-              const OperationsInQueueStagePage(),
-          '/dispatcherStagesInBatchesPage': (BuildContext context) =>
-              const StagesInBatchPage(),
+          //'/stagesInBatchInfoPage': (BuildContext context) =>
+          //    const StagesInBatchPage(),
           '/dispatcherOperationsInStagePage': (BuildContext context) =>
-              const DispatcherOperationsInStagePage(),
+              const OperationsInStagePage(),
         },
         home: const LoginPage(),
       ),

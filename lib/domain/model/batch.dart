@@ -1,5 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
+import 'package:master_plan/domain/model/status.dart';
+
 import 'batch_archive.dart';
 import 'order.dart';
 
@@ -16,7 +18,7 @@ class Batch {
   final int? batchStatusId;
   final int? orderId;
   final BatchArchive? batchArchive;
-  final String? batchStatusName;
+  final Status? status;
   final int? batchArchiveId;
 
   Batch({
@@ -27,7 +29,7 @@ class Batch {
     required this.count,
     required this.code,
     required this.technology,
-    this.batchStatusName,
+    this.status,
     this.batchStatusId,
     this.order,
     this.batchArchive,

@@ -12,10 +12,12 @@ import 'package:meta/meta.dart';
 import '../../../../../data/repositories/supabase/dto/distribution_stage_dto.dart';
 import '../../../../../data/repositories/supabase/dto/operation_dto.dart';
 import '../../../../../data/repositories/supabase/dto/operator_operations_dto.dart';
+import '../../../../../domain/model/batch.dart';
 import '../../../../../domain/model/distribution_stage.dart';
 import '../../../../../domain/model/operation.dart';
 import '../../../../../domain/model/unit.dart';
 import '../../../chief/stages_in_unit_page/stages_in_unit_model.dart';
+import '../../orders_page/batches_page/batch_model.dart';
 
 part 'queue_stages_state.dart';
 
@@ -55,214 +57,88 @@ class QueueStagesCubit extends Cubit<QueueStagesState> {
   Future fetchStages() async {
     emit(state.copyWith(status: QueueStagesPageStatus.loading));
     List<DistributionStage> distributionStagesList = [];
+    List<StageModel> stagesInBatchModelList = [];
 
-    List<StageInUnitModel> stagesList = [];
-
-    Map<int, StageInUnitModel> stagesMap = {};
-    List<int> stagesIdList = [];
-
-    var fetchedStagesList = await _distributionStageTable.select();
-
-    DistributionStage prevDistributionStage =
-        DistributionStage(id: 0, chiefBatchId: 0, stageId: 0, statusId: 0);
+    var fetchedStagesList =
+        await _distributionStageTable.selectByUnitId(selectedUnit.id);
 
     for (var fetchedStage in fetchedStagesList) {
-      print(fetchedStage);
-      var stageDto = DistributionStageDto.fromMap(fetchedStage);
-      var stage = DistributionStage.fromDto(stageDto);
+      final fetchedStageDto = DistributionStageDto.fromMap(fetchedStage);
 
-      distributionStagesList.add(stage);
+      final distributionStage = DistributionStage.fromDto(fetchedStageDto);
 
-      if ((!stagesMap.containsKey(stage.stageId)) &&
-          stage.unitId == selectedUnit.id) {
-        final stageUnitModel = StageInUnitModel(
-          batch: stage.chiefBatch?.batch ?? BatchDTO.empty,
-            stageId: stage.stageId,
-            stageNumber: stage.stage?.number ?? '',
-            code: stage.chiefBatch?.batch.code ?? '',
-            stageStatusName: stage.stageStatus?.name ?? '');
+       print('stageId: ${ distributionStage.id}');
 
-        stagesMap[stage.stageId] = stageUnitModel;
-
-        stagesMap[stage.stageId]?.totalDetailsQuantity =
-            stage.chiefBatch?.batch.count ?? 0;
-
-        stagesIdList.add(stage.stageId);
-      }
-
-      switch (stage.statusId) {
-        case 1:
-          if (prevDistributionStage.chiefBatchId == stage.chiefBatchId) {
-            stagesMap[stage.stageId]?.expectedDetailsQuantity++;
-          }
-          stagesMap[stage.stageId]?.inWorkDetailsQuantity++;
-        case 2:
-          if (prevDistributionStage.chiefBatchId == stage.chiefBatchId) {
-            stagesMap[stage.stageId]?.expectedDetailsQuantity++;
-          }
-          stagesMap[stage.stageId]?.inWorkDetailsQuantity++;
-        case 3:
-          if (prevDistributionStage.chiefBatchId == stage.chiefBatchId) {
-            stagesMap[stage.stageId]?.expectedDetailsQuantity++;
-          }
-          stagesMap[stage.stageId]?.stagesList.add(stage);
-          stagesMap[stage.stageId]?.readyDetailsQuantity++;
-        case 4:
-          stagesMap[stage.stageId]?.uploadedDetailsQuantity++;
-      }
-
-      if (stage.unitId == selectedUnit.id) {
-        stagesMap[stage.stageId]?.inUnitDetailsQuantity++;
-      }
-
-      prevDistributionStage = stage;
+      distributionStagesList.add(distributionStage);
     }
 
-
-    var fetchedOperationsList =
-        await _operationTable.selectByStageIdList(stagesIdList);
-
-    for (var fetchedOperation in fetchedOperationsList) {
-      final operationDto = OperationDTO.fromMap(fetchedOperation);
-      final operation = Operation(
-          id: operationDto.id,
-          number: operationDto.number,
-          name: operationDto.name,
-          code: operationDto.code,
-          timepz: operationDto.timepz,
-          stageId: operationDto.stageId);
-
-      stagesMap[operation.stageId]?.operationsList.add(OperationInStageModel(
-            name: operation.name,
-            number: operation.number,
-            operationId: operation.id,
-            code: operation.code,
-            stageId: operation.stageId,
-          ));
-      stagesMap[operation.stageId]?.operationsQuantity++;
-    }
-
-    var fetchedOperatorOperationsList = await _operatorOperationsTable
-        .selectByUnitOrderedByChiefOperation(selectedUnit.id);
-
-    OperatorOperationsDTO prevOperation = OperatorOperationsDTO.empty;
-
-    for (int i = 0; i < fetchedOperatorOperationsList.length; i++) {
-      var operation = fetchedOperatorOperationsList[i];
-
-      final operatorOperationsDto = OperatorOperationsDTO.fromMap(operation);
-
-      final operationInList = stagesMap[operatorOperationsDto.stageId]
-          ?.operationsList
-          .firstWhere((element) =>
-              element.operationId == operatorOperationsDto.operationId);
-
-      operationInList?.areaNumber = operatorOperationsDto.area!.number;
-      switch (operatorOperationsDto.statusId) {
-        case 2:
-          if (i == 0) {
-            operationInList?.onDistribution++;
-            stagesMap[operatorOperationsDto.stageId]
-                ?.onDistributionOperationsQuantity++;
-            print('1: ${operatorOperationsDto.id}');
-          } else {
-            if (operatorOperationsDto.chiefBatchId !=
-                prevOperation.chiefBatchId) {
-              operationInList?.onDistribution++;
-              stagesMap[operatorOperationsDto.stageId]
-                  ?.onDistributionOperationsQuantity++;
-
-              print(
-                  '2: ${operatorOperationsDto.chiefBatchId}    ${prevOperation.chiefBatchId}');
-            } else {
-              if ((operatorOperationsDto.modific == false ||
-                  operatorOperationsDto.modific == null) &&
-                  (prevOperation.statusId == 9)) {
-                operationInList?.onDistribution++;
-                stagesMap[operatorOperationsDto.stageId]
-                    ?.onDistributionOperationsQuantity++;
-
-                print('3: ${operatorOperationsDto.id}');
-              }
-            }
-          }
-
-        case 3:
-          operationInList?.distributed++;
-          stagesMap[operatorOperationsDto.stageId]
-              ?.distributedOperationsQuantity++;
-        case 4:
-          operationInList?.modificationQuantity++;
-          stagesMap[operatorOperationsDto.stageId]
-              ?.modificationOperationsQuantity++;
-        case 5:
-          stagesMap[operatorOperationsDto.stageId]?.defectDetailsQuantity++;
-          stagesMap[operatorOperationsDto.stageId]?.defectOperationsQuantity++;
-          operationInList?.defectQuantity++;
-        case 6:
-          operationInList?.onCheckQuantity++;
-          stagesMap[operatorOperationsDto.stageId]?.onCheckOperationQuantity++;
-        case 7:
-          stagesMap[operatorOperationsDto.stageId]
-              ?.onMachinesOperationsQuantity++;
-          operationInList?.onMachinesQuantity++;
-        case 9:
-          stagesMap[operatorOperationsDto.stageId]?.readyOperationsQuantity++;
-          operationInList?.readyQuantity++;
-      }
-      prevOperation = operatorOperationsDto;
-    }
+    var stagesMap = groupBy(distributionStagesList, (stage) => stage.stageId);
 
     stagesMap.forEach((key, value) {
-      int defectCount = 0;
+     // print('value number: ${value.first.chiefBatch?.batch.number}');
 
-      for (int i = 0; i < value.operationsList.length; i++) {
-        defectCount = defectCount + value.operationsList[i].defectQuantity;
+      final stageModel = StageModel(
+          batch: Batch(
+              id: value.first.chiefBatch?.batch.id ?? 0,
+              numberRS: value.first.chiefBatch?.batch.numberRS ?? '',
+              number: value.first.chiefBatch?.batch.number,
+              name: value.first.chiefBatch?.batch.name ?? '',
+              count: value.first.chiefBatch?.batch.count ?? 0,
+              code: value.first.chiefBatch?.batch.code ?? '',
+              technology: value.first.chiefBatch?.batch.technology ?? '',
+              isready: value.first.chiefBatch?.batch.isready ?? false,
+              orderId: value.first.chiefBatch?.batch.orderId),
+          stageId: value.first.stageId,
+          stageNumber: value.first.stage?.number ?? '',
+          stageName: value.first.stage?.name ?? '');
 
-        value.operationsList[i].readyPercent =
-            (value.operationsList[i].readyQuantity /
-                    value.totalDetailsQuantity *
-                    100)
+      print('batch number: ${stageModel.batch.number}');
+
+      stageModel.status = value.last.stageStatus?.name ?? '';
+
+      for (var stage in value) {
+        stageModel.distributionStagesIdsList.add(stage.id);
+
+        switch (stage.statusId) {
+          case 2:
+            stageModel.inWorkQuantity++;
+          case 3:
+            stageModel.readyToUploadQuantity++;
+
+          case 4:
+            stageModel.uploadedQuantity++;
+          case 5:
+            stageModel.defectQuantity++;
+        }
+      }
+
+      stageModel.allOnStageQuantity =
+          stageModel.inWorkQuantity + stageModel.readyToUploadQuantity;
+
+      stageModel.readyQuantity =
+          stageModel.readyToUploadQuantity + stageModel.uploadedQuantity;
+
+      stagesInBatchModelList.add(stageModel);
+
+      if (stageModel.uploadedQuantity != 0 && stageModel.readyQuantity != 0) {
+        stageModel.readyPercent =
+            ((stageModel.uploadedQuantity / stageModel.readyQuantity) * 100)
                 .round();
       }
 
-      for (int i = 0; i < value.stagesList.length; i++) {}
+      stagesInBatchModelList
+          .sort((a, b) => a.readyPercent.compareTo(b.readyPercent));
 
-      value.operationsQuantity =
-          value.operationsQuantity * value.totalDetailsQuantity;
+      //stagesInBatchModelList.forEach((stage) => print('batch number: ${stage.batch.number}'));
 
-      value.readyOperationsPercent =
-          ((value.readyOperationsQuantity / value.operationsQuantity) * 100)
-              .round();
-
-      value.semisQuantity =
-          value.totalDetailsQuantity - value.defectDetailsQuantity;
-
-      value.missingSemisQuantity =
-          value.totalDetailsQuantity - value.semisQuantity;
-
-      value.availableDetailsQuantity =
-          value.totalDetailsQuantity - value.defectDetailsQuantity;
-
-      value.readyDetailsPercent =
-          ((value.readyDetailsQuantity + value.uploadedDetailsQuantity) /
-                  value.availableDetailsQuantity *
-                  100)
-              .round();
-
-      stagesList.add(value);
+      emit(state.copyWith(
+          status: QueueStagesPageStatus.success,
+          stagesList: stagesInBatchModelList.reversed.toList()));
     });
-
-    stagesList
-        .sort((a, b) => a.readyDetailsPercent.compareTo(b.readyDetailsPercent));
-
-    emit(state.copyWith(
-        status: QueueStagesPageStatus.success,
-        stagesList: stagesList.reversed.toList()));
   }
 
   Future initQueueStagesPage() async {
     await fetchUnits();
-    fetchStages();
+    await fetchStages();
   }
 }

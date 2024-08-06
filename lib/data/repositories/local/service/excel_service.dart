@@ -1221,7 +1221,7 @@ class ExcelService {
             cell.cellStyle = _cellTextStyle;
           case 3:
             cell.value = TextCellValue(
-                '${analyticsOperationsList[operationRowIndex].code}');
+                '${analyticsOperationsList[operationRowIndex].batch.code}.${analyticsOperationsList[operationRowIndex].code}');
             cell.cellStyle = _cellTextStyle;
           case 4:
             cell.value = TextCellValue(

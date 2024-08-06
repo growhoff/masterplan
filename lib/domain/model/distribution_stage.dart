@@ -2,6 +2,7 @@ import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/distribution_stage_dto.dart';
 import 'package:master_plan/domain/model/chief_batch.dart';
 import 'package:master_plan/domain/model/stage.dart';
+import 'package:master_plan/domain/model/status.dart';
 // import 'package:master_plan/domain/model/user.dart';
 
 import '../../data/repositories/supabase/dto/stage_status.dart';
@@ -25,7 +26,7 @@ class DistributionStage {
   final Stage? stage;
   final int statusId;
   final int? unitId;
-  final StageStatus? stageStatus;
+  final Status? stageStatus;
 
   factory DistributionStage.fromDto(DistributionStageDto dto) {
     return DistributionStage(
@@ -33,7 +34,8 @@ class DistributionStage {
         chiefBatchId: dto.chiefBatchId,
         stageId: dto.stageId,
         statusId: dto.statusId,
-        stageStatus: dto.stageStatus,
+        stageStatus: Status(
+            id: dto.stageStatus?.id ?? 0, name: dto.stageStatus?.name ?? ''),
         unitId: dto.unitId,
         chiefBatch: dto.chiefBatchDto != null
             ? ChiefBatch(

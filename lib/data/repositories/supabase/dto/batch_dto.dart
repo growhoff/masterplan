@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'package:master_plan/data/repositories/supabase/dto/batch_archive_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/order_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/status_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 
 class BatchDTO extends Dto {
@@ -19,6 +20,7 @@ class BatchDTO extends Dto {
   final BatchArchiveDto? batchArchive;
   final int? batchArchiveId;
   final int? batchStatusId;
+  final StatusDTO? status;
 
   BatchDTO({
     required this.id,
@@ -29,6 +31,7 @@ class BatchDTO extends Dto {
     required this.code,
     required this.technology,
     required this.isready,
+    this.status,
     this.batchArchive,
     this.batchStatusId,
     this.order,
@@ -67,9 +70,12 @@ class BatchDTO extends Dto {
     return BatchDTO(
         id: map['id'] as int,
         numberRS: map['rs_number'] as String,
-        number: map['number'] as String,
+        number: map['number'],
         name: map['name'] as String,
         count: map['count'] as int,
+        status: map['z_batch_status'] != null
+            ? StatusDTO.fromMap(map['z_batch_status'])
+            : null,
         code: map['code'] as String,
         order: map['z_order'] != null ? OrderDTO.fromMap(map['z_order']) : null,
         technology: map['technology'] as String,

@@ -15,6 +15,7 @@ import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/position.dart';
 import 'package:master_plan/domain/model/status.dart';
 import 'package:master_plan/domain/model/user.dart';
+import 'package:master_plan/domain/usecase/areas_list_service.dart';
 import 'package:master_plan/domain/usecase/time_converter.dart';
 import 'package:master_plan/presentation/pages/master/pages/analytics_page/analytics_operation_model.dart';
 import 'package:open_filex/open_filex.dart';
@@ -29,32 +30,21 @@ import '../../../../../../domain/model/stage.dart';
 part 'analytics_state.dart';
 
 class AnalyticsCubit extends Cubit<AnalyticsState> {
-  AnalyticsCubit(this.staffId) : super(AnalyticsState());
+  AnalyticsCubit() : super(AnalyticsState());
 
   final _operatorOperationsTable = OperatorOperationsTable();
   final _excelService = ExcelService();
   final _positionStaffTable = PositionStaffTable();
-  final int staffId;
+
+  final _areasIdsList = AreasListService.instance.areasIdsList;
 
   Future<void> fetchReadyOperations({int? timeStart, int? timeEnd}) async {
     List<AnalyticsOperationModel> analyticsOperationsList = [];
 
     List<OperatorOperations> operatorOperationsList = [];
-    List<int> areasList = [];
-
-    // получить список участков на которых работает мастер
-
-    var fetchedList =
-        await _positionStaffTable.selectByStaffId(staffId: staffId);
-
-    for (var fetchedStaff in fetchedList) {
-      final positionStaffDto = PositionStaffDTO.fromMap(fetchedStaff);
-      final positionStaff = PositionStaffModel.fromDTO(positionStaffDto);
-      areasList.add(positionStaff.areaId ?? 0);
-    }
 
     var fetchedOperationsList = await _operatorOperationsTable
-        .selectReadyDefectAndModificationOnArea(areasList);
+        .selectReadyDefectAndModificationOnArea(_areasIdsList);
 
     for (var fetchedOperation in fetchedOperationsList) {
       final operationDto = OperatorOperationsDTO.fromMap(fetchedOperation);
@@ -87,7 +77,6 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
 
       int change = 1;
       (hours >= 8 && hours <= 20) ? change = 1 : change = 2;
-
 
       AnalyticsOperationModel analyticsOperation = AnalyticsOperationModel(
           batch: value.first.batch,
@@ -130,24 +119,9 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
     List<AnalyticsOperationModel> analyticsOperationsList = [];
 
     List<OperatorOperations> operatorOperationsList = [];
-    List<int> areasList = [];
-
-    // получить список участков на которых работает мастер
-
-
-    print('satffId: $staffId');
-    var fetchedList =
-        await _positionStaffTable.selectByStaffId(staffId: staffId);
-
-    for (var fetchedStaff in fetchedList) {
-      final positionStaffDto = PositionStaffDTO.fromMap(fetchedStaff);
-      final positionStaff = PositionStaffModel.fromDTO(positionStaffDto);
-      areasList.add(positionStaff.areaId ?? 0);
-    }
-    print('areasList: $areasList');
 
     var fetchedOperationsList = await _operatorOperationsTable
-        .selectReadyDefectAndModificationOnAreaOrderedByBatch(areasList);
+        .selectReadyDefectAndModificationOnAreaOrderedByBatch(_areasIdsList);
     print('fetchOperations: $fetchedOperationsList');
     for (var fetchedOperation in fetchedOperationsList) {
       final operationDto = OperatorOperationsDTO.fromMap(fetchedOperation);
@@ -155,15 +129,20 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
       final operation = convertOperationDtoToModel(dto: operationDto);
 
       if (timeStart != null && timeEnd != null) {
-        // print(
-        //     'start: ${timeStart}  operation: ${operation.timeFirstStart} end: ${timeEnd}');
+
         if ((operation.timeFirstStart >= timeStart &&
                 operation.timeFirstStart <= timeEnd) ||
             operation.timeFirstStart == 0) {
           operatorOperationsList.add(operation);
+          print('id: ${operation.id}');
+          print(
+              'start: ${timeStart}  operation: ${operation.timeFirstStart} end: ${timeEnd}');
         }
       } else {
         operatorOperationsList.add(operation);
+        print('id: ${operation.id}');
+        print(
+            'start: ${timeStart}  operation: ${operation.timeFirstStart} end: ${timeEnd}');
       }
     }
 
@@ -263,8 +242,9 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
         timeStart: start.millisecondsSinceEpoch,
         timeEnd: end.millisecondsSinceEpoch + 86399000);
 
-    String filePath = await _excelService.uploadTotalNumberReadyOperationsReport(
-        analyticsOperationsList: state.analyticsOperationsList);
+    String filePath =
+        await _excelService.uploadTotalNumberReadyOperationsReport(
+            analyticsOperationsList: state.analyticsOperationsList);
     if (filePath == '') {
       filePath = 'что-то пошло не так';
     } else {

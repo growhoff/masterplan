@@ -5,11 +5,19 @@ class Company {
   final String name;
   final String code;
   final bool? isPaid;
+  final String? dateOfPayment;
+  final String? paymentEndDate;
+  final bool? isTestPeriod;
+  final int? numberOfSupportStaff;
   Company({
     required this.id,
     required this.name,
     required this.code,
-    this.isPaid
+    this.isPaid,
+    this.dateOfPayment,
+    this.isTestPeriod,
+    this.numberOfSupportStaff,
+    this.paymentEndDate
   });
 
   

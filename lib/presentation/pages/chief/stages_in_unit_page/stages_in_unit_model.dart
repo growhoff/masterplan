@@ -16,7 +16,7 @@ class StageInUnitModel {
       required this.stageStatusName});
 
   final int stageId;
-  final BatchDTO batch;
+  final Batch batch;
   final String stageNumber;
   final String code;
   final String stageStatusName;

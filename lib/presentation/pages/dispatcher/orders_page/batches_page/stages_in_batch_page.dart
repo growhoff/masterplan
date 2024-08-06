@@ -3,28 +3,37 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/pages/dispatcher/orders_page/batches_page/batch_model.dart';
 import 'package:master_plan/presentation/pages/dispatcher/orders_page/batches_page/batches_cubit/batches_cubit.dart';
+import 'package:master_plan/presentation/pages/dispatcher/orders_page/batches_page/widgets/stages_in_batch_table_cell.dart';
 
+import '../../../../../domain/model/batch.dart';
 import '../../../../../domain/model/order.dart';
 
 class StagesInBatchPage extends StatelessWidget {
-  const StagesInBatchPage({super.key});
+  const StagesInBatchPage(
+      {super.key, this.selectedStageId, required this.batch});
+
+  final Batch batch;
+  final int? selectedStageId;
 
   @override
   Widget build(BuildContext context) {
-    final batch = ModalRoute.of(context)?.settings.arguments as BatchModel;
+    //final batch = ModalRoute.of(context)?.settings.arguments as Batch;
     return BlocProvider(
-      create: (context) => BatchesCubit(order: batch.batch.order),
+      create: (context) => BatchesCubit(),
       child: StagesInBatchPageView(
         batch: batch,
+        selectedStageId: selectedStageId,
       ),
     );
   }
 }
 
 class StagesInBatchPageView extends StatefulWidget {
-  const StagesInBatchPageView({required this.batch, super.key});
+  const StagesInBatchPageView(
+      {required this.batch, this.selectedStageId, super.key});
 
-  final BatchModel batch;
+  final Batch batch;
+  final int? selectedStageId;
 
   @override
   State<StagesInBatchPageView> createState() => _StagesInBatchPageViewState();
@@ -33,7 +42,8 @@ class StagesInBatchPageView extends StatefulWidget {
 class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
   @override
   void initState() {
-    context.read<BatchesCubit>().fetchStagesInBatch(widget.batch.batch.id);
+    context.read<BatchesCubit>().fetchStagesInBatch(widget.batch.id);
+    print('selectedStageid: ${widget.selectedStageId}');
     super.initState();
   }
 
@@ -68,7 +78,7 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                                       width: 20,
                                     ),
                                     Text(
-                                        '${widget.batch.batch.numberRS} ${widget.batch.batch.name}')
+                                        '${widget.batch.numberRS} ${widget.batch.name}')
                                   ],
                                 ),
                                 const SizedBox(
@@ -86,7 +96,7 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                                     const SizedBox(
                                       width: 20,
                                     ),
-                                    Text('${widget.batch.batch.technology}')
+                                    Text('${widget.batch.technology}')
                                   ],
                                 ),
                                 const SizedBox(
@@ -104,8 +114,8 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                                     const SizedBox(
                                       width: 20,
                                     ),
-                                    widget.batch.batch.code != ''
-                                        ? Text('${widget.batch.batch.code}')
+                                    widget.batch.code != ''
+                                        ? Text('${widget.batch.code}')
                                         : Text('_')
                                   ],
                                 ),
@@ -142,7 +152,7 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                                     const SizedBox(
                                       width: 20,
                                     ),
-                                    Text('${widget.batch.batch.count}')
+                                    Text('${widget.batch.count}')
                                   ],
                                 ),
                                 const SizedBox(
@@ -160,7 +170,7 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                                     const SizedBox(
                                       width: 20,
                                     ),
-                                    Text('${widget.batch.readyQuantity}')
+                                    Text('readyQuantity')
                                   ],
                                 ),
                                 const SizedBox(
@@ -178,7 +188,7 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                                     const SizedBox(
                                       width: 20,
                                     ),
-                                    Text('${widget.batch.readyPercent}%')
+                                    Text('readyPercent%')
                                   ],
                                 ),
                               ],
@@ -395,182 +405,128 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                             ...List.generate(
                                 state.stagesInBatchList.length,
                                 (index) => TableRow(children: [
-                                      TableRowInkWell(
-                                        onTap: () {
-                                          Navigator.pushNamed(context,
-                                              '/dispatcherOperationsInStagePage',
-                                              arguments: state
-                                                  .stagesInBatchList[index]);
-                                        },
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 5),
-                                          child: Text(
-                                            '${widget.batch.batch.order?.number}.${widget.batch.batch.number}.${state.stagesInBatchList[index].stageNumber}',
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ),
+                                      StagesInBatchTableCell(
+                                        '${widget.batch.order?.number}.${widget.batch.number}.${state.stagesInBatchList[index].stageNumber}',
+                                        stageModel:
+                                            state.stagesInBatchList[index],
+                                        isFirstInRow: true,
+                                        isSelected: state
+                                                    .stagesInBatchList[index]
+                                                    .stageId ==
+                                                widget.selectedStageId
+                                            ? true
+                                            : false,
                                       ),
-                                      TableRowInkWell(
-                                        onTap: () {
-                                          Navigator.pushNamed(context,
-                                              '/dispatcherOperationsInStagePage',
-                                              arguments: state
-                                                  .stagesInBatchList[index]);
-                                        },
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 5),
-                                          child: Text(
-                                            '${state.stagesInBatchList[index].stageName}',
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ),
+                                      StagesInBatchTableCell(
+                                        '${state.stagesInBatchList[index].stageName}',
+                                        stageModel:
+                                            state.stagesInBatchList[index],
+                                        isSelected: state
+                                                    .stagesInBatchList[index]
+                                                    .stageId ==
+                                                widget.selectedStageId
+                                            ? true
+                                            : false,
                                       ),
-                                      TableRowInkWell(
-                                        onTap: () {
-                                          Navigator.pushNamed(context,
-                                              '/dispatcherOperationsInStagePage',
-                                              arguments: state
-                                                  .stagesInBatchList[index]);
-                                        },
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 5),
-                                          child: Text(
-                                            '${state.stagesInBatchList[index].inWorkQuantity}',
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ),
+                                      StagesInBatchTableCell(
+                                        '${state.stagesInBatchList[index].inWorkQuantity}',
+                                        stageModel:
+                                            state.stagesInBatchList[index],
+                                        isSelected: state
+                                                    .stagesInBatchList[index]
+                                                    .stageId ==
+                                                widget.selectedStageId
+                                            ? true
+                                            : false,
                                       ),
-                                      TableRowInkWell(
-                                        onTap: () {
-                                          Navigator.pushNamed(context,
-                                              '/dispatcherOperationsInStagePage',
-                                              arguments: state
-                                                  .stagesInBatchList[index]);
-                                        },
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 5),
-                                          child: Text(
-                                            '${state.stagesInBatchList[index].readyToUploadQuantity}',
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ),
+                                      StagesInBatchTableCell(
+                                        '${state.stagesInBatchList[index].readyToUploadQuantity}',
+                                        stageModel:
+                                            state.stagesInBatchList[index],
+                                        isSelected: state
+                                                    .stagesInBatchList[index]
+                                                    .stageId ==
+                                                widget.selectedStageId
+                                            ? true
+                                            : false,
                                       ),
-                                      TableRowInkWell(
-                                        onTap: () {
-                                          Navigator.pushNamed(context,
-                                              '/dispatcherOperationsInStagePage',
-                                              arguments: state
-                                                  .stagesInBatchList[index]);
-                                        },
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 5),
-                                          child: Text(
-                                            '${state.stagesInBatchList[index].allOnStageQuantity}',
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ),
+                                      StagesInBatchTableCell(
+                                        '${state.stagesInBatchList[index].allOnStageQuantity}',
+                                        stageModel:
+                                            state.stagesInBatchList[index],
+                                        isSelected: state
+                                                    .stagesInBatchList[index]
+                                                    .stageId ==
+                                                widget.selectedStageId
+                                            ? true
+                                            : false,
                                       ),
-                                      TableRowInkWell(
-                                        onTap: () {
-                                          Navigator.pushNamed(context,
-                                              '/dispatcherOperationsInStagePage',
-                                              arguments: state
-                                                  .stagesInBatchList[index]);
-                                        },
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 5),
-                                          child: Text(
-                                            '${state.stagesInBatchList[index].waitFromPrevStagesQuantity}',
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ),
+                                      StagesInBatchTableCell(
+                                        '${state.stagesInBatchList[index].waitFromPrevStagesQuantity}',
+                                        stageModel:
+                                            state.stagesInBatchList[index],
+                                        isSelected: state
+                                                    .stagesInBatchList[index]
+                                                    .stageId ==
+                                                widget.selectedStageId
+                                            ? true
+                                            : false,
                                       ),
-                                      TableRowInkWell(
-                                        onTap: () {
-                                          Navigator.pushNamed(context,
-                                              '/dispatcherOperationsInStagePage',
-                                              arguments: state
-                                                  .stagesInBatchList[index]);
-                                        },
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 5),
-                                          child: Text(
-                                            '${state.stagesInBatchList[index].uploadedQuantity}',
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ),
+                                      StagesInBatchTableCell(
+                                        '${state.stagesInBatchList[index].uploadedQuantity}',
+                                        stageModel:
+                                            state.stagesInBatchList[index],
+                                        isSelected: state
+                                                    .stagesInBatchList[index]
+                                                    .stageId ==
+                                                widget.selectedStageId
+                                            ? true
+                                            : false,
                                       ),
-                                      TableRowInkWell(
-                                        onTap: () {
-                                          Navigator.pushNamed(context,
-                                              '/dispatcherOperationsInStagePage',
-                                              arguments: state
-                                                  .stagesInBatchList[index]);
-                                        },
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 5),
-                                          child: Text(
-                                            '${state.stagesInBatchList[index].readyQuantity}',
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ),
+                                      StagesInBatchTableCell(
+                                        '${state.stagesInBatchList[index].readyQuantity}',
+                                        stageModel:
+                                            state.stagesInBatchList[index],
+                                        isSelected: state
+                                                    .stagesInBatchList[index]
+                                                    .stageId ==
+                                                widget.selectedStageId
+                                            ? true
+                                            : false,
                                       ),
-                                      TableRowInkWell(
-                                        onTap: () {
-                                          Navigator.pushNamed(context,
-                                              '/dispatcherOperationsInStagePage',
-                                              arguments: state
-                                                  .stagesInBatchList[index]);
-                                        },
-                                        child: Container(
-                                          alignment: Alignment.center,
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 5),
-                                          child: Text(
-                                            '${state.stagesInBatchList[index].defectQuantity}',
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ),
+                                      StagesInBatchTableCell(
+                                        '${state.stagesInBatchList[index].defectQuantity}',
+                                        stageModel:
+                                            state.stagesInBatchList[index],
+                                        isSelected: state
+                                                    .stagesInBatchList[index]
+                                                    .stageId ==
+                                                widget.selectedStageId
+                                            ? true
+                                            : false,
                                       ),
-                                      TableRowInkWell(
-                                        onTap: () {
-                                          Navigator.pushNamed(context,
-                                              '/dispatcherOperationsInStagePage',
-                                              arguments: state
-                                                  .stagesInBatchList[index]);
-                                        },
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 5),
-                                          child: Text(
-                                            '${state.stagesInBatchList[index].readyPercent}',
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ),
+                                      StagesInBatchTableCell(
+                                        '${state.stagesInBatchList[index].readyPercent}',
+                                        stageModel:
+                                            state.stagesInBatchList[index],
+                                        isSelected: state
+                                                    .stagesInBatchList[index]
+                                                    .stageId ==
+                                                widget.selectedStageId
+                                            ? true
+                                            : false,
                                       ),
-                                      TableRowInkWell(
-                                        onTap: () {
-                                          Navigator.pushNamed(context,
-                                              '/dispatcherOperationsInStagePage',
-                                              arguments: state
-                                                  .stagesInBatchList[index]);
-                                        },
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 5),
-                                          child: Text(
-                                            '${state.stagesInBatchList[index].status}',
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ),
+                                      StagesInBatchTableCell(
+                                        '${state.stagesInBatchList[index].status}',
+                                        stageModel:
+                                            state.stagesInBatchList[index],
+                                        isSelected: state
+                                                    .stagesInBatchList[index]
+                                                    .stageId ==
+                                                widget.selectedStageId
+                                            ? true
+                                            : false,
+                                        isLastInRow: true,
                                       ),
                                     ]))
                           ],

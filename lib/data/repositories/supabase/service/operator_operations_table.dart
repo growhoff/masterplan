@@ -106,8 +106,8 @@ class OperatorOperationsTable extends SupabaseTable {
             '*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*), z_staff(*, z_position(*)), z_machine(*), z_area!inner(*), z_chief_operation!inner(*), z_chief_batch(*)')
         .eq('z_area.company_id', _companyId)
         .inFilter('operation_id', operationsIdsList)
-        .order('chief_batch_id', ascending: true)
-        .order('chief_operation_id', ascending: true);
+        .order('id', ascending: true);
+        //.order('chief_operation_id', ascending: true);
   }
 
   Future<List<Map<String, dynamic>>> selectReadyDefectAndModificationOnArea(
@@ -288,7 +288,7 @@ class OperatorOperationsTable extends SupabaseTable {
       'status_id': 6,
       'staff_id': staffId,
       'time_working': 0,
-      'time_first_start': 0
+      'time_first_start': DateTime.now().millisecondsSinceEpoch
     }).eq('optimal_part', optPath);
   }
 

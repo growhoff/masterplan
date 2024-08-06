@@ -5,34 +5,34 @@ import 'package:master_plan/presentation/pages/dispatcher/orders_page/batches_pa
 
 import 'batch_model.dart';
 
-class DispatcherOperationsInStagePage extends StatelessWidget {
-  const DispatcherOperationsInStagePage({super.key});
+class OperationsInStagePage extends StatelessWidget {
+  const OperationsInStagePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     final stage =
-        ModalRoute.of(context)?.settings.arguments as StageInBatchModel;
+        ModalRoute.of(context)?.settings.arguments as StageModel;
     return BlocProvider(
       create: (context) => BatchesCubit(),
-      child: DispatcherOperationsInStagePageView(
+      child: OperationsInStagePageView(
         stage: stage,
       ),
     );
   }
 }
 
-class DispatcherOperationsInStagePageView extends StatefulWidget {
-  const DispatcherOperationsInStagePageView({required this.stage, super.key});
+class OperationsInStagePageView extends StatefulWidget {
+  const OperationsInStagePageView({required this.stage, super.key});
 
-  final StageInBatchModel stage;
+  final StageModel stage;
 
   @override
-  State<DispatcherOperationsInStagePageView> createState() =>
-      _DispatcherOperationsInStagePageViewState();
+  State<OperationsInStagePageView> createState() =>
+      _OperationsInStagePageViewState();
 }
 
-class _DispatcherOperationsInStagePageViewState
-    extends State<DispatcherOperationsInStagePageView> {
+class _OperationsInStagePageViewState
+    extends State<OperationsInStagePageView> {
   @override
   void initState() {
     context.read<BatchesCubit>().fetchOperationsInStage(widget.stage);

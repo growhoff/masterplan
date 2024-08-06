@@ -4,15 +4,18 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/pages/chief/stages_in_unit_page/stages_in_unit_cubit/stages_in_unit_cubit.dart';
 import 'package:master_plan/presentation/pages/chief/stages_in_unit_page/stages_in_unit_model.dart';
+import 'package:master_plan/presentation/pages/dispatcher/orders_page/batches_page/batch_model.dart';
+
+import '../../orders_page/batches_page/stages_in_batch_page.dart';
 
 class QueueStageItem extends StatelessWidget {
   const QueueStageItem(
-    this.stagesInUnitModel, {
+    this.stageModel, {
     required this.setState,
     super.key,
   });
 
-  final StageInUnitModel stagesInUnitModel;
+  final StageModel stageModel;
   final VoidCallback setState;
 
   @override
@@ -20,7 +23,7 @@ class QueueStageItem extends StatelessWidget {
     return BlocProvider(
       create: (context) => StagesInUnitCubit(),
       child: QueueStageItemView(
-        stagesInUnitModel: stagesInUnitModel,
+        stageModel: stageModel,
         setState: setState,
       ),
     );
@@ -29,12 +32,12 @@ class QueueStageItem extends StatelessWidget {
 
 class QueueStageItemView extends StatefulWidget {
   const QueueStageItemView({
-    required this.stagesInUnitModel,
+    required this.stageModel,
     required this.setState,
     super.key,
   });
 
-  final StageInUnitModel stagesInUnitModel;
+  final StageModel stageModel;
   final VoidCallback setState;
 
   @override
@@ -56,9 +59,9 @@ class _QueueStageItemViewState extends State<QueueStageItemView> {
                       title: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('этап ${widget.stagesInUnitModel.stageNumber}'),
+                          Text('этап ${widget.stageModel.stageNumber}'),
                           Text(
-                              'деталь ${widget.stagesInUnitModel.batch.number} ${widget.stagesInUnitModel.batch.name}')
+                              'деталь ${widget.stageModel.batch.number} ${widget.stageModel.batch.name}')
                         ],
                       ),
                       contentPadding: EdgeInsets.all(5),
@@ -66,18 +69,20 @@ class _QueueStageItemViewState extends State<QueueStageItemView> {
                         SimpleDialogOption(
                           padding:
                               EdgeInsets.symmetric(horizontal: 26, vertical: 5),
-                          onPressed: () {
-                            Navigator.pop(context, false);
-                            Navigator.pushNamed(
-                                context, '/detailsInUnitQuantityPage',
-                                arguments: widget.stagesInUnitModel);
-                          },
+                          onPressed: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => StagesInBatchPage(
+                                        batch: widget.stageModel.batch,
+                                        selectedStageId:
+                                            widget.stageModel.stageId,
+                                      ))),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Container(
                                 padding: EdgeInsets.all(3),
-                                child: Text('N'),
+                                child: Text('I'),
                                 decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     border: Border.all(
@@ -86,40 +91,8 @@ class _QueueStageItemViewState extends State<QueueStageItemView> {
                               SizedBox(
                                 width: 8,
                               ),
-                              Text('количество',
+                              Text('подробная информация',
                                   style: TextStyle(fontSize: 18)),
-                            ],
-                          ),
-                        ),
-                        Divider(
-                          height: 1,
-                        ),
-                        SimpleDialogOption(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 26, vertical: 5),
-                          onPressed: () {
-                            Navigator.pop(context, false);
-                            setState(() {
-                              Navigator.pushNamed(
-                                  context, '/operationsInQueueStagePage',
-                                  arguments: widget.stagesInUnitModel);
-                            });
-                          },
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(3),
-                                child: Text('O'),
-                                decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                        width: 2, color: Colors.black)),
-                              ),
-                              SizedBox(
-                                width: 8,
-                              ),
-                              Text('операции', style: TextStyle(fontSize: 18)),
                             ],
                           ),
                         ),
@@ -148,22 +121,22 @@ class _QueueStageItemViewState extends State<QueueStageItemView> {
                                                             .start,
                                                     children: [
                                                       Text(
-                                                          'Номер чертежа: ${widget.stagesInUnitModel.batch.number} ${widget.stagesInUnitModel.batch.name}'),
+                                                          'Номер чертежа: ${widget.stageModel.batch.number} ${widget.stageModel.batch.name}'),
                                                       const SizedBox(
                                                         height: 5,
                                                       ),
                                                       Text(
-                                                          '№ этапа: ${widget.stagesInUnitModel.stageNumber}'),
+                                                          '№ этапа: ${widget.stageModel.stageNumber}'),
                                                       const SizedBox(
                                                         height: 5,
                                                       ),
                                                       Text(
-                                                          'Номер технологии: ${widget.stagesInUnitModel.batch.technology}'),
+                                                          'Номер технологии: ${widget.stageModel.batch.technology}'),
                                                       const SizedBox(
                                                         height: 5,
                                                       ),
                                                       Text(
-                                                          'Код детали: ${widget.stagesInUnitModel.code}')
+                                                          'Код детали: ${widget.stageModel.batch.code}')
                                                     ],
                                                   )),
                                             ),
@@ -200,8 +173,7 @@ class _QueueStageItemViewState extends State<QueueStageItemView> {
                     ));
           },
           child: Card(
-            color: readyPercentToColor(
-                widget.stagesInUnitModel.readyDetailsPercent),
+            color: readyPercentToColor(widget.stageModel.readyPercent),
             child: Padding(
               padding: const EdgeInsets.all(5),
               child: Column(
@@ -212,7 +184,7 @@ class _QueueStageItemViewState extends State<QueueStageItemView> {
                       Expanded(
                         child: Container(
                           child: Text(
-                            '${widget.stagesInUnitModel.stageNumber}',
+                            '${widget.stageModel.stageNumber}',
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -221,7 +193,7 @@ class _QueueStageItemViewState extends State<QueueStageItemView> {
                       Expanded(
                         child: Container(
                           child: Text(
-                            '${widget.stagesInUnitModel.batch.number}',
+                            '${widget.stageModel.batch.number}',
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -230,7 +202,7 @@ class _QueueStageItemViewState extends State<QueueStageItemView> {
                       Expanded(
                         child: Container(
                           child: Text(
-                            '${widget.stagesInUnitModel.batch.name}',
+                            '${widget.stageModel.batch.name}',
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -239,7 +211,7 @@ class _QueueStageItemViewState extends State<QueueStageItemView> {
                       Expanded(
                         child: Container(
                           child: Text(
-                            '${widget.stagesInUnitModel.readyDetailsPercent}%',
+                            '${widget.stageModel.readyPercent}%',
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -248,7 +220,7 @@ class _QueueStageItemViewState extends State<QueueStageItemView> {
                       Expanded(
                         child: Container(
                           child: Text(
-                            '${widget.stagesInUnitModel.stageStatusName}',
+                            '${widget.stageModel.status}',
                             textAlign: TextAlign.center,
                           ),
                         ),

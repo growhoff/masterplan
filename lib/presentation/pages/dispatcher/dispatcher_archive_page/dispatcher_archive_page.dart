@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/presentation/pages/dispatcher/dispatcher_archive_page/widgets/archive_expansion_body_item.dart';
+import 'package:master_plan/presentation/pages/dispatcher/dispatcher_archive_page/widgets/archive_expansion_title_item.dart';
 import 'package:master_plan/presentation/pages/technologist/archive_page/archive_cubit/archive_cubit.dart';
 import 'package:master_plan/presentation/pages/technologist/archive_page/widgets/archive_expansion_body_item.dart';
 import 'package:master_plan/presentation/pages/technologist/archive_page/widgets/archive_expansion_title_item.dart';
@@ -69,25 +71,30 @@ class _DispatcherArchivePageViewState extends State<DispatcherArchivePageView> {
                         child: ListView.separated(
                             physics: AlwaysScrollableScrollPhysics(),
                             shrinkWrap: true,
-                            itemBuilder: (context, index) =>
-                                index < state.batchesList.length
-                                    ? ExpansionTile(
-                                        maintainState: true,
-                                        tilePadding: EdgeInsets.all(0),
-                                        title: ArchiveExpansionTitleItem(
-                                            state.batchesList[index]),
-                                        childrenPadding:
-                                            EdgeInsets.fromLTRB(20, 0, 20, 10),
-                                        expandedAlignment: Alignment.topLeft,
-                                        children: [
-                                          ArchiveExpansionBodyItem(
-                                            state.batchesList[index],
-                                          )
-                                        ],
+                            itemBuilder: (context, index) => index <
+                                    state.batchesList.length
+                                ? ExpansionTile(
+                                    maintainState: true,
+                                    tilePadding: EdgeInsets.all(0),
+                                    title: DispatcherArchiveExpansionTitleItem(
+                                        state.batchesList[index]),
+                                    childrenPadding:
+                                        EdgeInsets.fromLTRB(20, 0, 20, 10),
+                                    expandedAlignment: Alignment.topLeft,
+                                    children: [
+                                      DispatcherArchiveExpansionBodyItem(
+                                        state.batchesList[index],
+                                        deleteBatch: () => setState(() =>
+                                            context
+                                                .read<DispatcherArchiveCubit>()
+                                                .deleteBatchArchive(state
+                                                    .batchesList[index].id)),
                                       )
-                                    : SizedBox(
-                                        height: 50,
-                                      ),
+                                    ],
+                                  )
+                                : SizedBox(
+                                    height: 50,
+                                  ),
                             separatorBuilder: (ctx, i) => SizedBox(
                                   height: 5,
                                 ),

@@ -6,15 +6,15 @@ class StagesInUnitState extends Equatable {
     this.stagesInBatchList = const [],
   });
 
-  final List<StageInUnitModel> stagesList;
-  final List<StageInBatchModel> stagesInBatchList;
+  final List<StageModel> stagesList;
+  final List<StageModel> stagesInBatchList;
 
   @override
   List<Object?> get props => [stagesList, stagesInBatchList, ];
 
   StagesInUnitState copyWith({
-    List<StageInUnitModel>? stagesList,
-    List<StageInBatchModel>? stagesInBatchList,
+    List<StageModel>? stagesList,
+    List<StageModel>? stagesInBatchList,
   }) {
     return StagesInUnitState(
         stagesList: stagesList ?? this.stagesList,

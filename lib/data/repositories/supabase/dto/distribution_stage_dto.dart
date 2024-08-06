@@ -2,7 +2,10 @@
 import 'package:master_plan/data/repositories/supabase/dto/chief_batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/stage_status.dart';
+import 'package:master_plan/data/repositories/supabase/dto/status_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
+
+import '../../../../domain/model/status.dart';
 
 class DistributionStageDto extends Dto {
   DistributionStageDto({
@@ -23,7 +26,7 @@ class DistributionStageDto extends Dto {
   final StageDTO? stageDto;
   final int statusId;
   final int? unitId;
-  final StageStatus? stageStatus;
+  final StatusDTO? stageStatus;
 
   factory DistributionStageDto.fromMap(Map<String, dynamic> map) {
     return DistributionStageDto(
@@ -40,7 +43,7 @@ class DistributionStageDto extends Dto {
             : null,
         statusId: map['status_id'],
         stageStatus: map['z_stage_status'] != null
-            ? StageStatus.fromMap(map['z_stage_status'])
+            ? StatusDTO.fromMap(map['z_stage_status'])
             : null,
         unitId: map['unit_id']);
   }

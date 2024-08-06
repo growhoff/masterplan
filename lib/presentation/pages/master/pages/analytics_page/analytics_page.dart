@@ -11,7 +11,7 @@ class AnalyticsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final staffId = context.read<CubitMain>().state.user?.id ?? 0;
     return BlocProvider(
-      create: (context) => AnalyticsCubit(staffId),
+      create: (context) => AnalyticsCubit(),
       child: AnalyticsPageView(),
     );
   }

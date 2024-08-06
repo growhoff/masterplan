@@ -15,7 +15,7 @@ final class BatchesState extends Equatable {
 
   final BatchesStatus status;
 
-  final List<StageInBatchModel> stagesInBatchList;
+  final List<StageModel> stagesInBatchList;
 
   final List<OperationInStageModel> operationsInStageList;
 
@@ -24,7 +24,7 @@ final class BatchesState extends Equatable {
   BatchesState copyWith({
     List<BatchModel>? batchesList,
     BatchesStatus? status,
-    List<StageInBatchModel>? stagesInBatchList,
+    List<StageModel>? stagesInBatchList,
     List<BatchArchive>? batchesArchiveList,
     List<OperationInStageModel>? operationsInStageList,
   }) {

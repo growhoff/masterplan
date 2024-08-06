@@ -135,8 +135,8 @@ class _AddBatchPagePageViewState extends State<AddBatchPagePageView> {
                       height: 40,
                     ),
                     ElevatedButton(
-                      onPressed: () {
-                        context.read<BatchesCubit>().addBatch();
+                      onPressed: () async{
+                        await context.read<BatchesCubit>().addBatch();
                         Navigator.pop(context, true);
                       },
                       child: Text(

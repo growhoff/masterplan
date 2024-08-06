@@ -10,9 +10,8 @@ class BatchArchiveTable extends SupabaseTable {
   final _companyId = CompanyService.instance.companyId ?? 1;
 
   @override
-  Future<void> delete(int id) {
-    // TODO: implement delete
-    throw UnimplementedError();
+  Future<void> delete(int id) async {
+    await _table.delete().eq('id', id);
   }
 
   @override
