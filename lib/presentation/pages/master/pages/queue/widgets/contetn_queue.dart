@@ -5,9 +5,9 @@ import 'row_list_four.dart';
 import '../../queue/model/item_machine.dart';
 
 class ContetnQueue extends StatelessWidget {
-  const ContetnQueue({super.key, required this.itemMachine});
+  const ContetnQueue({super.key, required this.itemMachine, required this.isGroup});
   final ItemMachine itemMachine;
-
+  final bool isGroup;
   @override
   Widget build(BuildContext context) {
     String activeBatch = '';
@@ -61,21 +61,26 @@ class ContetnQueue extends StatelessWidget {
 
         // const Divider(),
         // const SizedBox(height: 8),
+        
+        const SizedBox(height: 8),
+        const Card(
+          color: Colors.white38,
+          child: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: RowListFour(text0: '№ этапа', text1: 'Деталь', text2: 'Номер операции', text3: 'Время обработки, мин.', text4: 'Кол. в оп. партии', text5: 'Количество в группе'),
+          ),
+        ),
+        // const SizedBox(height: 0),
         Visibility(
           visible: itemMachine.activeOper != null,
           child: Card(
           color: Colors.greenAccent,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Column(
-            children: [
-              const RowListFour(text0: '№ этапа', text1: 'Деталь', text2: 'Номер операции', text3: 'Время обработки, мин.', text4: 'Кол. в оп. партии',),
-              RowListFour(text0: activeStage, text1: activeBatch, text2: activeOper, text3: activeTime, text4: activeCount,),
-            ],
-                  ),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            child: RowListFour(text0: activeStage, text1: activeBatch, text2: activeOper, text3: activeTime, text4: activeCount, text5: ''),
           )),),
         const SizedBox(height: 8),
-        Reorder(itemMachine.listOper)
+        Reorder(itemMachine.listPathOper, isGroup)
       ],
     );
   }

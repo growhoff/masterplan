@@ -10,16 +10,6 @@ class ButtonStatus {
 
   String toggleStatus(String status, String oldStatus){
     String res = status;
-    // switch (status) {
-    //   case 'Все': res = 'Все'; break;
-    //   case 'Пауза': res = 'Пауза'; break;
-    //   case 'Переналадка': res = 'Переналадка'; break;
-    //   case 'Уборка': res = 'Уборка'; break;
-    //   case 'Поломка': res = 'Поломка'; break;
-    //   case 'НетУП': res = 'НетУП'; break;
-    //   case 'НетЧертеж': res = 'НетЧертеж'; break;
-    //   default: res = 'Все';
-    // }
     if (status != 'Пауза' && oldStatus != 'Пауза') if (status == oldStatus) res = 'Все';
     return res;
   }
@@ -38,6 +28,22 @@ class ButtonStatus {
       case 'НетУП': res = 7; break;
       case 'НетЧертеж': res = 9; break;
       default: res = 2;
+    }
+    return res;
+  }
+
+    String getStringStatus(int status){
+    String res;
+    switch (status) {
+      case 1: res = 'В работе'; break;
+      case 2: res = 'Простой'; break;
+      case 3: res = 'Переналадка'; break;
+      case 4: res = 'Поломка'; break;
+      case 5: res = 'Уборка'; break;
+      case 6: res = 'ОтсутствиеИнструмента'; break;
+      case 7: res = 'НетУП'; break;
+      case 9: res = 'НетЧертеж'; break;
+      default: res = 'Простой';
     }
     return res;
   }

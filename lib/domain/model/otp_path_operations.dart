@@ -12,6 +12,9 @@ class OptPathOperations {
   final AreaDTO? area;
   final List<int>? listId;
   final bool? active;
+  final String batchNumber;
+  final String stageNumber;
+  // final bool isChoise;
   OptPathOperations({
     required this.list,
     required this.idPath,
@@ -20,6 +23,9 @@ class OptPathOperations {
     this.machine,
     this.area,
     this.listId,
-    this.active
+    this.active,
+    required this.batchNumber,
+    required this.stageNumber,
+    // required this.isChoise,
   });
 }

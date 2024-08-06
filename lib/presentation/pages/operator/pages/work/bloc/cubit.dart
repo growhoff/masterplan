@@ -135,59 +135,68 @@ class CubitWork extends Cubit<StateWork> {
         operActive ??= listOperQueue.first;
         listOperQueue.removeAt(0);
       }
-      //добавляем время в массив
-      //выставление статусов относительно паузы
-      if (operActive != null) {
-        if (operActive.pause == null) {
-          print('pause == null/ btn = Все/ btnstart = false/ time = false');
-          statusBtn.add('Все');
-          listStartBtn.add(false);
-          listStartTime.add(false);
-          timeActive.add(0);
-        } else if (operActive.pause == true) {
-          print('pause == true/ btn = Простой/ btnstart = true/ time = false');
-          statusBtn.add('Простой');
-          listStartBtn.add(true);
-          listStartTime.add(false);
-          timeActive.add(operActive.list.first.timeworking!);
-        } else {
-          print('pause == false/ btn = Простой/ btnstart = false/ time = true');
-          statusBtn.add('В работе');
+
+      final dtoL = await selectMonitorStatus(shiftsDistr.machine.id);
+      if (dtoL != null){
+        final status = dtoL.statusMachine!.id;
+        if (status == 3 || status == 4 || status == 5 || status == 6 || status == 7 || status == 9){
+          print('operActive == null/ btn = ${dtoL.statusMachine!.name}/ btnstart = false/ time = true');
+          statusBtn.add(ButtonStatus().getStringStatus(status));
           listStartBtn.add(false);
           listStartTime.add(true);
-
-          final date1 = DateTime.fromMillisecondsSinceEpoch(
-                  operActive.list.first.timestart!)
-              .toUtc();
-          final date2 = DateTime.now().toUtc();
-          final difference = (date2.difference(date1)).inSeconds;
+          final difference = getDifferenceSec(dtoL.timeStart);
           timeActive.add(difference);
-        }
-      } else {
-        // ??
-        final lastStatusMap =
-            await monitorTable.selectStatusLastMachine(shiftsDistr.machine.id);
-        if (lastStatusMap != null) {
-          final dtoLast = MonitoringMachineDTO.fromMap(lastStatusMap);
-          if ((dtoLast.statusMachine!.id == 4) && (dtoLast.timeStop == 0)) {
-            print(
-                'operActive == null/ btn = Поломка/ btnstart = false/ time = true');
-            statusBtn.add('Поломка');
-            listStartBtn.add(false);
-            listStartTime.add(true);
-
-            final date1 =
-                DateTime.fromMillisecondsSinceEpoch(dtoLast.timeStart).toUtc();
-            final date2 = DateTime.now().toUtc();
-            final difference = (date2.difference(date1)).inSeconds;
-            timeActive.add(difference);
-          } else {
-            print(
-                'operActive == null/ btn = Все/ btnstart = false/ time = false');
+          emit(state.copyWith(monitorId: dtoL.id));
+        } else {
+          if (operActive != null) {
+          if (operActive.pause == null) {
+            print('pause == null/ btn = Все/ btnstart = false/ time = false');
             statusBtn.add('Все');
             listStartBtn.add(false);
             listStartTime.add(false);
             timeActive.add(0);
+          } else if (operActive.pause == true) {
+            print('pause == true/ btn = Простой/ btnstart = true/ time = false');
+            statusBtn.add('Простой');
+            listStartBtn.add(true);
+            listStartTime.add(false);
+            timeActive.add(operActive.list.first.timeworking!);
+          } else {
+            print('pause == false/ btn = Простой/ btnstart = false/ time = true');
+            statusBtn.add('В работе');
+            listStartBtn.add(false);
+            listStartTime.add(true);
+            final difference = getDifferenceSec(operActive.list.first.timestart!);
+            timeActive.add(difference);
+          }
+        } else {
+          statusBtn.add('Все');
+          listStartBtn.add(false);
+          listStartTime.add(false);
+          timeActive.add(0);
+        }
+        }
+      } else {
+        if (operActive != null) {
+          if (operActive.pause == null) {
+            print('pause == null/ btn = Все/ btnstart = false/ time = false');
+            statusBtn.add('Все');
+            listStartBtn.add(false);
+            listStartTime.add(false);
+            timeActive.add(0);
+          } else if (operActive.pause == true) {
+            print('pause == true/ btn = Простой/ btnstart = true/ time = false');
+            statusBtn.add('Простой');
+            listStartBtn.add(true);
+            listStartTime.add(false);
+            timeActive.add(operActive.list.first.timeworking!);
+          } else {
+            print('pause == false/ btn = Простой/ btnstart = false/ time = true');
+            statusBtn.add('В работе');
+            listStartBtn.add(false);
+            listStartTime.add(true);
+            final difference = getDifferenceSec(operActive.list.first.timestart!);
+            timeActive.add(difference);
           }
         } else {
           statusBtn.add('Все');
@@ -196,6 +205,55 @@ class CubitWork extends Cubit<StateWork> {
           timeActive.add(0);
         }
       }
+      //добавляем время в массив
+      //выставление статусов относительно паузы
+      // if (operActive != null) {
+      //   if (operActive.pause == null) {
+      //     print('pause == null/ btn = Все/ btnstart = false/ time = false');
+      //     statusBtn.add('Все');
+      //     listStartBtn.add(false);
+      //     listStartTime.add(false);
+      //     timeActive.add(0);
+      //   } else if (operActive.pause == true) {
+      //     print('pause == true/ btn = Простой/ btnstart = true/ time = false');
+      //     statusBtn.add('Простой');
+      //     listStartBtn.add(true);
+      //     listStartTime.add(false);
+      //     timeActive.add(operActive.list.first.timeworking!);
+      //   } else {
+      //     print('pause == false/ btn = Простой/ btnstart = false/ time = true');
+      //     statusBtn.add('В работе');
+      //     listStartBtn.add(false);
+      //     listStartTime.add(true);
+      //     final difference = getDifferenceSec(operActive.list.first.timestart!);
+      //     timeActive.add(difference);
+      //   }
+      // } else {
+      //   // ??
+      //   // final lastStatusMap = await monitorTable.selectStatusLastMachine(shiftsDistr.machine.id);
+      //   // if (lastStatusMap != null) {
+      //     // final dtoLast = MonitoringMachineDTO.fromMap(lastStatusMap);
+      //     // if ((dtoLast.statusMachine!.id == 4) && (dtoLast.timeStop == 0)) {
+      //     //   print('operActive == null/ btn = Поломка/ btnstart = false/ time = true');
+      //     //   statusBtn.add('Поломка');
+      //     //   listStartBtn.add(false);
+      //     //   listStartTime.add(true);
+      //     //   final difference = getDifferenceSec(dtoLast.timeStart);
+      //     //   timeActive.add(difference);
+      //     // } else {
+      //     //   print('operActive == null/ btn = Все/ btnstart = false/ time = false');
+      //     //   statusBtn.add('Все');
+      //     //   listStartBtn.add(false);
+      //     //   listStartTime.add(false);
+      //     //   timeActive.add(0);
+      //     // }
+      //   // } else {
+      //   //   statusBtn.add('Все');
+      //   //   listStartBtn.add(false);
+      //   //   listStartTime.add(false);
+      //   //   timeActive.add(0);
+      //   // }
+      // }
       //
       pageData.add(PageItem(
           machine: shiftsDistr.machine,
@@ -210,6 +268,24 @@ class CubitWork extends Cubit<StateWork> {
         listStartBtn: listStartTime,
         listStartTime: listStartTime));
   }
+
+
+  Future<MonitoringMachineDTO?> selectMonitorStatus(int idMachine)async{
+    final lastStatusMap = await monitorTable.selectStatusLastMachine(idMachine);
+    if (lastStatusMap != null){
+      final dtoLast = MonitoringMachineDTO.fromMap(lastStatusMap);
+      if (dtoLast.timeStop == 0) {return dtoLast;}
+      else {return null;}
+    } else {return null;}
+  }
+
+  int getDifferenceSec(int time){
+    final date1 = DateTime.fromMillisecondsSinceEpoch(time).toUtc();
+    final date2 = DateTime.now().toUtc();
+    final difference = (date2.difference(date1)).inSeconds;
+    return difference;
+  }
+
 
   void setActivePage(int index) {
     emit(state.copyWith(activePage: index));

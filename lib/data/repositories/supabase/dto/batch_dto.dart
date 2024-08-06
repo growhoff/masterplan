@@ -67,7 +67,7 @@ class BatchDTO extends Dto {
     return BatchDTO(
         id: map['id'] as int,
         numberRS: map['rs_number'] as String,
-        number: map['number'],
+        number: map['number'] as String,
         name: map['name'] as String,
         count: map['count'] as int,
         code: map['code'] as String,

@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/domain/model/group_opt_path.dart';
 
 import '../../../../domain/model/item_saver.dart';
 import 'state.dart';
@@ -19,8 +20,12 @@ class CubitMaster extends Cubit<StateMaster> {
     return check;
   }
 
-  void setList(List<OptPathOperations> list){
-    emit(state.copyWith(list: list, isSaveOrder: list.isNotEmpty));
+  void setList(List<GroupOptPath> list){
+    List<OptPathOperations> listNew = [];
+    for (var e in list) {
+      listNew.addAll(e.listOptPath);
+    }
+    emit(state.copyWith(list: listNew, isSaveOrder: list.isNotEmpty));
   }
 
   Future<void> saveDate() async {

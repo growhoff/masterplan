@@ -44,7 +44,7 @@ class CubitQueueMaster extends Cubit<StateQueueMaster> {
         list.add(ConvertDtoModel.convertToOperatorOperations(element));
         if (element.timeplan != null) {time += element.timeplan!;}
       }
-      listB.add(OptPathOperations(idPath: key!, list: list, order: list.first.order!, time: time, active: list.first.status.id == 7));
+      listB.add(OptPathOperations(idPath: key!, list: list, order: list.first.order!, time: time, active: list.first.status.id == 7, batchNumber: '$key', stageNumber: ''));
     });
 
     listB.sort((a, b) => a.order!.compareTo(b.order!));

@@ -50,6 +50,7 @@ class ConvertDtoModel {
           code: dto.batch.code,
           orderId: dto.batch.orderId,
           technology: dto.batch.technology,
+          number: dto.batch.number,
           // order: dto.batch.order,
           isready: dto.batch.isready),
       order: dto.order,

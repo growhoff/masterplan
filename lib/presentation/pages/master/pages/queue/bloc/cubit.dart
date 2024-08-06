@@ -2,16 +2,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
 import 'package:master_plan/domain/model/area_machine.dart';
+import 'package:master_plan/domain/model/group_opt_path.dart';
 import 'package:master_plan/domain/model/name_index.dart';
-import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/domain/model/otp_path_operations.dart';
-import 'package:master_plan/domain/usecase/convert_dto_model.dart';
+import 'package:master_plan/domain/usecase/operation_group.dart';
 import '../model/item_machine.dart';
 import 'state.dart';
-import 'package:collection/collection.dart';
 
 class CubitQueueMaster extends Cubit<StateQueueMaster> {
-  // final List<OperatorOperations>? queueList;
   final int userId;
   final tableOperations = OperatorOperationsTable();
   final List<AreaMachine> listAreaMachine;
@@ -30,41 +28,12 @@ class CubitQueueMaster extends Cubit<StateQueueMaster> {
     }
     final quere = await tableOperations.selectListIdOrder(listId);
     List<OperatorOperationsDTO> queueList = [];
-    for (var item in quere) {
-      queueList.add(OperatorOperationsDTO.fromMap(item));
-    }
+    for (var item in quere) {queueList.add(OperatorOperationsDTO.fromMap(item));}
 
-    List<OptPathOperations> listB = [];
-    var newMap = groupBy(queueList, (el) => el.optimalPart);
-    newMap.forEach((key, value) {
-      List<OperatorOperations> list = [];
-      int time = 0;
-      for (var element in value) {
-        list.add(ConvertDtoModel.convertToOperatorOperations(element));
-        if (element.timeplan != null) {time += element.timeplan!;}
-      }
-      listB.add(OptPathOperations(idPath: key!, list: list, order: list.first.order!, time: time, active: list.first.status.id == 7));
-    });
-
+    List<OptPathOperations> listB = OperationsGroup().group(queueList);
     listB.sort((a, b) => a.order!.compareTo(b.order!));
-
-    List<ItemMachine> listItem = [];
-    for (var machine in listAreaMachine[state.activeArea].listMachine) {
-      List<OptPathOperations> listQueue = [];
-      int time = 0;
-      OptPathOperations? activeOper;
-      for (var item in listB) {
-        if (item.list.first.machine!.id == machine.id) {
-          if (!item.active!){
-            listQueue.add(item);
-            time +=item.time;
-          }else{
-            activeOper = item;
-          }
-        }
-      }
-      listItem.add(ItemMachine(machine: machine, listOper: listQueue, time: time, activeOper: activeOper));
-    }
+    List<ItemMachine> listItem = OperationsGroup().groupMachine(listAreaMachine[state.activeArea].listMachine, listB);
+    
     emit(state.copyWith(listMachine: listItem));
   }
 
@@ -102,6 +71,64 @@ class CubitQueueMaster extends Cubit<StateQueueMaster> {
     emit(state.copyWith(activeArea: index, activeMachine: 0, listMachine: []));
     final queue = await tableOperations.selectListMachineId(state.listAreaMachine[index].idListMachine);
     await getQuere(queue);
+  }
+
+  void groupNameOper(){
+    List<GroupOptPath> list = OperationsGroup().groupOperInMachineBatchNum(state.listMachine![state.activeMachine]);
+    List<ItemMachine> listMachine = state.listMachine!;
+    List<ItemMachine> newList = [];
+    listMachine[state.activeMachine] = ItemMachine(machine: listMachine[state.activeMachine].machine, listPathOper: list, time: listMachine[state.activeMachine].time);
+    newList.addAll(listMachine);
+    emit(state.copyWith(listMachine: []));
+    emit(state.copyWith(listMachine: newList, isGroup: true));
+  }
+
+  void groupStageNumber(){
+    List<GroupOptPath> list = OperationsGroup().groupOperInMachineStageNumber(state.listMachine![state.activeMachine]);
+    List<ItemMachine> listMachine = state.listMachine!;
+    List<ItemMachine> newList = [];
+    listMachine[state.activeMachine] = ItemMachine(machine: listMachine[state.activeMachine].machine, listPathOper: list, time: listMachine[state.activeMachine].time);
+    newList.addAll(listMachine);
+    emit(state.copyWith(listMachine: []));
+    emit(state.copyWith(listMachine: newList, isGroup: true));
+  }
+
+  void reGroup(){
+    List<GroupOptPath> list = OperationsGroup().groupOperInMachineOptPath(state.listMachine![state.activeMachine]);
+    List<ItemMachine> listMachine = state.listMachine!;
+    List<ItemMachine> newList = [];
+    listMachine[state.activeMachine] = ItemMachine(machine: listMachine[state.activeMachine].machine, listPathOper: list, time: listMachine[state.activeMachine].time);
+    newList.addAll(listMachine);
+    emit(state.copyWith(listMachine: []));
+    emit(state.copyWith(listMachine: newList, isGroup: false));
+  }
+
+  void choiseOptPath(int index){
+    List<ItemMachine> listMachine = state.listMachine!;
+    GroupOptPath operOld = listMachine[state.activeMachine].listPathOper[index];
+    listMachine[state.activeMachine].listPathOper[index] = GroupOptPath(listOptPath: operOld.listOptPath, count: operOld.listOptPath.length, isChoise: !operOld.isChoise);
+    emit(state.copyWith(listMachine: []));
+    emit(state.copyWith(listMachine: listMachine));
+  }
+
+  void getUp(){
+    List<GroupOptPath> list = OperationsGroup().regroupUp(state.listMachine![state.activeMachine]);
+    List<ItemMachine> listMachine = state.listMachine!;
+    List<ItemMachine> newList = [];
+    listMachine[state.activeMachine] = ItemMachine(machine: listMachine[state.activeMachine].machine, listPathOper: list, time: listMachine[state.activeMachine].time);
+    newList.addAll(listMachine);
+    emit(state.copyWith(listMachine: []));
+    emit(state.copyWith(listMachine: newList));
+  }
+
+  void getDown(){
+    List<GroupOptPath> list = OperationsGroup().regroupDuwn(state.listMachine![state.activeMachine]);
+    List<ItemMachine> listMachine = state.listMachine!;
+    List<ItemMachine> newList = [];
+    listMachine[state.activeMachine] = ItemMachine(machine: listMachine[state.activeMachine].machine, listPathOper: list, time: listMachine[state.activeMachine].time);
+    newList.addAll(listMachine);
+    emit(state.copyWith(listMachine: []));
+    emit(state.copyWith(listMachine: newList));
   }
 
   // Future<void> saveDate(List<OptPathOperations> operList) async {

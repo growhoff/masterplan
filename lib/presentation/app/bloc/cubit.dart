@@ -289,8 +289,7 @@ class CubitMain extends Cubit<StateMain> {
     }
     List<User> userList = [];
     for (var user in userListDto) {
-      userList.add(User.fromDTO(
-          user.staff, Unit.fromDTO(user.unit!), Area.fromDTO(user.area!)));
+      userList.add(User.fromDTO(user.staff, user.unit == null ? null : Unit.fromDTO(user.unit!), user.area == null ? null : Area.fromDTO(user.area!)));
     }
     emit(state.copyWith(operatorList: userList));
   }

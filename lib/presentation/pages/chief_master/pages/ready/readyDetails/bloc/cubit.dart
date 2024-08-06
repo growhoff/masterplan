@@ -49,7 +49,7 @@ class CubitReadyDetailsChM extends Cubit<StateReadyDetailsChM> {
         list.add(convertDto(element));
         listId.add(element.id);
       }
-      listB.add(OptPathOperations(idPath: key!, list: list, listId: listId, time: list.first.timeworking ?? 0));
+      listB.add(OptPathOperations(idPath: key!, list: list, listId: listId, time: list.first.timeworking ?? 0, batchNumber: '$key',stageNumber: ''));
     });
 
     List<ItemMachine> listMachine = [];

@@ -2,6 +2,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:master_plan/domain/model/area_machine.dart';
 import 'package:master_plan/domain/model/name_index.dart';
+// import 'package:master_plan/domain/model/otp_path_operations.dart';
 import 'package:master_plan/presentation/pages/master/pages/queue/model/item_machine.dart';
 
 class StateQueueMaster extends Equatable {
@@ -11,6 +12,7 @@ class StateQueueMaster extends Equatable {
   final List<AreaMachine> listAreaMachine;
   final List<NameIndex> listItemArea;
   final List<NameIndex> listItemMachine;
+  final bool isGroup;
 
   const StateQueueMaster({
     this.listMachine = const [],
@@ -19,10 +21,11 @@ class StateQueueMaster extends Equatable {
     this.listAreaMachine = const [],
     this.listItemArea = const [],
     this.listItemMachine = const [],
+    this.isGroup = false,
   });
 
   @override
-  List<Object> get props => [listMachine ?? [], activeArea, activeMachine, listAreaMachine, listItemArea, listItemMachine];
+  List<Object> get props => [listMachine ?? [], activeArea, activeMachine, listAreaMachine, listItemArea, listItemMachine, isGroup];
 
   StateQueueMaster copyWith({
     List<ItemMachine>? listMachine,
@@ -31,6 +34,7 @@ class StateQueueMaster extends Equatable {
     List<AreaMachine>? listAreaMachine,
     List<NameIndex>? listItemArea,
     List<NameIndex>? listItemMachine,
+    bool? isGroup,
   }) {
     return StateQueueMaster(
       listMachine: listMachine ?? this.listMachine,
@@ -39,6 +43,7 @@ class StateQueueMaster extends Equatable {
       listAreaMachine: listAreaMachine ?? this.listAreaMachine,
       listItemArea: listItemArea ?? this.listItemArea,
       listItemMachine: listItemMachine ?? this.listItemMachine,
+      isGroup: isGroup ?? this.isGroup,
     );
   }
 
