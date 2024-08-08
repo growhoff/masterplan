@@ -27,6 +27,8 @@ class TitleItem extends StatelessWidget {
             const SizedBox(height: 2),
             Text('Деталь № ${oper.detailNumber}'),
             const SizedBox(height: 2),
+            Text('Чертеж № ${oper.listOperat.first.batch.numberRS}'),
+            const SizedBox(height: 2),
             Text('Операция: ${oper.operationName}'),
             const SizedBox(height: 2),
             Text('Кол-во на участке: ${oper.count}'),

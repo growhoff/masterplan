@@ -24,6 +24,10 @@ class ShiftsDistributionTable extends SupabaseTable{
     return table.select(selectShifts).inFilter('id',listId).eq('date', date);
   }
 
+  Future<List<Map<String, dynamic>>> selectListMachineId(List<int> listId) {
+    return table.select(selectShifts).inFilter('machine_id',listId);
+  }
+
   Future<List<Map<String, dynamic>>> selectListId(List<int> listId, DateTime date) {
     String filters = '';
     for (var i = 0; i < listId.length; i++) {
@@ -39,6 +43,10 @@ class ShiftsDistributionTable extends SupabaseTable{
   @override
   Future<List<Map<String, dynamic>>> select() {
     return table.select();
+  }
+
+  Future<List<Map<String, dynamic>>> selectEqMachineTimeChange(int machineId, DateTime time, int change) {
+    return table.select(selectShifts).eq('machine_id', machineId).eq('date', time).eq('change_id', change);
   }
 
   Future<List<Map<String, dynamic>>> selectEqUser(int userId, DateTime time, int change) {
@@ -60,6 +68,10 @@ class ShiftsDistributionTable extends SupabaseTable{
   @override
   Future<void> update(int id, Dto dto) {
     return table.update({'name': '1'}).eq('id', id);
+  }
+
+  Future<void> updateUser(int id, int userId) {
+    return table.update({'staff_id': userId}).eq('id', id);
   }
 
 }

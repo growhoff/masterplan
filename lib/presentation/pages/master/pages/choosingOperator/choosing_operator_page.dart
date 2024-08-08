@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:master_plan/data/repositories/supabase/dto/machine_dto.dart';
 import 'package:master_plan/domain/model/machine.dart';
+import 'package:master_plan/domain/model/user.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import 'package:master_plan/presentation/app/bloc/state.dart';
 import 'package:intl/intl.dart';
@@ -9,15 +10,16 @@ import 'package:master_plan/presentation/pages/master/pages/choosingOperator/blo
 import 'package:master_plan/presentation/pages/master/pages/choosingOperator/bloc/state.dart';
 
 class ChoosingOperatorPage extends StatelessWidget {
-  const ChoosingOperatorPage({super.key, required this.machine, required this.change, required this.time});
+  const ChoosingOperatorPage({super.key, required this.machine, required this.change, required this.time, required this.operatorList});
   final Machine machine;
   final DateTime time;
   final int change;
+  final List<User> operatorList;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => CubitChoosingOperator(change,machine,time),
+      create: (context) => CubitChoosingOperator(change,machine,time, operatorList),
       child: const ChoosingOperatorContent(),
     );
   }
@@ -62,14 +64,14 @@ class ChoosingOperatorContent extends StatelessWidget {
                 //  const SizedBox(height: 8),
                 //  const Divider(),
                  const SizedBox(height: 8),
-                  BlocBuilder<CubitMain, StateMain>(
+                  BlocBuilder<CubitChoosingOperator, StateChoosingOperator>(
                    builder:(context, state) => ListView.builder(
                     shrinkWrap: true,
-                    itemCount: state.operatorList!.length,
+                    itemCount: state.operatorList.length,
                     itemBuilder: (context, index) => ListTile(
-                      tileColor: stateoper.user == state.operatorList![index].id ? Colors.green : Colors.white10,
-                      title: Text(state.operatorList![index].fio),
-                      onTap: () => context.read<CubitChoosingOperator>().saveUser(state.operatorList![index].id),
+                      tileColor: stateoper.user == state.operatorList[index].id ? Colors.green : Colors.white10,
+                      title: Text(state.operatorList[index].fio),
+                      onTap: () => context.read<CubitChoosingOperator>().saveUser(state.operatorList[index].id),
                     ),
                     ),
                  ),

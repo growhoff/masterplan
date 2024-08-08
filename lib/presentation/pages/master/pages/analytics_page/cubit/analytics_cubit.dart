@@ -2,10 +2,8 @@ import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:master_plan/data/repositories/local/service/excel_service.dart';
 import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto/operation_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
@@ -19,13 +17,10 @@ import 'package:master_plan/domain/usecase/areas_list_service.dart';
 import 'package:master_plan/domain/usecase/time_converter.dart';
 import 'package:master_plan/presentation/pages/master/pages/analytics_page/analytics_operation_model.dart';
 import 'package:open_filex/open_filex.dart';
-
 import '../../../../../../data/repositories/local/service/notification_service.dart';
-import '../../../../../../data/repositories/supabase/dto/position_staff_dto.dart';
 import '../../../../../../domain/model/company.dart';
 import '../../../../../../domain/model/operator_operations.dart';
-import '../../../../../../domain/model/position_staff.dart';
-import '../../../../../../domain/model/stage.dart';
+
 
 part 'analytics_state.dart';
 

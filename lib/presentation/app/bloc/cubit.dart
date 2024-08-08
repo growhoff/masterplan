@@ -14,9 +14,9 @@ import 'package:master_plan/data/repositories/supabase/service/staff_table.dart'
 import 'package:master_plan/data/repositories/supabase/service/version_table.dart';
 import 'package:master_plan/domain/model/area.dart';
 import 'package:master_plan/domain/model/area_machine.dart';
-import 'package:master_plan/domain/model/company.dart';
+// import 'package:master_plan/domain/model/company.dart';
 import 'package:master_plan/domain/model/machine.dart';
-import 'package:master_plan/domain/model/position.dart';
+// import 'package:master_plan/domain/model/position.dart';
 import 'package:master_plan/domain/model/shifts_distribution.dart';
 import 'package:master_plan/domain/model/staff.dart';
 import 'package:master_plan/domain/model/unit.dart';
@@ -63,7 +63,7 @@ class CubitMain extends Cubit<StateMain> {
               // await getMachineToUnit([state.user!.area!.id]);
               await fetchAreasList(state.user!.id);
              // print(AreasListService.instance.areasIdsList);
-              await getOperators();
+              // await getOperators(); v21 пока убрал
               final staffModel = Staff.fromDTO(StaffDTO.fromMap(query));
               emit(state.copyWith(staff: staffModel));
               print('Master staffId : ${state.staff?.id}');
@@ -77,7 +77,7 @@ class CubitMain extends Cubit<StateMain> {
               await fetchUnitId(query['id']);
               List<int> listAreaId = await getAreaForStaff(query['id']);
               await getMachineToUnit(listAreaId);
-              await getOperatorsToUnit();
+              // await getOperatorsToUnit();
               break;
             //ИНАЧЕ
             default:
@@ -243,22 +243,22 @@ class CubitMain extends Cubit<StateMain> {
   }
 
   // chief-master
-  Future<void> getOperatorsToUnit() async {
-    final staffTable = PositionStaffTable();
-    int areaID = state.user!.area != null
-        ? state.user!.area!.id
-        : state.listAreaId!.first;
-    final userQuery = await staffTable.selectOperatorsOnArea(areaId: areaID);
-    List<PositionStaffDTO> userListDto = [];
-    for (var userDto in userQuery) {
-      userListDto.add(PositionStaffDTO.fromMap(userDto));
-    }
-    List<User> userList = [];
-    for (var user in userListDto) {
-      userList.add(User.fromDTO(user.staff, user.unit == null ? null : Unit.fromDTO(user.unit!), user.area == null ? null : Area.fromDTO(user.area!)));
-    }
-    emit(state.copyWith(operatorList: userList));
-  }
+  // Future<void> getOperatorsToUnit() async {
+  //   final staffTable = PositionStaffTable();
+  //   int areaID = state.user!.area != null
+  //       ? state.user!.area!.id
+  //       : state.listAreaId!.first;
+  //   final userQuery = await staffTable.selectOperatorsOnArea(areaId: areaID);
+  //   List<PositionStaffDTO> userListDto = [];
+  //   for (var userDto in userQuery) {
+  //     userListDto.add(PositionStaffDTO.fromMap(userDto));
+  //   }
+  //   List<User> userList = [];
+  //   for (var user in userListDto) {
+  //     userList.add(User.fromDTO(user.staff, user.unit == null ? null : Unit.fromDTO(user.unit!), user.area == null ? null : Area.fromDTO(user.area!)));
+  //   }
+  //   emit(state.copyWith(operatorList: userList));
+  // }
 
   Future fetchAreasList(int staffId) async {
     final positionStaffTable = PositionStaffTable();
@@ -276,22 +276,22 @@ class CubitMain extends Cubit<StateMain> {
   }
 
   //master
-  Future<void> getOperators() async {
-    final staffTable = PositionStaffTable();
-    int areaID = state.user!.area != null
-        ? state.user!.area!.id
-        : state.listAreaId!.first;
-    final userQuery = await staffTable.selectOperatorsOnArea(areaId: areaID);
-    List<PositionStaffDTO> userListDto = [];
-    for (var userDto in userQuery) {
-      userListDto.add(PositionStaffDTO.fromMap(userDto));
-    }
-    List<User> userList = [];
-    for (var user in userListDto) {
-      userList.add(User.fromDTO(user.staff, user.unit == null ? null : Unit.fromDTO(user.unit!), user.area == null ? null : Area.fromDTO(user.area!)));
-    }
-    emit(state.copyWith(operatorList: userList));
-  }
+  // Future<void> getOperators() async {
+  //   final staffTable = PositionStaffTable();
+  //   int areaID = state.user!.area != null
+  //       ? state.user!.area!.id
+  //       : state.listAreaId!.first;
+  //   final userQuery = await staffTable.selectOperatorsOnArea(areaId: areaID);
+  //   List<PositionStaffDTO> userListDto = [];
+  //   for (var userDto in userQuery) {
+  //     userListDto.add(PositionStaffDTO.fromMap(userDto));
+  //   }
+  //   List<User> userList = [];
+  //   for (var user in userListDto) {
+  //     userList.add(User.fromDTO(user.staff, user.unit == null ? null : Unit.fromDTO(user.unit!), user.area == null ? null : Area.fromDTO(user.area!)));
+  //   }
+  //   emit(state.copyWith(operatorList: userList));
+  // }
 
   //оператор
   Future<void> getMachineOperatorZ(int userId) async {

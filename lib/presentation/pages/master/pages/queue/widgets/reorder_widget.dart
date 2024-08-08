@@ -40,7 +40,7 @@ class Reorder extends StatelessWidget {
                 Expanded(flex: 4, child: Text('${list[index].listOptPath.first.list.first.operation.number} ${list[index].listOptPath.first.list.first.operation.name}', textAlign: TextAlign.center)),
                 Expanded(flex: 3, child: Text('${list[index].listOptPath.first.time}', textAlign: TextAlign.center)),
                 Expanded(flex: 2, child: Text('${list[index].listOptPath.length > 1 ? '-' : list[index].listOptPath.first.list.length}', textAlign: TextAlign.center)),
-                Expanded(flex: 2, child: Text('${list[index].listOptPath.length == 1 ? '-' : list[index].listOptPath.length}', textAlign: TextAlign.center)),
+                Expanded(flex: 2, child: Text('${list[index].listOptPath.length == 1 ? '-' : list[index].count}', textAlign: TextAlign.center)),
                 //инфо
                 Expanded(child: IconButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => TableInfoPage(list[index].listOptPath.first.list),)), icon: const Icon(Icons.info, color: Colors.blue))),
                 //передать на готовые детали

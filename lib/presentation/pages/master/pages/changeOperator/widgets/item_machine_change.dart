@@ -42,7 +42,8 @@ class ItemMachineChange extends StatelessWidget {
                                         builder: (context) => ChoosingOperatorPage(
                                             machine: machineShif.machine,
                                             time: state.days,
-                                            change: state.change))),
+                                            change: state.change,
+                                            operatorList: state.operatorList))),
                                 icon: const Icon(Icons.add)),
                             Visibility(
                                 visible: (changeItem != null),

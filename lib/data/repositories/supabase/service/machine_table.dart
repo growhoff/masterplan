@@ -34,7 +34,7 @@ class MachineTable extends SupabaseTable {
 
   Future<int> fetchActivatedMachinesByCompanyId() async {
     var res = await table
-        .select('*,z_area!inner(*)')
+        .select('*,z_area!inner(*), z_shift_schedule(*)')
         .eq('z_area.company_id', _companyId)
         .eq('is_activated', true)
         .count();
@@ -57,7 +57,7 @@ class MachineTable extends SupabaseTable {
   Future<List<Map<String, dynamic>>> selectByUnitIdList(
       List<int> unitIdList) async {
     return await table
-        .select('*, z_area!inner(*)')
+        .select('*, z_area!inner(*), z_shift_schedule(*)')
         .inFilter('z_area.unit_id', unitIdList);
   }
 

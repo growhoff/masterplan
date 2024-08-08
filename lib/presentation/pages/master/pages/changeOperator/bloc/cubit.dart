@@ -1,7 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/data/repositories/supabase/dto/position_staff_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/shifts_distribution_dto.dart';
+import 'package:master_plan/data/repositories/supabase/service/position_staff_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/shifts_distribution.dart';
+import 'package:master_plan/domain/model/area_machine.dart';
 import 'package:master_plan/domain/model/machine.dart';
+import 'package:master_plan/domain/model/name_index.dart';
 // import 'package:master_plan/domain/model/position.dart';
 import 'package:master_plan/domain/model/shifts_distribution.dart';
 import 'package:master_plan/domain/model/shifts_machine.dart';
@@ -10,10 +14,15 @@ import 'state.dart';
 
 class CubitChangeOperator extends Cubit<StateCubitChangeOperator> { 
   final List<Machine>? machineList;
-  final List<int> machineIdList;
+  // final List<int> machineIdList;
+  final List<AreaMachine> listAreaMachine;
   final zshiftsDistributionTable = ShiftsDistributionTable();
-  CubitChangeOperator(this.machineList, this.machineIdList) : super(StateCubitChangeOperator(days: DateTime.now())){
-    zshiftsDistributionTable.table.stream(primaryKey: ['id']).inFilter('machine_id', machineIdList).listen((event) {
+  final staffTable = PositionStaffTable();
+  CubitChangeOperator(this.machineList, this.listAreaMachine) : super(StateCubitChangeOperator(days: DateTime.now())){
+    emit(state.copyWith(listAreaMachine: listAreaMachine));
+    setListItemDrop();
+    getOperators();
+    zshiftsDistributionTable.table.stream(primaryKey: ['id']).inFilter('machine_id', listAreaMachine[state.activeArea].idListMachine).listen((event) {
       }).onData((data)async {
           await getQuere(data);
       });
@@ -49,8 +58,40 @@ class CubitChangeOperator extends Cubit<StateCubitChangeOperator> {
     emit(state.copyWith(change: change));
   }
 
+  Future<void> setActiveArea(int index) async{
+    emit(state.copyWith(activeArea: index, shiftsList: []));
+    final queue = await zshiftsDistributionTable.selectListMachineId(listAreaMachine[index].idListMachine);
+    await getOperators();
+    await getQuere(queue);
+  }
+
+  void setListItemDrop() {
+    List<NameIndex> listItemArea = [];
+    if (state.listAreaMachine.isNotEmpty) {
+      for (var i = 0; i < state.listAreaMachine.length; i++) {
+        listItemArea.add(NameIndex(name: state.listAreaMachine[i].area.name, index: i));
+      }
+    }
+    emit(state.copyWith(listItemArea: listItemArea));
+  }
+
+
+  Future<void> getOperators() async {
+    final userQuery = await staffTable.selectOperatorsOnArea(areaId: listAreaMachine[state.activeArea].area.id);
+    List<PositionStaffDTO> userListDto = [];
+    for (var userDto in userQuery) {
+      userListDto.add(PositionStaffDTO.fromMap(userDto));
+    }
+    List<User> userList = [];
+    for (var user in userListDto) {
+      userList.add(User.fromDTO(user.staff, null, null));
+    }
+    emit(state.copyWith(operatorList: userList));
+  }
+
+
   Future<void> setDate(DateTime date)async{
-    final zshiftsDistributionQuery = await zshiftsDistributionTable.selectListIdMachine(machineIdList, date);
+    final zshiftsDistributionQuery = await zshiftsDistributionTable.selectListIdMachine(state.listAreaMachine[state.activeArea].idListMachine, date);
     List<ShiftsDistributionDTO> listDto = [];
     for (var shiftsDistr in zshiftsDistributionQuery) {
       listDto.add(ShiftsDistributionDTO.fromMap(shiftsDistr));

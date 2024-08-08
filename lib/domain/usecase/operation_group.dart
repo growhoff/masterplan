@@ -59,11 +59,13 @@ class OperationsGroup {
     }
     var newMap = groupBy(listActive, (el) => el.batchNumber);
     newMap.forEach((key, value) {
+      int length = 0;
       List<OptPathOperations> list = [];
       for (var element in value) {
         list.add(element);
+        length += element.list.length;
       }
-      listNew.add(GroupOptPath(listOptPath: list, count: list.length, isChoise: false));
+      listNew.add(GroupOptPath(listOptPath: list, count: length, isChoise: false));
     });
     listNew.addAll(listUnActive);
     return listNew;
@@ -79,11 +81,13 @@ class OperationsGroup {
     }
     var newMap = groupBy(listActive, (el) => el.stageNumber);
     newMap.forEach((key, value) {
+      int length = 0;
       List<OptPathOperations> list = [];
       for (var element in value) {
         list.add(element);
+        length += element.list.length;
       }
-      listNew.add(GroupOptPath(listOptPath: list, count: list.length, isChoise: false));
+      listNew.add(GroupOptPath(listOptPath: list, count: length, isChoise: false));
     });
     listNew.addAll(listUnActive);
     return listNew;
