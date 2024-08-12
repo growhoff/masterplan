@@ -26,10 +26,12 @@ class ElementBarReady extends StatelessWidget {
               itemCount: state.listMachine!.length),
           ),
             const SizedBox(height: 18),
-            ContetnReadyMaster(l: state.statusList[state.activePage], operList: state.listMachine![state.activePage].listOper, machine: state.listMachine![state.activePage].machine, timeWorking: state.listMachine![state.activePage].time)
+            state.isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : ContetnReadyMaster(l: state.statusList[state.activePage], operList: state.listMachine![state.activePage].listOper, machine: state.listMachine![state.activePage].machine, timeWorking: state.listMachine![state.activePage].time)
         ],
       )
-      : const Center(child: CircularProgressIndicator()),
+      : const Center(child: Text('Нет станков')),
     );
   }
 }

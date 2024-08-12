@@ -42,14 +42,25 @@ class ContentListWidgetMaster extends StatelessWidget {
         const SizedBox(height: 8),
         const Card(child: Calendar()),
         const SizedBox(height: 8),
-        const Row(
+        Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            ButtonChange(1),
-            Spacer(),
-            ButtonChange(2),
-          ],
+          children: List.generate(monitor.machine.shiftSchedule!.count, (int index) => ButtonChange(index+1)),
         ),
+        // ListView.separated(
+        //   scrollDirection: Axis.horizontal,
+        //   shrinkWrap: true,
+        //   itemBuilder: (context, index) => ButtonChange(index+1), 
+        //   separatorBuilder: (context, index) => const SizedBox(width: 8,), 
+        //   itemCount: monitor.machine.shiftSchedule!.count
+        //   ),
+        // const Row(
+        //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+        //   children: [
+        //     ButtonChange(1),
+        //     Spacer(),
+        //     ButtonChange(2),
+        //   ],
+        // ),
       const SizedBox(height: 8),
       const Divider(),
       const SizedBox(height: 8),

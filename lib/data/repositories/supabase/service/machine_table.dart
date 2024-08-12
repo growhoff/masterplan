@@ -46,7 +46,7 @@ class MachineTable extends SupabaseTable {
   }
 
   Future<List<Map<String, dynamic>>> selectMachineToArea(int areaId) {
-    return table.select().eq('area_id', areaId);
+    return table.select('*,z_area!inner(*), z_shift_schedule(*)').eq('area_id', areaId);
   }
 
   Future<List<Map<String, dynamic>>> selectMachineToAreaList(

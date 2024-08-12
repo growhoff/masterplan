@@ -1,3 +1,4 @@
+import 'package:master_plan/data/repositories/supabase/dto/machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/monitoring_machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
 import 'package:master_plan/domain/model/batch.dart';
@@ -26,7 +27,24 @@ class ConvertDtoModel {
         changeId: dto.changeId,
         batch: dto.batch,
         user: dto.user,
-        operationId: dto.operationId);
+        operationId: dto.operationId,
+        machine: dto.machine!
+        );
+  }
+
+  static Machine converterToMachine(MachineDTO dto) {
+    return Machine(
+          id: dto.id,
+          inventoryNumber: dto.inventoryNumber,
+          isActivated: dto.isActivated,
+          name: dto.name,
+          areaId: dto.areaId,
+          typeMachine: dto.typeMachine,
+          model: dto.model,
+          control: dto.control,
+          prefix: dto.prefix,
+          shiftSchedule: dto.shiftSchedule,
+          );
   }
 
   static OperatorOperations convertToOperatorOperations(
@@ -54,12 +72,7 @@ class ConvertDtoModel {
           // order: dto.batch.order,
           isready: dto.batch.isready),
       order: dto.order,
-      machine: Machine(
-          id: dto.machine!.id,
-          inventoryNumber: dto.machine!.inventoryNumber,
-          isActivated: dto.machine!.isActivated,
-          name: dto.machine!.name,
-          areaId: dto.areaId),
+      machine: converterToMachine(dto.machine!),
       chiefBatchId: dto.chiefBatchId,
       chiefOperationId: dto.chiefOperationId,
       optimalPart: dto.optimalPart,

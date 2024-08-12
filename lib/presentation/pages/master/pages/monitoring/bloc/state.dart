@@ -18,6 +18,8 @@ class StateMonitoring extends Equatable {
   final List<AreaMachine> listAreaMachine;
   final List<NameIndex> listItemArea;
   final List<NameIndex> listItemMachine;
+  final bool isLoading;
+
   const StateMonitoring({
     this.listMonitor = const[],
     required this.days,
@@ -30,10 +32,11 @@ class StateMonitoring extends Equatable {
     this.listAreaMachine = const [],
     this.listItemArea = const [],
     this.listItemMachine = const [],
+    this.isLoading = false,
   });
 
   @override
-  List<Object> get props => [listMonitor ?? [], days, change, activePage, listStatusActive, statusActive ?? StatusMachineDTO(id: -1, name: '-'), activeArea, activeMachine, listAreaMachine, listItemArea, listItemMachine];
+  List<Object> get props => [isLoading, listMonitor ?? [], days, change, activePage, listStatusActive, statusActive ?? StatusMachineDTO(id: -1, name: '-'), activeArea, activeMachine, listAreaMachine, listItemArea, listItemMachine];
 
   StateMonitoring copyWith({
     List<ItemMachineMonitorMaster>? listMonitor,
@@ -47,6 +50,7 @@ class StateMonitoring extends Equatable {
     List<AreaMachine>? listAreaMachine,
     List<NameIndex>? listItemArea,
     List<NameIndex>? listItemMachine,
+    bool? isLoading,
   }) {
     return StateMonitoring(
       listMonitor: listMonitor ?? this.listMonitor,
@@ -60,6 +64,7 @@ class StateMonitoring extends Equatable {
       listAreaMachine: listAreaMachine ?? this.listAreaMachine,
       listItemArea: listItemArea ?? this.listItemArea,
       listItemMachine: listItemMachine ?? this.listItemMachine,
+      isLoading: isLoading ?? this.isLoading,
     );
   }
 

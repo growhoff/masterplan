@@ -13,7 +13,7 @@ class StateQueueMaster extends Equatable {
   final List<NameIndex> listItemArea;
   final List<NameIndex> listItemMachine;
   final bool isGroup;
-
+  final bool isLoading;
   const StateQueueMaster({
     this.listMachine = const [],
     this.activeMachine = 0,
@@ -22,10 +22,11 @@ class StateQueueMaster extends Equatable {
     this.listItemArea = const [],
     this.listItemMachine = const [],
     this.isGroup = false,
+    this.isLoading = false,
   });
 
   @override
-  List<Object> get props => [listMachine ?? [], activeArea, activeMachine, listAreaMachine, listItemArea, listItemMachine, isGroup];
+  List<Object> get props => [listMachine ?? [], activeArea, activeMachine, listAreaMachine, listItemArea, listItemMachine, isGroup, isLoading];
 
   StateQueueMaster copyWith({
     List<ItemMachine>? listMachine,
@@ -35,6 +36,7 @@ class StateQueueMaster extends Equatable {
     List<NameIndex>? listItemArea,
     List<NameIndex>? listItemMachine,
     bool? isGroup,
+    bool? isLoading,
   }) {
     return StateQueueMaster(
       listMachine: listMachine ?? this.listMachine,
@@ -44,6 +46,7 @@ class StateQueueMaster extends Equatable {
       listItemArea: listItemArea ?? this.listItemArea,
       listItemMachine: listItemMachine ?? this.listItemMachine,
       isGroup: isGroup ?? this.isGroup,
+      isLoading: isLoading ?? this.isLoading,
     );
   }
 

@@ -29,6 +29,7 @@ class CubitMonitoring extends Cubit<StateMonitoring> {
   }
 
   Future<void> getQuere(List<Map<String, dynamic>>? data) async {
+    emit(state.copyWith(isLoading: true));
     List<int> listId = [];
     for (var element in data!) {
       listId.add(element['id']);
@@ -44,13 +45,13 @@ class CubitMonitoring extends Cubit<StateMonitoring> {
     final listStatus = listMonitor[state.activeMachine].listStatus;
     final machineId = listMonitor[state.activeMachine].machine.id;
     await getListMonitorChange(listStatus, machineId);
-    emit(state.copyWith(listMonitor: listMonitor));
+    emit(state.copyWith(listMonitor: listMonitor, isLoading: false));
     setListItemDrop();
   }
 
 
   Future<void> setDate(DateTime date) async {
-    emit(state.copyWith(days: date));
+    emit(state.copyWith(days: date, isLoading: true));
     final quere = await tableMonitoring.selectListIdMachine(listAreaMachine[state.activeArea].idListMachine, date);
     List<MonitoringMachineDTO> queueList = [];
     for (var item in quere) {
@@ -60,7 +61,7 @@ class CubitMonitoring extends Cubit<StateMonitoring> {
     final listStatus = listMonitor[state.activeMachine].listStatus;
     final machineId = listMonitor[state.activeMachine].machine.id;
     await getListMonitorChange(listStatus, machineId);
-    emit(state.copyWith(listMonitor: listMonitor));
+    emit(state.copyWith(listMonitor: listMonitor, isLoading: false));
   }
 
 
@@ -133,7 +134,7 @@ class CubitMonitoring extends Cubit<StateMonitoring> {
     final listStatus = state.listMonitor![index].listStatus;
     final machineId = state.listMonitor![index].machine.id;
     getListMonitorChange(listStatus, machineId);
-    emit(state.copyWith(activeMachine: index));
+    emit(state.copyWith(activeMachine: index, change: 1));
     setListItemDrop();
   }
 

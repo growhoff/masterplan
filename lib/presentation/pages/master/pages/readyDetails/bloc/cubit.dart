@@ -34,6 +34,7 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
   }
 
   Future<void> getQuere(List<Map<String, dynamic>>? data) async {
+    emit(state.copyWith(isLoading: true));
     List<int> listId = [];
     for (var element in data!) {
       if (element['status_id'] as int == 6) listId.add(element['id']);
@@ -77,7 +78,7 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
           machine: machine, listOper: list, time: timeWorking ~/ 60));
       statusList.add(intList);
     }
-    emit(state.copyWith(listMachine: listMachine, statusList: statusList));
+    emit(state.copyWith(listMachine: listMachine, statusList: statusList, isLoading: false));
   }
 
   OperatorOperations convertDto(OperatorOperationsDTO dto) {

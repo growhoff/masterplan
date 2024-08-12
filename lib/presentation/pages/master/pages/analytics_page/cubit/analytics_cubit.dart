@@ -7,7 +7,7 @@ import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
-import 'package:master_plan/data/repositories/supabase/service/position_staff_table.dart';
+// import 'package:master_plan/data/repositories/supabase/service/position_staff_table.dart';
 import 'package:master_plan/domain/model/batch.dart';
 import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/position.dart';
@@ -29,7 +29,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
 
   final _operatorOperationsTable = OperatorOperationsTable();
   final _excelService = ExcelService();
-  final _positionStaffTable = PositionStaffTable();
+  // final _positionStaffTable = PositionStaffTable();
 
   final _areasIdsList = AreasListService.instance.areasIdsList;
 

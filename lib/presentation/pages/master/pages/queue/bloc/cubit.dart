@@ -22,6 +22,7 @@ class CubitQueueMaster extends Cubit<StateQueueMaster> {
   }
 
   Future<void> getQuere(List<Map<String, dynamic>>? data) async {
+    emit(state.copyWith(isLoading: true));
     List<int> listId = [];
     for (var element in data!) {
       if ((element['status_id'] as int == 3) || (element['status_id'] as int == 7)) listId.add(element['id']);
@@ -30,11 +31,14 @@ class CubitQueueMaster extends Cubit<StateQueueMaster> {
     List<OperatorOperationsDTO> queueList = [];
     for (var item in quere) {queueList.add(OperatorOperationsDTO.fromMap(item));}
 
-    List<OptPathOperations> listB = OperationsGroup().group(queueList);
-    listB.sort((a, b) => a.order!.compareTo(b.order!));
-    List<ItemMachine> listItem = OperationsGroup().groupMachine(listAreaMachine[state.activeArea].listMachine, listB);
+    List<ItemMachine> listItem = [];
+    if (queueList.isNotEmpty){
+      List<OptPathOperations> listB = OperationsGroup().group(queueList);
+      listB.sort((a, b) => a.order!.compareTo(b.order!));
+      listItem = OperationsGroup().groupMachine(listAreaMachine[state.activeArea].listMachine, listB);
+    }
     
-    emit(state.copyWith(listMachine: listItem));
+    emit(state.copyWith(listMachine: listItem, isLoading: false));
   }
 
   void updateOperationDistribMaster(int id) {

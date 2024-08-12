@@ -24,8 +24,10 @@ class ElementBarMonitor extends StatelessWidget {
             DropMachine(state.activeMachine, state.listItemMachine),
             const SizedBox(height: 18),
             state.listMonitor!.isNotEmpty
-            ? ContentListWidgetMaster(state.listMonitor![state.activeMachine], state.change, state.listStatusActive, state.statusActive!)
-            : const Center(child: CircularProgressIndicator())
+            ? state.isLoading
+              ? ContentListWidgetMaster(state.listMonitor![state.activeMachine], state.change, state.listStatusActive, state.statusActive!)
+              : const Center(child: CircularProgressIndicator())
+            : const Center(child: Text('Пусто'))
         ],
       )
       : const Center(child: Text('Нет станков')),

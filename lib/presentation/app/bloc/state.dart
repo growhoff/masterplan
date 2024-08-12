@@ -38,7 +38,7 @@ class StateMain extends Equatable {
   final int? unitId;
 
   const StateMain({
-    this.version = 'v2.6.21',
+    this.version = 'v2.6.22',
     this.user,
     this.unitId,
     this.staff,

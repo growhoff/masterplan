@@ -24,6 +24,7 @@ import 'package:master_plan/domain/model/user.dart';
 import 'package:master_plan/domain/usecase/areas_list_service.dart';
 import 'package:master_plan/domain/usecase/change_logic.dart';
 import 'package:master_plan/domain/usecase/chief_unit_service.dart';
+import 'package:master_plan/domain/usecase/convert_dto_model.dart';
 import 'package:path/path.dart';
 import '../../../domain/usecase/company_service.dart';
 import 'state.dart';
@@ -49,7 +50,6 @@ class CubitMain extends Cubit<StateMain> {
         final userModel = StaffDTO.fromMap(query);
         if (userModel.password == password) {
           await getUserNew(userModel);
-
           switch (state.user!.position.id) {
             //начальник
             case 2:
@@ -133,12 +133,7 @@ class CubitMain extends Cubit<StateMain> {
     List<Machine> listMachine = [];
     for (var machine in machineQuery) {
       final model = MachineDTO.fromMap(machine);
-      listMachine.add(Machine(
-          id: model.id,
-          isActivated: model.isActivated,
-          inventoryNumber: model.inventoryNumber,
-          name: model.name,
-          areaId: model.areaId));
+      listMachine.add(ConvertDtoModel.converterToMachine(model));
     }
     List<int> listId = [];
     for (var machine in listMachine) {
@@ -157,10 +152,7 @@ class CubitMain extends Cubit<StateMain> {
       )
     ];
 
-    emit(state.copyWith(
-        machineList: listMachine,
-        machineIdList: listId,
-        listAreaMachine: listAreaMachine));
+    emit(state.copyWith(machineList: listMachine,machineIdList: listId,listAreaMachine: listAreaMachine));
   }
 
   // chief && chief-master
@@ -183,12 +175,7 @@ class CubitMain extends Cubit<StateMain> {
     List<Machine> listMachine = [];
     for (var machine in machineQuery) {
       final model = MachineDTO.fromMap(machine);
-      listMachine.add(Machine(
-          isActivated: model.isActivated,
-          id: model.id,
-          inventoryNumber: model.inventoryNumber,
-          name: model.name,
-          areaId: model.areaId));
+      listMachine.add(ConvertDtoModel.converterToMachine(model));
     }
     List<int> listId = [];
     for (var machine in listMachine) {
@@ -370,12 +357,7 @@ class CubitMain extends Cubit<StateMain> {
     return ShiftsDistribution(
         id: model.id,
         date: model.date,
-        machine: Machine(
-            isActivated: model.machine!.isActivated,
-            id: model.machine!.id,
-            inventoryNumber: model.machine!.inventoryNumber,
-            name: model.machine!.name,
-            areaId: model.machine!.areaId),
+        machine: ConvertDtoModel.converterToMachine(model.machine!),
         user: User.fromDTO(model.user!, null, null),
         change: model.change!);
   }

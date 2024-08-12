@@ -66,9 +66,11 @@ class ElementBarQueue extends StatelessWidget {
             const SizedBox(height: 8),
             DropMachineQueue(state.activeMachine, state.listItemMachine),
             const SizedBox(height: 8),
-            state.listMachine!.isNotEmpty
-            ? ContetnQueue(itemMachine: state.listMachine![state.activeMachine], isGroup: state.isGroup)
-            : const Center(child: CircularProgressIndicator())
+            state.isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : state.listMachine!.isNotEmpty 
+              ? ContetnQueue(itemMachine: state.listMachine![state.activeMachine], isGroup: state.isGroup)
+              : const Center(child: Text('Пусто'))
         ],
       )
       : const Center(child: Text('Нет станков')),
