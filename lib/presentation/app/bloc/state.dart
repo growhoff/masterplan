@@ -46,7 +46,7 @@ class StateMain extends Equatable {
   final List<ShiftScheduleDTO>? shiftScheduleList;
 
   const StateMain({
-    this.version = 'v2.7.1',
+    this.version = 'v2.7.2',
     this.user,
     this.unitId,
     this.staff,
