@@ -32,7 +32,7 @@ class BatchArchiveTable extends SupabaseTable {
 
   @override
   Future<List<Map<String, dynamic>>> select() async {
-    return await _table.select().eq('company_id', _companyId);
+    return await _table.select().eq('company_id', _companyId).order('id', ascending: false);
   }
 
   @override

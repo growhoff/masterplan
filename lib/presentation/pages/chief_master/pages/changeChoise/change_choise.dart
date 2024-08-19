@@ -12,10 +12,10 @@ class ChangeOperatorPageChM extends StatelessWidget {
   Widget build(BuildContext context) {
     final stateMain = context.read<CubitMain>().state;
     return BlocProvider<CubitChangeOperator>(
-      create: (context) => CubitChangeOperator(stateMain.machineList, stateMain.listAreaMachineUser!),
+      create: (context) => CubitChangeOperator(stateMain.listAreaMachineUser!),
       child: Scaffold(
-        appBar: AppBar(title: const Text('Список смен'),),
-        body: const ChangeOperatorContent()),
+          appBar: AppBar(title: const Text('Список смен'),),
+          body: const ChangeOperatorContent()),
     );
   }
 }

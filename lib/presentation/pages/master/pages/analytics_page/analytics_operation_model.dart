@@ -1,12 +1,15 @@
+import 'package:master_plan/data/repositories/supabase/dto/distribution_stage_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
+import 'package:master_plan/domain/model/distribution_stage.dart';
+
 import '../../../../../domain/model/batch.dart';
+import '../../../../../domain/model/stage.dart';
 
 class AnalyticsOperationModel {
   AnalyticsOperationModel(
-      {
-        required this.batch,
-        required this.stage,
-        required this.operationId,
+      {required this.batch,
+      required this.stage,
+      required this.operationId,
       required this.code,
       required this.comment,
       required this.detailNumber,
@@ -18,9 +21,13 @@ class AnalyticsOperationModel {
       required this.machineName,
       required this.machineInventoryNumber,
       required this.fio,
-      required this.date,
+      required this.dateEnd,
+      required this.dateStart,
+      required this.timeStart,
+      required this.timeEnd,
       required this.change,
       required this.areaNumber});
+
 
   final Batch batch;
   final StageDTO stage;
@@ -35,7 +42,10 @@ class AnalyticsOperationModel {
   final String machineName;
   final int machineInventoryNumber;
   final String fio;
-  final String date;
+  final String dateEnd;
+  final String dateStart;
+  final String timeStart;
+  final String timeEnd;
   final String comment;
   final int change;
   final String areaNumber;

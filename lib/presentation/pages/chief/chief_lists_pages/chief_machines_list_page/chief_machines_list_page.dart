@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import 'chief_machine_cubit/chief_machine_cubit.dart';
 
 import 'chief_machine_list_widgets/equipment_list_element.dart';
@@ -10,8 +11,9 @@ class ChiefMachinesListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final stateMain = context.read<CubitMain>().state;
     return BlocProvider(
-      create: (context) => ChiefMachineCubit(),
+      create: (context) => ChiefMachineCubit(stateMain.controlMachineList ?? [], stateMain.shiftScheduleList ?? [], stateMain.typeMachineList ?? [], stateMain.viewMachineList ?? []),
       child: const ChiefMachinesListPageView(),
     );
   }

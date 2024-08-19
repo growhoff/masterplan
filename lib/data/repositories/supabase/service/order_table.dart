@@ -15,10 +15,11 @@ class OrderTable extends SupabaseTable {
   }
 
   @override
-  Future<void> insert(Dto dto) async {
+  Future<int> insert(Dto dto) async {
     if (dto is OrderDTO) {
-      await table.insert({
+      var res = await table.insert({
         'number': dto.number,
+        'customer': dto.customer,
         'date_receipt': dto.dateReceipt,
         'required_completion_date': dto.requiredCompletionDate,
         'calculated_completion_date': dto.calculatedCompletionDate,
@@ -26,8 +27,11 @@ class OrderTable extends SupabaseTable {
         'priority': dto.priority,
         'order_status_id': 1,
         'company_id': _companyId,
-      });
+      }).select('id');
+
+      return res.first['id'];
     }
+    return 0;
   }
 
   @override
@@ -37,9 +41,6 @@ class OrderTable extends SupabaseTable {
         .eq('company_id', _companyId)
         .order('priority', ascending: true);
   }
-
-
-
 
   Future changeStatusToFormed(int orderId) async {
     await table.update({'order_status_id': 2}).eq('id', orderId);
@@ -64,6 +65,17 @@ class OrderTable extends SupabaseTable {
   @override
   Future<void> update(int id, Dto dto) {
     return table.update({'name': '1'}).eq('id', id);
+  }
+
+  Future<void> updateOrder(OrderDTO orderDto) async{
+    print('ID : ${orderDto.id}');
+   await table.update({
+      'number': orderDto.number,
+      'customer': orderDto.customer,
+      'date_receipt': orderDto.dateReceipt,
+      'required_completion_date': orderDto.requiredCompletionDate,
+      'priority': orderDto.priority,
+    }).eq('id', orderDto.id);
   }
 
   stream() {

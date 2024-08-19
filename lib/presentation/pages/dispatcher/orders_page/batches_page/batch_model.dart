@@ -22,11 +22,13 @@ class StageModel {
 
       required this.stageNumber,
       required this.stageName,
-      required this.batch
+      required this.batch,
+        required this.unitNumber
       });
 
   final String stageNumber;
   final String stageName;
+  final String unitNumber;
   final int stageId;
   final Batch batch;
 

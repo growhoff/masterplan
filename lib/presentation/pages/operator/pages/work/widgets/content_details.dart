@@ -51,36 +51,52 @@ class ContentDetail extends StatelessWidget {
         )
         : Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
-               
-              LineTextSpawn(title: 'Деталь:', text: '${operation.list.first.batch.number} ${operation.list.first.batch.name}'),
-              const SizedBox(height: 2),
-              LineTextSpawn(title: 'Операция:', text: '${operation.list.first.operation.number} ${operation.list.first.operation.name}'),
-              const SizedBox(height: 2),
-              LineTextSpawn(title: 'Количество в опт. партии:', text: '${operation.list.length}'),
-              const SizedBox(height: 2),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Card(color: ButtonStatus().getColorStatus(statusBtn), child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                child: Text(statusBtn == 'Все' ? 'Простой' : statusBtn),
-              )),
-                const SizedBox(width: 12,),
-                  Visibility(
-                    visible: operation.list.first.modific != null,
-                    child: const Card(color: Colors.amberAccent, child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                      child: Text('Доработка'),
-                    )),),
-                ],
+              Card(
+                color: const Color.fromARGB(66, 236, 236, 236),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      LineTextSpawn(title: 'Деталь:', text: '${operation.list.first.batch.numberRS} ${operation.list.first.batch.name}'),
+                      LineTextSpawn(title: 'Операция:', text: '${operation.list.first.operation.number}.${operation.list.first.operation.name}'),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text('Переходы: '),
+                          ...operation.list.first.listTransfer!.isEmpty 
+                            ? [const Text('отсутствуют')] 
+                            : operation.list.first.listTransfer!.map((e)=>Card(color: Colors.white10, child: Padding(padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),child: Text('${e.code}.${e.name}'),
+                      ))).toList()
+                      ],),
+                      LineTextSpawn(title: 'Количество в опт. партии:', text: '${operation.list.length}'),
+                      const SizedBox(height: 2),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Card(color: ButtonStatus().getColorStatus(statusBtn), child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                        child: Text(statusBtn == 'Все' ? 'Простой' : statusBtn),
+                      )),
+                        const SizedBox(width: 12,),
+                          Visibility(
+                            visible: operation.list.first.modific != null,
+                            child: const Card(color: Colors.amberAccent, child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                              child: Text('Доработка'),
+                            )),),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 12),
               const Time(false),
-              const SizedBox(height: 12),
+              const SizedBox(height: 6),
               const Divider(),
-              const SizedBox(height: 12),
+              const SizedBox(height: 6),
               SizedBox(
                   width: double.maxFinite,
                   child: ElevatedButtonCastom(

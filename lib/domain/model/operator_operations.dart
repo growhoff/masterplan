@@ -5,6 +5,7 @@ import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
 import 'package:master_plan/domain/model/batch.dart';
 import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/status.dart';
+import 'package:master_plan/domain/model/transfer.dart';
 import 'package:master_plan/domain/model/user.dart';
 
 import 'distribution_stage.dart';
@@ -34,6 +35,7 @@ class OperatorOperations {
   final String? comment;
 
   final DistributionStage? distributionStage;
+  final List<Transfer>? listTransfer;
 
   OperatorOperations({
     required this.id,
@@ -58,7 +60,8 @@ class OperatorOperations {
     this.chiefOperationId,
     this.modific,
     this.comment,
-    this.distributionStage
+    this.distributionStage,
+    this.listTransfer,
   });
 
 
@@ -84,6 +87,7 @@ class OperatorOperations {
     int? chiefOperationId,
     bool? modific,
     String? comment,
+    List<Transfer>? listTransfer,
   }) {
     return OperatorOperations(
       id: id ?? this.id,
@@ -107,6 +111,7 @@ class OperatorOperations {
       chiefOperationId: chiefOperationId ?? this.chiefOperationId,
       modific: modific ?? this.modific,
       comment: comment ?? this.comment,
+      listTransfer: listTransfer ?? this.listTransfer,
     );
   }
 }

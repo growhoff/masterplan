@@ -29,14 +29,16 @@ class ContentListWidgetMaster extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('${monitor.machine.name} станок / Оператор: $nameOperator', textAlign: TextAlign.left, style: const TextStyle(fontWeight: FontWeight.bold)),
+            Flexible(child: Text('${monitor.machine.name} станок / Оператор: $nameOperator', textAlign: TextAlign.left, style: const TextStyle(fontWeight: FontWeight.bold))),
             const SizedBox(width: 10),
-            Visibility(visible: statusActive.id != -1, child: Card(
-              color: statusActive.id != -1 ? context.read<CubitMonitoring>().convertColor(statusActive.id) : Colors.white, 
-              child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              child: Text(statusActive.id != -1 ? statusActive.name : ''),
-            ),))
+            Flexible(
+              child: Visibility(visible: statusActive.id != -1, child: Card(
+                color: statusActive.id != -1 ? context.read<CubitMonitoring>().convertColor(statusActive.id) : Colors.white, 
+                child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: Text(statusActive.id != -1 ? statusActive.name : ''),
+              ),)),
+            )
           ],
         ),
         const SizedBox(height: 8),

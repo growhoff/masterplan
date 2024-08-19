@@ -69,12 +69,22 @@ class DistributionStageTable extends SupabaseTable {
         .order('id', ascending: true);
   }
 
+  Future<List<Map<String, dynamic>>> selectByBatchId(int batchId) async {
+    return await _table
+        .select(
+            '*, z_chief_batch!inner(*, z_batch!inner(*, z_batch_archive(*), z_order(*))), z_stage(*), z_stage_status(*)')
+
+        .eq('z_chief_batch.batch_id', batchId)
+        .order('id', ascending: true);
+  }
+
   Future<List<Map<String, dynamic>>> selectByUnitId(int unitId) async {
     return await _table
         .select(
             '*, z_chief_batch!inner(*, z_batch!inner(*, z_batch_archive(*), z_order(*))), z_stage(*), z_stage_status(*)')
         .eq('z_chief_batch.z_batch.company_id', _companyId)
         .eq('unit_id', unitId)
+    .order('chief_batch_id', ascending: true)
         .order('id', ascending: true);
   }
 
@@ -91,7 +101,7 @@ class DistributionStageTable extends SupabaseTable {
       List<int> chiefBatchIdsList) async {
     return await _table
         .select(
-            '*, z_chief_batch!inner(*, z_batch!inner(*, z_batch_archive(*))), z_stage(*), z_stage_status(*)')
+            '*,z_unit(*), z_chief_batch!inner(*, z_batch!inner(*, z_order(*),z_batch_archive(*))), z_stage(*), z_stage_status(*)')
         .eq('z_chief_batch.z_batch.company_id', _companyId)
         .inFilter('chief_batch_id', chiefBatchIdsList)
         .order('id', ascending: true);
@@ -147,7 +157,7 @@ class DistributionStageTable extends SupabaseTable {
     print(_companyId);
     return await _table
         .select(
-            '*, z_chief_batch!inner(*, z_batch!inner(*, z_batch_archive(*))), z_stage(*)')
+            '*, z_chief_batch!inner(*, z_batch!inner(*,z_order(*), z_batch_archive(*))), z_stage(*)')
         .eq('z_chief_batch.z_batch.company_id', _companyId)
         .eq('status_id', 1);
   }

@@ -1,8 +1,8 @@
-# Install script for directory: D:/FlutterProject/masterplan/windows/flutter/ephemeral/.plugin_symlinks/permission_handler_windows/windows
+# Install script for directory: D:/Flutter project/masterplan/windows/flutter/ephemeral/.plugin_symlinks/permission_handler_windows/windows
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "$<TARGET_FILE_DIR:master_plan>")
+  set(CMAKE_INSTALL_PREFIX "$<TARGET_FILE_DIR:flutter_application_2>")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 

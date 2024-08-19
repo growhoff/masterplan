@@ -17,10 +17,10 @@ class BatchDTO extends Dto {
   final bool isready;
   final int? orderId;
   final int? companyId;
-  final BatchArchiveDto? batchArchive;
-  final int? batchArchiveId;
+
   final int? batchStatusId;
   final StatusDTO? status;
+  final String? description;
 
   BatchDTO({
     required this.id,
@@ -31,11 +31,12 @@ class BatchDTO extends Dto {
     required this.code,
     required this.technology,
     required this.isready,
+    this.description,
     this.status,
-    this.batchArchive,
+
     this.batchStatusId,
     this.order,
-    this.batchArchiveId,
+
     this.orderId,
     this.companyId,
   });
@@ -82,11 +83,10 @@ class BatchDTO extends Dto {
         isready: map['isready'] as bool,
         orderId: map['order_id'] != null ? map['order_id'] as int : null,
         companyId: map['company_id'],
-        batchArchive: map['z_batch_archive'] != null
-            ? BatchArchiveDto.fromMap(map['z_batch_archive'])
-            : null,
+
+        description: map['description'],
         batchStatusId: map['batch_status_id'],
-        batchArchiveId: map['batch_archive_id']);
+       );
   }
 
   String toJson() => json.encode(toMap());

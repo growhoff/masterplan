@@ -1,11 +1,13 @@
 import 'package:master_plan/data/repositories/supabase/dto/machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/monitoring_machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/transfer_dto.dart';
 import 'package:master_plan/domain/model/batch.dart';
 import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/monitoring_machine.dart';
 import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/domain/model/status.dart';
+import 'package:master_plan/domain/model/transfer.dart';
 import 'package:master_plan/domain/usecase/time_converter.dart';
 
 class ConvertDtoModel {
@@ -29,22 +31,31 @@ class ConvertDtoModel {
         user: dto.user,
         operationId: dto.operationId,
         machine: dto.machine!
-        );
+    );
   }
 
   static Machine converterToMachine(MachineDTO dto) {
     return Machine(
-          id: dto.id,
-          inventoryNumber: dto.inventoryNumber,
-          isActivated: dto.isActivated,
-          name: dto.name,
-          areaId: dto.areaId,
-          typeMachine: dto.typeMachine,
-          model: dto.model,
-          control: dto.control,
-          prefix: dto.prefix,
-          shiftSchedule: dto.shiftSchedule,
-          );
+      id: dto.id,
+      inventoryNumber: dto.inventoryNumber,
+      isActivated: dto.isActivated,
+      name: dto.name,
+      areaId: dto.areaId,
+      model: dto.model,
+      prefix: dto.prefix,
+      shiftSchedule: dto.shiftSchedule,
+      viewMachine: dto.viewMachine,
+      controlMachine: dto.controlMachine,
+      typeMachine: dto.typeMachine,
+      typeMachineId: dto.typeMachineId,
+      viewMachineId: dto.viewId,
+      shiftScheduleId: dto.shiftScheduleId,
+      controlMachineId: dto.controlId,
+    );
+  }
+
+  static Transfer convertToTransfer(TransferDTO dto){
+    return Transfer(id: dto.id, number: dto.number, name: dto.name, code: dto.code, timesh: dto.timesh, operationId: dto.operationId);
   }
 
   static OperatorOperations convertToOperatorOperations(
@@ -72,7 +83,7 @@ class ConvertDtoModel {
           // order: dto.batch.order,
           isready: dto.batch.isready),
       order: dto.order,
-      machine: converterToMachine(dto.machine!),
+      machine: dto.machine == null ? null : converterToMachine(dto.machine!),
       chiefBatchId: dto.chiefBatchId,
       chiefOperationId: dto.chiefOperationId,
       optimalPart: dto.optimalPart,

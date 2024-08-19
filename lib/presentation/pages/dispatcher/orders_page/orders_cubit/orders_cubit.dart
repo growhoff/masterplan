@@ -1,10 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 import 'package:master_plan/data/repositories/supabase/dto/order_dto.dart';
 
 import 'package:master_plan/data/repositories/supabase/service/order_table.dart';
-
 
 import 'package:master_plan/domain/model/order.dart';
 
@@ -21,6 +21,7 @@ class OrdersCubit extends Cubit<OrdersState> {
 
   final _orderTable = OrderTable();
   final numberController = TextEditingController();
+  final customerController = TextEditingController();
   DateTime receiptDate = DateTime.now();
 
   DateTime requiredCompletionDate = DateTime.now();
@@ -45,6 +46,7 @@ class OrdersCubit extends Cubit<OrdersState> {
             requiredCompletionDate: orderDto.requiredCompletionDate,
             calculatedCompletionDate: orderDto.calculatedCompletionDate,
             actualCompletionDate: orderDto.actualCompletionDate,
+            customer: orderDto.customer,
             priority: orderDto.priority,
             statusId: orderDto.statusId,
             status: OrderStatus(
@@ -66,11 +68,41 @@ class OrdersCubit extends Cubit<OrdersState> {
         id: 0,
         number: numberController.text,
         dateReceipt: receiptDate.toString(),
+        customer: customerController.text,
         requiredCompletionDate: requiredCompletionDate.toString(),
         priority: selectedPriority,
         statusId: 1));
   }
 
+  Future editOrder(Order order) async {
+
+    await _orderTable.updateOrder(OrderDTO(
+        id: order.id,
+        number: numberController.text,
+        dateReceipt: receiptDate.toString(),
+        customer: customerController.text,
+        requiredCompletionDate: requiredCompletionDate.toString(),
+        priority: selectedPriority,
+        statusId: 1));
+  }
+
+  Future initEditOrderPage(Order order) async {
+    numberController.text = order.number;
+
+    DateFormat format = DateFormat("yyyy-MM-dd");
+
+    if (order.dateReceipt != null) {
+      receiptDate = format.parse(order.dateReceipt ?? '');
+    }
+
+    if (order.requiredCompletionDate != null) {
+      requiredCompletionDate = format.parse(order.requiredCompletionDate ?? '');
+    }
+
+    customerController.text = order.customer ?? '';
+
+    selectedPriority = order.priority;
+  }
 
   Future deleteOrder(int id) async {
     await _orderTable.delete(id);

@@ -39,28 +39,19 @@ class _MachinesListElementState extends State<MachinesListElement> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      widget.machineModel.name,
-                      style: TextStyle(fontSize: 18),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                        'инвентарный номер: ${widget.machineModel.inventoryNumber}')
+                    Text(widget.machineModel.name, style: const TextStyle(fontSize: 18)),
+                    const SizedBox(height: 10),
+                    Text('инвентарный номер: ${widget.machineModel.inventoryNumber}')
                   ],
                 ),
               ),
               Expanded(
-                flex: 1,
                 child: Column(
                   children: [
                     IconButton(
                         iconSize: 24,
                         onPressed: () {
-                          Navigator.pushNamed(context, '/chiefMachineEditPage',
-                              arguments: EditPageArguments(
-                                  widget.machineModel, widget.machineModel.areaId));
+                          Navigator.pushNamed(context, '/chiefMachineEditPage',arguments: EditPageArguments(widget.machineModel, widget.machineModel.areaId));
                         },
                         icon: const Icon(Icons.edit)),
                     IconButton(
@@ -69,18 +60,14 @@ class _MachinesListElementState extends State<MachinesListElement> {
                           showCupertinoDialog(
                               context: context,
                               builder: (context) => AlertDialog(
-                                    title: Text('удалить?'),
+                                    title: const Text('удалить?'),
                                     content: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Text('${widget.machineModel.name}'),
-                                        const SizedBox(
-                                          height: 5,
-                                        ),
-                                        Text(
-                                            'инвент. номер: ${widget.machineModel.inventoryNumber}')
+                                        Text(widget.machineModel.name),
+                                        const SizedBox(height: 5),
+                                        Text('инвент. номер: ${widget.machineModel.inventoryNumber}')
                                       ],
                                     ),
                                     actions: [
@@ -89,16 +76,10 @@ class _MachinesListElementState extends State<MachinesListElement> {
                                             widget.deleteMachine();
                                             Navigator.pop(context, true);
                                           },
-                                          child: Text(
-                                            'да',
-                                            style: TextStyle(fontSize: 18),
-                                          )),
+                                          child: const Text('да',style: TextStyle(fontSize: 18))),
                                       TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context, false);
-                                          },
-                                          child: Text("нет",
-                                              style: TextStyle(fontSize: 18)))
+                                          onPressed: () => Navigator.pop(context, false),
+                                          child: const Text("нет",style: TextStyle(fontSize: 18)))
                                     ],
                                   ));
                         },

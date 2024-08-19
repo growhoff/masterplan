@@ -1,1 +1,0 @@
-D:\Flutter project\master-plan\master_plan\android\app\src\main\kotlin\com\example\master_plan\MainActivity.kt

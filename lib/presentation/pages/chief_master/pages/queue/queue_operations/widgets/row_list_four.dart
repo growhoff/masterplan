@@ -12,7 +12,7 @@ class RowListFour extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Spacer(),
+        // const Spacer(),
         Expanded(flex: 3, child: Text(text0, textAlign: TextAlign.center)),
         Expanded(flex: 3, child: Text(text1, textAlign: TextAlign.center)),
         Expanded(flex: 4, child: Text(text2, textAlign: TextAlign.center)),
@@ -20,7 +20,7 @@ class RowListFour extends StatelessWidget {
         Expanded(flex: 2, child: Text(text4, textAlign: TextAlign.center)),
         const Spacer(),
         const Spacer(),
-        const Spacer()
+        // const Spacer()
       ],
     );
   }

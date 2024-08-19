@@ -1,15 +1,20 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/data/repositories/supabase/dto/monitoring_machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/transfer_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/monitoring_machine_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/transfer_table.dart';
 import 'package:master_plan/domain/model/batch.dart';
+import 'package:master_plan/domain/model/group_transfer.dart';
 import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/domain/model/shifts_distribution.dart';
 import 'package:master_plan/domain/model/status.dart';
+import 'package:master_plan/domain/model/transfer.dart';
 import 'package:master_plan/domain/usecase/button_status.dart';
 import 'package:master_plan/domain/usecase/change_logic.dart';
+import 'package:master_plan/domain/usecase/convert_dto_model.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/model/item_oper.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/model/page_item.dart';
 
@@ -25,6 +30,7 @@ class CubitWork extends Cubit<StateWork> {
   final List<ShiftsDistribution>? zShiftsDistributionList;
   final List<int> machineListId;
   final operatorOperationsTable = OperatorOperationsTable();
+  final transferTable = TransferTable();
   final monitorTable = MonitoringMachineTable();
   late Timer periodicTimer;
   final int userIds;
@@ -68,19 +74,43 @@ class CubitWork extends Cubit<StateWork> {
   //   }
   // }
 
+  Future<List<GroupTransfer>> getTransferList(List<int> listId)async{
+    List<Transfer> list = [];
+    final quereTransfer = await transferTable.selectOperationId(listId);
+    for (var dto in quereTransfer) {
+      final model = TransferDTO.fromMap(dto);
+      list.add(ConvertDtoModel.convertToTransfer(model)); 
+    }
+    List<GroupTransfer> listGroup = [];
+    var newMap = groupBy(list, (el) => el.operationId);
+    newMap.forEach((key, value){
+      listGroup.add(GroupTransfer(operId: key, listTransfer: value));
+    });
+    return listGroup;
+  }
+
   Future<void> getQuere(List<Map<String, dynamic>>? data) async {
     List<int> listId = [];
+    Set<int> listOperationsId = {};
     for (var element in data!) {
       if (element['status_id'] == 3 ||
           element['status_id'] == 6 ||
           element['status_id'] == 7 ||
-          element['status_id'] == 8) listId.add(element['id']);
+          element['status_id'] == 8) {
+            listId.add(element['id']); 
+            listOperationsId.add(element['operation_id']);
+          }
     }
     final quere = await operatorOperationsTable.selectListIdOrder(listId);
+    final List<GroupTransfer> listGroup = await getTransferList(listOperationsId.toList());
     List<OperatorOperations> operatorOperationsList = [];
     for (var operatorOper in quere) {
       final model = OperatorOperationsDTO.fromMap(operatorOper);
-      operatorOperationsList.add(convertDto(model));
+      List<Transfer> listTrans = [];
+      for (var grItem in listGroup) {
+        if (model.operationId == grItem.operId) listTrans.addAll(grItem.listTransfer);
+      }
+      operatorOperationsList.add(convertDto(model, listTransfer: listTrans));
     }
 
     //группировка по оптимальной партии
@@ -134,6 +164,7 @@ class CubitWork extends Cubit<StateWork> {
       if (operActive == null && listOperQueue.isNotEmpty) {
         operActive ??= listOperQueue.first;
         listOperQueue.removeAt(0);
+        print('Need id oper: ${operActive.list.first.operation.id}');
       }
 
       final dtoL = await selectMonitorStatus(shiftsDistr.machine.id);
@@ -490,7 +521,7 @@ class CubitWork extends Cubit<StateWork> {
     emit(state.copyWith(listStartBtn: list, count: 0));
   }
 
-  OperatorOperations convertDto(OperatorOperationsDTO dto) {
+  OperatorOperations convertDto(OperatorOperationsDTO dto, {required List<Transfer> listTransfer}) {
     return OperatorOperations(
       id: dto.id,
       area: dto.area!,
@@ -525,6 +556,7 @@ class CubitWork extends Cubit<StateWork> {
           name: dto.machine!.name,
           areaId: dto.areaId),
       modific: dto.modific,
+      listTransfer: listTransfer,
     );
   }
 

@@ -11,15 +11,17 @@ class ButtonChangeOper extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<CubitChangeOperator, StateCubitChangeOperator>(
         builder: (context, state) => Expanded(
-            flex: 5,
-            child: ElevatedButton(
-                onPressed: () => context.read<CubitChangeOperator>().setChange(change),
-                style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        state.change == change ? const Color.fromARGB(255, 155, 235, 157) : const Color.fromARGB(255, 185, 208, 219),
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 16, horizontal: 5)),
-                child: Text('$change смена', style: const TextStyle(color: Colors.black),))));
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 5),
+              child: ElevatedButton(
+                  onPressed: () => context.read<CubitChangeOperator>().setChange(change),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          state.change == change ? const Color.fromARGB(255, 155, 235, 157) : const Color.fromARGB(255, 185, 208, 219),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 16, horizontal: 5)),
+                  child: Text('$change смена', style: const TextStyle(color: Colors.black),)),
+            )));
   }
 }
                       

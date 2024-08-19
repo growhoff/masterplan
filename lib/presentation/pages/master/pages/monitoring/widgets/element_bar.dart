@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/presentation/pages/master/pages/monitoring/widgets/dialog_job.dart';
 import 'package:master_plan/presentation/pages/master/pages/monitoring/widgets/drop_area.dart';
 import 'package:master_plan/presentation/pages/master/pages/monitoring/widgets/drop_machine.dart';
 import '../../monitoring/bloc/cubit.dart';
@@ -16,6 +17,7 @@ class ElementBarMonitor extends StatelessWidget {
       state.listItemMachine.isNotEmpty
       ? Column(
         children: [
+            ElevatedButton(onPressed: (){showDialog(context: context,builder: (ctx) => const DialogJob()); }, child: const Icon(Icons.change_circle)),
             Visibility(
               visible: !oneArea,
               child: DropArea(state.activeArea, state.listItemArea),
@@ -25,8 +27,8 @@ class ElementBarMonitor extends StatelessWidget {
             const SizedBox(height: 18),
             state.listMonitor!.isNotEmpty
             ? state.isLoading
-              ? ContentListWidgetMaster(state.listMonitor![state.activeMachine], state.change, state.listStatusActive, state.statusActive!)
-              : const Center(child: CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator())
+              : ContentListWidgetMaster(state.listMonitor![state.activeMachine], state.change, state.listStatusActive, state.statusActive!)
             : const Center(child: Text('Пусто'))
         ],
       )

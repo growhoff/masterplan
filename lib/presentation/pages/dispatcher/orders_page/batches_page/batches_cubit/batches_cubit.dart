@@ -3,22 +3,31 @@ import 'package:collection/collection.dart';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:master_plan/data/repositories/local/service/excel_service.dart';
 
 import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/chief_batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/chief_operation_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/distribution_stage_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/operation_archive_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operation_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/stage_archive_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/transfer_archive_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/transfer_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/batch_archive_table.dart';
 
 import 'package:master_plan/data/repositories/supabase/service/batch_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/chief_operation_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/distribution_stage_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/operation_archive_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operation_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/stage_archive_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/stage_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/transfer_archive_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/transfer_table.dart';
 import 'package:master_plan/domain/model/chief_batch.dart';
 import 'package:master_plan/domain/model/distribution_stage.dart';
 import 'package:master_plan/domain/model/operation.dart';
@@ -49,7 +58,13 @@ class BatchesCubit extends Cubit<BatchesState> {
   final _distributionStageTable = DistributionStageTable();
   final _stageTable = StageTable();
   final _operatorOperationsTable = OperatorOperationsTable();
+  final _stageArchiveTable = StageArchiveTable();
+  final _operationArchiveTable = OperationArchiveTable();
   final _operationTable = OperationTable();
+  final _transferTable = TransferTable();
+  final _transferArchiveTable = TransferArchiveTable();
+
+  ExcelService _excelService = ExcelService();
 
   BatchArchive selectedBatch = BatchArchive.empty;
   TextEditingController quantityController = TextEditingController();
@@ -81,7 +96,6 @@ class BatchesCubit extends Cubit<BatchesState> {
                 number: batchDto.order?.number ?? '',
                 priority: batchDto.order?.priority ?? 0,
                 statusId: batchDto.order?.statusId ?? 0),
-            batchArchiveId: batchDto.batchArchiveId,
             isready: batchDto.isready,
             orderId: order?.id);
         batchesList.add(BatchModel(batch: batch));
@@ -158,6 +172,74 @@ class BatchesCubit extends Cubit<BatchesState> {
     final int batchNumber =
         await _batchTable.fetchBatchesInOrderQuantity(order?.id ?? 0) + 1;
 
+    int batchId = await _batchTable.insert(BatchDTO(
+        id: 0,
+        numberRS: selectedBatch.number,
+        name: selectedBatch.name,
+        number: batchNumber.toString(),
+        count: int.parse(quantityController.text),
+        code: selectedBatch.code ?? '',
+        technology: selectedBatch.technologyNumber,
+        orderId: order?.id,
+        isready: false));
+
+    var fetchedOperationsArchiveList =
+        await _operationArchiveTable.selectByBatchArchiveId(selectedBatch.id);
+
+
+    int stageArchiveId = 0;
+
+    int stageId = 0;
+
+    for (var operation in fetchedOperationsArchiveList) {
+      final operationArchiveDto = OperationArchiveDto.fromMap(operation);
+      if (operationArchiveDto.stageArchiveId != stageArchiveId) {
+        stageArchiveId = operationArchiveDto.stageArchiveId;
+
+        stageId = await _stageTable.insert(StageDTO(
+            id: operationArchiveDto.stageArchiveDTO?.id ?? 0,
+            number: operationArchiveDto.stageArchiveDTO?.number ?? '',
+            name: operationArchiveDto.stageArchiveDTO?.name ?? '',
+            batchId: batchId));
+      }
+
+      int operationId = await _operationTable.insert(OperationDTO(
+          id: 0,
+          number: operationArchiveDto.number,
+          name: operationArchiveDto.name,
+          code: operationArchiveDto.code,
+          timepz: operationArchiveDto.timepz,
+          stageId: stageId,
+          timeSH: operationArchiveDto.timeSH));
+
+      var fetchedTransfersArchiveList = await _transferArchiveTable
+          .selectByOperationArchiveId(operationArchiveDto.id);
+
+      if (fetchedTransfersArchiveList.isNotEmpty) {
+        for (var transfer in fetchedTransfersArchiveList) {
+          final transferArchiveDto = TransferArchiveDto.fromMap(transfer);
+          await _transferTable.insert(TransferDTO(
+              id: 0,
+              name: transferArchiveDto.name,
+              code: transferArchiveDto.code,
+              timesh: transferArchiveDto.timeSH,
+              operationId: operationId));
+        }
+      }
+    }
+
+    await _chiefBatchTable.bulkInsert(
+      batchId: batchId,
+      quantity: int.parse(quantityController.text),
+    );
+  }
+
+  Future<void> addBatchOld() async {
+    Map<int, List<OperationArchiveDto>> operationsMap = {};
+
+    final int batchNumber =
+        await _batchTable.fetchBatchesInOrderQuantity(order?.id ?? 0) + 1;
+
     print('batchNumber : $batchNumber');
     int batchId = await _batchTable.insert(BatchDTO(
         id: 0,
@@ -168,8 +250,48 @@ class BatchesCubit extends Cubit<BatchesState> {
         code: selectedBatch.code ?? '',
         technology: selectedBatch.technologyNumber,
         orderId: order?.id,
-        batchArchiveId: selectedBatch.id,
         isready: false));
+
+    var fetchedStagesArchiveList =
+        await _stageArchiveTable.selectByBatchArchiveId(selectedBatch.id);
+
+    for (var fetchedStageArchive in fetchedStagesArchiveList) {
+      final stageArchiveDto = StageArchiveDTO.fromMap(fetchedStageArchive);
+
+      int stageId = await _stageTable.insert(StageDTO(
+          id: stageArchiveDto.id,
+          number: stageArchiveDto.number,
+          name: stageArchiveDto.name,
+          batchId: batchId));
+
+      var fetchedOperationsArchiveList = await _operationArchiveTable
+          .selectByStageArchiveId(stageArchiveDto.id);
+
+      List<OperationArchiveDto> operationsArchiveDtosList = [];
+      for (var fetchedOperationArchive in fetchedOperationsArchiveList) {
+        final operationArchiveDto =
+            OperationArchiveDto.fromMap(fetchedOperationArchive);
+        operationsArchiveDtosList.add(operationArchiveDto);
+      }
+      operationsMap[stageId] = operationsArchiveDtosList;
+    }
+
+    List<OperationDTO> operationsDtosList = [];
+
+    operationsMap.forEach((key, value) {
+      for (var operation in value) {
+        operationsDtosList.add(OperationDTO(
+            id: 0,
+            number: operation.number,
+            name: operation.name,
+            code: operation.code,
+            timepz: operation.timepz,
+            stageId: key,
+            timeSH: operation.timeSH));
+      }
+    });
+
+    await _operationTable.bulkInsert(operationsDtosList: operationsDtosList);
 
     await _chiefBatchTable.bulkInsert(
       batchId: batchId,
@@ -186,11 +308,9 @@ class BatchesCubit extends Cubit<BatchesState> {
     print('начали формировать');
 
     List<int> batchesIdList = [];
-    List<int> batchesArchiveIdList = [];
 
     for (var batch in state.batchesList) {
       batchesIdList.add(batch.batch.id);
-      batchesArchiveIdList.add(batch.batch.batchArchiveId ?? 0);
     }
     var fetchedChiefBatchedList =
         await _chiefBatchTable.selectByBatchesIdList(batchesIdList);
@@ -202,22 +322,24 @@ class BatchesCubit extends Cubit<BatchesState> {
       chiefBatchesList.add(chiefBatch);
     }
 
-    List<Stage> allStagesList = [];
-    var fetchedLit =
-        await _stageTable.selectByBatchesArchiveIdList(batchesArchiveIdList);
+    print('chief batches list : $chiefBatchesList');
 
-    for (var fetchedStage in fetchedLit) {
+    List<Stage> allStagesList = [];
+    var fetchedList = await _stageTable.selectByBatchesIdsList(batchesIdList);
+
+    for (var fetchedStage in fetchedList) {
       final stageDto = StageDTO.fromMap(fetchedStage);
       final stage = Stage.fromDto(stageDto);
-
+      print('stage batch : ${stage.batchId}');
       allStagesList.add(stage);
     }
 
-    var stagesMap = groupBy(allStagesList, (stage) => stage.batchArchiveId);
+    var stagesMap = groupBy(allStagesList, (stage) => stage.batchId);
 
     List<DistributionStage> distributionStagesList = [];
     for (var batch in chiefBatchesList) {
-      final stagesList = stagesMap[batch.batch.batchArchiveId];
+      print('batch: ${batch.batchId}');
+      final stagesList = stagesMap[batch.batchId];
 
       stagesList?.forEach((stage) {
         distributionStagesList.add(DistributionStage(
@@ -228,6 +350,7 @@ class BatchesCubit extends Cubit<BatchesState> {
         ));
       });
     }
+
     await _distributionStageTable.bulkInsert(
         distributionStagesList: distributionStagesList);
 
@@ -250,6 +373,7 @@ class BatchesCubit extends Cubit<BatchesState> {
   Future fetchStagesInBatch(int batchId) async {
     List<DistributionStage> distributionStagesList = [];
     List<StageModel> stagesInBatchModelList = [];
+    print('BATCH ID: $batchId');
     var fetchedChiefBatchesList =
         await _chiefBatchTable.selectByBatchesIdList([batchId]);
     List<int> chiefBatchesIdsList = [];
@@ -277,6 +401,11 @@ class BatchesCubit extends Cubit<BatchesState> {
               id: value.first.chiefBatch?.batch.id ?? 0,
               numberRS: value.first.chiefBatch?.batch.numberRS ?? '',
               name: value.first.chiefBatch?.batch.name ?? '',
+              order: Order(
+                  id: value.first.chiefBatch?.batch.order?.id ?? 0,
+                  number: value.first.chiefBatch?.batch.order?.number ?? '',
+                  priority: value.first.chiefBatch?.batch.order?.priority ?? 0,
+                  statusId: value.first.chiefBatch?.batch.order?.statusId ?? 0),
               count: value.first.chiefBatch?.batch.count ?? 0,
               code: value.first.chiefBatch?.batch.code ?? '',
               technology: value.first.chiefBatch?.batch.technology ?? '',
@@ -284,8 +413,10 @@ class BatchesCubit extends Cubit<BatchesState> {
               orderId: value.first.chiefBatch?.batch.orderId),
           stageId: value.first.stageId,
           stageNumber: value.first.stage?.number ?? '',
-          stageName: value.first.stage?.name ?? '');
+          stageName: value.first.stage?.name ?? '',
+          unitNumber: value.first.unit?.number ?? '');
 
+      print(stageInBatchModel.batch.order?.number);
       stageInBatchModel.status = value.last.stageStatus?.name ?? '';
 
       for (var stage in value) {
@@ -327,7 +458,7 @@ class BatchesCubit extends Cubit<BatchesState> {
   Future fetchOperationsInStage(StageModel stageInBatch) async {
     List<OperationInStageModel> operationsInStageList = [];
     List<int> operationsIdsList = [];
-
+    print(stageInBatch.stageId);
     var fetchedOperationsList =
         await _operationTable.selectByStageId(stageId: stageInBatch.stageId);
 
@@ -357,8 +488,8 @@ class BatchesCubit extends Cubit<BatchesState> {
     for (int i = 0; i < fetchedOperatorOperationsList.length; i++) {
       var operation = fetchedOperatorOperationsList[i];
       final operatorOperationsDto = OperatorOperationsDTO.fromMap(operation);
-     // print(
-       //   'ID : ${operatorOperationsDto.id}  , name: ${operatorOperationsDto.operation.name}  ,  status: ${operatorOperationsDto.statusId}');
+      // print(
+      //   'ID : ${operatorOperationsDto.id}  , name: ${operatorOperationsDto.operation.name}  ,  status: ${operatorOperationsDto.statusId}');
       final operationInStage = operationsInStageList.firstWhere((operation) =>
           operation.operation.id == operatorOperationsDto.operationId);
 
@@ -419,5 +550,9 @@ class BatchesCubit extends Cubit<BatchesState> {
     }
 
     emit(state.copyWith(operationsInStageList: operationsInStageList));
+  }
+
+  Future loadOrder() async {
+    await _excelService.dispatcherLoadOrder();
   }
 }

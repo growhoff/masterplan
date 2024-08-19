@@ -20,12 +20,13 @@ class StageTable extends SupabaseTable {
         'name': dto.name,
         'area_id': 1,
         'batch_id': dto.batchId,
-        'batch_archive_id': dto.batchArchiveId
+
       }).select('id');
       return stage[0]['id'];
     }
     return 0;
   }
+
 
   @override
   Future<List<Map<String, dynamic>>> select() {
@@ -37,6 +38,14 @@ class StageTable extends SupabaseTable {
     return await table
         .select()
         .inFilter('batch_archive_id', batchesIdList)
+        .order('id', ascending: true);
+  }
+
+  Future<List<Map<String, dynamic>>> selectByBatchesIdsList(
+      List<int> batchesIdsList) async {
+    return await table
+        .select()
+        .inFilter('batch_id', batchesIdsList)
         .order('id', ascending: true);
   }
 

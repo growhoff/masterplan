@@ -305,7 +305,7 @@ class _StagesInUnitTitleItemViewState extends State<StagesInUnitTitleItemView> {
                       Expanded(
                         child: Container(
                           child: Text(
-                            '${widget.stageModel.stageNumber}',
+                            '${widget.stageModel.batch.order?.number ?? '_'}.${widget.stageModel.batch.number}.${widget.stageModel.stageNumber}',
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -314,7 +314,7 @@ class _StagesInUnitTitleItemViewState extends State<StagesInUnitTitleItemView> {
                       Expanded(
                         child: Container(
                           child: Text(
-                            '${widget.stageModel.batch.number}',
+                            '${widget.stageModel.batch.numberRS}',
                             textAlign: TextAlign.center,
                           ),
                         ),

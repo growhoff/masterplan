@@ -19,7 +19,9 @@ class ChiefOperationDistributionTitleItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Этап № ${operation.stage.number}\n${operation.stage.name}'),
+            Text('${operation.batch.id}'),
+            Text(
+                'Этап № ${operation.batch.order?.number ?? '_'}.${operation.batch.number}.${operation.stage.number}\n${operation.stage.name}'),
             const SizedBox(height: 8),
             Text(
                 'Деталь № ${operation.batch.technology}\n${operation.batch.name} ${operation.batch.numberRS}'),
@@ -27,7 +29,8 @@ class ChiefOperationDistributionTitleItem extends StatelessWidget {
             Text(
                 'Операция: ${operation.operation.number} ${operation.operation.name}'),
             const SizedBox(height: 8),
-            Text('Кол-во деталей: ${operation.quantity} / ${operation.batch.count}'),
+            Text(
+                'Кол-во деталей: ${operation.quantity} / ${operation.batch.count}'),
             const SizedBox(height: 8),
             Text(
                 'Т п.з.: ${operation.operation.timepz} / Т шт.: ${operation.operation.timeSH} / Т шт.к.: ${(operation.operation.timepz + operation.operation.timeSH) / operation.quantity}')
@@ -144,7 +147,6 @@ class _ChiefOperationDistributionBodyItemState
                                 .add(DistributionOperationModel(
                                     oldQuantity: widget.operation.quantity,
                                     chiefOperationId: widget.operation.id,
-
                                     batchId: widget.operation.batchId,
                                     operationId: widget.operation.operationId,
                                     quantity:

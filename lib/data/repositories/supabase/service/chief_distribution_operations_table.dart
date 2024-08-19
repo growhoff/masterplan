@@ -61,11 +61,11 @@ class ChiefDistributionOperationsTable extends SupabaseTable {
       required int unitId}) async {
     var res = await table
         .select(
-            '*, z_batch:batch_id!inner(*), z_stage:stage_id(*), z_operation:operation_id(*)')
+            '*, z_batch:batch_id!inner(*, z_order(*)), z_stage:stage_id(*), z_operation:operation_id(*)')
         .eq('z_batch.company_id', _companyId ?? 1)
         .inFilter('unit_id', [0, unitId])
         .gt('quantity', 0)
-        .range(minRange, maxRange)
+
         .order('id', ascending: true);
     return res;
   }
@@ -79,6 +79,10 @@ class ChiefDistributionOperationsTable extends SupabaseTable {
   Future<void> updateQuantity(
       {required int chiefOperationId, required int newQuantity}) async {
     await table.update({'quantity': newQuantity}).eq('id', chiefOperationId);
+  }
+
+  Future<void> updateQuere({required int stageId, required int operationId, required int batchId, required int quantity}) async {
+    await table.update({'quantity': quantity}).eq('batch_id', batchId).eq('operation_id', operationId).eq('stage_id', stageId);
   }
 
   stream() {

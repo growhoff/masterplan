@@ -27,7 +27,6 @@ class BatchTable extends SupabaseTable {
         'order_id': dto.orderId,
         'count': dto.count,
         'company_id': _companyId,
-        'batch_archive_id': dto.batchArchiveId,
         'batch_status_id': 5,
       }).select('id');
 

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import 'package:master_plan/presentation/app/bloc/state.dart';
 import 'package:master_plan/presentation/pages/operator/bloc/cubit.dart';
+import 'package:master_plan/presentation/pages/operator/widgets/text_error.dart';
 import 'widgets/buttom_back.dart';
 import 'widgets/buttom_start.dart';
 
@@ -15,7 +16,7 @@ class OperatorPage extends StatelessWidget {
     final stateMain = context.read<CubitMain>().state;
     return BlocProvider<CubitOperator>(
       create: (context) => CubitOperator(stateMain.user!.id, stateMain.machineIdList!, stateMain.change!),
-      child: const ContentOperator()
+      child: const ContentOperator(),
     );
   }
 }
@@ -44,6 +45,8 @@ class ContentOperator extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  TextError(),
+                  SizedBox(height: 16),
                   ButtomStart(),
                   SizedBox(height: 16),
                   ButtomBack(),

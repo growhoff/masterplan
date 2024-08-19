@@ -1,17 +1,25 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/control_machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/position_staff_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/shift_schedule_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/shifts_distribution_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/staff_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/type_machine_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/view_machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/area_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/control_machine_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/machine_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/position_staff_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/shift_schedule_table.dart';
 
 // import 'package:master_plan/data/repositories/supabase/service/position_staff_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/shifts_distribution.dart';
 import 'package:master_plan/data/repositories/supabase/service/staff_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/type_machine_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/version_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/view_machine_table.dart';
 import 'package:master_plan/domain/model/area.dart';
 import 'package:master_plan/domain/model/area_machine.dart';
 // import 'package:master_plan/domain/model/company.dart';
@@ -56,6 +64,7 @@ class CubitMain extends Cubit<StateMain> {
               await fetchUnitId(state.user!.id);
               List<int> listAreaId = await getAreaForStaff(query['id']);
               await getMachineToUnit(listAreaId);
+              await getListsMachine();
               break;
             //мастер
             case 3:
@@ -100,16 +109,49 @@ class CubitMain extends Cubit<StateMain> {
     }
   }
 
+  Future<void> getListsMachine()async{
+    final typeMachineTable = TypeMachineTable();
+    final viewMachineTable = ViewMachineTable();
+    final controlMachineTable = ControlMachineTable();
+    final shiftScheduleTable = ShiftScheduleTable();
+
+    final queueType = await typeMachineTable.select();
+    final queueView = await viewMachineTable.select();
+    final queueControl = await controlMachineTable.select();
+    final queueShift = await shiftScheduleTable.select();
+
+    List<TypeMachineDTO> listType = [];
+    List<ViewMachineDTO> listView = [];
+    List<ControlMachineDTO> listControl = [];
+    List<ShiftScheduleDTO> listShift = [];
+    
+    for (var e in queueType) {
+      listType.add(TypeMachineDTO.fromMap(e));
+    }
+    for (var e in queueView) {
+      listView.add(ViewMachineDTO.fromMap(e));
+    }
+    for (var e in queueControl) {
+      listControl.add(ControlMachineDTO.fromMap(e));
+    }
+    for (var e in queueShift) {
+      listShift.add(ShiftScheduleDTO.fromMap(e));
+    }
+
+    emit(state.copyWith(typeMachineList: listType, viewMachineList: listView, controlMachineList: listControl, shiftScheduleList: listShift));
+  }
+
   //get user
   Future<void> getUserNew(StaffDTO dto) async {
     final list = await getStaffPosition(dto.id);
     Unit? unit;
     Area? area;
     for (var element in list) {
-      if (element.positionId != 7) {
-        unit = Unit.fromDTO(element.unit!);
-        area = Area.fromDTO(element.area!);
-      }
+      // if (element.positionId != 7) {
+        
+      // }
+      unit = Unit.fromDTO(element.unit!);
+      area = Area.fromDTO(element.area!);
     }
     final userDto = User.fromDTO(dto, unit, area);
     emit(state.copyWith(user: userDto));

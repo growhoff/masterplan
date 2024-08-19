@@ -208,6 +208,34 @@ class _AddOrderPageViewState extends State<AddOrderPageView> {
                             child: Text(
                               softWrap: true,
                               textAlign: TextAlign.center,
+                              'заказчик',
+                              style: TextStyle(fontSize: 20),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          SizedBox(
+                            width: 150,
+                            child: TextField(
+                              controller:
+                              context.read<OrdersCubit>().customerController,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),  const SizedBox(
+                      height: 40,
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Flexible(
+                            child: Text(
+                              softWrap: true,
+                              textAlign: TextAlign.center,
                               'приоритет',
                               style: TextStyle(fontSize: 20),
                             ),
@@ -240,6 +268,8 @@ class _AddOrderPageViewState extends State<AddOrderPageView> {
                         ],
                       ),
                     ),
+
+
                     const SizedBox(
                       height: 40,
                     ),

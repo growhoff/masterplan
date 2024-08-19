@@ -36,6 +36,7 @@ import '../pages/dispatcher/lists_page/units_list_page/edit_unit_page.dart';
 import '../pages/dispatcher/orders_page/batches_page/add_batch_page.dart';
 import '../pages/dispatcher/orders_page/batches_page/batches_page.dart';
 import '../pages/dispatcher/orders_page/batches_page/dispatcher_operations_in_stage_page.dart';
+import '../pages/dispatcher/orders_page/edit_order_page.dart';
 import '../pages/dispatcher/orders_page/order_info_page.dart';
 import '../pages/dispatcher/widgets/custom_navbar.dart';
 import '../pages/master/maste_page.dart';
@@ -126,6 +127,8 @@ class MyApp extends StatelessWidget {
           //    const StagesInBatchPage(),
           '/dispatcherOperationsInStagePage': (BuildContext context) =>
               const OperationsInStagePage(),
+
+          'editOrderPage': (BuildContext context) => const EditOrderPage(),
         },
         home: const LoginPage(),
       ),

@@ -9,6 +9,7 @@ class Order {
   final String? requiredCompletionDate;
   final String? calculatedCompletionDate;
   final String? actualCompletionDate;
+  final String? customer;
   final int priority;
   final int statusId;
   final OrderStatus? status;
@@ -16,6 +17,7 @@ class Order {
   Order(
       {required this.id,
       this.status,
+        this.customer,
       required this.number,
       this.dateReceipt,
       this.requiredCompletionDate,

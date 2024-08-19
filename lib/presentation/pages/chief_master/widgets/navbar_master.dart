@@ -20,7 +20,7 @@ class NavbarChiefMaster extends StatelessWidget {
               final user = state.user!;
               return Column(children: [
                 Text(DataChiefMaster.listPage[stateMaster.activePage].title), 
-                Text('${user.fio} / ${user.position.name} / Начальник-мастер', style: const TextStyle(fontSize: 12)),
+                Text('${user.fio} / ${user.position.name} / ${user.unit?.name} (${user.area?.name})', style: const TextStyle(fontSize: 12)),
               ]);
               }
               ),

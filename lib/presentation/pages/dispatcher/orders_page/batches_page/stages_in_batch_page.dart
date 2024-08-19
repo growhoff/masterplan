@@ -209,8 +209,9 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                             6: FlexColumnWidth(1),
                             7: FlexColumnWidth(1),
                             8: FlexColumnWidth(1),
-                            9: FlexColumnWidth(1.5),
-                            10: FlexColumnWidth(3),
+                            9: FlexColumnWidth(1),
+                            10: FlexColumnWidth(1.5),
+                            11: FlexColumnWidth(3),
                           },
                           defaultColumnWidth: const FlexColumnWidth(),
                           border: TableBorder.all(color: Colors.black),
@@ -245,6 +246,23 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                                           child: Text(
                                             'Наименование\nэтапа',
                                             textAlign: TextAlign.center,
+                                          ),
+                                        )),
+                                  ),
+                                  TableCell(
+                                    child: Container(
+                                        height: 100,
+                                        color: Colors.blue[200],
+                                        alignment: Alignment.center,
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 8),
+                                        child: const FittedBox(
+                                          fit: BoxFit.fill,
+                                          child: RotatedBox(
+                                            quarterTurns: 3,
+                                            child: Text(
+                                              '№ цеха',
+                                            ),
                                           ),
                                         )),
                                   ),
@@ -406,7 +424,7 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                                 state.stagesInBatchList.length,
                                 (index) => TableRow(children: [
                                       StagesInBatchTableCell(
-                                        '${widget.batch.order?.number}.${widget.batch.number}.${state.stagesInBatchList[index].stageNumber}',
+                                        '${state.stagesInBatchList[index].batch.order?.number ?? '_'}.${widget.batch.number}.${state.stagesInBatchList[index].stageNumber}',
                                         stageModel:
                                             state.stagesInBatchList[index],
                                         isFirstInRow: true,
@@ -417,6 +435,7 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                                             ? true
                                             : false,
                                       ),
+
                                       StagesInBatchTableCell(
                                         '${state.stagesInBatchList[index].stageName}',
                                         stageModel:
@@ -428,6 +447,17 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                                             ? true
                                             : false,
                                       ),
+                                  StagesInBatchTableCell(
+                                    '${state.stagesInBatchList[index].unitNumber}',
+                                    stageModel:
+                                    state.stagesInBatchList[index],
+                                    isSelected: state
+                                        .stagesInBatchList[index]
+                                        .stageId ==
+                                        widget.selectedStageId
+                                        ? true
+                                        : false,
+                                  ),
                                       StagesInBatchTableCell(
                                         '${state.stagesInBatchList[index].inWorkQuantity}',
                                         stageModel:

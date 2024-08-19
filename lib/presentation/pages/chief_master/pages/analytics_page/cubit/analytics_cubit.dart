@@ -91,9 +91,19 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
       var hours =
           DateTime.fromMillisecondsSinceEpoch(value.first.timestop ?? 0).hour;
 
-      var dateTime =
+      var dateTimeEnd =
       DateTime.fromMillisecondsSinceEpoch(value.first.timestop ?? 0);
-      String date = '${dateTime.day}.${dateTime.month}.${dateTime.year}';
+
+      String dateEnd =
+          '${dateTimeEnd.day}.${dateTimeEnd.month}.${dateTimeEnd.year}';
+      String timeEnd = '${dateTimeEnd.hour}:${dateTimeEnd.minute}';
+
+      var dateTimeStart =
+      DateTime.fromMillisecondsSinceEpoch(value.first.timestart ?? 0);
+
+      String dateStart =
+          '${dateTimeStart.day}.${dateTimeStart.month}.${dateTimeStart.year}';
+      String timeStart = '${dateTimeStart.hour}:${dateTimeStart.minute}';
 
       int change = 1;
       (hours >= 8 && hours <= 20) ? change = 1 : change = 2;
@@ -114,7 +124,10 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
           machineName: value.first.machine?.name ?? '',
           machineInventoryNumber: value.first.machine?.inventoryNumber ?? 0,
           fio: value.first.user?.fio ?? 'мастер',
-          date: date,
+          dateEnd: dateEnd,
+          timeEnd: timeEnd,
+          dateStart: dateStart,
+          timeStart: timeStart,
           change: change,
           areaNumber: value.first.area.number,
           detailName: value.first.batch.name);
@@ -190,9 +203,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
 
       if (!stagesMap.containsKey(chiefOperation.stageId)) {
         stagesMap[chiefOperation.stageId] = ChiefStageForReportModel(
-            code: chiefOperation.batch.code != ''
-                ? chiefOperation.batch.code
-                : chiefOperation.batch.batchArchive?.code ?? '',
+            code: chiefOperation.batch.code ,
             technologyNumber: chiefOperation.batch.technology,
             batchId: chiefOperation.batchId,
             batchNumber: chiefOperation.batch.numberRS,
@@ -384,7 +395,10 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
             machineName: '',
             machineInventoryNumber: 0,
             fio: '',
-            date: '',
+            dateStart: '',
+            dateEnd: '',
+            timeStart: '',
+            timeEnd: '',
             change: 0,
             areaNumber: '');
 

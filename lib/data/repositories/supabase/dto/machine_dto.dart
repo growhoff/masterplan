@@ -1,7 +1,10 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/control_machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/shift_schedule_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/type_machine_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/view_machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 
 class MachineDTO extends Dto {
@@ -11,13 +14,16 @@ class MachineDTO extends Dto {
   final int areaId;
   final bool isActivated;
   final AreaDTO? area;
-  final String? typeMachine;
   final String? model;
-  final String? control;
   final String? prefix;
   final int? shiftScheduleId;
+  final int? viewId;
+  final int? controlId;
+  final int? typeMachineId;
   final ShiftScheduleDTO? shiftSchedule;
-
+  final ViewMachineDTO? viewMachine;
+  final ControlMachineDTO? controlMachine;
+  final TypeMachineDTO? typeMachine;
   MachineDTO({
     required this.id,
     required this.inventoryNumber,
@@ -25,12 +31,16 @@ class MachineDTO extends Dto {
     required this.areaId,
     required this.isActivated,
     this.area,
-    this.typeMachine,
     this.model,
-    this.control,
     this.prefix,
     this.shiftScheduleId,
+    this.viewId,
+    this.controlId,
+    this.typeMachineId,
     this.shiftSchedule,
+    this.viewMachine,
+    this.controlMachine,
+    this.typeMachine,
   });
 
   Map<String, dynamic> toMap() {
@@ -50,12 +60,17 @@ class MachineDTO extends Dto {
       isActivated: map['is_activated'],
       areaId: map['area_id'] as int,
       area: map['z_area'] != null ? AreaDTO.fromMap(map['z_area']) : null,
-      typeMachine: map['type_machine'] != null ? map['type_machine'] as String : null,
       model: map['model'] != null ? map['model'] as String : null,
-      control: map['control'] != null ? map['control'] as String : null,
       prefix: map['prefix'] != null ? map['prefix'] as String : null,
       shiftScheduleId: map['shift_schedule_id'] != null ? map['shift_schedule_id'] as int : null,
       shiftSchedule: map['z_shift_schedule'] != null ?  ShiftScheduleDTO.fromMap(map['z_shift_schedule']) : null,
+
+      viewId: map['view_id'] != null ? map['view_id'] as int : null,
+      viewMachine: map['z_view_machine'] != null ?  ViewMachineDTO.fromMap(map['z_view_machine']) : null,
+      controlId: map['control_id'] != null ? map['control_id'] as int : null,
+      controlMachine: map['z_control_machine'] != null ?  ControlMachineDTO.fromMap(map['z_control_machine']) : null,
+      typeMachineId: map['type_machine_id'] != null ? map['type_machine_id'] as int : null,
+      typeMachine: map['z_type_machine'] != null ?  TypeMachineDTO.fromMap(map['z_type_machine']) : null,
     );
   }
 

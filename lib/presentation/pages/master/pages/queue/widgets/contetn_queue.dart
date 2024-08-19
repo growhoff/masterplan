@@ -19,7 +19,7 @@ class ContetnQueue extends StatelessWidget {
       final batch = itemMachine.activeOper!.list.first.batch;
       final oper = itemMachine.activeOper!.list.first.operation;
       activeStage = itemMachine.activeOper!.list.first.stage.number;
-      activeBatch = '${batch.code} ${batch.name}';
+      activeBatch = '${batch.numberRS} ${batch.name}';
       activeOper = '${oper.code} ${oper.name}';
       activeTime = '${itemMachine.activeOper!.time}';
       activeCount = '${itemMachine.activeOper!.list.length}';

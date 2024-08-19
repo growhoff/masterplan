@@ -20,8 +20,8 @@ project(nuget-populate NONE)
 include(ExternalProject)
 ExternalProject_Add(nuget-populate
                      "UPDATE_DISCONNECTED" "False" "EXTERNALPROJECT_INTERNAL_ARGUMENT_SEPARATOR" "URL" "https://dist.nuget.org/win-x86-commandline/v6.0.0/nuget.exe" "URL_HASH" "SHA256=04eb6c4fe4213907e2773e1be1bbbd730e9a655a3c9c58387ce8d4a714a5b9e1" DOWNLOAD_NO_EXTRACT YES
-                    SOURCE_DIR          "D:/FlutterProject/masterplan/build/windows/x64/_deps/nuget-src"
-                    BINARY_DIR          "D:/FlutterProject/masterplan/build/windows/x64/_deps/nuget-build"
+                    SOURCE_DIR          "D:/Flutter project/masterplan/build/windows/x64/_deps/nuget-src"
+                    BINARY_DIR          "D:/Flutter project/masterplan/build/windows/x64/_deps/nuget-build"
                     CONFIGURE_COMMAND   ""
                     BUILD_COMMAND       ""
                     INSTALL_COMMAND     ""
@@ -37,10 +37,10 @@ get_filename_component(dlFileName "${DOWNLOADED_FILE}" NAME)
 
 ExternalProject_Add_Step(nuget-populate copyfile
   COMMAND    "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/cmake.exe" -E copy_if_different
-             "<DOWNLOADED_FILE>" "D:/FlutterProject/masterplan/build/windows/x64/_deps/nuget-src"
+             "<DOWNLOADED_FILE>" "D:/Flutter project/masterplan/build/windows/x64/_deps/nuget-src"
   DEPENDEES  patch
   DEPENDERS  configure
-  BYPRODUCTS "D:/FlutterProject/masterplan/build/windows/x64/_deps/nuget-src/${dlFileName}"
+  BYPRODUCTS "D:/Flutter project/masterplan/build/windows/x64/_deps/nuget-src/${dlFileName}"
   COMMENT    "Copying file to SOURCE_DIR"
 )
 

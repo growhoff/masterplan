@@ -29,8 +29,8 @@ class OperationTable extends SupabaseTable {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> select() {
-    return table.select();
+  Future<List<Map<String, dynamic>>> select() async{
+    return await table.select('*,z_stage(*)').order('id', ascending: true);
   }
 
   Future<List<Map<String, dynamic>>> selectByStageIdList(
@@ -41,11 +41,29 @@ class OperationTable extends SupabaseTable {
         .order('id', ascending: true);
   }
 
+  Future<void> bulkInsert(
+      {required List<OperationDTO> operationsDtosList}) async {
+    List<Map<String, Object>> mapsList = [];
+    for (int i = 0; i < operationsDtosList.length; i++) {
+      var operation = operationsDtosList[i];
+      mapsList.add({
+        'number': operation.number,
+        'name': operation.name,
+        'code': operation.code,
+        'time_pz': operation.timepz,
+        'stage_id': operation.stageId,
+        'time_sh': operation.timeSH,
+      });
+    }
+
+    await table.insert(mapsList);
+  }
+
   Future<List<Map<String, dynamic>>> selectByBatchesIdsList(
       List<int> batchesIdList) async {
     return await table
         .select('*, z_stage!inner(*)')
-        .inFilter('z_stage.batch_archive_id', batchesIdList)
+        .inFilter('z_stage.batch_id', batchesIdList)
         .order('id', ascending: true);
   }
 

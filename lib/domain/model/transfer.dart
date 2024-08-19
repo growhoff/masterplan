@@ -2,17 +2,18 @@
 
 class Transfer {
   final int id;
-  final int number;
+  final int? number;
   final String name;
   final String code;
   final int timesh;
   final int operationId;
   Transfer({
     required this.id,
-    required this.number,
+    this.number,
     required this.name,
     required this.code,
     required this.timesh,
     required this.operationId,
   });
 }
+

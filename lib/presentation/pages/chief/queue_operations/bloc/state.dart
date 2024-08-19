@@ -1,10 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:master_plan/domain/model/area_machine.dart';
-// import 'package:master_plan/domain/model/otp_path_operations.dart';
-import 'package:master_plan/presentation/pages/chief/queue_operations/model/distrib_item.dart';
-// import 'package:master_plan/presentation/pages/chief_master/pages/queue/queue_operations/model/item_oper.dart';
-// import '../model/item_machine.dart';
+import '../model/distrib_item.dart';
 
 
 class StateOperatQueueMasterChM extends Equatable {

@@ -8,6 +8,12 @@ class ButtomBack extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CubitOperator, StateOperator>(builder: (context, state) => Visibility(visible: state.isStart ,child: ElevatedButton(onPressed: ()=> Navigator.pushNamed(context, '/workPage'), child: const Text('Вернуться'))));
+    final machineList = context.read<CubitOperator>().machineIdList;
+    return BlocBuilder<CubitOperator, StateOperator>(
+        builder: (context, state) => Visibility(
+            visible: state.isStart && machineList.isNotEmpty,
+            child: ElevatedButton(
+                onPressed: () => Navigator.pushNamed(context, '/workPage'),
+                child: const Text('Вернуться'))));
   }
 }

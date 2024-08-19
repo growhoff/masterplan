@@ -96,33 +96,29 @@ class _OrdersPageViewState extends State<OrdersPageView> {
                   child: ListView.separated(
                       physics: AlwaysScrollableScrollPhysics(),
                       shrinkWrap: true,
-                      itemBuilder: (context, index) =>
-                          Center(
+                      itemBuilder: (context, index) => Center(
                             child: GestureDetector(
                               onTap: () {
                                 showDialog(
                                     context: context,
-                                    builder: (ctx) =>
-                                        SimpleDialog(
+                                    builder: (ctx) => SimpleDialog(
                                           title: Text(
-                                              'заказ ${state.ordersList[index]
-                                                  .number}'),
+                                              'заказ ${state.ordersList[index].number}'),
                                           contentPadding: EdgeInsets.all(5),
                                           children: [
                                             SimpleDialogOption(
                                               onPressed: () {
                                                 Navigator.pop(context, false);
                                                 Navigator.pushNamed(context,
-                                                    '/dispatcherOrderInfoPage',
-                                                    arguments: state
-                                                        .ordersList[index])
-                                                    .then((_) =>
-                                                    setState(() {
-                                                    }));
+                                                        '/dispatcherOrderInfoPage',
+                                                        arguments: state
+                                                            .ordersList[index])
+                                                    .then(
+                                                        (_) => setState(() {}));
                                               },
                                               child: const Row(
                                                 crossAxisAlignment:
-                                                CrossAxisAlignment.center,
+                                                    CrossAxisAlignment.center,
                                                 children: [
                                                   Icon(Icons.info_rounded),
                                                   SizedBox(
@@ -131,7 +127,7 @@ class _OrdersPageViewState extends State<OrdersPageView> {
                                                   Text(
                                                     'инфо',
                                                     style:
-                                                    TextStyle(fontSize: 18),
+                                                        TextStyle(fontSize: 18),
                                                   )
                                                 ],
                                               ),
@@ -150,7 +146,7 @@ class _OrdersPageViewState extends State<OrdersPageView> {
                                               },
                                               child: const Row(
                                                 crossAxisAlignment:
-                                                CrossAxisAlignment.center,
+                                                    CrossAxisAlignment.center,
                                                 children: [
                                                   Icon(Icons.account_tree),
                                                   SizedBox(
@@ -168,11 +164,15 @@ class _OrdersPageViewState extends State<OrdersPageView> {
                                             SimpleDialogOption(
                                               onPressed: () {
                                                 Navigator.pop(context, false);
-                                                setState(() {});
+
+                                                Navigator.pushNamed(
+                                                    context, 'editOrderPage',
+                                                    arguments: state
+                                                        .ordersList[index]);
                                               },
                                               child: const Row(
                                                 crossAxisAlignment:
-                                                CrossAxisAlignment.center,
+                                                    CrossAxisAlignment.center,
                                                 children: [
                                                   Icon(Icons.edit_rounded),
                                                   SizedBox(
@@ -193,14 +193,14 @@ class _OrdersPageViewState extends State<OrdersPageView> {
                                                   context
                                                       .read<OrdersCubit>()
                                                       .deleteOrder(state
-                                                      .ordersList[index]
-                                                      .id);
+                                                          .ordersList[index]
+                                                          .id);
                                                 });
                                                 Navigator.pop(context, false);
                                               },
                                               child: const Row(
                                                 crossAxisAlignment:
-                                                CrossAxisAlignment.center,
+                                                    CrossAxisAlignment.center,
                                                 children: [
                                                   Icon(Icons.delete_rounded),
                                                   SizedBox(
@@ -223,8 +223,7 @@ class _OrdersPageViewState extends State<OrdersPageView> {
                                         Expanded(
                                           child: Container(
                                             child: Text(
-                                              '${state.ordersList[index]
-                                                  .number}',
+                                              '${state.ordersList[index].number}',
                                               textAlign: TextAlign.center,
                                               style: TextStyle(fontSize: 18),
                                             ),
@@ -234,7 +233,7 @@ class _OrdersPageViewState extends State<OrdersPageView> {
                                         Expanded(
                                           child: Container(
                                             child: Text(
-                                              'заказчик',
+                                              state.ordersList[index].customer ?? '_',
                                               textAlign: TextAlign.center,
                                               style: TextStyle(fontSize: 18),
                                             ),
@@ -251,8 +250,7 @@ class _OrdersPageViewState extends State<OrdersPageView> {
                                           flex: 3,
                                         ),
                                         Text(
-                                          '${state.ordersList[index].status
-                                              ?.name}',
+                                          '${state.ordersList[index].status?.name}',
                                           textAlign: TextAlign.center,
                                         )
                                       ],
@@ -260,8 +258,7 @@ class _OrdersPageViewState extends State<OrdersPageView> {
                               ),
                             ),
                           ),
-                      separatorBuilder: (ctx, i) =>
-                          SizedBox(
+                      separatorBuilder: (ctx, i) => SizedBox(
                             height: 5,
                           ),
                       itemCount: state.ordersList.length),

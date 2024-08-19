@@ -1,13 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
+import 'package:master_plan/data/repositories/supabase/service/chief_distribution_operations_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/chief_operation_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
 import 'package:master_plan/domain/model/area.dart';
 import 'package:master_plan/domain/model/area_machine.dart';
-import 'package:master_plan/domain/model/batch.dart';
-import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/operator_operations.dart';
-import 'package:master_plan/domain/model/status.dart';
-import 'package:master_plan/presentation/pages/chief/queue_operations/model/distrib_item.dart';
+import 'package:master_plan/domain/usecase/convert_dto_model.dart';
+import '../model/distrib_item.dart';
 import 'state.dart';
 
 class CubitOperatQueueMasterChM extends Cubit<StateOperatQueueMasterChM> {
@@ -19,7 +19,7 @@ class CubitOperatQueueMasterChM extends Cubit<StateOperatQueueMasterChM> {
 
   CubitOperatQueueMasterChM( this.queueList,  this.userId, this.listArea, this.listAreaMachine) : super(const StateOperatQueueMasterChM()) {
     emit(state.copyWith(listAreaMachine: listAreaMachine));
-    tableOperations.table.stream(primaryKey: ['id']).inFilter('machine_id', listAreaMachine[state.activeArea].idListMachine).listen((event) {}).onData((data) async {
+    tableOperations.table.stream(primaryKey: ['id']).inFilter('area_id', [listAreaMachine[state.activeArea].area.id]).listen((event) {}).onData((data) async {
       await getQuere(data);
     });
   }
@@ -28,7 +28,7 @@ class CubitOperatQueueMasterChM extends Cubit<StateOperatQueueMasterChM> {
   Future<void> getQuere(List<Map<String, dynamic>>? data) async {
     List<int> listId = [];
     for (var element in data!) {
-      if (element['status_id'] as int == 3) listId.add(element['id']);
+      if (element['status_id'] as int == 2 || element['status_id'] as int == 3 || element['status_id'] as int == 4) listId.add(element['id']);
     }
     final quere = await tableOperations.selectListIdOrder(listId);
     Set<String> setAllId = {};
@@ -64,8 +64,8 @@ class CubitOperatQueueMasterChM extends Cubit<StateOperatQueueMasterChM> {
       List<OperatorOperationsDTO> listTrue = [];
       List<OperatorOperationsDTO> listTrueMod = [];
       for (var el in queueList) {
-        if ((int.parse(batchId) == el.batchId) && (int.parse(stageId) == el.stageId) && (int.parse(operId) == el.operationId) && (el.statusId == 3 && el.modific == null)) listTrue.add(el);
-        if ((int.parse(batchId) == el.batchId) && (int.parse(stageId) == el.stageId) && (int.parse(operId) == el.operationId) && (el.statusId == 3 && el.modific == true)) listTrueMod.add(el);
+        if ((int.parse(batchId) == el.batchId) && (int.parse(stageId) == el.stageId) && (int.parse(operId) == el.operationId) && (el.modific == null)) listTrue.add(el);
+        if ((int.parse(batchId) == el.batchId) && (int.parse(stageId) == el.stageId) && (int.parse(operId) == el.operationId) && (el.modific == true)) listTrueMod.add(el);
       }
       if (listTrue.isNotEmpty) listResOper.add(convertToDistrib(listTrue));
       if (listTrueMod.isNotEmpty) listResOper.add(convertToDistrib(listTrueMod));
@@ -79,7 +79,7 @@ class CubitOperatQueueMasterChM extends Cubit<StateOperatQueueMasterChM> {
       int timePZ = operOperat.first.operation.timepz;
       List<OperatorOperations> list = [];
       for (var element in operOperat) {
-        list.add(convertDto(element));
+        list.add(ConvertDtoModel.convertToOperatorOperations(element));
       }
     return DistribItem(
         stageNumber: '${operOperat.first.stage!.number} ${operOperat.first.stage!.name}',
@@ -93,39 +93,6 @@ class CubitOperatQueueMasterChM extends Cubit<StateOperatQueueMasterChM> {
         );
   }
 
-  OperatorOperations convertDto(OperatorOperationsDTO dto) {
-    return OperatorOperations(
-      id: dto.id,
-      area: dto.area!,
-      operation: dto.operation,
-      stage: dto.stage!,
-      timeplan: dto.timeplan ?? 0,
-      timeFirstStart: dto.timeFirstStart ?? 0,
-      timestart: dto.timestart,
-      timestop: dto.timestop,
-      timeworking: dto.timeworking,
-      status: Status(id: dto.status.id, name: dto.status.name),
-      batch: Batch(id: dto.batch.id,
-          numberRS: dto.batch.numberRS,
-          name: dto.batch.name,
-          count: dto.batch.count,
-          code: dto.batch.code,
-          orderId: dto.batch.orderId,
-          technology: dto.batch.technology,
-          isready: dto.batch.isready),
-      order: dto.order,
-      machine: Machine(id: dto.machine!.id,
-          inventoryNumber: dto.machine!.inventoryNumber,
-          isActivated: dto.machine!.isActivated,
-          name: dto.machine!.name,
-          areaId: dto.areaId),
-      chiefBatchId: dto.chiefBatchId,
-      chiefOperationId: dto.chiefOperationId,
-      optimalPart: dto.optimalPart,
-      modific: dto.modific,
-    );
-  }
-
   void updateOperationDistribMaster(int id) {
     tableOperations.updateMasterDistribMasterEqOptimalPart(id);
   }
@@ -136,7 +103,7 @@ class CubitOperatQueueMasterChM extends Cubit<StateOperatQueueMasterChM> {
 
   Future<void> setActiveArea(int index) async{
     emit(state.copyWith(activeArea: index, activeMachine: 0, listResOper: []));
-    final queue = await tableOperations.selectListMachineId(state.listAreaMachine[index].idListMachine);
+    final queue = await tableOperations.selectAreaId(state.listAreaMachine[index].area.id);
     await getQuere(queue);
   }
 
@@ -149,5 +116,27 @@ class CubitOperatQueueMasterChM extends Cubit<StateOperatQueueMasterChM> {
     // for (var element in saveList) {
     //   await tableOperations.updateOrder(element.idPath, element.order);
     // }
+  }
+
+  Future<void> saveDateList(DistribItem distrib, int index) async {
+    final tableChiefOper = ChiefOperationTable();
+    final tableChiefDistribut = ChiefDistributionOperationsTable();
+    final stageId = distrib.listOperat.first.stage.id;
+    final operId = distrib.listOperat.first.operation.id;
+    final batchId = distrib.listOperat.first.batch.id;
+    
+    List<int> chiefBatchIdList = [];
+    List<int> listOperId = [];
+    for (var el in distrib.listOperat) {
+      if (el.chiefBatchId != null) chiefBatchIdList.add(el.chiefBatchId!);
+      listOperId.add(el.id);
+    }
+    await tableChiefDistribut.updateQuere(stageId: stageId, operationId: operId, batchId: batchId, quantity: distrib.listOperat.length);
+    await tableChiefOper.updateSelect(chiefBatchId: chiefBatchIdList, stageId: stageId, operationId: operId);
+    await tableOperations.deleteListId(listOperId);
+    List<DistribItem> listResOper = state.listResOper;
+    listResOper.removeAt(index);
+    emit(state.copyWith(listResOper: []));
+    emit(state.copyWith(listResOper: listResOper));
   }
 }

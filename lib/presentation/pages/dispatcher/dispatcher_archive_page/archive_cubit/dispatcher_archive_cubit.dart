@@ -1,12 +1,19 @@
 import 'package:bloc/bloc.dart';
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/chief_operation_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/distribution_stage_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operation_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/transfer_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/batch_archive_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/batch_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/chief_operation_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/distribution_stage_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operation_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/stage_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/transfer_table.dart';
 import 'package:master_plan/domain/model/batch.dart';
@@ -15,8 +22,14 @@ import 'package:master_plan/domain/model/transfer.dart';
 
 import '../../../../../data/repositories/local/service/excel_service.dart';
 import '../../../../../data/repositories/supabase/dto/batch_archive_dto.dart';
+import '../../../../../data/repositories/supabase/dto/operation_archive_dto.dart';
+import '../../../../../data/repositories/supabase/dto/stage_archive_dto.dart';
+import '../../../../../data/repositories/supabase/service/operation_archive_table.dart';
+import '../../../../../data/repositories/supabase/service/stage_archive_table.dart';
 import '../../../../../domain/model/batch_archive.dart';
 import '../../../../../domain/model/operation.dart';
+import '../../../../../domain/model/operation_archive.dart';
+import '../../../../../domain/model/stage_archive.dart';
 
 part 'dispatcher_archive_state.dart';
 
@@ -24,24 +37,25 @@ class DispatcherArchiveCubit extends Cubit<DispatcherArchiveState> {
   DispatcherArchiveCubit() : super(const DispatcherArchiveState());
 
   final _batchArchiveTable = BatchArchiveTable();
-  final _stageTable = StageTable();
-  final _operationTable = OperationTable();
+  final _stageArchiveTable = StageArchiveTable();
+  final _operationArchiveTable = OperationArchiveTable();
   final _transferTable = TransferTable();
 
   final _excelService = ExcelService();
 
   Future<void> fetchStages({required int batchArchiveId}) async {
-    List<Stage> stagesList = [];
+    List<StageArchive> stagesList = [];
 
     try {
-      var fetchedStagesList = await _stageTable.selectByBatchArchiveId(
-          batchArchiveId: batchArchiveId);
+      var fetchedStagesList =
+          await _stageArchiveTable.selectByBatchArchiveId(batchArchiveId);
       for (var fetchedStage in fetchedStagesList) {
-        final stageDto = StageDTO.fromMap(fetchedStage);
-        final stage = convertStageDtoToModel(stageDto);
-        stagesList.add(stage);
+        final stageArchiveDto = StageArchiveDTO.fromMap(fetchedStage);
+        final stageArchive = convertStageArchiveDtoToModel(stageArchiveDto);
+        stagesList.add(stageArchive);
       }
 
+      print('stagesList : $stagesList');
       emit(state.copyWith(
           stagesList: stagesList, status: DispatcherArchiveStatus.success));
     } catch (e) {
@@ -71,15 +85,16 @@ class DispatcherArchiveCubit extends Cubit<DispatcherArchiveState> {
   }
 
   Future<void> fetchOperations({required int stageId}) async {
-    List<Operation> operationsList = [];
+    List<OperationArchive> operationsList = [];
 
     var fetchedOperationsList =
-        await _operationTable.selectByStageId(stageId: stageId);
+        await _operationArchiveTable.selectByStageArchiveId(stageId);
 
     for (var fetchedOperation in fetchedOperationsList) {
-      final operationDto = OperationDTO.fromMap(fetchedOperation);
-      final operation = convertOperationDtoToModel(operationDto);
-      operationsList.add(operation);
+      final operationArchiveDto = OperationArchiveDto.fromMap(fetchedOperation);
+      final operationArchive =
+          convertOperationArchiveDtoToModel(operationArchiveDto);
+      operationsList.add(operationArchive);
     }
     emit(state.copyWith(
         operationsList: operationsList,
@@ -111,34 +126,37 @@ class DispatcherArchiveCubit extends Cubit<DispatcherArchiveState> {
     emit(state.copyWith(status: DispatcherArchiveStatus.loading));
     try {
       print('трай');
+
       await _excelService.loadDetailToArchive();
+
       print('загрузили');
       fetchBatches();
-    } catch (e) {}
+    } catch (e) {
+      print('ошибка : $e');
+    }
   }
 
-  Future deleteBatchArchive(int batchId)async{
+  Future deleteBatchArchive(int batchId) async {
     await _batchArchiveTable.delete(batchId);
     await fetchBatches();
   }
 
-  convertStageDtoToModel(StageDTO dto) {
-    return Stage(
+  convertStageArchiveDtoToModel(StageArchiveDTO dto) {
+    return StageArchive(
         id: dto.id,
         number: dto.number,
         name: dto.name,
-        areaId: dto.areaId,
-        isdistributed: dto.isdistributed,
-        batchId: dto.batchId);
+        batchArchiveId: dto.batchArchiveId);
   }
 
-  convertOperationDtoToModel(OperationDTO dto) {
-    return Operation(
+  convertOperationArchiveDtoToModel(OperationArchiveDto dto) {
+    return OperationArchive(
         id: dto.id,
         number: dto.number,
         name: dto.name,
         code: dto.code,
         timepz: dto.timepz,
-        stageId: dto.stageId);
+        stageArchiveId: dto.stageArchiveId,
+        timeSH: dto.timeSH);
   }
 }

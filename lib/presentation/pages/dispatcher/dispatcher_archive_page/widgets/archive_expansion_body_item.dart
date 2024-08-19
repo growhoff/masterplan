@@ -27,7 +27,7 @@ class DispatcherArchiveExpansionBodyItem extends StatelessWidget {
                           const EdgeInsets.symmetric(
                               horizontal: 10, vertical: 10))),
                   onPressed: () {
-                    Navigator.pushNamed(context, '/archiveStagesPage',
+                    Navigator.pushNamed(context, '/dispatcherArchiveStagesPage',
                         arguments: batchArchive);
                   },
                   child: Text('подробнее'))),

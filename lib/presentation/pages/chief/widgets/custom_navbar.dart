@@ -25,9 +25,7 @@ class _NavBarCustomChiefState extends State<NavBarCustomChief> {
             return Column(
               children: [
                 Text(DataChief.listPage[selectedIndex].title),
-                Text(
-                    ' ${user.fio} / ${user.position.name} / ${user.unit!.name}',
-                    style: const TextStyle(fontSize: 12)),
+                Text(' ${user.fio} / ${user.position.name} / ${user.unit!.name}', style: const TextStyle(fontSize: 12)),
               ],
             );
           }),

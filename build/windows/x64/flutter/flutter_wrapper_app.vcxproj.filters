@@ -1,28 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="D:\FlutterProject\masterplan\windows\flutter\ephemeral\cpp_client_wrapper\core_implementations.cc">
+    <ClCompile Include="D:\Flutter project\masterplan\windows\flutter\ephemeral\cpp_client_wrapper\core_implementations.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="D:\FlutterProject\masterplan\windows\flutter\ephemeral\cpp_client_wrapper\standard_codec.cc">
+    <ClCompile Include="D:\Flutter project\masterplan\windows\flutter\ephemeral\cpp_client_wrapper\standard_codec.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="D:\FlutterProject\masterplan\windows\flutter\ephemeral\cpp_client_wrapper\flutter_engine.cc">
+    <ClCompile Include="D:\Flutter project\masterplan\windows\flutter\ephemeral\cpp_client_wrapper\flutter_engine.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="D:\FlutterProject\masterplan\windows\flutter\ephemeral\cpp_client_wrapper\flutter_view_controller.cc">
+    <ClCompile Include="D:\Flutter project\masterplan\windows\flutter\ephemeral\cpp_client_wrapper\flutter_view_controller.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="D:\FlutterProject\masterplan\windows\flutter\CMakeLists.txt" />
+    <CustomBuild Include="D:\Flutter project\masterplan\windows\flutter\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CMake Rules">
-      <UniqueIdentifier>{FDC199D8-3A59-3ADC-AAD1-94E13836DDC4}</UniqueIdentifier>
+      <UniqueIdentifier>{76ABF22D-8440-338E-BE7F-994B71203490}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{97860BEB-BC3B-3746-8C61-DF0EBC554DD3}</UniqueIdentifier>
+      <UniqueIdentifier>{1A3733E9-70CF-3F72-A085-5E7819B99325}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

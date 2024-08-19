@@ -66,9 +66,7 @@ class AnalyticsCubit extends Cubit<ChiefAnalyticsState> {
 
       if (!stagesMap.containsKey(chiefOperation.stageId)) {
         stagesMap[chiefOperation.stageId] = ChiefStageForReportModel(
-            code: chiefOperation.batch.code != ''
-                ? chiefOperation.batch.code
-                : chiefOperation.batch.batchArchive?.code ?? '',
+            code: chiefOperation.batch.code ,
             technologyNumber: chiefOperation.batch.technology,
             batchId: chiefOperation.batchId,
             batchNumber: chiefOperation.batch.numberRS,

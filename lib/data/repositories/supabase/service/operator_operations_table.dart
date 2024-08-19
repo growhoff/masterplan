@@ -9,7 +9,7 @@ class OperatorOperationsTable extends SupabaseTable {
   final table = Supabase.instance.client.from('z_operator_operations');
   static const selectStaff = '*, z_position(*), z_company(*)';
   static const selectOperOperat =
-      '*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*), z_staff($selectStaff), z_machine(*), z_area!inner(*), z_chief_operation(*), z_chief_batch(*), z_distribution_stage(*)';
+      '*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*, z_order(*)), z_staff($selectStaff), z_machine(*), z_area!inner(*), z_chief_operation(*), z_chief_batch(*), z_distribution_stage(*)';
   static const selectOperOperatLite =
       '*, z_status(*), z_batch(*), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_staff($selectStaff)';
 
@@ -19,6 +19,10 @@ class OperatorOperationsTable extends SupabaseTable {
   @override
   Future<void> delete(int id) {
     return table.delete().eq('id', id);
+  }
+
+  Future<void> deleteListId(List<int> id) async{
+    return await table.delete().inFilter('id', id);
   }
 
   @override
@@ -68,6 +72,17 @@ class OperatorOperationsTable extends SupabaseTable {
         .order('id', ascending: true);
   }
 
+
+
+  Future<List<Map<String, dynamic>>> selectByBatchIdWithoutDistributionStage(
+      int batchId) {
+    return table
+        .select(selectOperOperat)
+        .eq('batch_id', batchId)
+        .isFilter('distribution_stage_id', null)
+        .order('id', ascending: true);
+  }
+
   Future<List<Map<String, dynamic>>> selectOrderedByChiefOperation() {
     return table
         .select(selectOperOperat)
@@ -106,8 +121,9 @@ class OperatorOperationsTable extends SupabaseTable {
             '*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*), z_staff(*, z_position(*)), z_machine(*), z_area!inner(*), z_chief_operation!inner(*), z_chief_batch(*)')
         .eq('z_area.company_id', _companyId)
         .inFilter('operation_id', operationsIdsList)
+        .inFilter('distribution_stage_id', distributionStageIdsList)
         .order('id', ascending: true);
-        //.order('chief_operation_id', ascending: true);
+    //.order('chief_operation_id', ascending: true);
   }
 
   Future<List<Map<String, dynamic>>> selectReadyDefectAndModificationOnArea(
@@ -127,6 +143,10 @@ class OperatorOperationsTable extends SupabaseTable {
   Future<List<Map<String, dynamic>>> selectListMachineId(
       List<int> machineIdList) {
     return table.select(selectOperOperat).inFilter('machine_id', machineIdList);
+  }
+
+  Future<List<Map<String, dynamic>>> selectAreaId(int idArea) {
+    return table.select(selectOperOperat).eq('area_id', idArea);
   }
 
   Future<List<Map<String, dynamic>>> selectId(int id) {
@@ -203,6 +223,10 @@ class OperatorOperationsTable extends SupabaseTable {
   @override
   Future<void> update(int id, Dto dto) {
     return table.update({'name': '1'}).eq('id', id);
+  }
+
+  Future<void> updateDistrStage(int id, int distStageId) {
+    return table.update({'distribution_stage_id': distStageId}).eq('id', id);
   }
 
   //статус распределение мастер
@@ -288,7 +312,8 @@ class OperatorOperationsTable extends SupabaseTable {
       'status_id': 6,
       'staff_id': staffId,
       'time_working': 0,
-      'time_first_start': DateTime.now().millisecondsSinceEpoch
+      'time_first_start': DateTime.now().millisecondsSinceEpoch,
+      'time_stop': DateTime.now().millisecondsSinceEpoch,
     }).eq('optimal_part', optPath);
   }
 

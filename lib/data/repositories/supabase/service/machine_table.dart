@@ -6,8 +6,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class MachineTable extends SupabaseTable {
   final table = Supabase.instance.client.from('z_machine');
-
   final _companyId = CompanyService.instance.companyId ?? 0;
+  final setectTable = '*,z_area!inner(*), z_shift_schedule(*), z_control_machine(*), z_type_machine(*), z_view_machine(*)';
 
   @override
   Future<void> delete(int id) {
@@ -20,7 +20,13 @@ class MachineTable extends SupabaseTable {
       var data = await table.insert({
         'name': dto.name,
         'inventory_number': dto.inventoryNumber,
-        'area_id': dto.areaId
+        'area_id': dto.areaId,
+        'shift_schedule_id': dto.shiftScheduleId,
+        'view_id': dto.viewId,
+        'control_id': dto.controlId,
+        'type_machine_id': dto.typeMachineId,
+        'prefix': dto.prefix,
+        'model': dto.model,
       }).select('id');
       return data[0]['id'];
     }
@@ -29,12 +35,12 @@ class MachineTable extends SupabaseTable {
 
   @override
   Future<List<Map<String, dynamic>>> select() {
-    return table.select();
+    return table.select(setectTable);
   }
 
   Future<int> fetchActivatedMachinesByCompanyId() async {
     var res = await table
-        .select('*,z_area!inner(*), z_shift_schedule(*)')
+        .select(setectTable)
         .eq('z_area.company_id', _companyId)
         .eq('is_activated', true)
         .count();
@@ -42,22 +48,21 @@ class MachineTable extends SupabaseTable {
   }
 
   Future<List<Map<String, dynamic>>> selectId(int id) {
-    return table.select().eq('id', id);
+    return table.select(setectTable).eq('id', id);
   }
 
   Future<List<Map<String, dynamic>>> selectMachineToArea(int areaId) {
-    return table.select('*,z_area!inner(*), z_shift_schedule(*)').eq('area_id', areaId);
+    return table.select(setectTable).eq('area_id', areaId);
   }
 
-  Future<List<Map<String, dynamic>>> selectMachineToAreaList(
-      List<int> listAreaId) {
-    return table.select().inFilter('area_id', listAreaId);
+  Future<List<Map<String, dynamic>>> selectMachineToAreaList(List<int> listAreaId) {
+    return table.select(setectTable).inFilter('area_id', listAreaId).order('name', ascending: true);
   }
 
   Future<List<Map<String, dynamic>>> selectByUnitIdList(
       List<int> unitIdList) async {
     return await table
-        .select('*, z_area!inner(*), z_shift_schedule(*)')
+        .select(setectTable)
         .inFilter('z_area.unit_id', unitIdList);
   }
 
@@ -70,7 +75,7 @@ class MachineTable extends SupabaseTable {
         filters += 'id.eq.${listId[i]},';
       }
     }
-    return table.select().or(filters);
+    return table.select(setectTable).or(filters);
   }
 
   @override
@@ -79,7 +84,11 @@ class MachineTable extends SupabaseTable {
       await table.update({
         'name': dto.name,
         'inventory_number': dto.inventoryNumber,
-        'area_id': dto.areaId
+        'area_id': dto.areaId,
+        'shift_schedule_id': dto.shiftScheduleId,
+        'view_id': dto.viewId,
+        'control_id': dto.controlId,
+        'type_machine_id': dto.typeMachineId,
       }).eq('id', id);
     }
   }

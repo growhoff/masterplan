@@ -5,20 +5,12 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:master_plan/data/repositories/supabase/dto/distribution_stage_dto.dart';
-import 'package:master_plan/data/repositories/supabase/service/chief_batch_table.dart';
 
 import 'package:master_plan/data/repositories/supabase/service/distribution_stage_table.dart';
-import 'package:master_plan/data/repositories/supabase/service/operation_table.dart';
-import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
 
-import 'package:master_plan/domain/model/operation.dart';
+import 'package:master_plan/domain/model/order.dart';
 import 'package:master_plan/domain/usecase/chief_unit_service.dart';
-import 'package:meta/meta.dart';
 
-import '../../../../../data/repositories/supabase/dto/batch_dto.dart';
-import '../../../../../data/repositories/supabase/dto/chief_batch_dto.dart';
-import '../../../../../data/repositories/supabase/dto/operation_dto.dart';
-import '../../../../../data/repositories/supabase/dto/operator_operations_dto.dart';
 import '../../../../../domain/model/batch.dart';
 import '../../../../../domain/model/distribution_stage.dart';
 
@@ -34,12 +26,6 @@ class StagesInUnitCubit extends Cubit<StagesInUnitState> {
   final _unitId = ChiefUnitService.instance.unitId;
 
   final _distributionStageTable = DistributionStageTable();
-
-  final _operationTable = OperationTable();
-
-  final _chiefBatchTable = ChiefBatchTable();
-
-  final _operatorOperationsTable = OperatorOperationsTable();
 
   final TextEditingController uploadStagesQuantityController =
       TextEditingController();
@@ -66,8 +52,18 @@ class StagesInUnitCubit extends Cubit<StagesInUnitState> {
       var stagesMap = groupBy(batchValue, (stage) => stage.stageId);
 
       stagesMap.forEach((stageKey, stageValue) {
+
+
         final stageModel = StageModel(
           batch: Batch(
+              order: Order(
+                  id: stageValue.first.chiefBatch?.batch.order?.id ?? 0,
+                  number:
+                      stageValue.first.chiefBatch?.batch.order?.number ?? '',
+                  priority:
+                      stageValue.first.chiefBatch?.batch.order?.priority ?? 0,
+                  statusId:
+                      stageValue.first.chiefBatch?.batch.order?.statusId ?? 0),
               id: stageValue.first.chiefBatch?.batch.id ?? 0,
               numberRS: stageValue.first.chiefBatch?.batch.numberRS ?? '',
               number: stageValue.first.chiefBatch?.batch.number,
@@ -80,6 +76,7 @@ class StagesInUnitCubit extends Cubit<StagesInUnitState> {
           stageId: stageValue.first.stageId,
           stageNumber: stageValue.first.stage?.number ?? '',
           stageName: stageValue.first.stage?.name ?? '',
+          unitNumber: stageValue.first.unit?.number ?? '',
         );
 
         stageModel.status = stageValue.last.stageStatus?.name ?? '';
@@ -95,6 +92,7 @@ class StagesInUnitCubit extends Cubit<StagesInUnitState> {
               stageModel.distributionStagesIdsList.add(stage.id);
             case 4:
               stageModel.uploadedQuantity++;
+
             case 5:
               stageModel.defectQuantity++;
           }

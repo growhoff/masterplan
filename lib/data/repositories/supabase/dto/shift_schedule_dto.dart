@@ -9,6 +9,7 @@ class ShiftScheduleDTO extends Dto {
   final int count;
   final int timeFirst;
   final String days;
+  final String info;
 
   ShiftScheduleDTO({
     required this.id,
@@ -17,6 +18,7 @@ class ShiftScheduleDTO extends Dto {
     required this.count,
     required this.timeFirst,
     required this.days,
+    required this.info,
   });
 
   Map<String, dynamic> toMap() {
@@ -27,6 +29,7 @@ class ShiftScheduleDTO extends Dto {
       'count': count,
       'time_first': timeFirst,
       'days': days,
+      'info': info,
     };
   }
 
@@ -38,6 +41,7 @@ class ShiftScheduleDTO extends Dto {
       count: map['count'] as int,
       timeFirst: map['time_first'] as int,
       days: map['days'] as String,
+      info: map['info'] as String,
     );
   }
 

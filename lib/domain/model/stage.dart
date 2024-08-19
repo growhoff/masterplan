@@ -8,7 +8,6 @@ class Stage {
   final String number;
   final String name;
   final int? areaId;
-  final bool isdistributed;
   final int? batchId;
   final Batch? batch;
   final int? batchArchiveId;
@@ -18,7 +17,7 @@ class Stage {
     required this.number,
     required this.name,
     this.areaId,
-    required this.isdistributed,
+
      this.batchId,
     this.batch,
     this.batchArchiveId,
@@ -30,8 +29,7 @@ class Stage {
         number: dto.number,
         name: dto.name,
         areaId: dto.areaId,
-        isdistributed: dto.isdistributed,
         batchId: dto.batchId,
-    batchArchiveId: dto.batchArchiveId);
+   );
   }
 }

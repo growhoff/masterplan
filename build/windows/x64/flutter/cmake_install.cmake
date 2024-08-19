@@ -1,8 +1,8 @@
-# Install script for directory: D:/FlutterProject/masterplan/windows/flutter
+# Install script for directory: D:/Flutter project/masterplan/windows/flutter
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "$<TARGET_FILE_DIR:master_plan>")
+  set(CMAKE_INSTALL_PREFIX "$<TARGET_FILE_DIR:flutter_application_2>")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 

@@ -1,6 +1,10 @@
 import 'package:equatable/equatable.dart';
+import 'package:master_plan/data/repositories/supabase/dto/control_machine_dto.dart';
 
 import 'package:master_plan/data/repositories/supabase/dto/monitoring_machine_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/shift_schedule_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/type_machine_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/view_machine_dto.dart';
 
 
 import 'package:master_plan/domain/model/area.dart';
@@ -36,9 +40,13 @@ class StateMain extends Equatable {
   final List<AreaMachine>? listAreaMachine;
   final List<AreaMachine>? listAreaMachineUser;
   final int? unitId;
+  final List<ViewMachineDTO>? viewMachineList;
+  final List<TypeMachineDTO>? typeMachineList;
+  final List<ControlMachineDTO>? controlMachineList;
+  final List<ShiftScheduleDTO>? shiftScheduleList;
 
   const StateMain({
-    this.version = 'v2.6.22',
+    this.version = 'v2.7.1',
     this.user,
     this.unitId,
     this.staff,
@@ -58,6 +66,10 @@ class StateMain extends Equatable {
     this.listArea,
     this.listAreaMachine,
     this.listAreaMachineUser,
+    this.viewMachineList,
+    this.typeMachineList,
+    this.controlMachineList,
+    this.shiftScheduleList,
   });
 
   @override
@@ -92,7 +104,11 @@ class StateMain extends Equatable {
     listArea ?? [],
     listAreaMachine ?? [],
     listAreaMachineUser ?? [],
-    staff ?? Staff.empty
+    staff ?? Staff.empty,
+    viewMachineList,
+    typeMachineList,
+    controlMachineList,
+    shiftScheduleList,
   ];
 
   StateMain copyWith({
@@ -115,6 +131,10 @@ class StateMain extends Equatable {
     List<Area>? listArea,
     List<AreaMachine>? listAreaMachine,
     List<AreaMachine>? listAreaMachineUser,
+    List<ViewMachineDTO>? viewMachineList,
+    List<TypeMachineDTO>? typeMachineList,
+    List<ControlMachineDTO>? controlMachineList,
+    List<ShiftScheduleDTO>? shiftScheduleList,
   }) {
     return StateMain(
       user: user ?? this.user,
@@ -138,6 +158,10 @@ class StateMain extends Equatable {
       listArea: listArea ?? this.listArea,
       listAreaMachine: listAreaMachine ?? this.listAreaMachine,
       listAreaMachineUser: listAreaMachineUser ?? this.listAreaMachineUser,
+      viewMachineList: viewMachineList ?? this.viewMachineList,
+      typeMachineList: typeMachineList ?? this.typeMachineList,
+      controlMachineList: controlMachineList ?? this.controlMachineList,
+      shiftScheduleList: shiftScheduleList ?? this.shiftScheduleList,
     );
   }
 

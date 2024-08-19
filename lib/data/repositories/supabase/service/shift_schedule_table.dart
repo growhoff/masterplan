@@ -2,7 +2,7 @@ import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class MachineTable extends SupabaseTable {
+class ShiftScheduleTable extends SupabaseTable {
   final table = Supabase.instance.client.from('z_shift_schedule');
 
   @override
@@ -25,7 +25,7 @@ class MachineTable extends SupabaseTable {
 
   @override
   Future<List<Map<String, dynamic>>> select() {
-    return table.select();
+    return table.select('*');
   }
 
 

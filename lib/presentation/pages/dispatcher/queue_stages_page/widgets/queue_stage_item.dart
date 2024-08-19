@@ -45,8 +45,6 @@ class QueueStageItemView extends StatefulWidget {
 }
 
 class _QueueStageItemViewState extends State<QueueStageItemView> {
-  bool isChecked = false;
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<StagesInUnitCubit, StagesInUnitState>(
@@ -184,7 +182,7 @@ class _QueueStageItemViewState extends State<QueueStageItemView> {
                       Expanded(
                         child: Container(
                           child: Text(
-                            '${widget.stageModel.stageNumber}',
+                            '${widget.stageModel.batch.order?.number ?? '_'}.${widget.stageModel.batch.number}.${widget.stageModel.stageNumber}',
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -193,7 +191,7 @@ class _QueueStageItemViewState extends State<QueueStageItemView> {
                       Expanded(
                         child: Container(
                           child: Text(
-                            '${widget.stageModel.batch.number}',
+                            '${widget.stageModel.batch.numberRS}',
                             textAlign: TextAlign.center,
                           ),
                         ),

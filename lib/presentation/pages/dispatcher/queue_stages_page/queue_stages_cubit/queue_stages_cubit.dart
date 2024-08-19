@@ -7,6 +7,7 @@ import 'package:master_plan/data/repositories/supabase/service/distribution_stag
 import 'package:master_plan/data/repositories/supabase/service/operation_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/unit_table.dart';
+import 'package:master_plan/domain/model/order.dart';
 import 'package:meta/meta.dart';
 
 import '../../../../../data/repositories/supabase/dto/distribution_stage_dto.dart';
@@ -26,8 +27,7 @@ class QueueStagesCubit extends Cubit<QueueStagesState> {
       : super(QueueStagesState(status: QueueStagesPageStatus.initial));
 
   final _distributionStageTable = DistributionStageTable();
-  final _operationTable = OperationTable();
-  final _operatorOperationsTable = OperatorOperationsTable();
+
   final _unitTable = UnitTable();
 
   Unit selectedUnit = Unit(id: 0, companyId: 0);
@@ -67,7 +67,7 @@ class QueueStagesCubit extends Cubit<QueueStagesState> {
 
       final distributionStage = DistributionStage.fromDto(fetchedStageDto);
 
-       print('stageId: ${ distributionStage.id}');
+      print('stageId: ${distributionStage.id}');
 
       distributionStagesList.add(distributionStage);
     }
@@ -75,7 +75,7 @@ class QueueStagesCubit extends Cubit<QueueStagesState> {
     var stagesMap = groupBy(distributionStagesList, (stage) => stage.stageId);
 
     stagesMap.forEach((key, value) {
-     // print('value number: ${value.first.chiefBatch?.batch.number}');
+      // print('value number: ${value.first.chiefBatch?.batch.number}');
 
       final stageModel = StageModel(
           batch: Batch(
@@ -83,6 +83,11 @@ class QueueStagesCubit extends Cubit<QueueStagesState> {
               numberRS: value.first.chiefBatch?.batch.numberRS ?? '',
               number: value.first.chiefBatch?.batch.number,
               name: value.first.chiefBatch?.batch.name ?? '',
+              order: Order(
+                  id: value.first.chiefBatch?.batch.order?.id ?? 0,
+                  number: value.first.chiefBatch?.batch.order?.number ?? '',
+                  priority: value.first.chiefBatch?.batch.order?.priority ?? 0,
+                  statusId: value.first.chiefBatch?.batch.order?.statusId ?? 0),
               count: value.first.chiefBatch?.batch.count ?? 0,
               code: value.first.chiefBatch?.batch.code ?? '',
               technology: value.first.chiefBatch?.batch.technology ?? '',
@@ -90,7 +95,8 @@ class QueueStagesCubit extends Cubit<QueueStagesState> {
               orderId: value.first.chiefBatch?.batch.orderId),
           stageId: value.first.stageId,
           stageNumber: value.first.stage?.number ?? '',
-          stageName: value.first.stage?.name ?? '');
+          stageName: value.first.stage?.name ?? '',
+          unitNumber: value.first.unit?.number ?? '');
 
       print('batch number: ${stageModel.batch.number}');
 

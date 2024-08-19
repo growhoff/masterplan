@@ -11,7 +11,7 @@ class TransferDTO extends Dto {
   final int operationId;
   TransferDTO({
     required this.id,
-    required this.number,
+    this.number,
     required this.name,
     required this.code,
     required this.timesh,

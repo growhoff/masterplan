@@ -2,28 +2,28 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>D:\FlutterProject\masterplan\build\windows\x64\x64\Debug\ZERO_CHECK</FullPath>
+      <FullPath>D:\Flutter project\masterplan\build\windows\x64\x64\Debug\ZERO_CHECK</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>D:\FlutterProject\masterplan\build\windows\x64\flutter\x64\Debug\flutter_assemble</FullPath>
+      <FullPath>D:\Flutter project\masterplan\build\windows\x64\flutter\x64\Debug\flutter_assemble</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>D:\FlutterProject\masterplan\build\windows\x64\plugins\app_links\Debug\app_links_plugin.dll</FullPath>
+      <FullPath>D:\Flutter project\masterplan\build\windows\x64\plugins\app_links\Debug\app_links_plugin.dll</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>D:\FlutterProject\masterplan\build\windows\x64\plugins\file_selector_windows\Debug\file_selector_windows_plugin.dll</FullPath>
+      <FullPath>D:\Flutter project\masterplan\build\windows\x64\plugins\file_selector_windows\Debug\file_selector_windows_plugin.dll</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>D:\FlutterProject\masterplan\build\windows\x64\plugins\permission_handler_windows\Debug\permission_handler_windows_plugin.dll</FullPath>
+      <FullPath>D:\Flutter project\masterplan\build\windows\x64\plugins\permission_handler_windows\Debug\permission_handler_windows_plugin.dll</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>D:\FlutterProject\masterplan\build\windows\x64\plugins\url_launcher_windows\Debug\url_launcher_windows_plugin.dll</FullPath>
+      <FullPath>D:\Flutter project\masterplan\build\windows\x64\plugins\url_launcher_windows\Debug\url_launcher_windows_plugin.dll</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>D:\FlutterProject\masterplan\build\windows\x64\runner\Debug\master_plan.exe</FullPath>
+      <FullPath>D:\Flutter project\masterplan\build\windows\x64\runner\Debug\flutter_application_2.exe</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>D:\FlutterProject\masterplan\build\windows\x64\x64\Debug\ALL_BUILD</FullPath>
+      <FullPath>D:\Flutter project\masterplan\build\windows\x64\x64\Debug\ALL_BUILD</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

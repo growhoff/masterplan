@@ -45,6 +45,10 @@ class TransferTable extends SupabaseTable{
     return table.select().or(filters);
   }
 
+  Future<List<Map<String, dynamic>>> selectOperationId(List<int> listId) {
+    return table.select().inFilter('operation_id', listId);
+  }
+
   @override
   Future<void> update(int id, Dto dto) {
    return table.update({'name': '1'}).eq('id', id);

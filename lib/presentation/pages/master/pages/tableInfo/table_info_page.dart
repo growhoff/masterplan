@@ -32,7 +32,7 @@ class TableInfoContent extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                Text('Деталь: ${oper.first.batch.number} ${oper.first.batch.name}'),
+                Text('Деталь: ${oper.first.batch.numberRS} ${oper.first.batch.name}'),
                 const SizedBox(height: 8),
                 Text('Этап: ${oper.first.stage.number} ${oper.first.stage.name}'),
                 const SizedBox(height: 8),

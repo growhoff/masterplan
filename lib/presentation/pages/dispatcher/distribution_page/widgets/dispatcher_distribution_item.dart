@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
 
 import 'package:master_plan/domain/model/chief_distribution_operations_model.dart';
 import 'package:master_plan/presentation/pages/chief/model/distribution_operation_model.dart';
@@ -21,12 +22,12 @@ class DispatcherDistributionTitleItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Деталь № ${stage.batchNumber} ${stage.batchName}'),
-            const SizedBox(height: 8),
-            Text('Этап № ${stage.stageNumber}\n${stage.stageName}'),
+            Text('Деталь № ${stage.batch.numberRS} ${stage.batch.name}'),
             const SizedBox(height: 8),
             Text(
-                'количество: ${stage.stagesList?.length} / ${stage.quantity}'),
+                'Этап № ${stage.batch.order?.number}.${stage.batch.number}.${stage.stageNumber}\n${stage.stageName}'),
+            const SizedBox(height: 8),
+            Text('количество: ${stage.stagesList?.length} / ${stage.quantity}'),
             const SizedBox(height: 8),
           ],
         ),
@@ -122,8 +123,8 @@ class _DispatcherDistributionBodyItemState
                                     .read<DispatcherDistributionCubit>()
                                     .stagesForDistributionList
                                     .removeWhere((stage) =>
-                                        (stage.batchNumber ==
-                                                widget.stage.batchNumber &&
+                                        (stage.batch.numberRS ==
+                                                widget.stage.batch.numberRS &&
                                             stage.stageNumber ==
                                                 widget.stage.stageNumber));
 
@@ -147,19 +148,16 @@ class _DispatcherDistributionBodyItemState
                                     .read<DispatcherDistributionCubit>()
                                     .stagesForDistributionList
                                     .add(DistributionStageModel(
-
-                                  batchId: widget.stage.batchId,
+                                        batch: widget.stage.batch,
+                                        batchId: widget.stage.batchId,
                                         stageArchiveId:
                                             widget.stage.stageArchiveId,
                                         quantity: int.parse(
                                             _textEditingController.text),
-                                        batchName: widget.stage.batchName,
-                                        batchNumber: widget.stage.batchNumber,
                                         stageName: widget.stage.stageName,
                                         stageNumber: widget.stage.stageNumber,
                                         unitId: activeValue?.id,
-                                    stagesList:
-                                            widget.stage.stagesList));
+                                        stagesList: widget.stage.stagesList));
                               }
                               setState(() {});
                             }

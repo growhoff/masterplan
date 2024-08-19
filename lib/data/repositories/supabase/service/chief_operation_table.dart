@@ -91,6 +91,10 @@ class ChiefOperationTable extends SupabaseTable {
         .limit(limit);
   }
 
+  Future<void> updateSelect({required List<int> chiefBatchId, required int stageId, required int operationId}) async {
+    return await table.update({'is_distributed': false}).inFilter('chief_batch_id', chiefBatchId).eq('stage_id', stageId).eq('operation_id', operationId);
+  }
+
   Future<void> changeIsDistributed(
       {required List<int> operationsIdList}) async {
     for (var id in operationsIdList) {

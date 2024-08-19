@@ -10,7 +10,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{FD246AC8-D560-324B-9429-C4107F57E143}</ProjectGuid>
+    <ProjectGuid>{1F727CFD-3F0F-3AFC-A155-4508FEED9EBD}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
     <Platform>x64</Platform>
@@ -45,13 +45,13 @@
     </Midl>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\dd83937ea1397255ffce9e44aa183bca\nuget-populate-mkdir.rule">
+    <CustomBuild Include="D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\9af0c2e1ee2c7aa611eb8b474861c1d0\nuget-populate-mkdir.rule">
       <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BuildInParallel>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Creating directories for 'nuget-populate'</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
-"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -Dcfgdir=/Debug -P D:/FlutterProject/masterplan/build/windows/x64/_deps/nuget-subbuild/nuget-populate-prefix/tmp/nuget-populate-mkdirs.cmake
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -Dcfgdir=/Debug -P "D:/Flutter project/masterplan/build/windows/x64/_deps/nuget-subbuild/nuget-populate-prefix/tmp/nuget-populate-mkdirs.cmake"
 if %errorlevel% neq 0 goto :cmEnd
-"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E touch D:/FlutterProject/masterplan/build/windows/x64/_deps/nuget-subbuild/nuget-populate-prefix/src/nuget-populate-stamp/Debug/nuget-populate-mkdir
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E touch "D:/Flutter project/masterplan/build/windows/x64/_deps/nuget-subbuild/nuget-populate-prefix/src/nuget-populate-stamp/Debug/nuget-populate-mkdir"
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -60,23 +60,23 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-mkdir</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-mkdir</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\dd83937ea1397255ffce9e44aa183bca\nuget-populate-download.rule">
+    <CustomBuild Include="D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\9af0c2e1ee2c7aa611eb8b474861c1d0\nuget-populate-download.rule">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Performing download step (download and verify) for 'nuget-populate'</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
-cd D:\FlutterProject\masterplan\build\windows\x64\_deps
+cd "D:\Flutter project\masterplan\build\windows\x64\_deps"
 if %errorlevel% neq 0 goto :cmEnd
 D:
 if %errorlevel% neq 0 goto :cmEnd
-"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -P D:/FlutterProject/masterplan/build/windows/x64/_deps/nuget-subbuild/nuget-populate-prefix/src/nuget-populate-stamp/download-nuget-populate.cmake
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -P "D:/Flutter project/masterplan/build/windows/x64/_deps/nuget-subbuild/nuget-populate-prefix/src/nuget-populate-stamp/download-nuget-populate.cmake"
 if %errorlevel% neq 0 goto :cmEnd
-"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -P D:/FlutterProject/masterplan/build/windows/x64/_deps/nuget-subbuild/nuget-populate-prefix/src/nuget-populate-stamp/verify-nuget-populate.cmake
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -P "D:/Flutter project/masterplan/build/windows/x64/_deps/nuget-subbuild/nuget-populate-prefix/src/nuget-populate-stamp/verify-nuget-populate.cmake"
 if %errorlevel% neq 0 goto :cmEnd
-"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E touch D:/FlutterProject/masterplan/build/windows/x64/_deps/nuget-subbuild/nuget-populate-prefix/src/nuget-populate-stamp/Debug/nuget-populate-download
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E touch "D:/Flutter project/masterplan/build/windows/x64/_deps/nuget-subbuild/nuget-populate-prefix/src/nuget-populate-stamp/Debug/nuget-populate-download"
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -84,18 +84,18 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\download-nuget-populate.cmake;D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\nuget-populate-urlinfo.txt;D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-mkdir;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-download</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\download-nuget-populate.cmake;D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\nuget-populate-urlinfo.txt;D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-mkdir;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-download</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\dd83937ea1397255ffce9e44aa183bca\nuget-populate-update.rule">
+    <CustomBuild Include="D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\9af0c2e1ee2c7aa611eb8b474861c1d0\nuget-populate-update.rule">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">No update step for 'nuget-populate'</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
 "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E echo_append
 if %errorlevel% neq 0 goto :cmEnd
-"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E touch D:/FlutterProject/masterplan/build/windows/x64/_deps/nuget-subbuild/nuget-populate-prefix/src/nuget-populate-stamp/Debug/nuget-populate-update
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E touch "D:/Flutter project/masterplan/build/windows/x64/_deps/nuget-subbuild/nuget-populate-prefix/src/nuget-populate-stamp/Debug/nuget-populate-update"
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -103,18 +103,18 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\nuget-populate-update-info.txt;D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-download;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-update</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\nuget-populate-update-info.txt;D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-download;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-update</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\dd83937ea1397255ffce9e44aa183bca\nuget-populate-patch.rule">
+    <CustomBuild Include="D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\9af0c2e1ee2c7aa611eb8b474861c1d0\nuget-populate-patch.rule">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">No patch step for 'nuget-populate'</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
 "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E echo_append
 if %errorlevel% neq 0 goto :cmEnd
-"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E touch D:/FlutterProject/masterplan/build/windows/x64/_deps/nuget-subbuild/nuget-populate-prefix/src/nuget-populate-stamp/Debug/nuget-populate-patch
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E touch "D:/Flutter project/masterplan/build/windows/x64/_deps/nuget-subbuild/nuget-populate-prefix/src/nuget-populate-stamp/Debug/nuget-populate-patch"
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -122,19 +122,19 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\nuget-populate-patch-info.txt;D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-update;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-patch</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\nuget-populate-patch-info.txt;D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-update;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-patch</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\dd83937ea1397255ffce9e44aa183bca\nuget-populate-copyfile.rule">
+    <CustomBuild Include="D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\9af0c2e1ee2c7aa611eb8b474861c1d0\nuget-populate-copyfile.rule">
       <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BuildInParallel>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Copying file to SOURCE_DIR</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
-"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E copy_if_different D:/FlutterProject/masterplan/build/windows/x64/_deps/nuget-subbuild/nuget-populate-prefix/src/nuget.exe D:/FlutterProject/masterplan/build/windows/x64/_deps/nuget-src
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E copy_if_different "D:/Flutter project/masterplan/build/windows/x64/_deps/nuget-subbuild/nuget-populate-prefix/src/nuget.exe" "D:/Flutter project/masterplan/build/windows/x64/_deps/nuget-src"
 if %errorlevel% neq 0 goto :cmEnd
-"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E touch D:/FlutterProject/masterplan/build/windows/x64/_deps/nuget-subbuild/nuget-populate-prefix/src/nuget-populate-stamp/Debug/nuget-populate-copyfile
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E touch "D:/Flutter project/masterplan/build/windows/x64/_deps/nuget-subbuild/nuget-populate-prefix/src/nuget-populate-stamp/Debug/nuget-populate-copyfile"
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -142,23 +142,23 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-patch;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-copyfile</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-patch;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-copyfile</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\dd83937ea1397255ffce9e44aa183bca\nuget-populate-configure.rule">
+    <CustomBuild Include="D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\9af0c2e1ee2c7aa611eb8b474861c1d0\nuget-populate-configure.rule">
       <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BuildInParallel>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">No configure step for 'nuget-populate'</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
-cd D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-build
+cd "D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-build"
 if %errorlevel% neq 0 goto :cmEnd
 D:
 if %errorlevel% neq 0 goto :cmEnd
 "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E echo_append
 if %errorlevel% neq 0 goto :cmEnd
-"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E touch D:/FlutterProject/masterplan/build/windows/x64/_deps/nuget-subbuild/nuget-populate-prefix/src/nuget-populate-stamp/Debug/nuget-populate-configure
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E touch "D:/Flutter project/masterplan/build/windows/x64/_deps/nuget-subbuild/nuget-populate-prefix/src/nuget-populate-stamp/Debug/nuget-populate-configure"
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -166,23 +166,23 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\tmp\nuget-populate-cfgcmd.txt;D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-patch;D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-copyfile;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-configure</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\tmp\nuget-populate-cfgcmd.txt;D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-patch;D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-copyfile;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-configure</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\dd83937ea1397255ffce9e44aa183bca\nuget-populate-build.rule">
+    <CustomBuild Include="D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\9af0c2e1ee2c7aa611eb8b474861c1d0\nuget-populate-build.rule">
       <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BuildInParallel>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">No build step for 'nuget-populate'</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
-cd D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-build
+cd "D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-build"
 if %errorlevel% neq 0 goto :cmEnd
 D:
 if %errorlevel% neq 0 goto :cmEnd
 "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E echo_append
 if %errorlevel% neq 0 goto :cmEnd
-"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E touch D:/FlutterProject/masterplan/build/windows/x64/_deps/nuget-subbuild/nuget-populate-prefix/src/nuget-populate-stamp/Debug/nuget-populate-build
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E touch "D:/Flutter project/masterplan/build/windows/x64/_deps/nuget-subbuild/nuget-populate-prefix/src/nuget-populate-stamp/Debug/nuget-populate-build"
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -190,23 +190,23 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-configure;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-build</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-configure;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-build</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\dd83937ea1397255ffce9e44aa183bca\nuget-populate-install.rule">
+    <CustomBuild Include="D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\9af0c2e1ee2c7aa611eb8b474861c1d0\nuget-populate-install.rule">
       <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BuildInParallel>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">No install step for 'nuget-populate'</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
-cd D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-build
+cd "D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-build"
 if %errorlevel% neq 0 goto :cmEnd
 D:
 if %errorlevel% neq 0 goto :cmEnd
 "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E echo_append
 if %errorlevel% neq 0 goto :cmEnd
-"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E touch D:/FlutterProject/masterplan/build/windows/x64/_deps/nuget-subbuild/nuget-populate-prefix/src/nuget-populate-stamp/Debug/nuget-populate-install
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E touch "D:/Flutter project/masterplan/build/windows/x64/_deps/nuget-subbuild/nuget-populate-prefix/src/nuget-populate-stamp/Debug/nuget-populate-install"
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -214,23 +214,23 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-build;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-install</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-build;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-install</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\dd83937ea1397255ffce9e44aa183bca\nuget-populate-test.rule">
+    <CustomBuild Include="D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\9af0c2e1ee2c7aa611eb8b474861c1d0\nuget-populate-test.rule">
       <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BuildInParallel>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">No test step for 'nuget-populate'</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
-cd D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-build
+cd "D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-build"
 if %errorlevel% neq 0 goto :cmEnd
 D:
 if %errorlevel% neq 0 goto :cmEnd
 "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E echo_append
 if %errorlevel% neq 0 goto :cmEnd
-"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E touch D:/FlutterProject/masterplan/build/windows/x64/_deps/nuget-subbuild/nuget-populate-prefix/src/nuget-populate-stamp/Debug/nuget-populate-test
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E touch "D:/Flutter project/masterplan/build/windows/x64/_deps/nuget-subbuild/nuget-populate-prefix/src/nuget-populate-stamp/Debug/nuget-populate-test"
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -238,21 +238,21 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-install;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-test</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-install;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-test</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\c30e899402e71836696e9092c9f7dbfe\nuget-populate-complete.rule">
+    <CustomBuild Include="D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\3c3d76e470191c62be888fd43c1dde09\nuget-populate-complete.rule">
       <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BuildInParallel>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Completed 'nuget-populate'</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
-"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E make_directory D:/FlutterProject/masterplan/build/windows/x64/_deps/nuget-subbuild/CMakeFiles/Debug
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E make_directory "D:/Flutter project/masterplan/build/windows/x64/_deps/nuget-subbuild/CMakeFiles/Debug"
 if %errorlevel% neq 0 goto :cmEnd
-"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E touch D:/FlutterProject/masterplan/build/windows/x64/_deps/nuget-subbuild/CMakeFiles/Debug/nuget-populate-complete
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E touch "D:/Flutter project/masterplan/build/windows/x64/_deps/nuget-subbuild/CMakeFiles/Debug/nuget-populate-complete"
 if %errorlevel% neq 0 goto :cmEnd
-"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E touch D:/FlutterProject/masterplan/build/windows/x64/_deps/nuget-subbuild/nuget-populate-prefix/src/nuget-populate-stamp/Debug/nuget-populate-done
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E touch "D:/Flutter project/masterplan/build/windows/x64/_deps/nuget-subbuild/nuget-populate-prefix/src/nuget-populate-stamp/Debug/nuget-populate-done"
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -260,13 +260,13 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-install;D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-mkdir;D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-download;D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-update;D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-patch;D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-configure;D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-build;D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-test;D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-copyfile;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\Debug\nuget-populate-complete</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-install;D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-mkdir;D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-download;D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-update;D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-patch;D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-configure;D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-build;D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-test;D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\src\nuget-populate-stamp\Debug\nuget-populate-copyfile;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\Debug\nuget-populate-complete</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\b95f26c75acc5666d7bc38e0c58a4dd5\nuget-populate.rule">
+    <CustomBuild Include="D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\524c2c3060414a840bcc9c73443018da\nuget-populate.rule">
       <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BuildInParallel>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'"></Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
@@ -276,18 +276,18 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\Debug\nuget-populate-complete;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\nuget-populate</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\Debug\nuget-populate-complete;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\nuget-populate</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
       <VerifyInputsAndOutputsExist Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</VerifyInputsAndOutputsExist>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeLists.txt">
+    <CustomBuild Include="D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeLists.txt">
       <UseUtf8Encoding>Always</UseUtf8Encoding>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule D:/FlutterProject/masterplan/build/windows/x64/_deps/nuget-subbuild/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule D:/Flutter project/masterplan/build/windows/x64/_deps/nuget-subbuild/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
-"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SD:/FlutterProject/masterplan/build/windows/x64/_deps/nuget-subbuild -BD:/FlutterProject/masterplan/build/windows/x64/_deps/nuget-subbuild --check-stamp-file D:/FlutterProject/masterplan/build/windows/x64/_deps/nuget-subbuild/CMakeFiles/generate.stamp
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" "-SD:/Flutter project/masterplan/build/windows/x64/_deps/nuget-subbuild" "-BD:/Flutter project/masterplan/build/windows/x64/_deps/nuget-subbuild" --check-stamp-file "D:/Flutter project/masterplan/build/windows/x64/_deps/nuget-subbuild/CMakeFiles/generate.stamp"
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -295,18 +295,18 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.28\Modules\CMakeGenericSystem.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.28\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.28\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.28\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.28\Modules\ExternalProject.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.28\Modules\ExternalProject\PatchInfo.txt.in;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.28\Modules\ExternalProject\RepositoryInfo.txt.in;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.28\Modules\ExternalProject\UpdateInfo.txt.in;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.28\Modules\ExternalProject\cfgcmd.txt.in;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.28\Modules\ExternalProject\download.cmake.in;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.28\Modules\ExternalProject\mkdirs.cmake.in;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.28\Modules\ExternalProject\shared_internal_commands.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.28\Modules\Platform\Windows-Initialize.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.28\Modules\Platform\Windows.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.28\Modules\Platform\WindowsPaths.cmake;D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\3.28.3-msvc11\CMakeSystem.cmake;D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\tmp\nuget-populate-mkdirs.cmake;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.28\Modules\CMakeGenericSystem.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.28\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.28\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.28\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.28\Modules\ExternalProject.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.28\Modules\ExternalProject\PatchInfo.txt.in;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.28\Modules\ExternalProject\RepositoryInfo.txt.in;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.28\Modules\ExternalProject\UpdateInfo.txt.in;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.28\Modules\ExternalProject\cfgcmd.txt.in;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.28\Modules\ExternalProject\download.cmake.in;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.28\Modules\ExternalProject\mkdirs.cmake.in;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.28\Modules\ExternalProject\shared_internal_commands.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.28\Modules\Platform\Windows-Initialize.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.28\Modules\Platform\Windows.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.28\Modules\Platform\WindowsPaths.cmake;D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\3.28.3-msvc11\CMakeSystem.cmake;D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\nuget-populate-prefix\tmp\nuget-populate-mkdirs.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <None Include="D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\nuget-populate">
+    <None Include="D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\CMakeFiles\nuget-populate">
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="D:\FlutterProject\masterplan\build\windows\x64\_deps\nuget-subbuild\ZERO_CHECK.vcxproj">
-      <Project>{584FD33A-5444-39AC-A9D0-B6FFF3E63BEE}</Project>
+    <ProjectReference Include="D:\Flutter project\masterplan\build\windows\x64\_deps\nuget-subbuild\ZERO_CHECK.vcxproj">
+      <Project>{5E4AF499-8C09-375C-93AB-7E3BCEA37AA4}</Project>
       <Name>ZERO_CHECK</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>

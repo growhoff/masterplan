@@ -2,13 +2,13 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>D:\FlutterProject\masterplan\build\windows\x64\x64\Debug\ZERO_CHECK</FullPath>
+      <FullPath>D:\Flutter project\masterplan\build\windows\x64\x64\Debug\ZERO_CHECK</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>D:\FlutterProject\masterplan\build\windows\x64\flutter\x64\Debug\flutter_assemble</FullPath>
+      <FullPath>D:\Flutter project\masterplan\build\windows\x64\flutter\x64\Debug\flutter_assemble</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>D:\FlutterProject\masterplan\build\windows\x64\plugins\file_selector_windows\Debug\file_selector_windows_plugin.dll</FullPath>
+      <FullPath>D:\Flutter project\masterplan\build\windows\x64\plugins\file_selector_windows\Debug\file_selector_windows_plugin.dll</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

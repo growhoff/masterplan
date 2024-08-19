@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/pages/technologist/archive_page/archive_cubit/archive_cubit.dart';
 
 import '../../../../domain/model/stage.dart';
+import '../../../../domain/model/stage_archive.dart';
 import 'archive_cubit/dispatcher_archive_cubit.dart';
 
 class DispatcherArchiveOperationsPage extends StatelessWidget {
@@ -11,20 +12,20 @@ class DispatcherArchiveOperationsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final stage = ModalRoute.of(context)!.settings.arguments as Stage;
+    final stageArchive = ModalRoute.of(context)!.settings.arguments as StageArchive;
     return BlocProvider(
       create: (context) => DispatcherArchiveCubit(),
       child: DispatcherArchiveOperationsPageView(
-        stage: stage,
+        stageArchive: stageArchive,
       ),
     );
   }
 }
 
 class DispatcherArchiveOperationsPageView extends StatefulWidget {
-  final Stage stage;
+  final StageArchive stageArchive;
 
-  const DispatcherArchiveOperationsPageView({required this.stage, super.key});
+  const DispatcherArchiveOperationsPageView({required this.stageArchive, super.key});
 
   @override
   State<DispatcherArchiveOperationsPageView> createState() =>
@@ -37,7 +38,7 @@ class _DispatcherArchiveOperationsPageViewState
   void initState() {
     context
         .read<DispatcherArchiveCubit>()
-        .fetchOperations(stageId: widget.stage.id);
+        .fetchOperations(stageId: widget.stageArchive.id);
     super.initState();
   }
 
@@ -49,7 +50,7 @@ class _DispatcherArchiveOperationsPageViewState
         child: Column(
           children: [
             Text(
-              '${widget.stage.number} ${widget.stage.name}',
+              '${widget.stageArchive.number} ${widget.stageArchive.name}',
               softWrap: true,
             ),
             Text('(операции)')

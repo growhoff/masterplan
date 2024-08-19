@@ -11,22 +11,22 @@ class QueueOperatPageMasterChief extends StatelessWidget {
   Widget build(BuildContext context) {
     final stateMain = context.read<CubitMain>().state;
     return BlocProvider<CubitOperatQueueMasterChM>(
-      create: (context) => CubitOperatQueueMasterChM( stateMain.queueList, stateMain.user!.id, stateMain.listArea!, stateMain.listAreaMachine!),
-      child: const QueuePageChiefContent(),
+      create: (context) => CubitOperatQueueMasterChM(stateMain.queueList, stateMain.user!.id, stateMain.listArea!, stateMain.listAreaMachine!),
+      child: const QueuePageChiefMasContent(),
     );
   }
 }
 
-class QueuePageChiefContent extends StatelessWidget {
-  const QueuePageChiefContent({super.key});
+class QueuePageChiefMasContent extends StatelessWidget {
+  const QueuePageChiefMasContent({super.key});
   @override
   Widget build(BuildContext context) {
     return const SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-              padding:  EdgeInsets.all(16),
-              child: ElementBarQueue()),
-        ),
-      );
+          child: SingleChildScrollView(
+            child: Padding(
+                padding:  EdgeInsets.all(16),
+                child: ElementBarQueue()),
+          ),
+        );
   }
 }

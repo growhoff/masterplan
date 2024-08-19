@@ -135,7 +135,7 @@ class ArchiveCubit extends Cubit<ArchiveState> {
         number: dto.number,
         name: dto.name,
         areaId: dto.areaId,
-        isdistributed: dto.isdistributed,
+
         batchId: dto.batchId);
   }
 

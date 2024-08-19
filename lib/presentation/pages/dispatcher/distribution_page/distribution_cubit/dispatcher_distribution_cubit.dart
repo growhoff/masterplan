@@ -49,23 +49,23 @@ class DispatcherDistributionCubit extends Cubit<DispatcherDistributionState> {
     var batchesMap = groupBy(stagesList, (stage) => stage.chiefBatch?.batchId);
 
     batchesMap.forEach((batchesKey, batchesValue) {
-
       var stagesMap = groupBy(batchesValue, (stage) => stage.stageId);
 
       stagesMap.forEach((stagesKey, stagesValue) {
         print('batchesKey: $batchesKey   ,  stageKey: $stagesKey ');
         final distributionStage = DistributionStageModel(
+            batch: stagesValue.first.chiefBatch?.batch ?? BatchDTO.empty,
             stageArchiveId: stagesValue.first.stageId,
             quantity: stagesValue.first.chiefBatch?.batch.count ?? 0,
-            batchName: stagesValue.first.chiefBatch?.batch.name ?? '',
-            batchNumber: stagesValue.first.chiefBatch?.batch.numberRS ?? '',
             stageName: stagesValue.first.stage?.name ?? '',
             stageNumber: stagesValue.first.stage?.number ?? '',
             batchId: stagesValue.first.chiefBatch?.batchId ?? 0);
 
+        stagesList = [];
         for (var stage in stagesValue) {
           stagesList.add(stage);
         }
+
         distributionStage.stagesList = stagesList;
         stagesList = [];
 

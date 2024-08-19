@@ -8,8 +8,10 @@ import 'package:master_plan/presentation/pages/dispatcher/queue_stages_page/queu
 
 import '../../../widgets/in_development_page.dart';
 import '../../chief/model/tab_bar_model.dart';
+import '../dispatcher_analytics_page/dispatcher_analytics_page.dart';
 import '../distribution_page/dispatcher_distribution_page.dart';
 import '../lists_page/lists_page.dart';
+import '../orders_page/batches_page/batches_cubit/batches_cubit.dart';
 
 abstract class DispatcherData {
   static List<TabBarModel> listPage = [
@@ -21,6 +23,14 @@ abstract class DispatcherData {
     TabBarModel(
         title: 'Заказы на производство',
         actions: [
+          BlocProvider(
+            create: (context) => BatchesCubit(),
+            child: IconButton(
+                onPressed: () {
+                  BatchesCubit().loadOrder();
+                },
+                icon: Icon(Icons.download)),
+          ),
           Builder(builder: (context) {
             return IconButton(
               icon: Icon(
@@ -45,7 +55,7 @@ abstract class DispatcherData {
         page: QueueStagesPage(),
         icon: Icons.library_add),
     TabBarModel(
-        title: 'Задания на производство',
+        title: 'Задания на производстве',
         actions: [],
         page: InDevelopmentPage(),
         icon: Icons.task_rounded),
@@ -62,7 +72,7 @@ abstract class DispatcherData {
     TabBarModel(
         title: 'Аналитика',
         actions: [],
-        page:InDevelopmentPage(),
+        page: DispatcherAnalyticsPage(),
         icon: Icons.fact_check_sharp),
     TabBarModel(
         title: 'Архив',

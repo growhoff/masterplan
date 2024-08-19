@@ -15,17 +15,18 @@ class Unit {
   final int? operatorsQuantity;
   final int? supportStaffQuantity;
 
-  Unit(
-      {required this.id,
-      this.name,
-      this.number,
-      required this.companyId,
-      this.staffId,
-      this.chief,
-      this.areasQuantity,
-      this.machinesQuantity,
-      this.operatorsQuantity,
-      this.supportStaffQuantity});
+  Unit({
+    required this.id,
+    this.name,
+    this.number,
+    required this.companyId,
+    this.staffId,
+    this.chief,
+    this.areasQuantity,
+    this.machinesQuantity,
+    this.operatorsQuantity,
+    this.supportStaffQuantity,
+  });
 
   static final empty = Unit(
       id: 0,
@@ -36,6 +37,11 @@ class Unit {
       supportStaffQuantity: 0);
 
   factory Unit.fromDTO(UnitDTO dto) {
-    return Unit(id: dto.id, companyId: dto.companyId);
+    return Unit(
+      id: dto.id,
+      name: dto.name,
+      number: dto.number,
+      companyId: dto.companyId,
+    );
   }
 }

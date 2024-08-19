@@ -6,9 +6,11 @@ import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/chief_operation_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operation_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/order_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/staff_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/status_dto.dart';
+
 // import 'package:master_plan/data/repositories/supabase/dto/user_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 
@@ -37,6 +39,7 @@ class OperatorOperationsDTO extends Dto {
 
   final int? machineId;
   final MachineDTO? machine;
+
   final int? order;
   final int? optimalPart;
 
@@ -51,38 +54,38 @@ class OperatorOperationsDTO extends Dto {
 
   final DistributionStageDto? distributionStageDto;
 
-  OperatorOperationsDTO(
-      {required this.id,
-      this.timeplan,
-      this.pause,
-      this.timeFirstStart,
-      required this.statusId,
-        this.distributionStageId,
+  OperatorOperationsDTO({required this.id,
+    this.timeplan,
+    this.pause,
+    this.timeFirstStart,
+    required this.statusId,
+    this.distributionStageId,
 
-        required this.status,
-      required this.batchId,
-      required this.batch,
-      required this.stageId,
-      this.stage,
-      required this.operationId,
-      required this.operation,
-      required this.areaId,
-      this.area,
-      this.machineId,
-      this.machine,
-      this.order,
-      this.optimalPart,
-      this.timestart,
-      this.timestop,
-      this.timeworking,
-      this.userId,
-      this.staff,
-      this.chiefOperationId,
-      this.chiefBatchId,
-      this.chiefOperation,
-      this.modific,
-      this.comment,
-      this.distributionStageDto});
+    required this.status,
+    required this.batchId,
+    required this.batch,
+    required this.stageId,
+    this.stage,
+    this.order,
+    required this.operationId,
+    required this.operation,
+    required this.areaId,
+    this.area,
+    this.machineId,
+    this.machine,
+
+    this.optimalPart,
+    this.timestart,
+    this.timestop,
+    this.timeworking,
+    this.userId,
+    this.staff,
+    this.chiefOperationId,
+    this.chiefBatchId,
+    this.chiefOperation,
+    this.modific,
+    this.comment,
+    this.distributionStageDto});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -128,7 +131,7 @@ class OperatorOperationsDTO extends Dto {
             : null,
         operationId: map['operation_id'] as int,
         operation:
-            OperationDTO.fromMap(map['z_operation'] as Map<String, dynamic>),
+        OperationDTO.fromMap(map['z_operation'] as Map<String, dynamic>),
         areaId: map['area_id'] as int,
         area: map['z_area'] != null
             ? AreaDTO.fromMap(map['z_area'] as Map<String, dynamic>)
@@ -138,18 +141,19 @@ class OperatorOperationsDTO extends Dto {
             ? MachineDTO.fromMap(map['z_machine'] as Map<String, dynamic>)
             : null,
         order: map['order'] != null ? map['order'] as int : null,
+
         optimalPart:
-            map['optimal_part'] != null ? map['optimal_part'] as int : null,
+    map['optimal_part'] != null ? map['optimal_part'] as int : null,
         timestart: map['time_start'] != null ? map['time_start'] as int : null,
         timestop: map['time_stop'] != null ? map['time_stop'] as int : null,
         timeworking:
-            map['time_working'] != null ? map['time_working'] as int : null,
+        map['time_working'] != null ? map['time_working'] as int : null,
         userId: map['staff_id'] != null ? map['staff_id'] as int : null,
         staff: map['z_staff'] != null
             ? StaffDTO.fromMap(map['z_staff'] as Map<String, dynamic>)
             : null,
         chiefBatchId:
-            map['chief_batch_id'] != null ? map['chief_batch_id'] as int : null,
+        map['chief_batch_id'] != null ? map['chief_batch_id'] as int : null,
         chiefOperationId: map['chief_operation_id'] != null
             ? map['chief_operation_id'] as int
             : null,

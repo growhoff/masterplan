@@ -1,6 +1,6 @@
-^D:\FLUTTERPROJECT\MASTERPLAN\BUILD\WINDOWS\X64\CMAKEFILES\D93D1D2FD81BF584C9F119B6029E9A06\GENERATE.STAMP.RULE
+^D:\FLUTTER PROJECT\MASTERPLAN\BUILD\WINDOWS\X64\CMAKEFILES\F0996C2EE06EDD0F0C81DBD50EC561C9\GENERATE.STAMP.RULE
 setlocal
-"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SD:/FlutterProject/masterplan/windows -BD:/FlutterProject/masterplan/build/windows/x64 --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file D:/FlutterProject/masterplan/build/windows/x64/master_plan.sln
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" "-SD:/Flutter project/masterplan/windows" "-BD:/Flutter project/masterplan/build/windows/x64" --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file "D:/Flutter project/masterplan/build/windows/x64/flutter_application_2.sln"
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone

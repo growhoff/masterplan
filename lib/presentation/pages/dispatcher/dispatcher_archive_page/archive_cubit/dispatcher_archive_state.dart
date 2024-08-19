@@ -11,15 +11,15 @@ class DispatcherArchiveState extends Equatable {
       this.status = DispatcherArchiveStatus.initial});
 
   final List<BatchArchive> batchesList;
-  final List<Stage> stagesList;
-  final List<Operation> operationsList;
+  final List<StageArchive> stagesList;
+  final List<OperationArchive> operationsList;
   final List<Transfer> transfersList;
   final DispatcherArchiveStatus status;
 
   DispatcherArchiveState copyWith(
       {List<BatchArchive>? batchesList,
-      List<Stage>? stagesList,
-      List<Operation>? operationsList,
+      List<StageArchive>? stagesList,
+      List<OperationArchive>? operationsList,
         List<Transfer>? transfersList,
       DispatcherArchiveStatus? status}) {
     return DispatcherArchiveState(
