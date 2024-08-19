@@ -84,11 +84,12 @@ class _DispatcherArchivePageViewState extends State<DispatcherArchivePageView> {
                                     children: [
                                       DispatcherArchiveExpansionBodyItem(
                                         state.batchesList[index],
-                                        deleteBatch: () => setState(() =>
-                                            context
-                                                .read<DispatcherArchiveCubit>()
-                                                .deleteBatchArchive(state
-                                                    .batchesList[index].id)),
+                                        deleteBatch: () => setState(() {
+                                          context
+                                              .read<DispatcherArchiveCubit>()
+                                              .deleteBatchArchive(
+                                                  state.batchesList[index].id);
+                                        }),
                                       )
                                     ],
                                   )

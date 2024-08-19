@@ -5,12 +5,16 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:master_plan/data/repositories/supabase/dto/distribution_stage_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
 
 import 'package:master_plan/data/repositories/supabase/service/distribution_stage_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
 
 import 'package:master_plan/domain/model/order.dart';
 import 'package:master_plan/domain/usecase/chief_unit_service.dart';
 
+import '../../../../../data/repositories/supabase/dto/operation_dto.dart';
+import '../../../../../data/repositories/supabase/service/operation_table.dart';
 import '../../../../../domain/model/batch.dart';
 import '../../../../../domain/model/distribution_stage.dart';
 
@@ -27,11 +31,15 @@ class StagesInUnitCubit extends Cubit<StagesInUnitState> {
 
   final _distributionStageTable = DistributionStageTable();
 
+  final _operationTable = OperationTable();
+
   final TextEditingController uploadStagesQuantityController =
       TextEditingController();
 
   Future fetchStages() async {
     List<DistributionStage> distributionStagesList = [];
+    Set<int> stagesIdsSet = {};
+    Map<int, int> operationsInStageQuantityMap = {};
     List<StageModel> stagesInBatchModelList = [];
 
     var fetchedStagesList =
@@ -43,7 +51,26 @@ class StagesInUnitCubit extends Cubit<StagesInUnitState> {
       final distributionStage = DistributionStage.fromDto(fetchedStageDto);
 
       distributionStagesList.add(distributionStage);
+      stagesIdsSet.add(distributionStage.stageId);
     }
+
+    var fetchedOperationsList =
+        await _operationTable.selectByStageIdList(stagesIdsSet.toList());
+
+    for (var operation in fetchedOperationsList) {
+      final operationDto = OperationDTO.fromMap(operation);
+
+      if (operationsInStageQuantityMap.containsKey(operationDto.stageId)) {
+        operationsInStageQuantityMap[operationDto.stageId] =
+            (operationsInStageQuantityMap[operationDto.stageId]! + 1);
+      } else {
+        operationsInStageQuantityMap[operationDto.stageId] = 1;
+      }
+    }
+
+    operationsInStageQuantityMap.forEach((key, value) {
+      print('$key : $value');
+    });
 
     var batchesMap =
         groupBy(distributionStagesList, (stage) => stage.chiefBatch?.batchId);
@@ -52,8 +79,6 @@ class StagesInUnitCubit extends Cubit<StagesInUnitState> {
       var stagesMap = groupBy(batchValue, (stage) => stage.stageId);
 
       stagesMap.forEach((stageKey, stageValue) {
-
-
         final stageModel = StageModel(
           batch: Batch(
               order: Order(
@@ -74,6 +99,8 @@ class StagesInUnitCubit extends Cubit<StagesInUnitState> {
               isready: stageValue.first.chiefBatch?.batch.isready ?? false,
               orderId: stageValue.first.chiefBatch?.batch.orderId),
           stageId: stageValue.first.stageId,
+          operationsQuantity:
+              operationsInStageQuantityMap[stageValue.first.stageId],
           stageNumber: stageValue.first.stage?.number ?? '',
           stageName: stageValue.first.stage?.name ?? '',
           unitNumber: stageValue.first.unit?.number ?? '',

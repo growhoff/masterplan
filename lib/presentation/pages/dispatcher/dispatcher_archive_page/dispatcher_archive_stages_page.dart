@@ -26,13 +26,16 @@ class DispatcherArchiveStagesPage extends StatelessWidget {
 class DispatcherArchiveStagesPageView extends StatefulWidget {
   final BatchArchive batchArchive;
 
-  const DispatcherArchiveStagesPageView({required this.batchArchive, super.key});
+  const DispatcherArchiveStagesPageView(
+      {required this.batchArchive, super.key});
 
   @override
-  State<DispatcherArchiveStagesPageView> createState() => _DispatcherArchiveStagesPageViewState();
+  State<DispatcherArchiveStagesPageView> createState() =>
+      _DispatcherArchiveStagesPageViewState();
 }
 
-class _DispatcherArchiveStagesPageViewState extends State<DispatcherArchiveStagesPageView> {
+class _DispatcherArchiveStagesPageViewState
+    extends State<DispatcherArchiveStagesPageView> {
   @override
   void initState() {
     context
@@ -87,38 +90,28 @@ class _DispatcherArchiveStagesPageViewState extends State<DispatcherArchiveStage
                                     'наименование',
                                   )),
                             ),
-                            TableCell(
-                              child: Container(
-                                  alignment: Alignment.center,
-                                  padding: EdgeInsets.all(8),
-                                  child: Text(
-                                    '№ этапа',
-                                    textAlign: TextAlign.center,
-                                  )),
-                            )
                           ]),
                       ...List.generate(
                           state.stagesList.length,
                           (index) => TableRow(children: [
                                 TableRowInkWell(
                                   onTap: () {
-                                    Navigator.pushNamed(
-                                        context, '/dispatcherArchiveOperationsPage',
+                                    Navigator.pushNamed(context,
+                                        '/dispatcherArchiveOperationsPage',
                                         arguments: state.stagesList[index]);
                                   },
                                   child: Container(
                                       alignment: Alignment.center,
                                       padding: EdgeInsets.all(8),
                                       child: Text(
-                                        '${index + 1}',
-                                        softWrap: true,
+                                        '${state.stagesList[index].number}',
                                         textAlign: TextAlign.center,
                                       )),
                                 ),
                                 TableRowInkWell(
                                   onTap: () {
-                                    Navigator.pushNamed(
-                                        context, '/dispatcherArchiveOperationsPage',
+                                    Navigator.pushNamed(context,
+                                        '/dispatcherArchiveOperationsPage',
                                         arguments: state.stagesList[index]);
                                   },
                                   child: Container(
@@ -129,20 +122,6 @@ class _DispatcherArchiveStagesPageViewState extends State<DispatcherArchiveStage
                                         textAlign: TextAlign.center,
                                       )),
                                 ),
-                                TableRowInkWell(
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                        context, '/dispatcherArchiveOperationsPage',
-                                        arguments: state.stagesList[index]);
-                                  },
-                                  child: Container(
-                                      alignment: Alignment.center,
-                                      padding: EdgeInsets.all(8),
-                                      child: Text(
-                                        '${state.stagesList[index].number}',
-                                        textAlign: TextAlign.center,
-                                      )),
-                                )
                               ]))
                     ]),
               ),

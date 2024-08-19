@@ -51,7 +51,7 @@ class OperationArchiveTable extends SupabaseTable {
       int batchArchiveId) async {
     return await _table
         .select('*, z_stage_archive!inner(*)')
-        .eq('z_stage_archive.batch_archive_id', batchArchiveId);
+        .eq('z_stage_archive.batch_archive_id', batchArchiveId).order('id', ascending: true);
   }
 
   Future<List<Map<String, dynamic>>> selectByStageArchiveId(

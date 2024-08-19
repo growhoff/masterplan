@@ -66,49 +66,49 @@ class _DispatcherAnalyticsPageViewState
                       showDialog(
                           context: context,
                           builder: (ctx) => StatefulBuilder(
-                                builder: (ctx, setState) {
-                                  return SimpleDialog(
-                                    title: Text('Выберите цех'),
-                                    children: [
-                                      Container(
-                                        padding: EdgeInsets.all(10),
-                                        alignment: Alignment.center,
-                                        child: DropdownButton<Unit>(
-                                            value: context
-                                                .read<
-                                                    DispatcherAnalyticsCubit>()
-                                                .selectedUnit,
-                                            items: state.unitsList
-                                                .map((Unit unit) =>
-                                                    DropdownMenuItem(
-                                                      value: unit,
-                                                      child: Text(
-                                                          '${unit.number} ${unit.name}'),
-                                                    ))
-                                                .toList(),
-                                            onChanged: (Unit? value) =>
-                                                setState(() {
-                                                  context
-                                                      .read<
-                                                          DispatcherAnalyticsCubit>()
-                                                      .changeSelectedUnit(
-                                                          value ?? Unit.empty);
+                            builder: (ctx, setStateLocal) {
+                              return SimpleDialog(
+                                title: Text('Выберите цех'),
+                                children: [
+                                  Container(
+                                      padding: EdgeInsets.all(10),
+                                      alignment: Alignment.center,
+                                      child: DropdownButton<Unit>(
+                                          value: context
+                                              .read<
+                                                  DispatcherAnalyticsCubit>()
+                                              .selectedUnit,
+                                          items: state.unitsList
+                                              .map((Unit unit) =>
+                                                  DropdownMenuItem(
+                                                    value: unit,
+                                                    child: Text(
+                                                        '${unit.number} ${unit.name}'),
+                                                  ))
+                                              .toList(),
+                                          onChanged: (Unit? value) =>
+                                              setStateLocal(() {
+                                                context
+                                                    .read<
+                                                        DispatcherAnalyticsCubit>()
+                                                    .changeSelectedUnit(
+                                                        value ??
+                                                            Unit.empty);
 
-                                                  context
-                                                      .read<
-                                                          DispatcherAnalyticsCubit>()
-                                                      .fetchAreas();
+                                                context
+                                                    .read<
+                                                        DispatcherAnalyticsCubit>()
+                                                    .fetchAreas();
 
-                                                  context
-                                                      .read<
-                                                          DispatcherAnalyticsCubit>()
-                                                      .selectedArea = Area.empty;
-                                                })),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              ));
+                                                context
+                                                    .read<
+                                                        DispatcherAnalyticsCubit>()
+                                                    .selectedArea = Area.empty;
+                                              }))),
+                                ],
+                              );
+                            }
+                          ));
                     },
                     child: Text('цех'),
                   ),

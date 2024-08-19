@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:master_plan/presentation/pages/dispatcher/dispatcher_analytics_page/dispatcher_analytics_cubit/dispatcher_analytics_cubit.dart';
 import 'package:master_plan/presentation/pages/dispatcher/orders_page/batches_page/stages_in_batch_page.dart';
+import 'package:master_plan/presentation/pages/dispatcher/orders_page/batches_page/widgets/batch_dialog.dart';
 
 import '../../../../../domain/model/order.dart';
 import 'batches_cubit/batches_cubit.dart';
@@ -173,7 +175,6 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                           9: FlexColumnWidth(1),
                           10: FlexColumnWidth(1),
                           11: FlexColumnWidth(1),
-
                         },
                         defaultColumnWidth: const FlexColumnWidth(),
                         border: TableBorder.all(color: Colors.black),
@@ -181,13 +182,14 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                             TableCellVerticalAlignment.middle,
                         children: [
                           TableRow(
-                              decoration: const BoxDecoration(color: Colors.grey),
+                              decoration:
+                                  const BoxDecoration(color: Colors.grey),
                               children: [
                                 TableCell(
                                   child: Container(
                                       alignment: Alignment.center,
-                                      padding:
-                                          const EdgeInsets.symmetric(vertical: 8),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8),
                                       child: const RotatedBox(
                                         quarterTurns: 3,
                                         child: Text(
@@ -197,12 +199,11 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                         ),
                                       )),
                                 ),
-
                                 TableCell(
                                   child: Container(
                                       alignment: Alignment.center,
-                                      padding:
-                                          const EdgeInsets.symmetric(vertical: 8),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8),
                                       child: const FittedBox(
                                         fit: BoxFit.fill,
                                         child: RotatedBox(
@@ -217,8 +218,8 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                 TableCell(
                                   child: Container(
                                       alignment: Alignment.center,
-                                      padding:
-                                          const EdgeInsets.symmetric(vertical: 8),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8),
                                       child: const FittedBox(
                                         fit: BoxFit.fill,
                                         child: Text(
@@ -244,8 +245,8 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                   child: Container(
                                       height: 100,
                                       alignment: Alignment.center,
-                                      padding:
-                                          const EdgeInsets.symmetric(vertical: 8),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8),
                                       child: const FittedBox(
                                         fit: BoxFit.fill,
                                         child: RotatedBox(
@@ -261,8 +262,8 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                   child: Container(
                                       height: 100,
                                       alignment: Alignment.center,
-                                      padding:
-                                          const EdgeInsets.symmetric(vertical: 8),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8),
                                       child: const FittedBox(
                                         fit: BoxFit.fill,
                                         child: RotatedBox(
@@ -279,8 +280,8 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                       height: 100,
                                       color: Colors.blue[200],
                                       alignment: Alignment.center,
-                                      padding:
-                                          const EdgeInsets.symmetric(vertical: 8),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8),
                                       child: const FittedBox(
                                         fit: BoxFit.fill,
                                         child: RotatedBox(
@@ -297,7 +298,8 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                       height: 100,
                                       color: Colors.green[300],
                                       alignment: Alignment.center,
-                                      padding: EdgeInsets.symmetric(vertical: 8),
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 8),
                                       child: const RotatedBox(
                                         quarterTurns: 3,
                                         child: FittedBox(
@@ -355,14 +357,13 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                               state.batchesList.length,
                               (index) => TableRow(children: [
                                     TableRowInkWell(
-                                      onTap: () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  StagesInBatchPage(
-                                                      batch: state
-                                                          .batchesList[index]
-                                                          .batch))),
+                                      onTap: () => showDialog(
+                                          context: context,
+                                          builder: (ctx) => BatchDialog(
+                                                cubit: context
+                                                    .read<BatchesCubit>(),
+                                                batch: state.batchesList[index],
+                                              )),
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 5),
@@ -372,16 +373,14 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                         ),
                                       ),
                                     ),
-                                TableRowInkWell(
-                                  onTap: () => Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              StagesInBatchPage(
-                                                  batch: state
-                                                      .batchesList[index]
-                                                      .batch))),
-
+                                    TableRowInkWell(
+                                      onTap: () =>showDialog(
+                                          context: context,
+                                          builder: (ctx) => BatchDialog(
+                                            cubit: context
+                                                .read<BatchesCubit>(),
+                                            batch: state.batchesList[index],
+                                          )),
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 5),
@@ -392,14 +391,13 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                       ),
                                     ),
                                     TableRowInkWell(
-                                      onTap: () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  StagesInBatchPage(
-                                                      batch: state
-                                                          .batchesList[index]
-                                                          .batch))),
+                                      onTap: () => showDialog(
+                                          context: context,
+                                          builder: (ctx) => BatchDialog(
+                                            cubit: context
+                                                .read<BatchesCubit>(),
+                                            batch: state.batchesList[index],
+                                          )),
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 5),
@@ -410,14 +408,13 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                       ),
                                     ),
                                     TableRowInkWell(
-                                      onTap: () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  StagesInBatchPage(
-                                                      batch: state
-                                                          .batchesList[index]
-                                                          .batch))),
+                                      onTap: () => showDialog(
+                                          context: context,
+                                          builder: (ctx) => BatchDialog(
+                                            cubit: context
+                                                .read<BatchesCubit>(),
+                                            batch: state.batchesList[index],
+                                          )),
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 5),
@@ -428,14 +425,13 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                       ),
                                     ),
                                     TableRowInkWell(
-                                      onTap: () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  StagesInBatchPage(
-                                                      batch: state
-                                                          .batchesList[index]
-                                                          .batch))),
+                                      onTap: () => showDialog(
+                                          context: context,
+                                          builder: (ctx) => BatchDialog(
+                                            cubit: context
+                                                .read<BatchesCubit>(),
+                                            batch: state.batchesList[index],
+                                          )),
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 5),
@@ -446,14 +442,13 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                       ),
                                     ),
                                     TableRowInkWell(
-                                      onTap: () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  StagesInBatchPage(
-                                                      batch: state
-                                                          .batchesList[index]
-                                                          .batch))),
+                                      onTap: () => showDialog(
+                                          context: context,
+                                          builder: (ctx) => BatchDialog(
+                                            cubit: context
+                                                .read<BatchesCubit>(),
+                                            batch: state.batchesList[index],
+                                          )),
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 5),
@@ -464,14 +459,13 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                       ),
                                     ),
                                     TableRowInkWell(
-                                      onTap: () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  StagesInBatchPage(
-                                                      batch: state
-                                                          .batchesList[index]
-                                                          .batch))),
+                                      onTap: () => showDialog(
+                                          context: context,
+                                          builder: (ctx) => BatchDialog(
+                                            cubit: context
+                                                .read<BatchesCubit>(),
+                                            batch: state.batchesList[index],
+                                          )),
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 5),
@@ -482,14 +476,13 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                       ),
                                     ),
                                     TableRowInkWell(
-                                      onTap: () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  StagesInBatchPage(
-                                                      batch: state
-                                                          .batchesList[index]
-                                                          .batch))),
+                                      onTap: () => showDialog(
+                                          context: context,
+                                          builder: (ctx) => BatchDialog(
+                                            cubit: context
+                                                .read<BatchesCubit>(),
+                                            batch: state.batchesList[index],
+                                          )),
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 5),
@@ -500,14 +493,13 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                       ),
                                     ),
                                     TableRowInkWell(
-                                      onTap: () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  StagesInBatchPage(
-                                                      batch: state
-                                                          .batchesList[index]
-                                                          .batch))),
+                                      onTap: () =>showDialog(
+                                          context: context,
+                                          builder: (ctx) => BatchDialog(
+                                            cubit: context
+                                                .read<BatchesCubit>(),
+                                            batch: state.batchesList[index],
+                                          )),
                                       child: Container(
                                         alignment: Alignment.center,
                                         padding: const EdgeInsets.symmetric(
@@ -519,14 +511,13 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                       ),
                                     ),
                                     TableRowInkWell(
-                                      onTap: () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  StagesInBatchPage(
-                                                      batch: state
-                                                          .batchesList[index]
-                                                          .batch))),
+                                      onTap: () => showDialog(
+                                          context: context,
+                                          builder: (ctx) => BatchDialog(
+                                            cubit: context
+                                                .read<BatchesCubit>(),
+                                            batch: state.batchesList[index],
+                                          )),
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 5),
@@ -537,14 +528,13 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                       ),
                                     ),
                                     TableRowInkWell(
-                                      onTap: () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  StagesInBatchPage(
-                                                      batch: state
-                                                          .batchesList[index]
-                                                          .batch))),
+                                      onTap: () => showDialog(
+                                          context: context,
+                                          builder: (ctx) => BatchDialog(
+                                            cubit: context
+                                                .read<BatchesCubit>(),
+                                            batch: state.batchesList[index],
+                                          )),
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 5),

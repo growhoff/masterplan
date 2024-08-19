@@ -11,12 +11,9 @@ import 'package:master_plan/data/repositories/supabase/dto/unit_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/chief_distribution_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/distribution_stage_table.dart';
 import 'package:master_plan/domain/model/operation.dart';
-import 'package:meta/meta.dart';
 
-import '../../../../../data/repositories/supabase/dto/position_staff_dto.dart';
 import '../../../../../data/repositories/supabase/service/chief_operation_table.dart';
 import '../../../../../data/repositories/supabase/service/operation_table.dart';
-import '../../../../../data/repositories/supabase/service/position_staff_table.dart';
 import '../../../../../data/repositories/supabase/service/unit_table.dart';
 import '../../../../../domain/model/distribution_stage.dart';
 import '../../../../../domain/model/unit.dart';

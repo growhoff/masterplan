@@ -101,11 +101,11 @@ class OperatorOperationsTable extends SupabaseTable {
   }
 
   Future<List<Map<String, dynamic>>>
-      selectReadyDefectAndModificationOnAreaOrderedByBatch(
-          List<int> areasIdList) {
+  selectReadyDefectAndModificationOnAreaOrderedByBatch(
+      List<int> areasIdList) {
     return table
         .select(
-            '*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*,z_order(*)), z_staff(*,z_position(*)) z_machine(*), z_area!inner(*), z_chief_operation(*), z_chief_batch(*), z_distribution_stage()')
+        '*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*,z_order(*)), z_staff(*,z_position(*)) z_machine(*), z_area!inner(*), z_chief_operation(*), z_chief_batch(*), z_distribution_stage()')
         .inFilter('area_id', areasIdList)
         .inFilter('status_id', [4, 5, 9])
         .order('batch_id', ascending: true)
@@ -113,12 +113,12 @@ class OperatorOperationsTable extends SupabaseTable {
   }
 
   Future<List<Map<String, dynamic>>>
-      selectByOperationIdListAndDistributionStagesIdList(
-          {required List<int> operationsIdsList,
-          required List<int> distributionStageIdsList}) {
+  selectByOperationIdListAndDistributionStagesIdList(
+      {required List<int> operationsIdsList,
+        required List<int> distributionStageIdsList}) {
     return table
         .select(
-            '*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*), z_staff(*, z_position(*)), z_machine(*), z_area!inner(*), z_chief_operation!inner(*), z_chief_batch(*)')
+        '*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*), z_staff(*, z_position(*)), z_machine(*), z_area!inner(*), z_chief_operation!inner(*), z_chief_batch(*)')
         .eq('z_area.company_id', _companyId)
         .inFilter('operation_id', operationsIdsList)
         .inFilter('distribution_stage_id', distributionStageIdsList)
@@ -155,7 +155,7 @@ class OperatorOperationsTable extends SupabaseTable {
 
   Future<Map<String, dynamic>> selectOptPath(int optPath) async {
     final quere =
-        await table.select(selectOperOperatLite).eq('optimal_part', optPath);
+    await table.select(selectOperOperatLite).eq('optimal_part', optPath);
     return quere.last;
   }
 
@@ -206,7 +206,7 @@ class OperatorOperationsTable extends SupabaseTable {
     }
     return table
         .select(
-            '*, z_status(*), z_batch(*), z_staff($selectStaff), z_machine(*)')
+        '*, z_status(*), z_batch(*), z_staff($selectStaff), z_machine(*)')
         .or(filters);
   }
 
@@ -214,7 +214,7 @@ class OperatorOperationsTable extends SupabaseTable {
       {required int areaId}) async {
     var res = await table
         .select(
-            '*, z_status(*), z_batch(*), z_stage(*), z_operation(*),z_staff($selectStaff), z_machine(*)')
+        '*, z_status(*), z_batch(*), z_stage(*), z_operation(*),z_staff($selectStaff), z_machine(*)')
         .eq('area_id', areaId);
     print(res);
     return res;
@@ -305,9 +305,9 @@ class OperatorOperationsTable extends SupabaseTable {
   }
 
   Future<void> updateMasterReadyEqOptimalPart(
-    int optPath,
-    int staffId,
-  ) async {
+      int optPath,
+      int staffId,
+      ) async {
     await table.update({
       'status_id': 6,
       'staff_id': staffId,
@@ -369,7 +369,7 @@ class OperatorOperationsTable extends SupabaseTable {
   }
 
   Future<List<Map<String, dynamic>>>
-      selectOrderedByChiefBatchIdAndChiefOperationId() {
+  selectOrderedByChiefBatchIdAndChiefOperationId() {
     return table
         .select(selectOperOperat)
         .eq('z_area.company_id', _companyId)

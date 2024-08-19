@@ -33,6 +33,8 @@ class ChiefAreaEditPageView extends StatefulWidget {
 class _ChiefAreaEditPageViewState extends State<ChiefAreaEditPageView> {
   @override
   void initState() {
+    context.read<ChiefAreasCubit>().numberController.text = widget.area.number;
+    context.read<ChiefAreasCubit>().nameController.text = widget.area.name;
     super.initState();
   }
 

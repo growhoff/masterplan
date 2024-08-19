@@ -186,7 +186,6 @@ class BatchesCubit extends Cubit<BatchesState> {
     var fetchedOperationsArchiveList =
         await _operationArchiveTable.selectByBatchArchiveId(selectedBatch.id);
 
-
     int stageArchiveId = 0;
 
     int stageId = 0;
@@ -299,8 +298,12 @@ class BatchesCubit extends Cubit<BatchesState> {
     );
   }
 
-  Future<void> deleteBatch(int batchId) async {
-    await _batchTable.delete(batchId);
+  Future<void> deleteBatch(Batch batch) async {
+    if ((batch.order?.statusId == 1) &&
+        (batch.batchStatusId == 5 || batch.batchStatusId == 6)) {
+      await _batchTable.delete(batch.id);
+      await fetchBatchesInOrder(batch.orderId);
+    }
   }
 
   Future formOrder() async {

@@ -13,22 +13,21 @@ class BatchModel {
   int readyPercent = 0;
 
   BatchModel({required this.batch});
-
 }
 
 class StageModel {
   StageModel(
       {required this.stageId,
-
       required this.stageNumber,
       required this.stageName,
       required this.batch,
-        required this.unitNumber
-      });
+      this.operationsQuantity,
+      required this.unitNumber});
 
   final String stageNumber;
   final String stageName;
   final String unitNumber;
+  final int? operationsQuantity;
   final int stageId;
   final Batch batch;
 

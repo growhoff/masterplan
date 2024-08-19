@@ -33,7 +33,51 @@ class DispatcherArchiveExpansionBodyItem extends StatelessWidget {
                   child: Text('подробнее'))),
           IconButton(
             onPressed: () {
-              deleteBatch();
+              showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                          actionsOverflowButtonSpacing: 20,
+                          title: Text.rich(
+                            TextSpan(
+                                style: TextStyle(fontSize: 20),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                      text: 'Вы уверены, что хотите удалить '),
+                                  TextSpan(
+                                      text:
+                                          '${batchArchive.number} ${batchArchive.name}',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                  TextSpan(text: ' ?'),
+                                ]),
+                          ),
+                          actions: [
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15, vertical: 10)),
+                              onPressed: () {
+                                deleteBatch();
+                                Navigator.pop(context);
+                              },
+                              child: Text(
+                                'да',
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            ),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15, vertical: 10)),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text(
+                                'нет',
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            )
+                          ]));
             },
             icon: Icon(
               Icons.delete_rounded,

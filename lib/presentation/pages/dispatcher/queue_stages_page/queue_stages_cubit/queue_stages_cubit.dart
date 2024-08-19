@@ -67,8 +67,6 @@ class QueueStagesCubit extends Cubit<QueueStagesState> {
 
       final distributionStage = DistributionStage.fromDto(fetchedStageDto);
 
-      print('stageId: ${distributionStage.id}');
-
       distributionStagesList.add(distributionStage);
     }
 
@@ -98,19 +96,16 @@ class QueueStagesCubit extends Cubit<QueueStagesState> {
           stageName: value.first.stage?.name ?? '',
           unitNumber: value.first.unit?.number ?? '');
 
-      print('batch number: ${stageModel.batch.number}');
-
-      stageModel.status = value.last.stageStatus?.name ?? '';
-
+      List<int> stagesStatusesIdsList = [];
       for (var stage in value) {
         stageModel.distributionStagesIdsList.add(stage.id);
-
+        stagesStatusesIdsList.add(stage.statusId);
         switch (stage.statusId) {
           case 2:
             stageModel.inWorkQuantity++;
           case 3:
             stageModel.readyToUploadQuantity++;
-
+            stagesStatusesIdsList.add(stage.statusId);
           case 4:
             stageModel.uploadedQuantity++;
           case 5:
@@ -132,6 +127,24 @@ class QueueStagesCubit extends Cubit<QueueStagesState> {
                 .round();
       }
 
+      print(stagesStatusesIdsList);
+
+      if (stagesStatusesIdsList.contains(1)) {
+        stageModel.status = 'На распределении';
+      } else {
+        if (stagesStatusesIdsList.contains(2)) {
+          stageModel.status = 'Выполняется';
+        } else {
+          if (stagesStatusesIdsList.contains(3)) {
+            stageModel.status = 'Частично готов';
+          } else {
+            if (stagesStatusesIdsList.contains(4)) {
+              stageModel.status = 'Готов';
+            }
+          }
+        }
+      }
+
       stagesInBatchModelList
           .sort((a, b) => a.readyPercent.compareTo(b.readyPercent));
 
@@ -141,6 +154,11 @@ class QueueStagesCubit extends Cubit<QueueStagesState> {
           status: QueueStagesPageStatus.success,
           stagesList: stagesInBatchModelList.reversed.toList()));
     });
+  }
+
+
+  Future redistribute()async{
+
   }
 
   Future initQueueStagesPage() async {

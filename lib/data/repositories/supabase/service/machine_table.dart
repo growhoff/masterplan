@@ -99,7 +99,7 @@ class MachineTable extends SupabaseTable {
 
   Future<int> fetchMachinesQuantityOnArea({required int areaId}) async {
     var res =
-        await table.select('id').eq('area_id', areaId).count(CountOption.exact);
+    await table.select('id').eq('area_id', areaId).count(CountOption.exact);
     return res.count;
   }
 }

@@ -14,7 +14,6 @@ import 'package:master_plan/data/repositories/supabase/service/machine_table.dar
 import 'package:master_plan/data/repositories/supabase/service/position_staff_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/shift_schedule_table.dart';
 
-// import 'package:master_plan/data/repositories/supabase/service/position_staff_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/shifts_distribution.dart';
 import 'package:master_plan/data/repositories/supabase/service/staff_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/type_machine_table.dart';
@@ -22,9 +21,7 @@ import 'package:master_plan/data/repositories/supabase/service/version_table.dar
 import 'package:master_plan/data/repositories/supabase/service/view_machine_table.dart';
 import 'package:master_plan/domain/model/area.dart';
 import 'package:master_plan/domain/model/area_machine.dart';
-// import 'package:master_plan/domain/model/company.dart';
 import 'package:master_plan/domain/model/machine.dart';
-// import 'package:master_plan/domain/model/position.dart';
 import 'package:master_plan/domain/model/shifts_distribution.dart';
 import 'package:master_plan/domain/model/staff.dart';
 import 'package:master_plan/domain/model/unit.dart';

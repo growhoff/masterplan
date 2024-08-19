@@ -16,7 +16,7 @@ class OperatorPage extends StatelessWidget {
     final stateMain = context.read<CubitMain>().state;
     return BlocProvider<CubitOperator>(
       create: (context) => CubitOperator(stateMain.user!.id, stateMain.machineIdList!, stateMain.change!),
-      child: const ContentOperator(),
+      child: const ContentOperator()
     );
   }
 }

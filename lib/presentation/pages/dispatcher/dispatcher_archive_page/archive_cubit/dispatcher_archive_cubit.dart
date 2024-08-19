@@ -136,8 +136,8 @@ class DispatcherArchiveCubit extends Cubit<DispatcherArchiveState> {
     }
   }
 
-  Future deleteBatchArchive(int batchId) async {
-    await _batchArchiveTable.delete(batchId);
+  Future deleteBatchArchive(int batchArchiveId) async {
+    await _batchArchiveTable.delete(batchArchiveId);
     await fetchBatches();
   }
 

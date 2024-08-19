@@ -113,6 +113,10 @@ class DispatcherAnalyticsCubit extends Cubit<DispatcherAnalyticsState> {
         areasList: areasList, status: DispatcherAnalyticsStateStatus.success));
   }
 
+  Future deleteBatch()async{
+    print('удалили');
+  }
+
   Future<void> fetchReadyOperations() async {
     List<AnalyticsOperationModel> analyticsOperationsList = [];
 
