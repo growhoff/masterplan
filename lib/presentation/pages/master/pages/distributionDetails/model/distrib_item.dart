@@ -15,6 +15,7 @@ class DistribItem {
   final List<OperatorOperationsDTO> listOperat;
   final int timeSh;
   final int timePZ;
+  final int countTransfer;
   DistribItem({
     required this.id,
     required this.stageNumber,
@@ -29,6 +30,7 @@ class DistribItem {
     required this.listOperat,
     required this.timeSh,
     required this.timePZ,
+    required this.countTransfer,
   });
 
   DistribItem copyWith({
@@ -45,6 +47,7 @@ class DistribItem {
     List<OperatorOperationsDTO>? listOperat,
     int? timeSh,
     int? timePZ,
+    int? countTransfer,
   }) {
     return DistribItem(
       id: id ?? this.id,
@@ -60,6 +63,7 @@ class DistribItem {
       listOperat: listOperat ?? this.listOperat,
       timeSh: timeSh ?? this.timeSh,
       timePZ: timePZ ?? this.timePZ,
+      countTransfer: countTransfer ?? this.countTransfer,
     );
   }
 }

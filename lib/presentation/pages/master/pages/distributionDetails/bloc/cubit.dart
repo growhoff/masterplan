@@ -1,10 +1,15 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/data/repositories/supabase/dto/chief_distribution_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/transfer_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/chief_distribution_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/transfer_table.dart';
 import 'package:master_plan/domain/model/area_machine.dart';
+import 'package:master_plan/domain/model/group_transfer.dart';
 import 'package:master_plan/domain/model/name_index.dart';
+import 'package:master_plan/domain/model/transfer.dart';
+import 'package:master_plan/domain/usecase/convert_dto_model.dart';
 // import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/presentation/pages/master/pages/distributionDetails/model/distrib_item.dart';
 import 'package:master_plan/presentation/pages/master/pages/distributionDetails/model/set_model.dart';
@@ -47,6 +52,7 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
     List<OperatorOperationsDTO> list = [];
     Set<int> setChiefBatchId = {};
     Set<int> setBatchId = {};
+    Set<int> setOperId = {};
     Set<String> setAllId = {};
     for (var item in quere) {
       final model = OperatorOperationsDTO.fromMap(item);
@@ -54,9 +60,11 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
       setBatchId.add(model.batchId);
       setAllId.add('${model.batchId}_${model.stageId}_${model.operationId}'); 
       list.add(model);
+      setOperId.add(model.operationId);
     }
     //лист с batch_id и operation_id по порядку
     var listSearch = await getChiefTable(setBatchId.toList());
+    List<GroupTransfer> listTransGroup = await getTransfer(setOperId.toList());
 
     //группировка по деталям
     List<SetModelBatch> listModelBatch = [];
@@ -106,8 +114,8 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
         if ((int.parse(batchId) == el.batchId) && (int.parse(stageId) == el.stageId) && (int.parse(operId) == el.operationId) && (el.statusId == 2)) listTrue2.add(el);
         if ((int.parse(batchId) == el.batchId) && (int.parse(stageId) == el.stageId) && (int.parse(operId) == el.operationId) && (el.statusId == 4)) listTrue4.add(el);
       }
-      if (listTrue2.isNotEmpty) listResOper.add(convertToDistrib(listTrue2));
-      if (listTrue4.isNotEmpty) listResOper.add(convertToDistrib(listTrue4));
+      if (listTrue2.isNotEmpty) listResOper.add(convertToDistrib(listTrue2, listTransGroup));
+      if (listTrue4.isNotEmpty) listResOper.add(convertToDistrib(listTrue4, listTransGroup));
     }
     emit(state.copyWith(pathListOper: listResOper, isLoading: false));
   }
@@ -133,8 +141,27 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
     return listB;
   }
 
+  Future<List<GroupTransfer>> getTransfer(List<int> listIdOper) async{
+    final tableTransfer = TransferTable();
+    final quereTransfer = await tableTransfer.selectOperationId(listIdOper);
+    List<Transfer> listTransfer = [];
+    for (var element in quereTransfer) {
+      final model = TransferDTO.fromMap(element);
+      listTransfer.add(ConvertDtoModel.convertToTransfer(model));
+    }
+    List<GroupTransfer> listGroupTransfer = [];
+    var newListTransfer = groupBy(listTransfer, (el) => el.operationId);
+    newListTransfer.forEach((key, value) {
+      listGroupTransfer.add(GroupTransfer(operId: key, listTransfer: value));
+    });
+    return listGroupTransfer;
+  }
 
-  DistribItem convertToDistrib(List<OperatorOperationsDTO> operOperat) {
+  DistribItem convertToDistrib(List<OperatorOperationsDTO> operOperat, List<GroupTransfer> listTransGroup) {
+    int count = 0;
+    for (var element in listTransGroup) {
+      if (operOperat.first.operationId == element.operId) count = element.listTransfer.length;
+    }
     return DistribItem(
         id: operOperat.first.id,
         stageNumber: operOperat.first.stage!.number,
@@ -146,7 +173,9 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
         listOperat: operOperat,
         timeSh: operOperat.first.operation.timeSH,
         timePZ: operOperat.first.operation.timepz,
-        setOptPart: 1);
+        setOptPart: 1,
+        countTransfer: count,
+      );
   }
 
   void toggleSelect(int index){

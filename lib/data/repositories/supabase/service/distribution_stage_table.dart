@@ -176,6 +176,13 @@ class DistributionStageTable extends SupabaseTable {
         .eq('status_id', 2);
   }
 
+  Future<void> updateStatusBrak(int stageId, int chiefBatchId) async {
+    await _table
+        .update({'status_id': 5})
+        .eq('stage_id', stageId)
+        .eq('chief_batch_id', chiefBatchId);
+  }
+
   Future<void> updateUnit(int id, int unitId) async {
     await _table.update({'unit_id': unitId}).eq('id', id);
   }

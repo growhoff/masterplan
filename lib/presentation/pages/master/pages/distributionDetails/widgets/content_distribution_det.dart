@@ -27,7 +27,7 @@ class DetailDistribContent extends StatelessWidget {
                         list.add(
                           ExpansionPanel(
                             headerBuilder: (context, isExpanded) => TitleItem(state.pathListOper[i], state.pathListOper[i].statusId == 4 ? Colors.amberAccent : colorMain), 
-                            body: BodyItem(i, colorMain),
+                            body: BodyItem(i, colorMain, state.pathListOper[i].countTransfer > 0),
                             isExpanded: state.pathListOper[i].isSelected,
                             backgroundColor: colorMain,
                           ));

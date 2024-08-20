@@ -29,7 +29,7 @@ class TitleItem extends StatelessWidget {
             const SizedBox(height: 2),
             Text('Чертеж № ${oper.listOperat.first.batch.numberRS}'),
             const SizedBox(height: 2),
-            Text('Операция: ${oper.operationName}'),
+            Text('Операция: ${oper.operationName} ${oper.countTransfer != 0 ? '(Переходов${oper.countTransfer})' : ''}'),
             const SizedBox(height: 2),
             Text('Кол-во на участке: ${oper.count}'),
             const SizedBox(height: 2),
@@ -42,9 +42,10 @@ class TitleItem extends StatelessWidget {
 }
 
 class BodyItem extends StatelessWidget {
-  const BodyItem(this.index, this.color, {super.key});
+  const BodyItem(this.index, this.color, this.readOnly, {super.key});
   final int index;
   final Color color;
+  final bool readOnly;
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -81,6 +82,7 @@ class BodyItem extends StatelessWidget {
                 Expanded(child: SizedBox(
                   width: 100, 
                   child: TextFormField(
+                    readOnly: readOnly,
                     onChanged: (value) => context.read<CubitDistributionDetails>().setOptPath(index, value),
                 )))
               ],
