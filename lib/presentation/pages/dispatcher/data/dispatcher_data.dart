@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:master_plan/domain/model/order.dart';
-import 'package:master_plan/presentation/pages/dispatcher/dispatcher_archive_page/dispatcher_archive_page.dart';
-import 'package:master_plan/presentation/pages/dispatcher/orders_page/orders_cubit/orders_cubit.dart';
 import 'package:master_plan/presentation/pages/dispatcher/orders_page/orders_page.dart';
 import 'package:master_plan/presentation/pages/dispatcher/queue_stages_page/queue_stages_page.dart';
 
@@ -74,10 +71,6 @@ abstract class DispatcherData {
         actions: [],
         page: DispatcherAnalyticsPage(),
         icon: Icons.fact_check_sharp),
-    TabBarModel(
-        title: 'Архив',
-        actions: [],
-        page: DispatcherArchivePage(),
-        icon: Icons.archive_rounded),
+
   ];
 }

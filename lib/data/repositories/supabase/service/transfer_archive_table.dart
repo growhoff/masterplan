@@ -33,7 +33,10 @@ class TransferArchiveTable extends SupabaseTable {
 
   Future<List<Map<String, dynamic>>> selectByOperationArchiveId(
       int operationArchiveId) async {
-    return await _table.select().eq('operation_archive_id', operationArchiveId);
+    return await _table
+        .select()
+        .eq('operation_archive_id', operationArchiveId)
+        .order('id', ascending: true);
   }
 
   @override

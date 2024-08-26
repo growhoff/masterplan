@@ -25,12 +25,12 @@ class TypeMachineTable extends SupabaseTable {
 
   @override
   Future<List<Map<String, dynamic>>> select() {
-    return table.select('*');
+    return table.select('*, z_view_machine(*)');
   }
 
 
   Future<List<Map<String, dynamic>>> selectId(int id) {
-    return table.select().eq('id', id);
+    return table.select('*, z_view_machine(*)').eq('id', id);
   }
 
 

@@ -15,11 +15,15 @@ class ChiefBatchTable extends SupabaseTable {
     throw UnimplementedError();
   }
 
+  Future bulkDeleteByBatchId(int batchId)async{
+    await table.delete().eq('batch_id', batchId);
+  }
+
   @override
   Future<int> insert(Dto dto) async {
     if (dto is ChiefBatchDTO) {
       var chiefBatch =
-      await table.insert({'batch_id': dto.batchId}).select('id');
+          await table.insert({'batch_id': dto.batchId}).select('id');
       return chiefBatch[0]['id'];
     }
     return 0;
@@ -48,7 +52,7 @@ class ChiefBatchTable extends SupabaseTable {
   }) async {
     List<Map<String, Object>> mapsList = [];
     for (int i = 0; i < quantity; i++) {
-      mapsList.add({'batch_id': batchId, 'batch_status_id': 1});
+      mapsList.add({'batch_id': batchId, 'batch_status_id': 5});
     }
 
     await table.insert(mapsList);
@@ -59,6 +63,12 @@ class ChiefBatchTable extends SupabaseTable {
     return await table.select('*, z_batch(*)');
   }
 
+  Future<List<Map<String, dynamic>>> selectByBatchId(int batchId) async {
+    return await table
+        .select('*,z_batch(*,z_batch_archive(*))')
+        .eq('batch_id', batchId);
+  }
+
   Future<List<Map<String, dynamic>>> selectByBatchesIdList(
       List<int> batchesIdList) async {
     return await table
@@ -67,7 +77,6 @@ class ChiefBatchTable extends SupabaseTable {
   }
 
   Future<int> fetchReadyDetailsCount({required int batchId}) async {
-
     final res = await table
         .select('*, z_batch!inner(*)')
         .eq('batch_id', batchId)
@@ -94,8 +103,14 @@ class ChiefBatchTable extends SupabaseTable {
     throw UnimplementedError();
   }
 
-  Future updateChiefBatchStatusToInWorkList({required List<int> chiefBatchIdList}) async {
+  Future updateChiefBatchStatusToInWorkList(
+      {required List<int> chiefBatchIdList}) async {
     await table.update({'batch_status_id': 1}).inFilter('id', chiefBatchIdList);
+  }
+
+  Future updateChiefBatchStatusToIsFormedByList(
+      {required List<int> chiefBatchIdList}) async {
+    await table.update({'batch_status_id': 6}).inFilter('id', chiefBatchIdList);
   }
 
   Future<void> updateChiefBatchStatusToDefect(
@@ -115,6 +130,22 @@ class ChiefBatchTable extends SupabaseTable {
 
   Future<void> updateChiefBatchStatusToReadyList(
       {required List<int> listChiefBatchId}) async {
-    await table.update({'batch_status_id': 2}).inFilter('id', listChiefBatchId).eq('batch_status_id', 1);
+    await table
+        .update({'batch_status_id': 2})
+        .inFilter('id', listChiefBatchId)
+        .eq('batch_status_id', 1);
+  }
+
+  Future<void> updateStatusJob(List<int> idList) {
+    return table.update({'batch_status_id': 7}).inFilter('id', idList);
+  }
+
+  Future<void> updateStatusReady(List<int> idList) {
+    return table.update({'batch_status_id': 2}).inFilter('id', idList);
+  }
+
+
+  Future<void> updateStatusBrak(List<int> idList) {
+    return table.update({'batch_status_id': 3}).inFilter('id', idList);
   }
 }

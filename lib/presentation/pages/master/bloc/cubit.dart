@@ -29,6 +29,7 @@ class CubitMaster extends Cubit<StateMaster> {
   }
 
   Future<void> saveDate() async {
+    emit(state.copyWith(isActiveStream: false));
     final tableOperations = OperatorOperationsTable();
     List<ItemSaver> saveList = [];
     for (var i = 0; i < state.list!.length; i++) {
@@ -38,6 +39,6 @@ class CubitMaster extends Cubit<StateMaster> {
       await tableOperations.updateOrder(element.idPath, element.order);
     }
 
-    emit(state.copyWith(list: [], isSaveOrder: false));
+    emit(state.copyWith(list: [], isSaveOrder: false, isActiveStream: true));
   }
 }

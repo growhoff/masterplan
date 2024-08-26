@@ -3,8 +3,8 @@ import 'package:master_plan/data/repositories/supabase/dto/control_machine_dto.d
 
 import 'package:master_plan/data/repositories/supabase/dto/monitoring_machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/shift_schedule_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto/type_machine_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto/view_machine_dto.dart';
+// import 'package:master_plan/data/repositories/supabase/dto/type_machine_dto.dart';
+// import 'package:master_plan/data/repositories/supabase/dto/view_machine_dto.dart';
 
 
 import 'package:master_plan/domain/model/area.dart';
@@ -16,6 +16,7 @@ import 'package:master_plan/domain/model/position.dart';
 import 'package:master_plan/domain/model/shifts_distribution.dart';
 import 'package:master_plan/domain/model/shifts_machine.dart';
 import 'package:master_plan/domain/model/user.dart';
+import 'package:master_plan/domain/model/view_machine.dart';
 
 import '../../../domain/model/staff.dart';
 
@@ -40,13 +41,14 @@ class StateMain extends Equatable {
   final List<AreaMachine>? listAreaMachine;
   final List<AreaMachine>? listAreaMachineUser;
   final int? unitId;
-  final List<ViewMachineDTO>? viewMachineList;
-  final List<TypeMachineDTO>? typeMachineList;
+  // final List<ViewMachineDTO>? viewMachineList;
+  // final List<TypeMachineDTO>? typeMachineList;
+  final List<ViewMachine>? listViewMachine;
   final List<ControlMachineDTO>? controlMachineList;
   final List<ShiftScheduleDTO>? shiftScheduleList;
 
   const StateMain({
-    this.version = 'v2.7.2',
+    this.version = 'v2.7.5',
     this.user,
     this.unitId,
     this.staff,
@@ -66,8 +68,9 @@ class StateMain extends Equatable {
     this.listArea,
     this.listAreaMachine,
     this.listAreaMachineUser,
-    this.viewMachineList,
-    this.typeMachineList,
+    // this.viewMachineList,
+    // this.typeMachineList,
+    this.listViewMachine = const [],
     this.controlMachineList,
     this.shiftScheduleList,
   });
@@ -105,8 +108,9 @@ class StateMain extends Equatable {
     listAreaMachine ?? [],
     listAreaMachineUser ?? [],
     staff ?? Staff.empty,
-    viewMachineList,
-    typeMachineList,
+    // viewMachineList,
+    // typeMachineList,
+    listViewMachine,
     controlMachineList,
     shiftScheduleList,
   ];
@@ -131,8 +135,9 @@ class StateMain extends Equatable {
     List<Area>? listArea,
     List<AreaMachine>? listAreaMachine,
     List<AreaMachine>? listAreaMachineUser,
-    List<ViewMachineDTO>? viewMachineList,
-    List<TypeMachineDTO>? typeMachineList,
+    // List<ViewMachineDTO>? viewMachineList,
+    // List<TypeMachineDTO>? typeMachineList,
+    List<ViewMachine>? listViewMachine,
     List<ControlMachineDTO>? controlMachineList,
     List<ShiftScheduleDTO>? shiftScheduleList,
   }) {
@@ -158,8 +163,9 @@ class StateMain extends Equatable {
       listArea: listArea ?? this.listArea,
       listAreaMachine: listAreaMachine ?? this.listAreaMachine,
       listAreaMachineUser: listAreaMachineUser ?? this.listAreaMachineUser,
-      viewMachineList: viewMachineList ?? this.viewMachineList,
-      typeMachineList: typeMachineList ?? this.typeMachineList,
+      // viewMachineList: viewMachineList ?? this.viewMachineList,
+      // typeMachineList: typeMachineList ?? this.typeMachineList,
+      listViewMachine: listViewMachine ?? this.listViewMachine,
       controlMachineList: controlMachineList ?? this.controlMachineList,
       shiftScheduleList: shiftScheduleList ?? this.shiftScheduleList,
     );

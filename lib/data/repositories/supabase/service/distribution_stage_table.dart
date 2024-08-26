@@ -19,6 +19,10 @@ class DistributionStageTable extends SupabaseTable {
     throw UnimplementedError();
   }
 
+  Future bulkDeleteByIdsList(List<int> distributionStagesIdsList) async {
+    await _table.delete().inFilter('id', distributionStagesIdsList);
+  }
+
   @override
   Future<void> insert(Dto dto) async {
     if (dto is DistributionStageDto) {
@@ -60,6 +64,14 @@ class DistributionStageTable extends SupabaseTable {
     return res;
   }
 
+  Future bulkUpdateUnitOnNullAndStatusToOnDistribution(
+      List<int> distributionStagesIdsList) async {
+    await _table.update({
+      'status_id': 1,
+      'unit_id': null,
+    }).inFilter('id', distributionStagesIdsList);
+  }
+
   @override
   Future<List<Map<String, dynamic>>> select() async {
     return await _table
@@ -73,7 +85,6 @@ class DistributionStageTable extends SupabaseTable {
     return await _table
         .select(
             '*, z_chief_batch!inner(*, z_batch!inner(*, z_batch_archive(*), z_order(*))), z_stage(*), z_stage_status(*)')
-
         .eq('z_chief_batch.batch_id', batchId)
         .order('id', ascending: true);
   }
@@ -84,7 +95,7 @@ class DistributionStageTable extends SupabaseTable {
             '*, z_chief_batch!inner(*, z_batch!inner(*, z_batch_archive(*), z_order(*))), z_stage(*), z_stage_status(*)')
         .eq('z_chief_batch.z_batch.company_id', _companyId)
         .eq('unit_id', unitId)
-    .order('chief_batch_id', ascending: true)
+        .order('chief_batch_id', ascending: true)
         .order('id', ascending: true);
   }
 
@@ -147,6 +158,12 @@ class DistributionStageTable extends SupabaseTable {
     }).inFilter('id', idList);
   }
 
+  Future bulkChangeStatusToExecute(List<int> idList) async {
+    await _table.update({
+      'status_id': 6,
+    }).inFilter('id', idList);
+  }
+
   Future bulkChangeStatusToDistributed(List<int> idList) async {
     await _table.update({
       'status_id': 4,
@@ -179,6 +196,20 @@ class DistributionStageTable extends SupabaseTable {
   Future<void> updateStatusBrak(int stageId, int chiefBatchId) async {
     await _table
         .update({'status_id': 5})
+        .eq('stage_id', stageId)
+        .eq('chief_batch_id', chiefBatchId);
+  }
+
+  Future<void> updateStatusJob(int stageId, int chiefBatchId) async {
+    await _table
+        .update({'status_id': 2})
+        .eq('stage_id', stageId)
+        .eq('chief_batch_id', chiefBatchId);
+  }
+
+  Future<void> updateStatusReady(int stageId, int chiefBatchId) async {
+    await _table
+        .update({'status_id': 3})
         .eq('stage_id', stageId)
         .eq('chief_batch_id', chiefBatchId);
   }

@@ -56,7 +56,7 @@ class TransferTable extends SupabaseTable{
 
   Future<List<Map<String, dynamic>>> selectByOperationId({required int operationId})async{
 
-    return await table.select().eq('operation_id', operationId);
+    return await table.select().eq('operation_id', operationId).order('id', ascending: true);
   }
 
 }

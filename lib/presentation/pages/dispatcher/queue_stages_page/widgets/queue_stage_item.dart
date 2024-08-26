@@ -165,8 +165,13 @@ class _QueueStageItemViewState extends State<QueueStageItemView> {
                           height: 1,
                         ),
                         SimpleDialogOption(
-                          onPressed:
-                              context.read<QueueStagesCubit>().redistribute,
+                          onPressed: () async{
+                            await context
+                                .read<QueueStagesCubit>()
+                                .redistribute(widget.stageModel);
+
+                            widget.setState();
+                          },
                           child: const Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [

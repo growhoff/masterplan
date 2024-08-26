@@ -1,39 +1,42 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:master_plan/domain/model/batch_archive.dart';
-import 'package:master_plan/presentation/pages/technologist/archive_page/archive_cubit/archive_cubit.dart';
+import '../../../../domain/model/batch_archive.dart';
+import 'archive_cubit/archive_cubit.dart';
 
-import '../../../../domain/model/batch.dart';
-
-class ArchiveStagesPage extends StatelessWidget {
-  const ArchiveStagesPage({super.key});
+class DispatcherArchiveStagesPage extends StatelessWidget {
+  const DispatcherArchiveStagesPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final batch = ModalRoute.of(context)!.settings.arguments as BatchArchive;
+    final batchArchive =
+        ModalRoute.of(context)!.settings.arguments as BatchArchive;
     return BlocProvider(
       create: (context) => ArchiveCubit(),
-      child: ArchiveStagesPageView(
-        batch: batch,
+      child: DispatcherArchiveStagesPageView(
+        batchArchive: batchArchive,
       ),
     );
   }
 }
 
-class ArchiveStagesPageView extends StatefulWidget {
-  final BatchArchive batch;
+class DispatcherArchiveStagesPageView extends StatefulWidget {
+  final BatchArchive batchArchive;
 
-  const ArchiveStagesPageView({required this.batch, super.key});
+  const DispatcherArchiveStagesPageView(
+      {required this.batchArchive, super.key});
 
   @override
-  State<ArchiveStagesPageView> createState() => _ArchiveStagesPageViewState();
+  State<DispatcherArchiveStagesPageView> createState() =>
+      _DispatcherArchiveStagesPageViewState();
 }
 
-class _ArchiveStagesPageViewState extends State<ArchiveStagesPageView> {
+class _DispatcherArchiveStagesPageViewState
+    extends State<DispatcherArchiveStagesPageView> {
   @override
   void initState() {
-    context.read<ArchiveCubit>().fetchStages(batchId: widget.batch.id);
+    context
+        .read<ArchiveCubit>()
+        .fetchStages(batchArchiveId: widget.batchArchive.id);
     super.initState();
   }
 
@@ -41,7 +44,10 @@ class _ArchiveStagesPageViewState extends State<ArchiveStagesPageView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.batch.name} (этапы)', softWrap: true,),
+        title: Text(
+          '${widget.batchArchive.name} (этапы)',
+          softWrap: true,
+        ),
       ),
       body: BlocBuilder<ArchiveCubit, ArchiveState>(
         builder: (context, state) {
@@ -80,38 +86,28 @@ class _ArchiveStagesPageViewState extends State<ArchiveStagesPageView> {
                                     'наименование',
                                   )),
                             ),
-                            TableCell(
-                              child: Container(
-                                  alignment: Alignment.center,
-                                  padding: EdgeInsets.all(8),
-                                  child: Text(
-                                    '№ этапа',
-                                    textAlign: TextAlign.center,
-                                  )),
-                            )
                           ]),
                       ...List.generate(
                           state.stagesList.length,
                           (index) => TableRow(children: [
                                 TableRowInkWell(
                                   onTap: () {
-                                    Navigator.pushNamed(
-                                        context, '/archiveOperationsPage',
+                                    Navigator.pushNamed(context,
+                                        '/dispatcherArchiveOperationsPage',
                                         arguments: state.stagesList[index]);
                                   },
                                   child: Container(
                                       alignment: Alignment.center,
                                       padding: EdgeInsets.all(8),
                                       child: Text(
-                                        '${index + 1}',
-                                        softWrap: true,
+                                        '${state.stagesList[index].number}',
                                         textAlign: TextAlign.center,
                                       )),
                                 ),
                                 TableRowInkWell(
                                   onTap: () {
-                                    Navigator.pushNamed(
-                                        context, '/archiveOperationsPage',
+                                    Navigator.pushNamed(context,
+                                        '/dispatcherArchiveOperationsPage',
                                         arguments: state.stagesList[index]);
                                   },
                                   child: Container(
@@ -122,20 +118,6 @@ class _ArchiveStagesPageViewState extends State<ArchiveStagesPageView> {
                                         textAlign: TextAlign.center,
                                       )),
                                 ),
-                                TableRowInkWell(
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                        context, '/archiveOperationsPage',
-                                        arguments: state.stagesList[index]);
-                                  },
-                                  child: Container(
-                                      alignment: Alignment.center,
-                                      padding: EdgeInsets.all(8),
-                                      child: Text(
-                                        '${state.stagesList[index].number}',
-                                        textAlign: TextAlign.center,
-                                      )),
-                                )
                               ]))
                     ]),
               ),

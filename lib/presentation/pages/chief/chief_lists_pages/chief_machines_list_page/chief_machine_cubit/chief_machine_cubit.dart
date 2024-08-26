@@ -3,10 +3,11 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:master_plan/data/repositories/supabase/dto/control_machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/shift_schedule_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto/type_machine_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto/view_machine_dto.dart';
+// import 'package:master_plan/data/repositories/supabase/dto/type_machine_dto.dart';
+// import 'package:master_plan/data/repositories/supabase/dto/view_machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/company_table.dart';
 import 'package:master_plan/domain/model/name_index.dart';
+import 'package:master_plan/domain/model/view_machine.dart';
 import 'package:master_plan/domain/usecase/company_service.dart';
 import 'package:master_plan/domain/usecase/convert_dto_model.dart';
 
@@ -20,13 +21,14 @@ import '../../../../../../domain/model/machine.dart';
 part 'chief_machine_state.dart';
 
 class ChiefMachineCubit extends Cubit<ChiefMachineState> {
-  ChiefMachineCubit(this.listControl, this.listShiftSch, this.listType, this.listView) : super(const ChiefMachineState()){
+  ChiefMachineCubit(this.listControl, this.listShiftSch, this.listViewMachine) : super(const ChiefMachineState()){
     getList();
   }
 
   final List<ControlMachineDTO> listControl;
-  final List<TypeMachineDTO> listType;
-  final List<ViewMachineDTO> listView;
+  // final List<TypeMachineDTO> listType;
+  // final List<ViewMachineDTO> listView;
+  final List<ViewMachine> listViewMachine;
   final List<ShiftScheduleDTO> listShiftSch;
 
   final machineTableStream = MachineTable().stream();
@@ -62,7 +64,7 @@ class ChiefMachineCubit extends Cubit<ChiefMachineState> {
       listControlName.add(NameIndex(name: e.name, index: e.id));
     }
     List<NameIndex> listViewName = [];
-    for (var e in listView) {
+    for (var e in listViewMachine) {
       listViewName.add(NameIndex(name: e.name, index: e.id));
     }
     List<NameIndex> listShiftSchName = [];
@@ -70,7 +72,7 @@ class ChiefMachineCubit extends Cubit<ChiefMachineState> {
       listShiftSchName.add(NameIndex(name: e.info, index: e.id));
     }
     List<NameIndex> listTypeName = [];
-    for (var e in listType) {
+    for (var e in listViewMachine[state.activeView].listType) {
       listTypeName.add(NameIndex(name: e.name, index: e.id));
     }
     emit(state.copyWith(listControl: listControlName, listShiftSch: listShiftSchName, listType: listTypeName, listView: listViewName));
@@ -79,6 +81,19 @@ class ChiefMachineCubit extends Cubit<ChiefMachineState> {
   Future<void> fetchAreasAndMachines() async {
     await fetchAreas();
     fetchMachinesList();
+  }
+
+  void getNewlistViewMachine(index){
+    int next = 0;
+    for (var i = 0; i < listViewMachine.length; i++) {
+      if (listViewMachine[i].id == index) next = i;
+    }
+    List<NameIndex> listTypeName = [];
+    for (var e in listViewMachine[next].listType) {
+      listTypeName.add(NameIndex(name: e.name, index: e.id));
+    }
+    activeTypeMachineId = null;
+    emit(state.copyWith(activeView: next, listType: listTypeName));
   }
 
   fetchAreas() async {

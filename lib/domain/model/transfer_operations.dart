@@ -18,6 +18,10 @@ class TransferOperations extends Dto {
   final MachineDTO? machine;
   final OperationDTO operation;
   final ChiefOperationDto? chiefOperation;
+  final int optPath;
+  final int? transferId;
+  final int order;
+  final int? operatorOperationId;
 
   TransferOperations({
     required this.id,
@@ -31,5 +35,9 @@ class TransferOperations extends Dto {
     this.machine,
     required this.operation,
     this.chiefOperation,
+    required this.optPath,
+    this.transferId,
+    required this.order,
+    this.operatorOperationId,
   });
 }

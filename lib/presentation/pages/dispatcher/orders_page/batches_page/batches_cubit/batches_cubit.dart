@@ -71,7 +71,8 @@ class BatchesCubit extends Cubit<BatchesState> {
   TextEditingController optimalBatchController = TextEditingController();
 
   Future<void> fetchBatchesInOrder(int? orderId) async {
-    print('orderId : $orderId');
+    emit(state.copyWith(status: BatchesStatus.loading));
+
     List<BatchModel> batchesList = [];
     List<int> batchesIdsList = [];
     try {
@@ -168,9 +169,10 @@ class BatchesCubit extends Cubit<BatchesState> {
     }
   }
 
-  Future<void> addBatch() async {
-    final int batchNumber =
-        await _batchTable.fetchBatchesInOrderQuantity(order?.id ?? 0) + 1;
+  Future<void> addBatch({int? orderId}) async {
+    final int batchNumber = await _batchTable
+            .fetchBatchesInOrderQuantity(orderId ?? order?.id ?? 0) +
+        1;
 
     int batchId = await _batchTable.insert(BatchDTO(
         id: 0,
@@ -180,7 +182,7 @@ class BatchesCubit extends Cubit<BatchesState> {
         count: int.parse(quantityController.text),
         code: selectedBatch.code ?? '',
         technology: selectedBatch.technologyNumber,
-        orderId: order?.id,
+        orderId: orderId ?? order?.id ?? 0,
         isready: false));
 
     var fetchedOperationsArchiveList =
@@ -233,69 +235,93 @@ class BatchesCubit extends Cubit<BatchesState> {
     );
   }
 
-  Future<void> addBatchOld() async {
-    Map<int, List<OperationArchiveDto>> operationsMap = {};
+  Future<void> editBatch(Batch batch) async {
 
-    final int batchNumber =
-        await _batchTable.fetchBatchesInOrderQuantity(order?.id ?? 0) + 1;
+    if (batch.numberRS != selectedBatch.number ||
+        batch.name != selectedBatch.name) {
+      print(
+          'batch numberRS: ${batch.numberRS}   selectedBatch number : ${selectedBatch.number}');
 
-    print('batchNumber : $batchNumber');
-    int batchId = await _batchTable.insert(BatchDTO(
-        id: 0,
-        numberRS: selectedBatch.number,
-        name: selectedBatch.name,
-        number: batchNumber.toString(),
-        count: int.parse(quantityController.text),
-        code: selectedBatch.code ?? '',
-        technology: selectedBatch.technologyNumber,
-        orderId: order?.id,
-        isready: false));
+      print(
+          'batch name: ${batch.name}   selectedBatch name : ${selectedBatch.name}');
 
-    var fetchedStagesArchiveList =
-        await _stageArchiveTable.selectByBatchArchiveId(selectedBatch.id);
 
-    for (var fetchedStageArchive in fetchedStagesArchiveList) {
-      final stageArchiveDto = StageArchiveDTO.fromMap(fetchedStageArchive);
 
-      int stageId = await _stageTable.insert(StageDTO(
-          id: stageArchiveDto.id,
-          number: stageArchiveDto.number,
-          name: stageArchiveDto.name,
-          batchId: batchId));
+      await _stageTable.bulkDeleteByBatchId(batch.id);
 
-      var fetchedOperationsArchiveList = await _operationArchiveTable
-          .selectByStageArchiveId(stageArchiveDto.id);
+      await _chiefBatchTable.bulkDeleteByBatchId(batch.id);
 
-      List<OperationArchiveDto> operationsArchiveDtosList = [];
-      for (var fetchedOperationArchive in fetchedOperationsArchiveList) {
-        final operationArchiveDto =
-            OperationArchiveDto.fromMap(fetchedOperationArchive);
-        operationsArchiveDtosList.add(operationArchiveDto);
-      }
-      operationsMap[stageId] = operationsArchiveDtosList;
-    }
-
-    List<OperationDTO> operationsDtosList = [];
-
-    operationsMap.forEach((key, value) {
-      for (var operation in value) {
-        operationsDtosList.add(OperationDTO(
+      await _batchTable.updateWithoutNumber(
+          batch.id,
+          BatchDTO(
             id: 0,
-            number: operation.number,
-            name: operation.name,
-            code: operation.code,
-            timepz: operation.timepz,
-            stageId: key,
-            timeSH: operation.timeSH));
+            numberRS: selectedBatch.number,
+            name: selectedBatch.name,
+            code: selectedBatch.code ?? '',
+            technology: selectedBatch.technologyNumber,
+            count: int.parse(quantityController.text),
+            companyId: 0, number: '', isready: false,
+          ));
+
+      var fetchedOperationsArchiveList =
+          await _operationArchiveTable.selectByBatchArchiveId(selectedBatch.id);
+
+      int stageArchiveId = 0;
+
+      int stageId = 0;
+
+      for (var operation in fetchedOperationsArchiveList) {
+        final operationArchiveDto = OperationArchiveDto.fromMap(operation);
+        if (operationArchiveDto.stageArchiveId != stageArchiveId) {
+          stageArchiveId = operationArchiveDto.stageArchiveId;
+
+          stageId = await _stageTable.insert(StageDTO(
+              id: operationArchiveDto.stageArchiveDTO?.id ?? 0,
+              number: operationArchiveDto.stageArchiveDTO?.number ?? '',
+              name: operationArchiveDto.stageArchiveDTO?.name ?? '',
+              batchId: batch.id));
+        }
+
+        int operationId = await _operationTable.insert(OperationDTO(
+            id: 0,
+            number: operationArchiveDto.number,
+            name: operationArchiveDto.name,
+            code: operationArchiveDto.code,
+            timepz: operationArchiveDto.timepz,
+            stageId: stageId,
+            timeSH: operationArchiveDto.timeSH));
+
+        var fetchedTransfersArchiveList = await _transferArchiveTable
+            .selectByOperationArchiveId(operationArchiveDto.id);
+
+        if (fetchedTransfersArchiveList.isNotEmpty) {
+          for (var transfer in fetchedTransfersArchiveList) {
+            final transferArchiveDto = TransferArchiveDto.fromMap(transfer);
+            await _transferTable.insert(TransferDTO(
+                id: 0,
+                name: transferArchiveDto.name,
+                code: transferArchiveDto.code,
+                timesh: transferArchiveDto.timeSH,
+                operationId: operationId));
+          }
+        }
       }
-    });
 
-    await _operationTable.bulkInsert(operationsDtosList: operationsDtosList);
+      await _chiefBatchTable.bulkInsert(
+        batchId: batch.id,
+        quantity: int.parse(quantityController.text),
+      );
+    } else {
+      await _batchTable.updateCount(
+          batch.id, int.parse(quantityController.text));
 
-    await _chiefBatchTable.bulkInsert(
-      batchId: batchId,
-      quantity: int.parse(quantityController.text),
-    );
+      await _chiefBatchTable.bulkDeleteByBatchId(batch.id);
+
+      await _chiefBatchTable.bulkInsert(
+        batchId: batch.id,
+        quantity: int.parse(quantityController.text),
+      );
+    }
   }
 
   Future<void> deleteBatch(Batch batch) async {
@@ -306,6 +332,96 @@ class BatchesCubit extends Cubit<BatchesState> {
     }
   }
 
+  Future formBatch(Batch batch) async {
+    var fetchedChiefBatchedList =
+        await _chiefBatchTable.selectByBatchId(batch.id);
+
+    List<ChiefBatch> chiefBatchesList = [];
+    for (var fetchedChiefBatch in fetchedChiefBatchedList) {
+      final chiefBatchDto = ChiefBatchDTO.fromMap(fetchedChiefBatch);
+      final chiefBatch = ChiefBatch.fromDto(chiefBatchDto);
+      chiefBatchesList.add(chiefBatch);
+    }
+
+    print('chief batches list : $chiefBatchesList');
+
+    List<Stage> allStagesList = [];
+    var fetchedList = await _stageTable.selectByBatchId(batch.id);
+
+    for (var fetchedStage in fetchedList) {
+      final stageDto = StageDTO.fromMap(fetchedStage);
+      final stage = Stage.fromDto(stageDto);
+      allStagesList.add(stage);
+    }
+
+    // var stagesMap = groupBy(allStagesList, (stage) => stage.batchId);
+
+    List<DistributionStage> distributionStagesList = [];
+    for (var batch in chiefBatchesList) {
+      //final stagesList = stagesMap[batch.batchId];
+
+      allStagesList.forEach((stage) {
+        distributionStagesList.add(DistributionStage(
+          id: 0,
+          chiefBatchId: batch.id,
+          stageId: stage.id,
+          statusId: 1,
+        ));
+      });
+    }
+
+    await _distributionStageTable.bulkInsert(
+        distributionStagesList: distributionStagesList);
+
+    print('вставили: $distributionStagesList');
+
+    List<int> chiefBatchesIdList = [];
+    for (var batch in chiefBatchesList) {
+      chiefBatchesIdList.add(batch.id);
+    }
+
+    await _chiefBatchTable.updateChiefBatchStatusToIsFormedByList(
+        chiefBatchIdList: chiefBatchesIdList);
+
+    await _batchTable.updateStatusToIsFormedByBatchId(batch.id);
+
+    print('сформировали');
+  }
+
+  Future disbandBatch(Batch batch) async {
+    List<ChiefBatch> chiefBatchesList = [];
+    List<int> chiefBatchesIdList = [];
+    List<int> distributionStagesIdsList = [];
+
+    await _batchTable.updateStatusToFormingByBatchId(batch.id);
+
+    var fetchedChiefBatchedList =
+        await _chiefBatchTable.selectByBatchId(batch.id);
+
+    for (var fetchedChiefBatch in fetchedChiefBatchedList) {
+      final chiefBatchDto = ChiefBatchDTO.fromMap(fetchedChiefBatch);
+      final chiefBatch = ChiefBatch.fromDto(chiefBatchDto);
+      chiefBatchesList.add(chiefBatch);
+      chiefBatchesIdList.add(chiefBatch.id);
+    }
+
+    var fetchedDistributionStagesList =
+        await _distributionStageTable.selectByBatchId(batch.id);
+
+    for (var stage in fetchedDistributionStagesList) {
+      final distributionStageDto = DistributionStageDto.fromMap(stage);
+      distributionStagesIdsList.add(distributionStageDto.id);
+    }
+
+    await _distributionStageTable
+        .bulkDeleteByIdsList(distributionStagesIdsList);
+
+    await _chiefBatchTable.updateChiefBatchStatusToIsFormedByList(
+        chiefBatchIdList: chiefBatchesIdList);
+
+    print('расформировали');
+  }
+
   Future formOrder() async {
     emit(state.copyWith(status: BatchesStatus.loading));
     print('начали формировать');
@@ -313,7 +429,9 @@ class BatchesCubit extends Cubit<BatchesState> {
     List<int> batchesIdList = [];
 
     for (var batch in state.batchesList) {
-      batchesIdList.add(batch.batch.id);
+      if (batch.batch.batchStatusId == 5) {
+        batchesIdList.add(batch.batch.id);
+      }
     }
     var fetchedChiefBatchedList =
         await _chiefBatchTable.selectByBatchesIdList(batchesIdList);
@@ -371,6 +489,16 @@ class BatchesCubit extends Cubit<BatchesState> {
     await _batchTable.updateStatusToIsFormedByBatchesIdsList(batchesIdList);
 
     emit(state.copyWith(status: BatchesStatus.success));
+  }
+
+  Future initEditBatchPage(Batch batch) async {
+    await fetchBatches();
+
+    quantityController.text = batch.count.toString();
+
+    selectedBatch = state.batchesArchiveList.firstWhere((batchInList) =>
+        (batchInList.name == batch.name &&
+            batchInList.number == batch.numberRS));
   }
 
   Future fetchStagesInBatch(int batchId) async {

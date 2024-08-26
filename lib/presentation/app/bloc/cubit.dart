@@ -7,7 +7,7 @@ import 'package:master_plan/data/repositories/supabase/dto/shift_schedule_dto.da
 import 'package:master_plan/data/repositories/supabase/dto/shifts_distribution_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/staff_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/type_machine_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto/view_machine_dto.dart';
+// import 'package:master_plan/data/repositories/supabase/dto/view_machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/area_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/control_machine_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/machine_table.dart';
@@ -18,7 +18,7 @@ import 'package:master_plan/data/repositories/supabase/service/shifts_distributi
 import 'package:master_plan/data/repositories/supabase/service/staff_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/type_machine_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/version_table.dart';
-import 'package:master_plan/data/repositories/supabase/service/view_machine_table.dart';
+// import 'package:master_plan/data/repositories/supabase/service/view_machine_table.dart';
 import 'package:master_plan/domain/model/area.dart';
 import 'package:master_plan/domain/model/area_machine.dart';
 import 'package:master_plan/domain/model/machine.dart';
@@ -26,6 +26,7 @@ import 'package:master_plan/domain/model/shifts_distribution.dart';
 import 'package:master_plan/domain/model/staff.dart';
 import 'package:master_plan/domain/model/unit.dart';
 import 'package:master_plan/domain/model/user.dart';
+import 'package:master_plan/domain/model/view_machine.dart';
 import 'package:master_plan/domain/usecase/areas_list_service.dart';
 import 'package:master_plan/domain/usecase/change_logic.dart';
 import 'package:master_plan/domain/usecase/chief_unit_service.dart';
@@ -48,7 +49,7 @@ class CubitMain extends Cubit<StateMain> {
     } else {
       final tableStaff = StaffTable();
       final query =
-          await tableStaff.selectName(login: login, company: companyS);
+      await tableStaff.selectName(login: login, company: companyS);
       if (query == null) {
         return 'Ошибка_авторизации_1'; //ошибка авторизации.нет пользователя
       } else {
@@ -56,36 +57,36 @@ class CubitMain extends Cubit<StateMain> {
         if (userModel.password == password) {
           await getUserNew(userModel);
           switch (state.user!.position.id) {
-            //начальник
+          //начальник
             case 2:
               await fetchUnitId(state.user!.id);
               List<int> listAreaId = await getAreaForStaff(query['id']);
               await getMachineToUnit(listAreaId);
               await getListsMachine();
               break;
-            //мастер
+          //мастер
             case 3:
               await getMachineToArea(state.user!.area!);
               // await getMachineToUnit([state.user!.area!.id]);
               await fetchAreasList(state.user!.id);
-             // print(AreasListService.instance.areasIdsList);
+              // print(AreasListService.instance.areasIdsList);
               // await getOperators(); v21 пока убрал
               final staffModel = Staff.fromDTO(StaffDTO.fromMap(query));
               emit(state.copyWith(staff: staffModel));
               print('Master staffId : ${state.staff?.id}');
               break;
-            //оператор
+          //оператор
             case 4:
               await getMachineOperatorZ(state.user!.id);
               break;
-            //начальник мастер
+          //начальник мастер
             case 7:
               await fetchUnitId(query['id']);
               List<int> listAreaId = await getAreaForStaff(query['id']);
               await getMachineToUnit(listAreaId);
               // await getOperatorsToUnit();
               break;
-            //ИНАЧЕ
+          //ИНАЧЕ
             default:
               break;
           }
@@ -108,26 +109,34 @@ class CubitMain extends Cubit<StateMain> {
 
   Future<void> getListsMachine()async{
     final typeMachineTable = TypeMachineTable();
-    final viewMachineTable = ViewMachineTable();
+    // final viewMachineTable = ViewMachineTable();
     final controlMachineTable = ControlMachineTable();
     final shiftScheduleTable = ShiftScheduleTable();
 
     final queueType = await typeMachineTable.select();
-    final queueView = await viewMachineTable.select();
+    // final queueView = await viewMachineTable.select();
     final queueControl = await controlMachineTable.select();
     final queueShift = await shiftScheduleTable.select();
 
     List<TypeMachineDTO> listType = [];
-    List<ViewMachineDTO> listView = [];
+    // List<ViewMachineDTO> listView = [];
     List<ControlMachineDTO> listControl = [];
     List<ShiftScheduleDTO> listShift = [];
-    
+    List<ViewMachine> listViewMachine = [];
+
     for (var e in queueType) {
       listType.add(TypeMachineDTO.fromMap(e));
     }
-    for (var e in queueView) {
-      listView.add(ViewMachineDTO.fromMap(e));
-    }
+
+    var newMap = groupBy(listType, (el) => el.viewMachineId);
+    newMap.forEach((key, value) {
+      listViewMachine.add(ViewMachine(id: value.first.viewMachineId, number: value.first.viewMachine!.number, name: value.first.viewMachine!.name, listType: value));
+    });
+    listViewMachine.sort((a, b) => a.id.compareTo(b.id));
+    // listB.sort((a, b) => a.order!.compareTo(b.order!));
+    // for (var e in queueView) {
+    //   listView.add(ViewMachineDTO.fromMap(e));
+    // }
     for (var e in queueControl) {
       listControl.add(ControlMachineDTO.fromMap(e));
     }
@@ -135,7 +144,7 @@ class CubitMain extends Cubit<StateMain> {
       listShift.add(ShiftScheduleDTO.fromMap(e));
     }
 
-    emit(state.copyWith(typeMachineList: listType, viewMachineList: listView, controlMachineList: listControl, shiftScheduleList: listShift));
+    emit(state.copyWith(listViewMachine: listViewMachine, controlMachineList: listControl, shiftScheduleList: listShift));
   }
 
   //get user
@@ -145,7 +154,7 @@ class CubitMain extends Cubit<StateMain> {
     Area? area;
     for (var element in list) {
       // if (element.positionId != 7) {
-        
+
       // }
       unit = Unit.fromDTO(element.unit!);
       area = Area.fromDTO(element.area!);
@@ -158,7 +167,7 @@ class CubitMain extends Cubit<StateMain> {
     //
     final positionStaffTable = PositionStaffTable();
     var fetchedList =
-        await positionStaffTable.selectByStaffId(staffId: staffId);
+    await positionStaffTable.selectByStaffId(staffId: staffId);
     final positionStaffDto = PositionStaffDTO.fromMap(fetchedList.first);
     print('posStaffDto: ${positionStaffDto.unitId}');
     final int unitId = positionStaffDto.unitId ?? 1;
@@ -377,7 +386,7 @@ class CubitMain extends Cubit<StateMain> {
 
     final zshiftsDistributionTable = ShiftsDistributionTable();
     final zshiftsDistributionQuery =
-        await zshiftsDistributionTable.selectEqUser(userId, time, change);
+    await zshiftsDistributionTable.selectEqUser(userId, time, change);
     List<ShiftsDistribution> zshiftsDistributionList = [];
     List<int> machineListId = [];
     for (var shiftsDistr in zshiftsDistributionQuery) {

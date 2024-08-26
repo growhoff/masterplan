@@ -14,7 +14,7 @@ class ButtonCircleIcon extends StatelessWidget {
       ),
       child: IconButton(
         onPressed: isActive ? onPressed : null,
-        icon: Icon(icon),
+        icon: Icon(icon, color: Colors.black),
       ),
     );
   }

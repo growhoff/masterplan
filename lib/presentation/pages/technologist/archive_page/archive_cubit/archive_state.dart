@@ -11,16 +11,16 @@ class ArchiveState extends Equatable {
       this.status = ArchiveStatus.initial});
 
   final List<BatchArchive> batchesList;
-  final List<Stage> stagesList;
-  final List<Operation> operationsList;
-  final List<Transfer> transfersList;
+  final List<StageArchive> stagesList;
+  final List<OperationArchive> operationsList;
+  final List<TransferArchive> transfersList;
   final ArchiveStatus status;
 
   ArchiveState copyWith(
       {List<BatchArchive>? batchesList,
-      List<Stage>? stagesList,
-      List<Operation>? operationsList,
-        List<Transfer>? transfersList,
+      List<StageArchive>? stagesList,
+      List<OperationArchive>? operationsList,
+        List<TransferArchive>? transfersList,
       ArchiveStatus? status}) {
     return ArchiveState(
         batchesList: batchesList ?? this.batchesList,
@@ -31,5 +31,5 @@ class ArchiveState extends Equatable {
   }
 
   @override
-  List<Object> get props => [batchesList, operationsList, transfersList,status];
+  List<Object> get props => [batchesList, stagesList, operationsList, transfersList,status];
 }

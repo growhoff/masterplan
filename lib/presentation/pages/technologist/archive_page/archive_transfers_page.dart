@@ -1,38 +1,39 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/presentation/pages/dispatcher/orders_page/batches_page/batches_cubit/batches_cubit.dart';
 import 'package:master_plan/presentation/pages/technologist/archive_page/archive_cubit/archive_cubit.dart';
 
-import '../../../../domain/model/stage.dart';
-import '../../../../domain/model/transfer.dart';
+import '../../../../domain/model/transfer_archive.dart';
 
-class ArchiveTransfersPage extends StatelessWidget {
-  const ArchiveTransfersPage({super.key});
+class DispatcherArchiveTransfersPage extends StatelessWidget {
+  const DispatcherArchiveTransfersPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final transfersList =
-        ModalRoute.of(context)?.settings.arguments as List<Transfer>;
-    return ArchiveTransfersPageView(
-      transfersList: transfersList,
+    final cubit =
+        ModalRoute.of(context)?.settings.arguments as ArchiveCubit;
+    return DispatcherArchiveTransfersPageView(
+      cubit: cubit,
     );
   }
 }
 
-class ArchiveTransfersPageView extends StatefulWidget {
-  const ArchiveTransfersPageView({required this.transfersList, super.key});
+class DispatcherArchiveTransfersPageView extends StatefulWidget {
+  const DispatcherArchiveTransfersPageView(
+      {required this.cubit, super.key});
 
-  final List<Transfer> transfersList;
+  final ArchiveCubit cubit;
 
   @override
-  State<ArchiveTransfersPageView> createState() =>
-      _ArchiveTransfersPageViewState();
+  State<DispatcherArchiveTransfersPageView> createState() =>
+      _DispatcherArchiveTransfersPageViewState();
 }
 
-class _ArchiveTransfersPageViewState extends State<ArchiveTransfersPageView> {
+class _DispatcherArchiveTransfersPageViewState
+    extends State<DispatcherArchiveTransfersPageView> {
   @override
   void initState() {
-    print(widget.transfersList.length);
+
     super.initState();
   }
 
@@ -42,9 +43,7 @@ class _ArchiveTransfersPageViewState extends State<ArchiveTransfersPageView> {
       appBar: AppBar(
           title: FittedBox(
         child: Column(
-          children: [
-            Text('переходы')
-          ],
+          children: [Text('переходы')],
         ),
       )),
       body: SingleChildScrollView(
@@ -83,7 +82,7 @@ class _ArchiveTransfersPageViewState extends State<ArchiveTransfersPageView> {
                         ),
                       ]),
                   ...List.generate(
-                      widget.transfersList.length,
+                      widget.cubit.state.transfersList.length,
                       (index) => TableRow(children: [
                             TableRowInkWell(
                               onTap: () {},
@@ -91,7 +90,7 @@ class _ArchiveTransfersPageViewState extends State<ArchiveTransfersPageView> {
                                   alignment: Alignment.center,
                                   padding: EdgeInsets.all(8),
                                   child: Text(
-                                    '${widget.transfersList[index].code}',
+                                    '${widget.cubit.state.transfersList[index].code}',
                                     textAlign: TextAlign.center,
                                   )),
                             ),
@@ -101,7 +100,7 @@ class _ArchiveTransfersPageViewState extends State<ArchiveTransfersPageView> {
                                   alignment: Alignment.center,
                                   padding: EdgeInsets.all(8),
                                   child: Text(
-                                    '${widget.transfersList[index].name}',
+                                    '${widget.cubit.state.transfersList[index].name}',
                                     textAlign: TextAlign.center,
                                   )),
                             ),

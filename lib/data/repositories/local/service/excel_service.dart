@@ -705,6 +705,169 @@ class ExcelService {
     print('финиш лоадинг закончил');
   }
 
+  Future technologistExcelLoader() async {
+    FilePickerResult? pickedFile = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['xlsx'],
+    );
+
+    var path = pickedFile?.paths.first;
+
+    if (pickedFile != null) {
+      var bytes = File(path!).readAsBytesSync();
+
+      var excel = Excel.decodeBytes(bytes);
+
+      for (var table in excel.tables.keys) {
+        String planNumber = excel.tables[table]!.rows[3][4]!.value.toString();
+        String planName = excel.tables[table]!.rows[3][5]!.value.toString();
+        String batchCode = excel.tables[table]!.rows[3][6]!.value.toString();
+        String technologyNumber =
+            excel.tables[table]!.rows[3][7]!.value.toString();
+        String description = excel.tables[table]!.rows[3][8]!.value.toString();
+
+        int batchArchiveId = await _batchArchiveTable.insert(BatchArchiveDto(
+          code: batchCode,
+          id: 0,
+          number: planNumber,
+          name: planName,
+          technologyNumber: technologyNumber,
+          companyId: 0,
+        ));
+
+        String stageNumber = excel.tables[table]!.rows[3][9]!.value.toString();
+        String stageName = excel.tables[table]!.rows[3][10]!.value.toString();
+
+        int stageArchiveId = await _stageArchiveTable.insert(StageArchiveDTO(
+          id: 0,
+          number: stageNumber.toString(),
+          name: stageName,
+          batchArchiveId: batchArchiveId,
+        ));
+
+        String operationCode =
+            excel.tables[table]!.rows[3][11]!.value.toString();
+        String operationNumber =
+            excel.tables[table]!.rows[3][12]!.value.toString();
+        String operationName =
+            excel.tables[table]!.rows[3][13]!.value.toString();
+
+        int timepz = (int.parse(
+            (excel.tables[table]!.rows[1][16]!.value ?? 0).toString()));
+        int transferTimeSH = int.parse(
+            (excel.tables[table]!.rows[1][17]!.value ?? 0).toString());
+
+        int operationTimeSH = transferTimeSH;
+
+        int operationArchiveId =
+            await _operationArchiveTable.insert(OperationArchiveDto(
+          id: 0,
+          number: operationNumber,
+          name: operationName,
+          code: operationCode,
+          timepz: timepz,
+          timeSH: operationTimeSH,
+          stageArchiveId: stageArchiveId,
+        ));
+
+        String? transferCode;
+        String? transferName;
+
+        if (excel.tables[table]!.rows[1][9]?.value != null) {
+          transferCode = excel.tables[table]!.rows[3][14]!.value.toString();
+          transferName = excel.tables[table]!.rows[3][15]!.value.toString();
+          _transferArchiveTable.insert(TransferArchiveDto(
+              id: 0,
+              name: transferName,
+              code: transferCode,
+              timeSH: transferTimeSH,
+              operationArchiveId: operationArchiveId));
+          print(
+              'инсерт переход для операции $operationArchiveId : $transferName');
+        }
+
+        for (int i = 4; i < excel.tables[table]!.maxRows; i++) {
+          var row = excel.tables[table]!.rows;
+
+          if (row[i][4]?.value != null) {
+            planNumber = row[i][4]!.value.toString();
+
+            planName = row[i][5]!.value.toString();
+
+            batchCode = row[i][6]!.value.toString();
+
+            technologyNumber = row[i][7]!.value.toString();
+
+            description = row[i][8]!.value.toString();
+
+            batchArchiveId = await _batchArchiveTable.insert(BatchArchiveDto(
+              code: batchCode,
+              id: 0,
+              number: planNumber,
+              name: planName,
+              technologyNumber: technologyNumber,
+              companyId: 0,
+            ));
+          }
+
+          if (row[i][9]?.value != null) {
+            stageNumber = row[i][9]!.value.toString();
+            stageName = row[i][10]!.value.toString();
+
+            stageArchiveId = await _stageArchiveTable.insert(StageArchiveDTO(
+              id: 0,
+              number: stageNumber.toString(),
+              name: stageName,
+              batchArchiveId: batchArchiveId,
+            ));
+          }
+
+          if (row[i][11]?.value != null) {
+            operationCode = excel.tables[table]!.rows[i][11]!.value.toString();
+            operationNumber =
+                excel.tables[table]!.rows[i][12]!.value.toString();
+            operationName = excel.tables[table]!.rows[i][13]!.value.toString();
+
+            if (row[i][16]?.value != null) {
+              timepz = (int.parse(
+                  (excel.tables[table]!.rows[i][16]!.value).toString()));
+            }
+            operationTimeSH = int.parse(row[i][17]!.value.toString());
+
+
+            operationArchiveId =
+                await _operationArchiveTable.insert(OperationArchiveDto(
+              id: 0,
+              number: operationNumber,
+              name: operationName,
+              code: operationCode,
+              timepz: timepz,
+              timeSH: operationTimeSH,
+              stageArchiveId: stageArchiveId,
+            ));
+          }
+
+          if (row[i][14]?.value != null) {
+            transferCode = row[i][14]!.value.toString();
+            transferName = row[i][15]!.value.toString();
+            transferTimeSH = int.parse(row[i][17]!.value.toString());
+            operationTimeSH = operationTimeSH + transferTimeSH;
+
+            _transferArchiveTable.insert(TransferArchiveDto(
+                id: 0,
+                name: transferName ?? '',
+                code: transferCode,
+                timeSH: transferTimeSH,
+                operationArchiveId: operationArchiveId));
+
+            _operationArchiveTable.updateTimeSH(
+                operationArchiveId, operationTimeSH);
+          }
+        }
+      }
+    }
+  }
+
   Future loadDetailToArchive() async {
     FilePickerResult? pickedFile = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -823,8 +986,7 @@ class ExcelService {
               timepz = (int.parse(row[i][11]!.value.toString()));
             }
             operationTimeSH = int.parse(row[i][12]!.value.toString());
-            print(
-                'добавляю операцию: $operationCode, $operationNumber, $operationName, operationTimeSH: $operationTimeSH');
+
             operationArchiveId =
                 await _operationArchiveTable.insert(OperationArchiveDto(
               id: 0,
@@ -842,19 +1004,16 @@ class ExcelService {
             transferName = row[i][10]?.value.toString();
             transferTimeSH = int.parse(row[i][12]!.value.toString());
             operationTimeSH = operationTimeSH + transferTimeSH;
-            print('operationTimeSH : $operationTimeSH');
+
             _transferArchiveTable.insert(TransferArchiveDto(
                 id: 0,
                 name: transferName ?? '',
                 code: transferCode,
                 timeSH: transferTimeSH,
                 operationArchiveId: operationArchiveId));
-            print(
-                'сейчас буду обновлять  operationId: $operationArchiveId,  operationTimeSH : $operationTimeSH');
+
             _operationArchiveTable.updateTimeSH(
                 operationArchiveId, operationTimeSH);
-            print(
-                'инсерт переход для операции $operationArchiveId : $transferName');
           }
         }
       }

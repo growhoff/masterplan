@@ -26,7 +26,12 @@ class ContetnReadyMaster extends StatelessWidget {
               const SizedBox(height: 8),
               const Divider(),
               const SizedBox(height: 8),
-              const RowExpand(text1: 'Деталь', text2: 'Операция', text3: 'Время обработки, мин.', text4: 'Кол. в опт. партии'),
+              const Card(
+                color: Colors.black12,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 2),
+                  child: RowExpand(text1: 'Деталь', text2: 'Операция', text3: 'Время обработки, мин.', text4: 'Кол. в опт. партии'),
+              )),
               const SizedBox(height: 8),
               ListView.builder(
                 shrinkWrap: true,

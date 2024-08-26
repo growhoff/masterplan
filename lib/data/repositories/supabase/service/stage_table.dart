@@ -12,6 +12,15 @@ class StageTable extends SupabaseTable {
     return table.delete().eq('id', id);
   }
 
+  Future bulkDelete(List<int> stagesIdsList)async{
+    await table.delete().inFilter('id', stagesIdsList);
+  }
+
+
+  Future bulkDeleteByBatchId(int batchId)async{
+    await table.delete().eq('batch_id', batchId);
+  }
+
   @override
   Future<int> insert(Dto dto) async {
     if (dto is StageDTO) {
@@ -40,6 +49,15 @@ class StageTable extends SupabaseTable {
         .inFilter('batch_archive_id', batchesIdList)
         .order('id', ascending: true);
   }
+
+  Future<List<Map<String, dynamic>>> selectByBatchId(
+      int batchId) async {
+    return await table
+        .select()
+        .eq('batch_id', batchId)
+        .order('id', ascending: true);
+  }
+
 
   Future<List<Map<String, dynamic>>> selectByBatchesIdsList(
       List<int> batchesIdsList) async {
@@ -94,10 +112,7 @@ class StageTable extends SupabaseTable {
     return table.stream(primaryKey: ['id']);
   }
 
-  Future<List<Map<String, dynamic>>> selectByBatchId(
-      {required int batchId}) async {
-    return table.select().eq('batch_id', batchId);
-  }
+
 
   Future<List<Map<String, dynamic>>> selectByBatchArchiveId(
       {required int batchArchiveId}) async {

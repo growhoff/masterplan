@@ -1,3 +1,4 @@
+import 'package:master_plan/data/repositories/supabase/dto/batch_archive_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
@@ -59,12 +60,70 @@ class BatchTable extends SupabaseTable {
   }
 
   @override
-  Future<void> update(int id, Dto dto) {
-    return table.update({'name': '1'}).eq('id', id);
+  Future<void> update(int id, Dto dto) async {
+    if (dto is BatchDTO) {
+      await table.update({
+        'rs_number': dto.numberRS,
+        'name': dto.name,
+        'code': dto.code,
+        'technology': dto.technology,
+        'description': dto.description,
+        'count': dto.count
+      }).eq('id', id);
+    }
   }
 
-  Future<void> updateStatusToIsFormedByBatchesIdsList(List<int> batchesIdsList) {
+  Future<void> updateWithoutNumber(int id, Dto dto) async {
+    if (dto is BatchDTO) {
+      await table.update({
+        'rs_number': dto.numberRS,
+        'name': dto.name,
+        'code': dto.code,
+        'technology': dto.technology,
+        'description': dto.description,
+        'count': dto.count
+      }).eq('id', id);
+    }
+  }
+
+
+
+  Future<void> updateFromBatchArchive(int id, BatchArchiveDto dto) async {
+    await table.update({
+      'rs_number': dto.number,
+      'name': dto.name,
+      'code': dto.code,
+      'technology': dto.technologyNumber,
+    }).eq('id', id);
+  }
+
+  Future<void> updateStatusJob(List<int> idList) {
+    return table.update({'batch_status_id': 7}).inFilter('id', idList);
+  }
+
+  Future<void> updateStatusReady(List<int> idList) {
+    return table.update({'batch_status_id': 2}).inFilter('id', idList);
+  }
+
+  Future<void> updateStatusBrak(List<int> idList) {
+    return table.update({'batch_status_id': 3}).inFilter('id', idList);
+  }
+
+  Future<void> updateCount(int id, int quantity) {
+    return table.update({'count': quantity}).eq('id', id);
+  }
+
+  Future<void> updateStatusToIsFormedByBatchesIdsList(
+      List<int> batchesIdsList) {
     return table.update({'batch_status_id': 6}).inFilter('id', batchesIdsList);
+  }
+
+  Future<void> updateStatusToFormingByBatchId(int batchId) {
+    return table.update({'batch_status_id': 5}).eq('id', batchId);
+  }
+
+  Future<void> updateStatusToIsFormedByBatchId(int batchesId) {
+    return table.update({'batch_status_id': 6}).eq('id', batchesId);
   }
 
   stream() {

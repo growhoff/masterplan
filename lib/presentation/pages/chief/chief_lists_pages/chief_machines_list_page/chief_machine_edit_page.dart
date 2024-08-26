@@ -13,7 +13,7 @@ class ChiefMachineEditPage extends StatelessWidget {
     final arguments = ModalRoute.of(context)!.settings.arguments as EditPageArguments;
     final stateMain = context.read<CubitMain>().state;
     return BlocProvider(
-      create: (context) => ChiefMachineCubit(stateMain.controlMachineList ?? [], stateMain.shiftScheduleList ?? [], stateMain.typeMachineList ?? [], stateMain.viewMachineList ?? []),
+      create: (context) => ChiefMachineCubit(stateMain.controlMachineList ?? [], stateMain.shiftScheduleList ?? [], stateMain.listViewMachine ?? []),
       child: ChiefMachineEditPageView(
         machine: arguments.machineModel,
         areaId: arguments.areaId,
@@ -87,6 +87,20 @@ class _ChiefMachineEditPageViewState extends State<ChiefMachineEditPageView> {
                         controller: context.read<ChiefMachineCubit>().prefixController,
                       ),
                       const SizedBox(height: 10),
+                      //Вид оборудования
+                      const Text('Вид оборудования', style: TextStyle(fontSize: 12)),
+                      DropdownButton<int>(
+                        isExpanded: true,
+                        hint: const Text('Вид оборудования'),
+                        value: context.read<ChiefMachineCubit>().activeViewId,
+                        onChanged: (int? value) => {
+                          context.read<ChiefMachineCubit>().getNewlistViewMachine(value),
+                          context.read<ChiefMachineCubit>().activeViewId =value ?? context.read<ChiefMachineCubit>().activeViewId,
+                          setState(() {})
+                          },
+                        items: state.listView.map((e) => DropdownMenuItem(value: e.index,child: Text(e.name))).toList(),
+                      ),
+                      const SizedBox(height: 10),
                       //Тип оборудования
                       const Text('Тип оборудования', style: TextStyle(fontSize: 12)),
                       DropdownButton<int>(
@@ -95,16 +109,6 @@ class _ChiefMachineEditPageViewState extends State<ChiefMachineEditPageView> {
                         value: context.read<ChiefMachineCubit>().activeTypeMachineId,
                         onChanged: (int? value) => setState(() => context.read<ChiefMachineCubit>().activeTypeMachineId = value ?? context.read<ChiefMachineCubit>().activeTypeMachineId),
                         items: state.listType.map((e) => DropdownMenuItem(value: e.index, child: Text(e.name))).toList(),
-                      ),
-                      const SizedBox(height: 10),
-                      //Вид оборудования
-                      const Text('Вид оборудования', style: TextStyle(fontSize: 12)),
-                      DropdownButton<int>(
-                        isExpanded: true,
-                        hint: const Text('Вид оборудования'),
-                        value: context.read<ChiefMachineCubit>().activeViewId,
-                        onChanged: (int? value) => setState(() => context.read<ChiefMachineCubit>().activeViewId =value ?? context.read<ChiefMachineCubit>().activeViewId),
-                        items: state.listView.map((e) => DropdownMenuItem(value: e.index,child: Text(e.name))).toList(),
                       ),
                       const SizedBox(height: 10),
                       //Управление

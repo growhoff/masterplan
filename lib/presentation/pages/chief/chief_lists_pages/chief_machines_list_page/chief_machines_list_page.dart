@@ -13,7 +13,7 @@ class ChiefMachinesListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final stateMain = context.read<CubitMain>().state;
     return BlocProvider(
-      create: (context) => ChiefMachineCubit(stateMain.controlMachineList ?? [], stateMain.shiftScheduleList ?? [], stateMain.typeMachineList ?? [], stateMain.viewMachineList ?? []),
+      create: (context) => ChiefMachineCubit(stateMain.controlMachineList ?? [], stateMain.shiftScheduleList ?? [], stateMain.listViewMachine ?? []),
       child: const ChiefMachinesListPageView(),
     );
   }

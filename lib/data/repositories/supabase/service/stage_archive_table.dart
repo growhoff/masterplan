@@ -39,7 +39,7 @@ class StageArchiveTable extends SupabaseTable {
       int batchArchiveId) async {
     return await _table
         .select('*, z_batch_archive!inner(*)')
-        .eq('batch_archive_id', batchArchiveId);
+        .eq('batch_archive_id', batchArchiveId).order('id', ascending: true);
 
   }
 

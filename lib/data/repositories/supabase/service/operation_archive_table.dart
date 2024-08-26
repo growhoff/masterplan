@@ -56,7 +56,7 @@ class OperationArchiveTable extends SupabaseTable {
 
   Future<List<Map<String, dynamic>>> selectByStageArchiveId(
       int stageArchiveId) async {
-    return await _table.select().eq('stage_archive_id', stageArchiveId);
+    return await _table.select().eq('stage_archive_id', stageArchiveId).order('id', ascending: true);
   }
 
   @override

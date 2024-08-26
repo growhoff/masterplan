@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/pages/dispatcher/dispatcher_analytics_page/dispatcher_analytics_cubit/dispatcher_analytics_cubit.dart';
+import 'package:master_plan/presentation/pages/dispatcher/orders_page/batches_page/widgets/batch_to_form_dialog_button.dart';
 
 import '../batch_model.dart';
 import '../batches_cubit/batches_cubit.dart';
@@ -42,6 +43,28 @@ class BatchDialog extends StatelessWidget {
         SimpleDialogOption(
             child: Row(
               children: [
+                Icon(Icons.edit_rounded),
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  'редактировать',
+                  style: TextStyle(fontSize: 18),
+                )
+              ],
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pushNamed(context, '/editBatchPage',
+                      arguments: batch.batch)
+                  .then((_) => cubit.fetchBatchesInOrder(batch.batch.orderId));
+            }),
+        Divider(
+          height: 1,
+        ),
+        SimpleDialogOption(
+            child: Row(
+              children: [
                 Icon(Icons.delete_rounded),
                 const SizedBox(
                   width: 10,
@@ -55,7 +78,14 @@ class BatchDialog extends StatelessWidget {
             onPressed: () {
               cubit.deleteBatch(batch.batch);
               Navigator.pop(context);
-            })
+            }),
+        Divider(
+          height: 1,
+        ),
+        BatchToFormDialogButton(
+          batch.batch,
+          fetchBatches: () => cubit.fetchBatchesInOrder(batch.batch.orderId),
+        )
       ],
     );
   }

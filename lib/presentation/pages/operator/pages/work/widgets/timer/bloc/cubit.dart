@@ -2,10 +2,18 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/data/repositories/supabase/dto/monitoring_machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/transfer_operations_dto.dart';
+import 'package:master_plan/data/repositories/supabase/service/batch_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/chief_batch_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/distribution_stage_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/monitoring_machine_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/order_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/transfer_operations_table.dart';
+import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/domain/usecase/change_logic.dart';
 import 'package:master_plan/domain/usecase/time_converter.dart';
+import 'package:master_plan/presentation/pages/operator/pages/work/model/item_oper.dart';
 import 'state.dart';
 
 class CubitTimer extends Cubit<StateTimer> {
@@ -13,6 +21,7 @@ class CubitTimer extends Cubit<StateTimer> {
   final List<int> timeActive;
   final List<bool> listStartTime;
   final operatorOperTable = OperatorOperationsTable();
+  final transferOperTable = TransferOperationsTable();
   CubitTimer(this.timeActive, this.listStartTime) : super(const StateTimer()){
     init();
   }
@@ -43,11 +52,53 @@ class CubitTimer extends Cubit<StateTimer> {
     });
   }
 
-  void firstStart(int index, int idOptPath){
+  Future<void> firstStart(int index, ItemOperOp operActive)async{
     List<bool> listState = [...state.listState];
       listState[index] = true;
-      operatorOperTable.setFirstTimeStart(idOptPath, DateTime.now().millisecondsSinceEpoch);
+      await operatorOperTable.setFirstTimeStart(operActive.idPath, DateTime.now().millisecondsSinceEpoch);
+      await updateStatusBatchChiefBatchStage(operActive);      
     emit(state.copyWith(listState: listState));
+  }
+
+  Future<void> updateStatusBatchChiefBatchStage(ItemOperOp operActive)async{
+      List<int> listIdBatch = [];
+      List<int> listIdChiefBatch = [];
+      List<int> listIdOrder = [];
+      for (var e in operActive.list) {
+        listIdBatch.add(e.batch.id);
+        listIdChiefBatch.add(e.chiefBatchId!);
+        listIdOrder.add(e.batch.orderId!);
+      }
+      await setBatchStatus(listIdBatch);
+      await setChiefBatchStatus(listIdChiefBatch);
+      await setDistribStageStatus(operActive.list);
+      await setOrderBatchStatus(listIdOrder);
+  }
+
+  Future<void> setBatchStatus(List<int> listIdBatch)async{
+    final batchTable = BatchTable();
+    await batchTable.updateStatusJob(listIdBatch);
+  }
+
+  Future<void> setChiefBatchStatus(List<int> listIdCiefBatch)async{
+    final chiefBatchTable = ChiefBatchTable();
+    await chiefBatchTable.updateStatusJob(listIdCiefBatch);
+  }
+
+  Future<void> setDistribStageStatus(List<OperatorOperations> list)async{
+    final distribStageTable = DistributionStageTable();
+    for (var e in list) {
+      await distribStageTable.updateStatusJob(e.stage.id, e.chiefBatchId!);
+    }
+  }
+
+  Future<void> setOrderBatchStatus(List<int> listIdOrder)async{
+    final orderTable = OrderTable();
+    await orderTable.updateStatusJob(listIdOrder);
+  }
+
+  void firstStartTransfer(ItemOperOp operActive, int machineId, int staffId, int activeTransfer, int order){
+      transferOperTable.insertDto(TransferOperationsDTO(id: 0, operatorOperationId: operActive.list.first.id, order: order, transferId: operActive.list.first.listTransfer?[activeTransfer].id, batchId: operActive.list.first.batch.id, operationId: operActive.list.first.operation.id, optPath: operActive.idPath, pause: false, timeFirstStart: DateTime.now().millisecondsSinceEpoch, timestart: DateTime.now().millisecondsSinceEpoch, timestop: 0, timeworking: 0, machineId: machineId, staffId: staffId));
   }
 //
   Future<void> startOrStop(int index, bool isStart, int idOptPath, int userId, int machineId, int batchId, int firstTimeBatch)async{
@@ -88,6 +139,22 @@ class CubitTimer extends Cubit<StateTimer> {
       // await operatorOperTable.updateTimeStop(idOptPath, DateTime.now().millisecondsSinceEpoch, state.listTick[index]);
     }
     emit(state.copyWith(listState: listState));
+  }
+
+    Future<void> startOrStopTransfer(bool isStart, ItemOperOp operActive, int userId, int indexTransfer)async{
+    final transferTable = TransferOperationsTable();
+    if (isStart){
+      await transferTable.updateTimeStart(operActive.idPath, DateTime.now().millisecondsSinceEpoch, userId, operActive.list.first.listTransfer![indexTransfer].id);
+    }
+    else {
+      final quereTrans = await transferTable.selectOptPath(operActive.idPath, operActive.list.first.listTransfer![indexTransfer].id);
+      final modelTrans = TransferOperationsDTO.fromMap(quereTrans);
+      int timeWork = modelTrans.timeworking ?? 0;
+      int? timeStart = modelTrans.timestart;
+      int seconds = TimeConverter().getTimeWorking(timeStart!, DateTime.now().millisecondsSinceEpoch);
+      int tick = timeWork + seconds;
+      await transferTable.updateTimeStop(operActive.idPath, DateTime.now().millisecondsSinceEpoch, tick, operActive.list.first.listTransfer![indexTransfer].id);
+    }
   }
 
     MonitoringMachineDTO getMonitoringStatus2(int userId, int machineId){

@@ -9,17 +9,18 @@ class StateReadyDetails extends Equatable {
   final List<List<StatusNext>> statusList;
   final int count;
   final bool isLoading;
-
+  final bool isActiveStream;
   const StateReadyDetails({
     this.listMachine = const [],
     this.activePage = 0,
     this.statusList = const [],
     this.count = 0,
     this.isLoading = false,
+    this.isActiveStream = true,
   });
 
   @override
-  List<Object> get props => [listMachine ?? [], activePage, statusList, count, isLoading];
+  List<Object> get props => [listMachine ?? [], activePage, statusList, count, isLoading, isActiveStream];
 
   StateReadyDetails copyWith({
     List<ItemMachine>? listMachine,
@@ -27,6 +28,7 @@ class StateReadyDetails extends Equatable {
     List<List<StatusNext>>? statusList,
     int? count,
     bool? isLoading,
+    bool? isActiveStream,
   }) {
     return StateReadyDetails(
       listMachine: listMachine ?? this.listMachine,
@@ -34,6 +36,7 @@ class StateReadyDetails extends Equatable {
       statusList: statusList ?? this.statusList,
       count: count ?? this.count,
       isLoading: isLoading ?? this.isLoading,
+      isActiveStream: isActiveStream ?? this.isActiveStream,
     );
   }
 

@@ -1,9 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/data/repositories/supabase/dto/chief_operation_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
+import 'package:master_plan/data/repositories/supabase/service/batch_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/chief_operation_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/distribution_stage_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/order_table.dart';
 import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/domain/usecase/convert_dto_model.dart';
@@ -28,7 +30,7 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
         .inFilter('machine_id', machineIdList)
         .listen((event) {})
         .onData((data) async {
-          await getQuere(data);
+          if (state.isActiveStream) await getQuere(data);
         });
   }
 
@@ -137,13 +139,14 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
   }
 
   Future<void> updateOperation() async {
-    final table = OperatorOperationsTable();
-    final chiefBatchTable = ChiefBatchTable();
+    emit(state.copyWith(isActiveStream: false));
+    final tableOperations = OperatorOperationsTable();
+    // final chiefBatchTable = ChiefBatchTable();
     final listOper = state.listMachine![state.activePage].listOper;
     if (listOper.isNotEmpty) {
       final listStatus = state.statusList[state.activePage];
       final List<int> listIdStatusReady = [];
-      final List<OperatorOperations> listOperatorOperations = [];
+      final List<OperatorOperations> listOperReady = [];
       // final List<int> listChiefOperationId = [];
       for (var i = 0; i < listOper.length; i++) {
         //доработка
@@ -153,65 +156,72 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
           for (var e in listOper[i].list) {
             if (count == 0) {
               listIdStatusReady.add(e.id);
-              listOperatorOperations.add(e);
+              listOperReady.add(e);
             } else {
               listSt2.add(e.id);
               count--;
             }
           }
-          await table.updateMasterModificateListCount(listSt2, listStatus[i].comment);
+          await tableOperations.updateMasterModificateListCount(listSt2, listStatus[i].comment);
         }
 
         //брак
         if (listStatus[i].status == 1) {
-          List<int> listSt1 = [];
+          List<int> listIdOperBrak = [];
+          List<OperatorOperations> listOperBrak = [];
           int count = listStatus[i].count;
 
           for (var j = 0; j < listOper[i].list.length; j++) {
             if (count == 0) {
               listIdStatusReady.add(listOper[i].listId[j]);
-              listOperatorOperations.add(listOper[i].list[j]);
+              listOperReady.add(listOper[i].list[j]);
             } else {
-              listSt1.add(listOper[i].listId[j]);
+              listIdOperBrak.add(listOper[i].listId[j]);
+              listOperBrak.add(listOper[i].list[j]);
               count--;
             }
           }
           //меняем статус по этим id в брак
-          await table.updateMasterBrakListCount(listSt1, listStatus[i].comment);
-          List<OperatorOperations> chOperId = listOper[i].list.getRange(0, listStatus[i].count).toList();
-          List<int> chId = [];
-          for (var e in chOperId) {
-            chId.add(e.chiefBatchId!);
-          }
-          print('лист chiefBatchId для обновления брака chiefBatchTable');
-          print(chId.toString());
-          await chiefBatchTable.updateChiefBatchStatusToDefectList(chiefBatchId: chId); 
-          final tableDistribStage = DistributionStageTable();
-          print('поэлементное обновление в tableDistribStage');
-          for (var element in chOperId) {
-            if (element.chiefBatchId != null) {
-              await tableDistribStage.updateStatusBrak(element.stage.id, element.chiefBatchId!); 
-              print('stageId ${element.stage.id} batchId ${element.chiefBatchId}');}
-          }
+          await tableOperations.updateMasterBrakListCount(listIdOperBrak, listStatus[i].comment);
+          await updateStatusBatchChiefBatchStage(listOperBrak, false);
+          // List<OperatorOperations> chOperId = listOper[i].list.getRange(0, listStatus[i].count).toList();
+          // List<int> chId = [];
+          // for (var e in chOperId) {
+          //   chId.add(e.chiefBatchId!);
+          // }
+          // print('лист chiefBatchId для обновления брака chiefBatchTable');
+          // print(chId.toString());
+          // await chiefBatchTable.updateChiefBatchStatusToDefectList(chiefBatchId: chId); 
+          // final tableDistribStage = DistributionStageTable();
+          // print('поэлементное обновление в tableDistribStage');
+          // for (var element in chOperId) {
+          //   if (element.chiefBatchId != null) {
+          //     await tableDistribStage.updateStatusBrak(element.stage.id, element.chiefBatchId!); 
+          //     print('stageId ${element.stage.id} batchId ${element.chiefBatchId}');}
+          // }
         }
 
         //готово
         if (listStatus[i].status == 0) {
           listIdStatusReady.addAll(listOper[i].listId);
-          for (var element in listOper[i].list) {
-            listOperatorOperations.add(element);
-          }
+          listOperReady.addAll(listOper[i].list);
+          // for (var element in listOper[i].list) {
+          //   listOperReady.add(element);
+          // }
         }
       }
       //тут выгрузка
-      await checkIsDetailReady(listOperatorOperations: listOperatorOperations);
-      await table.updateMasterStatisticReadyList(listIdStatusReady);
+      await tableOperations.updateMasterStatisticReadyList(listIdStatusReady);
+      await updateStatusBatchChiefBatchStage(listOperReady, true);
+      await checkIsDetailReady(listOperatorOperations: listOperReady);
     }
     List<ItemMachine> listMachine = state.listMachine!;
     List<List<StatusNext>> listStatus = state.statusList;
     listStatus[state.activePage].clear();
     listMachine[state.activePage].listOper.clear();
-    emit(state.copyWith(listMachine: listMachine, statusList: listStatus, count: state.count + 1));
+    // emit(state.copyWith(listMachine: listMachine, statusList: listStatus, isActiveStream: true));
+    emit(state.copyWith(listMachine: []));
+    emit(state.copyWith(listMachine: listMachine, statusList: listStatus, isActiveStream: true));
   }
 
   List<ItemId> getListIdFromQueue(List<Map<String, dynamic>> data) {
@@ -272,10 +282,51 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
     List<int> listStagechiefBatchIdLast = [];
     for (var stage in lastIdStage) {listStagechiefBatchIdLast.add(stage.chiefBatchId);}
     for (var i = 0; i < listStageId.length; i++) {
-      await tableStage.updateStatus(listStageId[i], listStagechiefBatchIdLast[i]);
+      await tableStage.updateStatusReady(listStageId[i], listStagechiefBatchIdLast[i]);
     }
     List<int> listChiefBatchLast = [];
     for (var batch in lastIdBatch) {listChiefBatchLast.add(batch.chiefBatchId);}
-    await chiefBatchTable.updateChiefBatchStatusToReadyList(listChiefBatchId: listChiefBatchLast);
+    await chiefBatchTable.updateStatusReady(listChiefBatchLast);
+  }
+
+  Future<void> updateStatusBatchChiefBatchStage(List<OperatorOperations> listOperatorOperations, bool isReady)async{
+      List<int> listIdBatch = [];
+      List<int> listIdChiefBatch = [];
+      List<int> listIdOrder = [];
+      for (var e in listOperatorOperations) {
+        listIdBatch.add(e.batch.id);
+        listIdChiefBatch.add(e.chiefBatchId!);
+        listIdOrder.add(e.batch.orderId!);
+      }
+      await setBatchStatus(listIdBatch, isReady);
+      await setChiefBatchStatus(listIdChiefBatch, isReady);
+      await setDistribStageStatus(listOperatorOperations, isReady);
+      await setOrderBatchStatus(listIdOrder, isReady);
+  }
+
+  Future<void> setBatchStatus(List<int> listIdBatch, bool isReady)async{
+    final batchTable = BatchTable();
+    if (isReady) {await batchTable.updateStatusReady(listIdBatch);}
+    // else {await batchTable.updateStatusBrak(listIdBatch);}
+  }
+
+  Future<void> setChiefBatchStatus(List<int> listIdCiefBatch, bool isReady)async{
+    final chiefBatchTable = ChiefBatchTable();
+    if (isReady) {await chiefBatchTable.updateStatusReady(listIdCiefBatch);}
+    else {await chiefBatchTable.updateStatusBrak(listIdCiefBatch);}
+  }
+
+  Future<void> setDistribStageStatus(List<OperatorOperations> list, bool isReady)async{
+    final distribStageTable = DistributionStageTable();
+    for (var e in list) {
+      if (isReady) {await distribStageTable.updateStatusReady(e.stage.id, e.chiefBatchId!);}
+      else {await distribStageTable.updateStatusBrak(e.stage.id, e.chiefBatchId!);}
+    }
+  }
+
+  Future<void> setOrderBatchStatus(List<int> listIdOrder, bool isReady)async{
+    final orderTable = OrderTable();
+    if (isReady) {await orderTable.updateStatusReady(listIdOrder);}
+    // else {await orderTable.updateStatusBrak(listIdOrder);}
   }
 }

@@ -44,7 +44,7 @@ class Reorder extends StatelessWidget {
                 //инфо
                 Expanded(child: IconButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => TableInfoPage(list[index].listOptPath.first.list),)), icon: const Icon(Icons.info, color: Colors.blue))),
                 //передать на готовые детали
-                Expanded(child: IconButton(onPressed: isGroup ? null : () => context.read<CubitQueueMaster>().updateOperationReady(list[index].listOptPath.first.idPath), icon: Icon(Icons.check_rounded, color: isGroup ? Colors.black12 : Colors.green))),
+                Expanded(child: IconButton(onPressed: isGroup ? null : () => context.read<CubitQueueMaster>().updateOperationReady(list[index].listOptPath), icon: Icon(Icons.check_rounded, color: isGroup ? Colors.black12 : Colors.green))),
                 //передать на распределение
                 Expanded(child: IconButton(onPressed: isGroup ? null : () => context.read<CubitQueueMaster>().updateOperationDistribMaster(list[index].listOptPath.first.idPath), icon: Icon(Icons.close, color: isGroup ? Colors.black12 : Colors.red))),
               ],

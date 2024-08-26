@@ -10,8 +10,7 @@ class OperatorOperationsTable extends SupabaseTable {
   static const selectStaff = '*, z_position(*), z_company(*)';
   static const selectOperOperat =
       '*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*, z_order(*)), z_staff($selectStaff), z_machine(*), z_area!inner(*), z_chief_operation(*), z_chief_batch(*), z_distribution_stage(*)';
-  static const selectOperOperatLite =
-      '*, z_status(*), z_batch(*), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_staff($selectStaff)';
+  static const selectOperOperatLite = '*, z_status(*), z_batch(*, z_order(*)), z_stage(*), z_operation(*), z_area(*), z_machine(*), z_staff($selectStaff)';
 
   final _companyId = CompanyService.instance.companyId ?? 1;
   final _unitId = ChiefUnitService.instance.unitId ?? 0;

@@ -103,8 +103,6 @@ class _OrdersPageViewState extends State<OrdersPageView> {
                       itemBuilder: (context, index) => Container(
                             child: GestureDetector(
                               onTap: () {
-                                Navigator.pop(context, false);
-
                                 Navigator.pushNamed(context, '/batchesPage',
                                     arguments: state.ordersList[index]);
                               },

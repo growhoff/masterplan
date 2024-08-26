@@ -1,39 +1,43 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:master_plan/presentation/pages/technologist/archive_page/archive_cubit/archive_cubit.dart';
 
-import '../../../../domain/model/stage.dart';
+import '../../../../domain/model/stage_archive.dart';
+import 'archive_cubit/archive_cubit.dart';
 
-class ArchiveOperationsPage extends StatelessWidget {
-  const ArchiveOperationsPage({super.key});
+class DispatcherArchiveOperationsPage extends StatelessWidget {
+  const DispatcherArchiveOperationsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final stage = ModalRoute.of(context)!.settings.arguments as Stage;
+    final stageArchive =
+        ModalRoute.of(context)!.settings.arguments as StageArchive;
     return BlocProvider(
       create: (context) => ArchiveCubit(),
-      child: ArchiveOperationsPageView(
-        stage: stage,
+      child: DispatcherArchiveOperationsPageView(
+        stageArchive: stageArchive,
       ),
     );
   }
 }
 
-class ArchiveOperationsPageView extends StatefulWidget {
-  final Stage stage;
+class DispatcherArchiveOperationsPageView extends StatefulWidget {
+  final StageArchive stageArchive;
 
-  const ArchiveOperationsPageView({required this.stage, super.key});
+  const DispatcherArchiveOperationsPageView(
+      {required this.stageArchive, super.key});
 
   @override
-  State<ArchiveOperationsPageView> createState() =>
-      _ArchiveOperationsPageViewState();
+  State<DispatcherArchiveOperationsPageView> createState() =>
+      _DispatcherArchiveOperationsPageViewState();
 }
 
-class _ArchiveOperationsPageViewState extends State<ArchiveOperationsPageView> {
+class _DispatcherArchiveOperationsPageViewState
+    extends State<DispatcherArchiveOperationsPageView> {
   @override
   void initState() {
-    context.read<ArchiveCubit>().fetchOperations(stageId: widget.stage.id);
+    context
+        .read<ArchiveCubit>()
+        .fetchOperations(stageId: widget.stageArchive.id);
     super.initState();
   }
 
@@ -45,7 +49,7 @@ class _ArchiveOperationsPageViewState extends State<ArchiveOperationsPageView> {
         child: Column(
           children: [
             Text(
-              '${widget.stage.number} ${widget.stage.name}',
+              '${widget.stageArchive.number} ${widget.stageArchive.name}',
               softWrap: true,
             ),
             Text('(операции)')
@@ -103,20 +107,23 @@ class _ArchiveOperationsPageViewState extends State<ArchiveOperationsPageView> {
                           state.operationsList.length,
                           (index) => TableRow(children: [
                                 TableRowInkWell(
-                                  onTap: () {
-                                    context.read<ArchiveCubit>().fetchTransfers(
+                                  onTap: () async{
+                                    int len = await context.read<ArchiveCubit>().fetchTransfers(
                                         operationId:
-                                            state.operationsList[index].id);
+                                        state.operationsList[index].id);
 
-                                    if (state.transfersList.isNotEmpty){
-                                      Navigator.pushNamed(
-                                          context, '/archiveTransferPage',
-                                          arguments: state.transfersList);
-                                    }else{
-                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                        duration: Duration(seconds: 2),
-                                          content:
-                                          Text('переходов нет')));
+                                    print('len : $len');
+
+                                    if (len!=0) {
+                                      Navigator.pushNamed(context,
+                                          '/dispatcherArchiveTransferPage',
+                                          arguments:
+                                          context.read<ArchiveCubit>());
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                          duration: Duration(seconds: 2),
+                                          content: Text('переходов нет')));
                                     }
                                   },
                                   child: Container(
@@ -129,20 +136,23 @@ class _ArchiveOperationsPageViewState extends State<ArchiveOperationsPageView> {
                                       )),
                                 ),
                                 TableRowInkWell(
-                                  onTap: () {
-                                    context.read<ArchiveCubit>().fetchTransfers(
+                                  onTap: () async{
+                                    int len = await context.read<ArchiveCubit>().fetchTransfers(
                                         operationId:
                                         state.operationsList[index].id);
 
-                                    if (state.transfersList.isNotEmpty){
-                                      Navigator.pushNamed(
-                                          context, '/archiveTransferPage',
-                                          arguments: state.transfersList);
-                                    }else{
-                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                    print('len : $len');
+
+                                    if (len!=0) {
+                                      Navigator.pushNamed(context,
+                                          '/dispatcherArchiveTransferPage',
+                                          arguments:
+                                          context.read<ArchiveCubit>());
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
                                           duration: Duration(seconds: 2),
-                                          content:
-                                          Text('переходов нет')));
+                                          content: Text('переходов нет')));
                                     }
                                   },
                                   child: Container(
@@ -154,20 +164,23 @@ class _ArchiveOperationsPageViewState extends State<ArchiveOperationsPageView> {
                                       )),
                                 ),
                                 TableRowInkWell(
-                                  onTap: () {
-                                    context.read<ArchiveCubit>().fetchTransfers(
+                                  onTap: () async{
+                                   int len = await context.read<ArchiveCubit>().fetchTransfers(
                                         operationId:
-                                        state.operationsList[index].id);
+                                            state.operationsList[index].id);
 
-                                    if (state.transfersList.isNotEmpty){
-                                      Navigator.pushNamed(
-                                          context, '/archiveTransferPage',
-                                          arguments: state.transfersList);
-                                    }else{
-                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                          duration: Duration(seconds: 2),
-                                          content:
-                                          Text('переходов нет')));
+                                    print('len : $len');
+
+                                    if (len!=0) {
+                                      Navigator.pushNamed(context,
+                                          '/dispatcherArchiveTransferPage',
+                                          arguments:
+                                              context.read<ArchiveCubit>());
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              duration: Duration(seconds: 2),
+                                              content: Text('переходов нет')));
                                     }
                                   },
                                   child: Container(

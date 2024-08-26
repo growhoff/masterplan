@@ -18,13 +18,17 @@ class TransferOperationsDTO extends Dto {
   final int? staffId;
   final StaffDTO? staff;
   final int batchId;
-  final BatchDTO batch;
+  final BatchDTO? batch;
   final int? machineId;
   final MachineDTO? machine;
   final int operationId;
-  final OperationDTO operation;
+  final OperationDTO? operation;
   final int? chiefOperationId;
   final ChiefOperationDto? chiefOperation;
+  final int optPath;
+  final int? transferId;
+  final int order;
+  final int? operatorOperationId;
 
   TransferOperationsDTO({
     required this.id,
@@ -36,19 +40,22 @@ class TransferOperationsDTO extends Dto {
     this.staffId,
     this.staff,
     required this.batchId,
-    required this.batch,
+    this.batch,
     this.machineId,
     this.machine,
     required this.operationId,
-    required this.operation,
+    this.operation,
     this.chiefOperationId,
     this.chiefOperation,
+    required this.optPath,
+    this.transferId,
+    required this.order,
+    this.operatorOperationId,
   });
 
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'id': id,
       'pause': pause,
       'time_first_start': timeFirstStart,
       'time_start': timestart,
@@ -58,7 +65,11 @@ class TransferOperationsDTO extends Dto {
       'batch_id': batchId,
       'machine_id': machineId,
       'operation_id': operationId,
-      'chief_operation_id': chiefOperationId,
+      // 'chief_operation_id': chiefOperationId,
+      'opt_path': optPath,
+      'transfer_id': transferId,
+      'order': order,
+      'operator_operation_id': operatorOperationId,
     };
   }
 
@@ -73,13 +84,17 @@ class TransferOperationsDTO extends Dto {
       staffId: map['staff_id'] != null ? map['staff_id'] as int : null,
       staff: map['z_staff'] != null ? StaffDTO.fromMap(map['z_staff'] as Map<String,dynamic>) : null,
       batchId: map['batch_id'] as int,
-      batch: BatchDTO.fromMap(map['z_batch'] as Map<String,dynamic>),
+      batch: map['z_batch'] != null ? BatchDTO.fromMap(map['z_batch'] as Map<String,dynamic>): null,
       machineId: map['machine_id'] != null ? map['machine_id'] as int : null,
       machine: map['z_machine'] != null ? MachineDTO.fromMap(map['z_machine'] as Map<String,dynamic>) : null,
       operationId: map['operation_id'] as int,
-      operation: OperationDTO.fromMap(map['z_operation'] as Map<String,dynamic>),
+      operation: map['z_operation'] != null ? OperationDTO.fromMap(map['z_operation'] as Map<String,dynamic>): null,
       chiefOperationId: map['chief_operation_id'] != null ? map['chief_operation_id'] as int : null,
       chiefOperation: map['z_chiefOperation'] != null ? ChiefOperationDto.fromMap(map['z_chiefOperation'] as Map<String,dynamic>) : null,
+      optPath: map['opt_path'] as int,
+      transferId: map['transfer_id'] != null ? map['transfer_id'] as int : null,
+      order: map['order'] as int,
+      operatorOperationId: map['operator_operation_id'] != null ? map['operator_operation_id'] as int : null,
     );
   }
 

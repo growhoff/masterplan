@@ -1,11 +1,13 @@
 import 'package:master_plan/data/repositories/supabase/dto/machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/monitoring_machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/order_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/transfer_dto.dart';
 import 'package:master_plan/domain/model/batch.dart';
 import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/monitoring_machine.dart';
 import 'package:master_plan/domain/model/operator_operations.dart';
+import 'package:master_plan/domain/model/order.dart';
 import 'package:master_plan/domain/model/status.dart';
 import 'package:master_plan/domain/model/transfer.dart';
 import 'package:master_plan/domain/usecase/time_converter.dart';
@@ -58,8 +60,11 @@ class ConvertDtoModel {
     return Transfer(id: dto.id, number: dto.number, name: dto.name, code: dto.code, timesh: dto.timesh, operationId: dto.operationId);
   }
 
-  static OperatorOperations convertToOperatorOperations(
-      OperatorOperationsDTO dto) {
+  static Order convertToOrder(OrderDTO dto){
+    return Order(id: dto.id, number: dto.number, priority: dto.priority, statusId: dto.statusId);
+  }
+
+  static OperatorOperations convertToOperatorOperations(OperatorOperationsDTO dto, {List<Transfer>? listTransfer}) {
     return OperatorOperations(
       id: dto.id,
       area: dto.area!,
@@ -80,7 +85,7 @@ class ConvertDtoModel {
           orderId: dto.batch.orderId,
           technology: dto.batch.technology,
           number: dto.batch.number,
-          // order: dto.batch.order,
+          order: dto.batch.order != null ? convertToOrder(dto.batch.order!) : null,
           isready: dto.batch.isready),
       order: dto.order,
       machine: dto.machine == null ? null : converterToMachine(dto.machine!),
@@ -88,6 +93,8 @@ class ConvertDtoModel {
       chiefOperationId: dto.chiefOperationId,
       optimalPart: dto.optimalPart,
       modific: dto.modific,
+      listTransfer: listTransfer,
+      pause: dto.pause,
     );
   }
 }

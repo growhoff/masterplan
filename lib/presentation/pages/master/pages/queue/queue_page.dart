@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
+import 'package:master_plan/presentation/pages/master/bloc/cubit.dart';
 import './bloc/cubit.dart';
 import './widgets/element_bar.dart';
 
@@ -11,7 +12,7 @@ class QueuePageMaster extends StatelessWidget {
   Widget build(BuildContext context) {
     final stateMain = context.read<CubitMain>().state;
     return BlocProvider<CubitQueueMaster>(
-      create: (context) => CubitQueueMaster(stateMain.user!.id, stateMain.listAreaMachine!),
+      create: (context) => CubitQueueMaster(stateMain.user!.id, stateMain.listAreaMachine!, context.read<CubitMaster>().state.isActiveStream),
       child: const QueuePageMasterContent(),
     );
   }

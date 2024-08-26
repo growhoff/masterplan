@@ -69,13 +69,25 @@ class OrderTable extends SupabaseTable {
 
   Future<void> updateOrder(OrderDTO orderDto) async{
     print('ID : ${orderDto.id}');
-   await table.update({
+    await table.update({
       'number': orderDto.number,
       'customer': orderDto.customer,
       'date_receipt': orderDto.dateReceipt,
       'required_completion_date': orderDto.requiredCompletionDate,
       'priority': orderDto.priority,
     }).eq('id', orderDto.id);
+  }
+
+  Future<void> updateStatusJob(List<int> idList) {
+    return table.update({'order_status_id': 3}).inFilter('id', idList);
+  }
+
+  Future<void> updateStatusReady(List<int> idList) {
+    return table.update({'order_status_id': 5}).inFilter('id', idList);
+  }
+
+  Future<void> updateStatusBrak(List<int> idList) {
+    return table.update({'order_status_id': 6}).inFilter('id', idList);
   }
 
   stream() {

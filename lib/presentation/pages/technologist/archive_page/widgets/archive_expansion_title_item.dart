@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:master_plan/domain/model/batch_archive.dart';
 
 import '../../../../../domain/model/batch.dart';
+import '../../../../../domain/model/batch_archive.dart';
 
-class ArchiveExpansionTitleItem extends StatelessWidget {
-  const ArchiveExpansionTitleItem(this.batch, {super.key});
+class DispatcherArchiveExpansionTitleItem extends StatelessWidget {
+  const DispatcherArchiveExpansionTitleItem(this.batch, {super.key});
 
   final BatchArchive batch;
 
@@ -16,12 +16,15 @@ class ArchiveExpansionTitleItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text('id: ${batch.id}'),
+            const SizedBox(height: 10,),
             Text('№ чертежа: ${batch.number}'),
             const SizedBox(height: 10,),
             Text('Наименование: ${batch.name}'),
             const SizedBox(height: 10,),
             Text('Номер технологии: ${batch.technologyNumber}'),
             const SizedBox(height: 10,),
+            Text('Код детали: ${batch.code}')
           ],
         ),
       ),

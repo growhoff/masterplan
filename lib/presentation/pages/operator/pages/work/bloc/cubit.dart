@@ -2,26 +2,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/data/repositories/supabase/dto/monitoring_machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/transfer_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/transfer_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/monitoring_machine_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/transfer_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/transfer_table.dart';
-import 'package:master_plan/domain/model/batch.dart';
 import 'package:master_plan/domain/model/group_transfer.dart';
-import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/domain/model/shifts_distribution.dart';
-import 'package:master_plan/domain/model/status.dart';
 import 'package:master_plan/domain/model/transfer.dart';
 import 'package:master_plan/domain/usecase/button_status.dart';
 import 'package:master_plan/domain/usecase/change_logic.dart';
 import 'package:master_plan/domain/usecase/convert_dto_model.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/model/item_oper.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/model/page_item.dart';
-
-// import '../../../../../../data/repositories/supabase/dto/chief_operation_dto.dart';
 import '../../../../../../data/repositories/supabase/service/chief_batch_table.dart';
-
-// import '../../../../../../data/repositories/supabase/service/chief_operation_table.dart';
 import 'state.dart';
 import 'package:collection/collection.dart';
 import 'dart:async';
@@ -32,6 +27,7 @@ class CubitWork extends Cubit<StateWork> {
   final operatorOperationsTable = OperatorOperationsTable();
   final transferTable = TransferTable();
   final monitorTable = MonitoringMachineTable();
+  final transferOperTable = TransferOperationsTable();
   late Timer periodicTimer;
   final int userIds;
 
@@ -188,17 +184,25 @@ class CubitWork extends Cubit<StateWork> {
             timeActive.add(0);
           } else if (operActive.pause == true) {
             print('pause == true/ btn = Простой/ btnstart = true/ time = false');
+            final quereTransOper = await transferOperTable.selectOptPathLast(operActive.idPath);
+            TransferOperationsDTO? transferOper;
+            if (quereTransOper.isNotEmpty) transferOper = TransferOperationsDTO.fromMap(quereTransOper.last);
             statusBtn.add('Простой');
             listStartBtn.add(true);
             listStartTime.add(false);
-            timeActive.add(operActive.list.first.timeworking!);
+            timeActive.add(transferOper != null ? transferOper.timeworking ?? 0 :  operActive.list.first.timeworking!);
+            if (quereTransOper.isNotEmpty) emit(state.copyWith(activeTransfer: transferOper!.order));
           } else {
             print('pause == false/ btn = Простой/ btnstart = false/ time = true');
+            final quereTransOper = await transferOperTable.selectOptPathLast(operActive.idPath);
+            TransferOperationsDTO? transferOper;
+            if (quereTransOper.isNotEmpty) transferOper = TransferOperationsDTO.fromMap(quereTransOper.last);
             statusBtn.add('В работе');
             listStartBtn.add(false);
             listStartTime.add(true);
-            final difference = getDifferenceSec(operActive.list.first.timestart!);
+            final difference = getDifferenceSec(transferOper != null ? transferOper.timestart! : operActive.list.first.timestart!);
             timeActive.add(difference);
+            if (quereTransOper.isNotEmpty) emit(state.copyWith(activeTransfer: transferOper!.order));
           }
         } else {
           statusBtn.add('Все');
@@ -236,56 +240,7 @@ class CubitWork extends Cubit<StateWork> {
           timeActive.add(0);
         }
       }
-      //добавляем время в массив
-      //выставление статусов относительно паузы
-      // if (operActive != null) {
-      //   if (operActive.pause == null) {
-      //     print('pause == null/ btn = Все/ btnstart = false/ time = false');
-      //     statusBtn.add('Все');
-      //     listStartBtn.add(false);
-      //     listStartTime.add(false);
-      //     timeActive.add(0);
-      //   } else if (operActive.pause == true) {
-      //     print('pause == true/ btn = Простой/ btnstart = true/ time = false');
-      //     statusBtn.add('Простой');
-      //     listStartBtn.add(true);
-      //     listStartTime.add(false);
-      //     timeActive.add(operActive.list.first.timeworking!);
-      //   } else {
-      //     print('pause == false/ btn = Простой/ btnstart = false/ time = true');
-      //     statusBtn.add('В работе');
-      //     listStartBtn.add(false);
-      //     listStartTime.add(true);
-      //     final difference = getDifferenceSec(operActive.list.first.timestart!);
-      //     timeActive.add(difference);
-      //   }
-      // } else {
-      //   // ??
-      //   // final lastStatusMap = await monitorTable.selectStatusLastMachine(shiftsDistr.machine.id);
-      //   // if (lastStatusMap != null) {
-      //     // final dtoLast = MonitoringMachineDTO.fromMap(lastStatusMap);
-      //     // if ((dtoLast.statusMachine!.id == 4) && (dtoLast.timeStop == 0)) {
-      //     //   print('operActive == null/ btn = Поломка/ btnstart = false/ time = true');
-      //     //   statusBtn.add('Поломка');
-      //     //   listStartBtn.add(false);
-      //     //   listStartTime.add(true);
-      //     //   final difference = getDifferenceSec(dtoLast.timeStart);
-      //     //   timeActive.add(difference);
-      //     // } else {
-      //     //   print('operActive == null/ btn = Все/ btnstart = false/ time = false');
-      //     //   statusBtn.add('Все');
-      //     //   listStartBtn.add(false);
-      //     //   listStartTime.add(false);
-      //     //   timeActive.add(0);
-      //     // }
-      //   // } else {
-      //   //   statusBtn.add('Все');
-      //   //   listStartBtn.add(false);
-      //   //   listStartTime.add(false);
-      //   //   timeActive.add(0);
-      //   // }
-      // }
-      //
+
       pageData.add(PageItem(
           machine: shiftsDistr.machine,
           operReadyList: listOperReady,
@@ -322,22 +277,35 @@ class CubitWork extends Cubit<StateWork> {
     emit(state.copyWith(activePage: index));
   }
 
-  Future<void> setReady(
-      ItemOperOp oper, int seconds, String comment, bool isStart) async {
+  Future<void> setReady(ItemOperOp oper, int seconds, String comment) async {
     getMonitoringIdAndSetMonitor(oper, comment);
-    await operatorOperationsTable.updateTimeStopAndReady(oper.idPath,
-        DateTime.now().millisecondsSinceEpoch, seconds, userIds, comment);
+    await operatorOperationsTable.updateTimeStopAndReady(oper.idPath, DateTime.now().millisecondsSinceEpoch, seconds, userIds, comment);
     setStateStart(false);
     // checkIsDetailReady(listChiefBatchId: oper.listChiefBatchId, listChiefOperationId: oper.listChiefOperationId);
   }
+   Future<void> setReadyTransfer(ItemOperOp oper, int seconds, String comment) async {
+    setStateStart(false);
+    setBtnStatus('Все');
+    await transferOperTable.updateTimeStopAndReady(oper.idPath, DateTime.now().millisecondsSinceEpoch, seconds, userIds, oper.list.first.listTransfer![state.activeTransfer].id);
+    if (oper.list.first.listTransfer!.length - 1 == state.activeTransfer){
+      emit(state.copyWith(activeTransfer: 0, newTransfer: true));
+      int secondsOper = await transferOperTable.selectOptPathTimeWork(oper.idPath);
+      setReady(oper, secondsOper, comment);
+    } else {
+      emit(state.copyWith(activeTransfer: state.activeTransfer + 1, newTransfer: true));
+    }
+  }
 
-  Future<void> setBrak(
-      ItemOperOp oper, int seconds, String comment, bool isStart) async {
+  Future<void> setBrak(ItemOperOp oper, int seconds, String comment) async {
     getMonitoringIdAndSetMonitor(oper, comment);
     setStatusOperationBrak(oper.listId, seconds);
     setStatusBatch(oper.list);
     setStateStart(false);
   }
+
+  void toggleNewTransfer(){
+    emit(state.copyWith(newTransfer: false));
+  } 
 
   Future<void> getMonitoringIdAndSetMonitor(
       ItemOperOp oper, String comment) async {
@@ -418,7 +386,7 @@ class CubitWork extends Cubit<StateWork> {
       list[state.activePage] = true;
       emit(state.copyWith(monitorId: id, listStartBtn: list));
     }
-    // setBtnStatus(status);
+    setBtnStatus(status);
   }
 
   Future<void> setMonitor(
@@ -522,42 +490,7 @@ class CubitWork extends Cubit<StateWork> {
   }
 
   OperatorOperations convertDto(OperatorOperationsDTO dto, {required List<Transfer> listTransfer}) {
-    return OperatorOperations(
-      id: dto.id,
-      area: dto.area!,
-      operation: dto.operation,
-      stage: dto.stage!,
-      timeplan: dto.timeplan ?? 0,
-      pause: dto.pause,
-      timeFirstStart: dto.timeFirstStart ?? 0,
-      timestart: dto.timestart,
-      timestop: dto.timestop,
-      timeworking: dto.timeworking,
-      chiefBatchId: dto.chiefBatchId,
-      chiefOperationId: dto.chiefOperationId,
-      optimalPart: dto.optimalPart,
-      status: Status(id: dto.status.id, name: dto.status.name),
-      batch: Batch(
-          id: dto.batch.id,
-          number: dto.batch.number,
-          name: dto.batch.name,
-          count: dto.batch.count,
-          code: dto.batch.code,
-          orderId: dto.batch.orderId,
-          technology: dto.batch.technology,
-          // order: dto.batch.order,
-          isready: dto.batch.isready,
-          numberRS: dto.batch.numberRS),
-      order: dto.order,
-      machine: Machine(
-          id: dto.machine!.id,
-          isActivated: dto.machine!.isActivated,
-          inventoryNumber: dto.machine!.inventoryNumber,
-          name: dto.machine!.name,
-          areaId: dto.areaId),
-      modific: dto.modific,
-      listTransfer: listTransfer,
-    );
+    return ConvertDtoModel.convertToOperatorOperations(dto, listTransfer: listTransfer);
   }
 
   Future<void> toggleBrak(String countStr) async {
@@ -574,5 +507,21 @@ class CubitWork extends Cubit<StateWork> {
 
   void toggleVisibleStatus() {
     emit(state.copyWith(visibleStatus: !state.visibleStatus));
+  }
+
+  String getButtonName(List<Transfer>? listTransfer, String statusBtn){
+    if (listTransfer != null){
+        switch (statusBtn){
+        case 'Все': if (listTransfer.isNotEmpty) {return 'Начать переход';} else {return 'Начать обработку';}
+        case 'В работе': return 'Пауза';
+        default: return 'Продолжить';
+      }
+    } else {
+      switch (statusBtn){
+      case 'Все': return 'Начать обработку';
+      case 'В работе': return 'Пауза';
+      default: return 'Продолжить';
+    }
+    }
   }
 }

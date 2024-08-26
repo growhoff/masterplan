@@ -12,6 +12,11 @@ class ChiefOperationTable extends SupabaseTable {
     throw UnimplementedError();
   }
 
+  Future deleteByDistributionStagesIdsList(
+      List<int> distributionStagesIdsList) async {
+    await table.delete().inFilter('id', distributionStagesIdsList);
+  }
+
   @override
   Future<void> insert(Dto dto) async {
     if (dto is ChiefOperationDto) {
@@ -91,8 +96,15 @@ class ChiefOperationTable extends SupabaseTable {
         .limit(limit);
   }
 
-  Future<void> updateSelect({required List<int> chiefBatchId, required int stageId, required int operationId}) async {
-    return await table.update({'is_distributed': false}).inFilter('chief_batch_id', chiefBatchId).eq('stage_id', stageId).eq('operation_id', operationId);
+  Future<void> updateSelect(
+      {required List<int> chiefBatchId,
+      required int stageId,
+      required int operationId}) async {
+    return await table
+        .update({'is_distributed': false})
+        .inFilter('chief_batch_id', chiefBatchId)
+        .eq('stage_id', stageId)
+        .eq('operation_id', operationId);
   }
 
   Future<void> changeIsDistributed(

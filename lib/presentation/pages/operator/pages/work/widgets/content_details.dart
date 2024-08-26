@@ -21,7 +21,9 @@ class ContentDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print(statusBtn);
+    // print('${pageData.operActive!.list.first.operation.id}');
     final astivePage = context.read<CubitWork>().state.activePage;
+    final activeTransfer = context.read<CubitWork>().state.activeTransfer;
     final operation = pageData.operActive;
     // final visibl = context.read<CubitWork>().state.visibleStatus;
     return  operation == null
@@ -61,15 +63,9 @@ class ContentDetail extends StatelessWidget {
                     children: [
                       LineTextSpawn(title: 'Деталь:', text: '${operation.list.first.batch.numberRS} ${operation.list.first.batch.name}'),
                       LineTextSpawn(title: 'Операция:', text: '${operation.list.first.operation.number}.${operation.list.first.operation.name}'),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text('Переходы: '),
-                          ...operation.list.first.listTransfer!.isEmpty 
-                            ? [const Text('отсутствуют')] 
-                            : operation.list.first.listTransfer!.map((e)=>Card(color: Colors.white10, child: Padding(padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),child: Text('${e.code}.${e.name}'),
-                      ))).toList()
-                      ],),
+                      operation.list.first.listTransfer!.isEmpty  
+                        ? LineTextSpawn(title: 'Переходы: отсутствуют', text: '')
+                        : LineTextSpawn(title: 'Переход:', text: '${activeTransfer+1}/${operation.list.first.listTransfer!.length} (${operation.list.first.listTransfer![activeTransfer].number}.${operation.list.first.listTransfer![activeTransfer].name})'),
                       LineTextSpawn(title: 'Количество в опт. партии:', text: '${operation.list.length}'),
                       const SizedBox(height: 2),
                       Row(
@@ -100,7 +96,7 @@ class ContentDetail extends StatelessWidget {
               SizedBox(
                   width: double.maxFinite,
                   child: ElevatedButtonCastom(
-                    text: 'Деталь готова',
+                    text: operation.list.first.listTransfer!.isEmpty ? 'Деталь готова' : 'Переход готов',
                     isActive: (statusBtn == 'Все') || (statusBtn == 'В работе') || (statusBtn == 'Простой'),
                     color: Colors.green,
                     onPressed: () async{
@@ -108,9 +104,12 @@ class ContentDetail extends StatelessWidget {
                       val = await showDialog<String>(context: context,builder: (BuildContext context) => const DialogInputComment());
                       if (val != ''){
                         if (countBr > 0){ 
-                          if (context.mounted) context.read<CubitWork>().setBrak(operation, context.read<CubitTimer>().state.listTick[astivePage], val!, !((statusBtn == 'В работе') || (statusBtn == 'Простой')));
+                          if (context.mounted) context.read<CubitWork>().setBrak(operation, context.read<CubitTimer>().state.listTick[astivePage], val!);
                         } else {
-                          if (context.mounted) context.read<CubitWork>().setReady(operation, context.read<CubitTimer>().state.listTick[astivePage], val!, !((statusBtn == 'В работе') || (statusBtn == 'Простой')));
+                          if (context.mounted) {
+                            if (operation.list.first.listTransfer!.isEmpty) {context.read<CubitWork>().setReady(operation, context.read<CubitTimer>().state.listTick[astivePage], val!);}
+                            else {context.read<CubitWork>().setReadyTransfer(operation, context.read<CubitTimer>().state.listTick[astivePage], val!);}
+                          }
                         }
                         if (context.mounted) context.read<CubitTimer>().refresh(astivePage);
                       }
@@ -153,115 +152,20 @@ class ContentDetail extends StatelessWidget {
                               color: const Color.fromARGB(255, 187, 194, 197),
                               onPressed: () async{
                                 // context.read<CubitWork>().toggleVisibleStatus();
-                                String value = '';
+                                String? value = '';
                                 String? comment = '';
                                 value = await showDialog(context: context, builder: (context) => DialogButtonSet(statusBtn));
-                                if (statusBtn != value && context.mounted) {comment = await showDialog<String>(context: context,builder: (BuildContext context) => const DialogInputComment());}
-                                else{comment = '-';}
-                                if (comment != ''){
-                                  if (context.mounted) await context.read<CubitWork>().setMonitor(value, comment!, statusBtn != value, operation.idPath);
-                                  if (context.mounted) context.read<CubitTimer>().refreshAndStartStop(astivePage, statusBtn != value);
+                                if (value != null){
+                                  if (statusBtn != value && context.mounted) {comment = await showDialog<String>(context: context,builder: (BuildContext context) => const DialogInputComment());}
+                                  else{comment = '-';}
+                                  if (comment != ''){
+                                    if (context.mounted) await context.read<CubitWork>().setMonitor(value, comment!, statusBtn != value, operation.idPath);
+                                    if (context.mounted) context.read<CubitTimer>().refreshAndStartStop(astivePage, statusBtn != value);
+                                  }
                                 }
                               }))),
                 ]
               ),
-              // const SizedBox(height: 30),
-              // Visibility(
-              //   visible: visibl,
-              //   child: Card(
-              //     color: const Color.fromARGB(255, 187, 194, 197),
-              //     child: Padding(
-              //       padding: const EdgeInsets.all(8.0),
-              //       child: Column(
-              //       children: [
-              //         SizedBox(
-              //                 width: double.maxFinite,
-              //                 child: ElevatedButtonCastom(
-              //                     text: 'Переналадка',
-              //                     isActive: (statusBtn == 'Все') || (statusBtn == 'Переналадка'),
-              //                     color: ButtonStatus().getColorStatus('Переналадка'),
-              //                     onPressed: () async{
-              //                       String? val = '';
-              //                       if (statusBtn != 'Переналадка') {val = await showDialog<String>(context: context,builder: (BuildContext context) => const DialogInputComment());}
-              //                       else{val = '-';}
-              //                       if (val != ''){
-              //                         if (context.mounted) context.read<CubitWork>().setMonitor('Переналадка', val!, statusBtn != 'Переналадка', operation.idPath);
-              //                         if (context.mounted) context.read<CubitTimer>().refreshAndStartStop(astivePage, statusBtn != 'Переналадка');
-              //                       }
-              //                       })),
-              //                    const SizedBox(height: 8),
-              //                     SizedBox(
-              //                 width: double.maxFinite,
-              //                 child: ElevatedButtonCastom(
-              //                     text: 'Уборка',
-              //                     isActive: (statusBtn == 'Все') || (statusBtn == 'Уборка'),
-              //                     color: ButtonStatus().getColorStatus('Уборка'),
-              //                     onPressed: () async{
-              //                       String? val = '';
-              //                       if (statusBtn != 'Уборка') {val = await showDialog<String>(context: context,builder: (BuildContext context) => const DialogInputComment());}
-              //                       else{val = '-';}
-              //                       if (val != ''){
-              //                         if (context.mounted) context.read<CubitWork>().setMonitor('Уборка', val!, statusBtn != 'Уборка', operation.idPath);
-              //                         if (context.mounted) context.read<CubitTimer>().refreshAndStartStop(astivePage, statusBtn != 'Уборка');
-              //                       }
-              //                     })),
-                     
-                     
-              //                     const SizedBox(height: 8),
-              //                     SizedBox(
-              //         width: double.maxFinite,
-              //         child: ElevatedButtonCastom(
-              //             text: 'Поломка',
-              //             isActive: (statusBtn == 'Все') || (statusBtn == 'В работе') || (statusBtn == 'Простой') || (statusBtn == 'Поломка'),
-              //             color: ButtonStatus().getColorStatus('Поломка'),
-              //             onPressed: () async{
-              //               String? val = '';
-              //               if (statusBtn != 'Поломка') {val = await showDialog<String>(context: context,builder: (BuildContext context) => const DialogInputComment());}
-              //               else{val = '-';}
-              //               if (val != ''){
-              //                 // if (context.mounted) await context.read<CubitWork>().setError(context.read<CubitTimer>().state.listTick[astivePage], operation.idPath);
-              //                 if (context.mounted) await context.read<CubitWork>().setMonitor('Поломка', val!, statusBtn != 'Поломка', operation.idPath);
-              //                 if (context.mounted) context.read<CubitTimer>().refreshAndStartStop(astivePage, statusBtn != 'Поломка');
-              //               }
-              //             })),
-              //                     const SizedBox(height: 8),
-                    
-              //         SizedBox(
-              //         width: double.maxFinite,
-              //         child: ElevatedButtonCastom(
-              //             text: 'Нет УП',
-              //             isActive: (statusBtn == 'Все') || (statusBtn == 'НетУП'),
-              //             color: ButtonStatus().getColorStatus('НетУП'),
-              //             onPressed: () async{
-              //              String? val = '';
-              //               if (statusBtn != 'НетУП') {val = await showDialog<String>(context: context,builder: (BuildContext context) => const DialogInputComment());}
-              //               else{val = '-';}
-              //               if (val != ''){
-              //                 if (context.mounted) await context.read<CubitWork>().setMonitor('НетУП', val!, statusBtn != 'НетУП', operation.idPath);
-              //                 if (context.mounted) context.read<CubitTimer>().refreshAndStartStop(astivePage, statusBtn != 'НетУП');
-              //               }
-              //             })),
-              //         const SizedBox(height: 8),
-                    
-              //         SizedBox(
-              //         width: double.maxFinite,
-              //         child: ElevatedButtonCastom(
-              //             text: 'Нет чертежа, нет технологии',
-              //             isActive: (statusBtn == 'Все') || (statusBtn == 'НетЧертеж'),
-              //             color: ButtonStatus().getColorStatus('НетЧертеж'),
-              //             onPressed: () async{
-              //              String? val = '';
-              //               if (statusBtn != 'НетЧертеж') {val = await showDialog<String>(context: context,builder: (BuildContext context) => const DialogInputComment());}
-              //               else{val = '-';}
-              //               if (val != ''){
-              //                 if (context.mounted) await context.read<CubitWork>().setMonitor('НетЧертеж', val!, statusBtn != 'НетЧертеж', operation.idPath);
-              //                 if (context.mounted) context.read<CubitTimer>().refreshAndStartStop(astivePage, statusBtn != 'НетЧертеж');
-              //               }
-              //             })),
-              //       ],
-              //      ),
-              //     ),
-              //   )),
             ],
           );
   }

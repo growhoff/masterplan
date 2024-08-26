@@ -2,7 +2,10 @@ import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/chief_distribution_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/unit_dto.dart';
+import 'package:master_plan/data/repositories/supabase/service/chief_distribution_operations_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/chief_operation_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/distribution_stage_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operation_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
@@ -27,6 +30,8 @@ class QueueStagesCubit extends Cubit<QueueStagesState> {
       : super(QueueStagesState(status: QueueStagesPageStatus.initial));
 
   final _distributionStageTable = DistributionStageTable();
+  final _chiefDistributionOperationsTable = ChiefDistributionOperationsTable();
+  final _chiefOperationsTable = ChiefOperationTable();
 
   final _unitTable = UnitTable();
 
@@ -156,9 +161,27 @@ class QueueStagesCubit extends Cubit<QueueStagesState> {
     });
   }
 
+  Future redistribute(StageModel stageModel) async {
+    List<int> chiefDistributionOperationsIdsList = [];
 
-  Future redistribute()async{
+    var fetchedChiefDistributionOperations =
+        await _chiefDistributionOperationsTable.selectByBatchAndStageId(
+            batchId: stageModel.batch.id, stageId: stageModel.stageId);
 
+    for (var chiefDistributionOperation in fetchedChiefDistributionOperations) {
+      final chiefDistributionOperationDto =
+          ChiefDistributionOperationsDTO.fromMap(chiefDistributionOperation);
+      chiefDistributionOperationsIdsList.add(chiefDistributionOperationDto.id);
+    }
+
+     await _chiefDistributionOperationsTable
+      .bulkDelete(chiefDistributionOperationsIdsList);
+
+    await _chiefOperationsTable.deleteByDistributionStagesIdsList(
+        stageModel.distributionStagesIdsList);
+
+    await _distributionStageTable.bulkUpdateUnitOnNullAndStatusToOnDistribution(
+        stageModel.distributionStagesIdsList);
   }
 
   Future initQueueStagesPage() async {

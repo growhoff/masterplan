@@ -158,7 +158,7 @@ class DispatcherDistributionCubit extends Cubit<DispatcherDistributionState> {
 
     await _chiefOperationTable.bulkInsert(dtosList: distributionOperationList);
     await _distributionStageTable
-        .bulkChangeStatusToInWork(stagesIdForChangeStatusList);
+        .bulkChangeStatusToExecute(stagesIdForChangeStatusList);
 
     stagesForDistributionList = [];
   }

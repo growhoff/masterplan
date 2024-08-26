@@ -1,9 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
+import 'package:master_plan/data/repositories/supabase/service/batch_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/chief_batch_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/distribution_stage_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/order_table.dart';
 import 'package:master_plan/domain/model/area_machine.dart';
 import 'package:master_plan/domain/model/group_opt_path.dart';
 import 'package:master_plan/domain/model/name_index.dart';
+import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/domain/model/otp_path_operations.dart';
 import 'package:master_plan/domain/usecase/operation_group.dart';
 import '../model/item_machine.dart';
@@ -13,11 +18,12 @@ class CubitQueueMaster extends Cubit<StateQueueMaster> {
   final int userId;
   final tableOperations = OperatorOperationsTable();
   final List<AreaMachine> listAreaMachine;
-  CubitQueueMaster(this.userId, this.listAreaMachine) : super(const StateQueueMaster()) {
+  final bool isActiveStream;
+  CubitQueueMaster(this.userId, this.listAreaMachine, this.isActiveStream) : super(const StateQueueMaster()) {
     emit(state.copyWith(listAreaMachine: listAreaMachine));
     setListItemDrop();
     tableOperations.table.stream(primaryKey: ['id']).inFilter('machine_id', listAreaMachine[state.activeArea].idListMachine).listen((event) {}).onData((data) async {
-      await getQuere(data);
+      if (isActiveStream) await getQuere(data);
     });
   }
 
@@ -41,12 +47,54 @@ class CubitQueueMaster extends Cubit<StateQueueMaster> {
     emit(state.copyWith(listMachine: listItem, isLoading: false));
   }
 
-  void updateOperationDistribMaster(int id) {
-    tableOperations.updateMasterDistribMasterEqOptimalPart(id);
+  Future<void> updateOperationDistribMaster(int id) async{
+    await tableOperations.updateMasterDistribMasterEqOptimalPart(id);
   }
 
-  void updateOperationReady(int idPath) {
-    tableOperations.updateMasterReadyEqOptimalPart(idPath, userId);
+  Future<void> updateOperationReady(List<OptPathOperations> listOptPath) async{
+    await tableOperations.updateMasterReadyEqOptimalPart(listOptPath.first.idPath, userId);
+    await updateStatusBatchChiefBatchStage(listOptPath);
+  }
+
+  Future<void> updateStatusBatchChiefBatchStage(List<OptPathOperations> listOptPath)async{
+      List<int> listIdBatch = [];
+      List<int> listIdChiefBatch = [];
+      List<int> listIdOrder = [];
+      for (var optPath in listOptPath) {
+        for (var e in optPath.list) {
+          listIdBatch.add(e.batch.id);
+          listIdChiefBatch.add(e.chiefBatchId!);
+          listIdOrder.add(e.batch.orderId!);
+        }
+      }
+      await setBatchStatus(listIdBatch);
+      await setChiefBatchStatus(listIdChiefBatch);
+      await setOrderBatchStatus(listIdOrder);
+      for (var optPath in listOptPath) {
+        await setDistribStageStatus(optPath.list);
+      }
+  }
+
+  Future<void> setBatchStatus(List<int> listIdBatch)async{
+    final batchTable = BatchTable();
+    await batchTable.updateStatusJob(listIdBatch);
+  }
+
+  Future<void> setChiefBatchStatus(List<int> listIdCiefBatch)async{
+    final chiefBatchTable = ChiefBatchTable();
+    await chiefBatchTable.updateStatusJob(listIdCiefBatch);
+  }
+
+  Future<void> setDistribStageStatus(List<OperatorOperations> list)async{
+    final distribStageTable = DistributionStageTable();
+    for (var e in list) {
+      await distribStageTable.updateStatusJob(e.stage.id, e.chiefBatchId!);
+    }
+  }
+
+  Future<void> setOrderBatchStatus(List<int> listIdOrder)async{
+    final orderTable = OrderTable();
+    await orderTable.updateStatusJob(listIdOrder);
   }
 
   void setListItemDrop() {

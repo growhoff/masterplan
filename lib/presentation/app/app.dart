@@ -19,7 +19,6 @@ import 'package:master_plan/presentation/pages/login/login_page.dart';
 import 'package:master_plan/presentation/pages/master/pages/addOperation/add_operation_page.dart';
 import 'package:master_plan/presentation/pages/operator/operator_page.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/work_page.dart';
-import 'package:master_plan/presentation/pages/technologist/archive_page/archive_stages_page.dart';
 import '../../theme/theme.dart';
 import '../pages/chief/chief_lists_pages/chief_staff_list_page/masters_list_page.dart';
 import '../pages/chief/chief_lists_pages/chief_staff_list_page/operators_list_page.dart';
@@ -27,20 +26,21 @@ import '../pages/chief/chief_lists_pages/chief_staff_list_page/selection_staff_p
 import '../pages/chief/chief_analytics_page/operations_statistics_page.dart';
 import '../pages/chief_master/chief_maste_page.dart';
 
-import '../pages/dispatcher/dispatcher_archive_page/dispatcher_archive_transfers_page.dart';
-import '../pages/dispatcher/dispatcher_archive_page/dispatcher_archive_operations_page.dart';
-import '../pages/dispatcher/dispatcher_archive_page/dispatcher_archive_stages_page.dart';
+
 import '../pages/dispatcher/lists_page/chiefs_list_page/chiefs_list_page.dart';
 import '../pages/dispatcher/lists_page/units_list_page/add_unit_page.dart';
 import '../pages/dispatcher/lists_page/units_list_page/edit_unit_page.dart';
 import '../pages/dispatcher/orders_page/batches_page/add_batch_page.dart';
 import '../pages/dispatcher/orders_page/batches_page/batches_page.dart';
 import '../pages/dispatcher/orders_page/batches_page/dispatcher_operations_in_stage_page.dart';
+import '../pages/dispatcher/orders_page/batches_page/edit_batch_page.dart';
 import '../pages/dispatcher/orders_page/edit_order_page.dart';
 import '../pages/dispatcher/orders_page/order_info_page.dart';
 import '../pages/dispatcher/widgets/custom_navbar.dart';
 import '../pages/master/maste_page.dart';
+
 import '../pages/technologist/archive_page/archive_operations_page.dart';
+import '../pages/technologist/archive_page/archive_stages_page.dart';
 import '../pages/technologist/archive_page/archive_transfers_page.dart';
 import '../pages/technologist/widgets/custom_navbar.dart';
 import 'bloc/cubit.dart';
@@ -74,7 +74,6 @@ class MyApp extends StatelessWidget {
               const ChiefMachineInsertPage(),
           '/chiefMachineEditPage': (BuildContext context) =>
               const ChiefMachineEditPage(),
-          // '/chiefStaffListPage': (BuildContext context) => const ChiefStaffListPage(),
           '/selectionStaffPositionPage': (BuildContext context) =>
               const SelectionStaffPositionPage(),
           '/mastersListPage': (BuildContext context) => const MastersListPage(),
@@ -92,21 +91,16 @@ class MyApp extends StatelessWidget {
               const DispatcherCustomNavBar(),
           '/technologistPage': (BuildContext context) =>
               const TechnologistCustomNavBar(),
-          '/archiveStagesPage': (BuildContext context) =>
-              const ArchiveStagesPage(),
-          '/archiveOperationsPage': (BuildContext context) =>
-              const ArchiveOperationsPage(),
-          '/archiveTransferPage': (BuildContext context) =>
-              const ArchiveTransfersPage(),
           '/dispatcherArchiveStagesPage': (BuildContext context) =>
               const DispatcherArchiveStagesPage(),
           '/dispatcherArchiveOperationsPage': (BuildContext context) =>
               const DispatcherArchiveOperationsPage(),
-          '/dispatcherArchiveTransferPage': (BuildContext context) =>
+          "/dispatcherArchiveTransferPage": (BuildContext context) =>
               const DispatcherArchiveTransfersPage(),
           '/chiefMasterPage': (BuildContext context) => const ChiefMasterPage(),
           '/batchesPage': (BuildContext context) => const BatchesPage(),
           '/addBatchPage': (BuildContext context) => const AddBatchPage(),
+          '/editBatchPage': (BuildContext context) => const EditBatchPage(),
           '/addOrderPage': (BuildContext context) => const AddOrderPage(),
           '/dispatcherChiefListPage': (BuildContext context) =>
               const ChiefsListPage(),
@@ -122,12 +116,8 @@ class MyApp extends StatelessWidget {
               const AddUnitPage(),
           '/dispatcherOrderInfoPage': (BuildContext context) =>
               const OrderInfoPage(),
-
-          //'/stagesInBatchInfoPage': (BuildContext context) =>
-          //    const StagesInBatchPage(),
           '/dispatcherOperationsInStagePage': (BuildContext context) =>
               const OperationsInStagePage(),
-
           'editOrderPage': (BuildContext context) => const EditOrderPage(),
         },
         home: const LoginPage(),

@@ -117,7 +117,13 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                             ))
                                   }
                                 : {
-                                    context.read<BatchesCubit>().formOrder(),
+                                    context
+                                        .read<BatchesCubit>()
+                                        .formOrder()
+                                        .then((_) => context
+                                            .read<BatchesCubit>()
+                                            .fetchBatchesInOrder(
+                                                widget.order?.id)),
                                     showDialog(
                                         context: context,
                                         builder: (context) => AlertDialog(
@@ -374,13 +380,13 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                       ),
                                     ),
                                     TableRowInkWell(
-                                      onTap: () =>showDialog(
+                                      onTap: () => showDialog(
                                           context: context,
                                           builder: (ctx) => BatchDialog(
-                                            cubit: context
-                                                .read<BatchesCubit>(),
-                                            batch: state.batchesList[index],
-                                          )),
+                                                cubit: context
+                                                    .read<BatchesCubit>(),
+                                                batch: state.batchesList[index],
+                                              )),
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 5),
@@ -394,10 +400,10 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                       onTap: () => showDialog(
                                           context: context,
                                           builder: (ctx) => BatchDialog(
-                                            cubit: context
-                                                .read<BatchesCubit>(),
-                                            batch: state.batchesList[index],
-                                          )),
+                                                cubit: context
+                                                    .read<BatchesCubit>(),
+                                                batch: state.batchesList[index],
+                                              )),
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 5),
@@ -411,10 +417,10 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                       onTap: () => showDialog(
                                           context: context,
                                           builder: (ctx) => BatchDialog(
-                                            cubit: context
-                                                .read<BatchesCubit>(),
-                                            batch: state.batchesList[index],
-                                          )),
+                                                cubit: context
+                                                    .read<BatchesCubit>(),
+                                                batch: state.batchesList[index],
+                                              )),
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 5),
@@ -428,10 +434,10 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                       onTap: () => showDialog(
                                           context: context,
                                           builder: (ctx) => BatchDialog(
-                                            cubit: context
-                                                .read<BatchesCubit>(),
-                                            batch: state.batchesList[index],
-                                          )),
+                                                cubit: context
+                                                    .read<BatchesCubit>(),
+                                                batch: state.batchesList[index],
+                                              )),
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 5),
@@ -445,10 +451,10 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                       onTap: () => showDialog(
                                           context: context,
                                           builder: (ctx) => BatchDialog(
-                                            cubit: context
-                                                .read<BatchesCubit>(),
-                                            batch: state.batchesList[index],
-                                          )),
+                                                cubit: context
+                                                    .read<BatchesCubit>(),
+                                                batch: state.batchesList[index],
+                                              )),
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 5),
@@ -462,10 +468,10 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                       onTap: () => showDialog(
                                           context: context,
                                           builder: (ctx) => BatchDialog(
-                                            cubit: context
-                                                .read<BatchesCubit>(),
-                                            batch: state.batchesList[index],
-                                          )),
+                                                cubit: context
+                                                    .read<BatchesCubit>(),
+                                                batch: state.batchesList[index],
+                                              )),
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 5),
@@ -479,10 +485,10 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                       onTap: () => showDialog(
                                           context: context,
                                           builder: (ctx) => BatchDialog(
-                                            cubit: context
-                                                .read<BatchesCubit>(),
-                                            batch: state.batchesList[index],
-                                          )),
+                                                cubit: context
+                                                    .read<BatchesCubit>(),
+                                                batch: state.batchesList[index],
+                                              )),
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 5),
@@ -493,13 +499,13 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                       ),
                                     ),
                                     TableRowInkWell(
-                                      onTap: () =>showDialog(
+                                      onTap: () => showDialog(
                                           context: context,
                                           builder: (ctx) => BatchDialog(
-                                            cubit: context
-                                                .read<BatchesCubit>(),
-                                            batch: state.batchesList[index],
-                                          )),
+                                                cubit: context
+                                                    .read<BatchesCubit>(),
+                                                batch: state.batchesList[index],
+                                              )),
                                       child: Container(
                                         alignment: Alignment.center,
                                         padding: const EdgeInsets.symmetric(
@@ -514,10 +520,10 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                       onTap: () => showDialog(
                                           context: context,
                                           builder: (ctx) => BatchDialog(
-                                            cubit: context
-                                                .read<BatchesCubit>(),
-                                            batch: state.batchesList[index],
-                                          )),
+                                                cubit: context
+                                                    .read<BatchesCubit>(),
+                                                batch: state.batchesList[index],
+                                              )),
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 5),
@@ -531,10 +537,10 @@ class _BatchesPageViewState extends State<BatchesPageView> {
                                       onTap: () => showDialog(
                                           context: context,
                                           builder: (ctx) => BatchDialog(
-                                            cubit: context
-                                                .read<BatchesCubit>(),
-                                            batch: state.batchesList[index],
-                                          )),
+                                                cubit: context
+                                                    .read<BatchesCubit>(),
+                                                batch: state.batchesList[index],
+                                              )),
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 5),

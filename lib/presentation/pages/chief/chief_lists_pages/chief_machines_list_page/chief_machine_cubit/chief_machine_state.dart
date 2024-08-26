@@ -10,6 +10,7 @@ final class ChiefMachineState extends Equatable {
     this.listControl = const [],
     this.listType = const [],
     this.listShiftSch = const [],
+    this.activeView = 0,
     });
 
   final List<Machine> machinesList;
@@ -20,6 +21,7 @@ final class ChiefMachineState extends Equatable {
   final List<NameIndex> listControl;
   final List<NameIndex> listType;
   final List<NameIndex> listShiftSch;
+  final int activeView;
 
   ChiefMachineState copyWith({
     List<Machine>? machinesList,
@@ -30,6 +32,7 @@ final class ChiefMachineState extends Equatable {
     List<NameIndex>? listControl,
     List<NameIndex>? listType,
     List<NameIndex>? listShiftSch,
+    int? activeView,
     }){
     return ChiefMachineState(
       machinesList: machinesList ?? this.machinesList,
@@ -40,9 +43,10 @@ final class ChiefMachineState extends Equatable {
       listControl: listControl ?? this.listControl,
       listType: listType ?? this.listType,
       listShiftSch: listShiftSch ?? this.listShiftSch,
+      activeView: activeView ?? this.activeView,
     );
   }
 
   @override
-  List<Object?> get props => [machinesList, areasList, areasNamesList];
+  List<Object?> get props => [machinesList, areasList, areasNamesList, activeView];
 }
