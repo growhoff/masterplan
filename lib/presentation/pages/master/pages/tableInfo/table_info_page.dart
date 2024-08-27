@@ -34,7 +34,7 @@ class TableInfoContent extends StatelessWidget {
               children: [
                 Text('Деталь: ${oper.first.batch.numberRS} ${oper.first.batch.name}'),
                 const SizedBox(height: 8),
-                Text('Этап: ${oper.first.batch.order?.number} ${oper.first.stage.name}'),
+                Text('Этап: ${oper.first.batch.order?.number}.${oper.first.batch.number}.${oper.first.stage.number} ${oper.first.stage.name}'),
                 const SizedBox(height: 8),
                 Text('Количество: ${oper.length}'),
                 const SizedBox(height: 8),

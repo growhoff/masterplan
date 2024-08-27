@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/monitoring_machine.dart';
 import 'package:master_plan/domain/usecase/time_converter.dart';
 import 'package:master_plan/presentation/pages/master/pages/monitoring/widgets/dialog_info_status.dart';
@@ -7,8 +8,9 @@ import '../bloc/cubit.dart';
 
 
 class StatusItem extends StatelessWidget {
-  const StatusItem({super.key, required this.item});
+  const StatusItem(this.machine, {super.key, required this.item});
   final MonitoringMachine item;
+  final Machine machine;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -36,7 +38,7 @@ class StatusItem extends StatelessWidget {
                       Expanded(flex: 2,child: Text(TimeConverter().convertTimeZone(item.timeStart))),
                       Expanded(flex: 2,child: Text(TimeConverter().convertTimeZone(item.timeStop))),
                       Expanded(flex: 2,child: Text(TimeConverter().convertTimeFromSecondsHHMMSS(item.timeWorking!))),
-                      Expanded(child: Text(TimeConverter().convertIntTimeToPrecent(item.timeWorking!))),
+                      Expanded(child: Text(TimeConverter().convertIntTimeToPrecent(item.timeWorking!, machine.shiftSchedule!.timeChange * 3600))),
                 ],
               ),
               // const SizedBox(height: 8),

@@ -95,8 +95,8 @@ class TimeConverter {
     }
   }
 
-  String convertIntTimeToPrecent(int time){
-    int precent = ((time / 43200) * 100).round();
+  String convertIntTimeToPrecent(int time, int timeMachine){
+    int precent = ((time / timeMachine) * 100).round();
     if (precent > 100) {return '~';} else {return '$precent %';}
   }
 }

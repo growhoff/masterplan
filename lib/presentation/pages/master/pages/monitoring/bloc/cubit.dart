@@ -8,6 +8,7 @@ import 'package:master_plan/domain/model/area_machine.dart';
 import 'package:master_plan/domain/model/monitoring_machine.dart';
 import 'package:master_plan/domain/model/name_index.dart';
 import 'package:master_plan/domain/usecase/convert_dto_model.dart';
+import 'package:master_plan/domain/usecase/machine_change.dart';
 import 'package:master_plan/domain/usecase/monitoring_time_list.dart';
 import 'package:master_plan/domain/usecase/time_converter.dart';
 import 'package:master_plan/presentation/pages/master/pages/monitoring/model/item_machine_monitor.dart';
@@ -68,14 +69,14 @@ class CubitMonitoring extends Cubit<StateMonitoring> {
   Future<void> getListMonitorChange(List<MonitoringMachine> listStatus, int machineId) async{
     List<MonitoringMachine> listStatusNew = [];
       if (listStatus.isNotEmpty) {
-        listStatusNew = MonitoringTimeList(listTime: [8,20]).convertTimeStatusLast(listStatus, state.change);
+        listStatusNew = MonitoringTimeList(listTime: MachineChange.getListChange(listAreaMachine[state.activeArea].listMachine[state.activeMachine])).convertTimeStatusLast(listStatus, state.change);
       } else {
         final quere = await tableMonitoring.selectStatusLastMachineDate(machineId, state.days);
         if (quere != null){
           final lastStatusItem = ConvertDtoModel.converterToMonitorMachine(MonitoringMachineDTO.fromMap(quere));
-          listStatusNew = MonitoringTimeList(listTime: [8,20]).convertTimeStatusLastItem(lastStatusItem, state.change, state.days);
+          listStatusNew = MonitoringTimeList(listTime: MachineChange.getListChange(listAreaMachine[state.activeArea].listMachine[state.activeMachine])).convertTimeStatusLastItem(lastStatusItem, state.change, state.days);
         } else {
-          listStatusNew = MonitoringTimeList(listTime: [8,20]).convertTimeStatusNull(state.change, state.days);
+          listStatusNew = MonitoringTimeList(listTime: MachineChange.getListChange(listAreaMachine[state.activeArea].listMachine[state.activeMachine])).convertTimeStatusNull(state.change, state.days);
         }
       }
       final statusActive = getActiveStatus(listStatusNew);

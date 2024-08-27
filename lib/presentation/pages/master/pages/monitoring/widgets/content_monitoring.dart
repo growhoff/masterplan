@@ -66,7 +66,7 @@ class ContentListWidgetMaster extends StatelessWidget {
       const SizedBox(height: 8),
       const Divider(),
       const SizedBox(height: 8),
-      StatusLine(listStatusActive),
+      StatusLine(listStatusActive, monitor.machine),
       const SizedBox(height: 8),
       const Divider(),
       const SizedBox(height: 8),
@@ -92,7 +92,7 @@ class ContentListWidgetMaster extends StatelessWidget {
         : ListView.separated(
             shrinkWrap: true,
             itemCount: listStatusActive.length,
-            itemBuilder: (context, index) => StatusItem(item: listStatusActive[index]),
+            itemBuilder: (context, index) => StatusItem(monitor.machine, item: listStatusActive[index]),
             separatorBuilder: (context, index) => const SizedBox(height: 3),
           )
       ],

@@ -373,7 +373,7 @@ class CubitWork extends Cubit<StateWork> {
           firstStartBatch: DateTime.now().millisecondsSinceEpoch,
           operationId: idPath,
           date: DateTime.now(),
-          changeId: ChangeLogic(count: 2, firstTime: 8).getChange(),
+          changeId: ChangeLogic(count: zShiftsDistributionList![state.activePage].machine.shiftSchedule!.count, firstTime: zShiftsDistributionList![state.activePage].machine.shiftSchedule!.timeFirst).getChange(),
           timeStart: DateTime.now().millisecondsSinceEpoch,
           timeStop: 0,
           statusMachineId: 1,
@@ -413,7 +413,7 @@ class CubitWork extends Cubit<StateWork> {
     if (lastStatusMap != null) {
       final dtoLast = MonitoringMachineDTO.fromMap(lastStatusMap);
       print(lastStatusMap.toString());
-      await ChangeLogic(count: 2, firstTime: 8)
+      await ChangeLogic(count: zShiftsDistributionList![state.activePage].machine.shiftSchedule!.count, firstTime: zShiftsDistributionList![state.activePage].machine.shiftSchedule!.timeFirst)
           .setDateNextSt2(dtoLast, userIds, optPathOper, comment);
     }
   }
@@ -428,7 +428,7 @@ class CubitWork extends Cubit<StateWork> {
       if (dtoLast.statusMachineId == 2) {
         return 2;
       } else {
-        await ChangeLogic(count: 2, firstTime: 8)
+        await ChangeLogic(count: zShiftsDistributionList![state.activePage].machine.shiftSchedule!.count, firstTime: zShiftsDistributionList![state.activePage].machine.shiftSchedule!.timeFirst)
             .setDateNextSt2(dtoLast, userIds, optPathOper, comment);
         return 0;
       }
@@ -444,7 +444,7 @@ class CubitWork extends Cubit<StateWork> {
         id: 0,
         operationId: optPathOper,
         date: DateTime.now(),
-        changeId: ChangeLogic(count: 2, firstTime: 8).getChange(),
+        changeId: ChangeLogic(count: zShiftsDistributionList![state.activePage].machine.shiftSchedule!.count, firstTime: zShiftsDistributionList![state.activePage].machine.shiftSchedule!.timeFirst).getChange(),
         timeStart: DateTime.now().millisecondsSinceEpoch,
         timeStop: 0,
         statusMachineId: idStatus,
@@ -460,7 +460,7 @@ class CubitWork extends Cubit<StateWork> {
         id: 0,
         operationId: -1,
         date: DateTime.now(),
-        changeId: ChangeLogic(count: 2, firstTime: 8).getChange(),
+        changeId: ChangeLogic(count: zShiftsDistributionList![state.activePage].machine.shiftSchedule!.count, firstTime: zShiftsDistributionList![state.activePage].machine.shiftSchedule!.timeFirst).getChange(),
         timeStart: DateTime.now().millisecondsSinceEpoch,
         timeStop: 0,
         statusMachineId: 2,

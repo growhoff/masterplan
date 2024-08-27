@@ -8,7 +8,7 @@ import '../dto/monitoring_machine_dto.dart';
 class MonitoringMachineTable extends SupabaseTable {
   final table = Supabase.instance.client.from('z_monitoring_machine');
   static const userStaff = '*, z_position(*), z_company(*)';
-  static const userMonitor = '*, z_status_machine(*), z_staff($userStaff), z_machine(*), z_batch(*)';
+  static const userMonitor = '*, z_status_machine(*), z_staff($userStaff), z_machine(*, z_shift_schedule(*)), z_batch(*)';
   @override
   Future<void> delete(int id) {
     return table.delete().eq('id', id);

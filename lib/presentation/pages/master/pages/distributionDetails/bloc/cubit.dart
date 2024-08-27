@@ -164,7 +164,7 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
     }
     return DistribItem(
         id: operOperat.first.id,
-        stageNumber: operOperat.first.stage!.number,
+        stageNumber: '${operOperat.first.batch.order?.number}.${operOperat.first.batch.number}.${operOperat.first.stage!.number}',
         statusId: operOperat.first.status.id,
         detailNumber: '${operOperat.first.batch.number} ${operOperat.first.batch.name}',
         operationName: '${operOperat.first.operation.number} ${operOperat.first.operation.name}',

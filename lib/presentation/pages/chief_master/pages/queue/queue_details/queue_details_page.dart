@@ -1,10 +1,7 @@
-
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
-import 'package:master_plan/presentation/pages/chief_master/pages/queue/queue_details/widgets/dialog_saver.dart';
+import './widgets/dialog_saver.dart';
 import './bloc/state.dart';
 import './bloc/cubit.dart';
 import './widgets/element_bar.dart';

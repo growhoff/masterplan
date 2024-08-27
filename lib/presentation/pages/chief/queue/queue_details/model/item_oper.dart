@@ -1,0 +1,18 @@
+// // ignore_for_file: public_member_api_docs, sort_constructors_first
+// // import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
+// import 'package:master_plan/domain/model/operator_operations.dart';
+
+// class ItemOper1 {
+//   final List<OperatorOperations> list;
+//   final int idPath;
+//   final int order;
+//   final int time;
+//   final bool active;
+//   ItemOper({
+//     required this.list,
+//     required this.idPath,
+//     required this.order,
+//     required this.time,
+//     required this.active,
+//   });
+// }

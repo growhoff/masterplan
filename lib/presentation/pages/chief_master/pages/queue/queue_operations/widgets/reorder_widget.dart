@@ -36,7 +36,7 @@ class Reorder extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               // Expanded(child: ReorderableIconWidget(index)),
-              Expanded(flex: 3, child: Text('${list[index].listOperat.first.batch.order?.number}', textAlign: TextAlign.center)),
+              Expanded(flex: 3, child: Text('${list[index].listOperat.first.batch.order?.number}.${list[index].listOperat.first.batch.number}.${list[index].listOperat.first.stage.number}', textAlign: TextAlign.center)),
               Expanded(flex: 3, child: Text(list[index].detailNumber, textAlign: TextAlign.center)),
               Expanded(flex: 4, child: Text(list[index].operationName, textAlign: TextAlign.center)),
               Expanded(flex: 2, child: Text(list[index].timeShKal.toStringAsFixed(2), textAlign: TextAlign.center)),

@@ -7,7 +7,7 @@ class ShiftsDistributionTable extends SupabaseTable{
 
   final table = Supabase.instance.client.from('z_shifts_distribution2');
   static const selectStaff = '*, z_position(*), z_company(*)';
-  static const selectShifts = '*, z_staff($selectStaff), z_change(*), z_machine(*)';
+  static const selectShifts = '*, z_staff($selectStaff), z_change(*), z_machine(*, z_shift_schedule(*))';
   @override
   Future<void> delete(int id) async{
     await table.delete().eq('id', id);

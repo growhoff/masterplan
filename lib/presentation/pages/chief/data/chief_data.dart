@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:master_plan/presentation/pages/chief/chief_analytics_page/analytics_page.dart';
 import 'package:master_plan/presentation/pages/chief/monitoring/monitoring_page.dart';
-
 import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_lists_page.dart';
-import 'package:master_plan/presentation/pages/chief/queue_operations/queue_operations_page.dart';
+import 'package:master_plan/presentation/pages/chief/queue/queue_page.dart';
 import 'package:master_plan/presentation/pages/chief/stages_in_unit_page/stages_in_unit_page.dart';
 
 import '../model/tab_bar_model.dart';
@@ -36,7 +34,7 @@ abstract class DataChief {
     TabBarModel(
         title: 'Очередь операций',
         actions: [],
-        page: const QueueOperatPageMasterChief(),
+        page: const QueuePage(),
         icon: Icons.queue),
     TabBarModel(
         title: 'Аналитика',

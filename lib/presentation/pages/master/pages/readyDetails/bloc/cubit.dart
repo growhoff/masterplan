@@ -262,6 +262,7 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
       listBatchToStage.add(BatchToStage(chiefBatchId: keyBatch, listDto: listDto));
     });
     List<int> listStageId = [];
+    List<int> listIdOrder = [];
     List<ChiefOperationDto> lastIdStage = [];
     List<ChiefOperationDto> lastIdBatch = [];
     for (var i = 0; i < listOperatorOperations.length; i++) {
@@ -272,6 +273,7 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
             if (element.operationId == listOperatorOperations[i].operation.id) {
               lastIdStage.add(element);
               listStageId.add(listOperatorOperations[i].stage.id);
+              listIdOrder.add(listOperatorOperations[i].batch.orderId!);
             }
           }
           //проверка на конец
@@ -279,14 +281,24 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
         }
       }
     }
+    final orderTable = OrderTable();
+    final batchTable = BatchTable();
+
     List<int> listStagechiefBatchIdLast = [];
     for (var stage in lastIdStage) {listStagechiefBatchIdLast.add(stage.chiefBatchId);}
     for (var i = 0; i < listStageId.length; i++) {
       await tableStage.updateStatusReady(listStageId[i], listStagechiefBatchIdLast[i]);
     }
+    
     List<int> listChiefBatchLast = [];
-    for (var batch in lastIdBatch) {listChiefBatchLast.add(batch.chiefBatchId);}
+    List<int> listIdBatch = [];
+    for (var batch in lastIdBatch) {
+      listChiefBatchLast.add(batch.chiefBatchId);
+      listIdBatch.add(batch.id);
+    }
     await chiefBatchTable.updateStatusReady(listChiefBatchLast);
+    await batchTable.updateStatusReady(listIdBatch);
+    await orderTable.updateStatusReady(listIdOrder);
   }
 
   Future<void> updateStatusBatchChiefBatchStage(List<OperatorOperations> listOperatorOperations, bool isReady)async{
@@ -298,35 +310,35 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
         listIdChiefBatch.add(e.chiefBatchId!);
         listIdOrder.add(e.batch.orderId!);
       }
-      await setBatchStatus(listIdBatch, isReady);
+      // await setBatchStatus(listIdBatch, isReady);
       await setChiefBatchStatus(listIdChiefBatch, isReady);
       await setDistribStageStatus(listOperatorOperations, isReady);
-      await setOrderBatchStatus(listIdOrder, isReady);
+      // await setOrderBatchStatus(listIdOrder, isReady);
   }
 
-  Future<void> setBatchStatus(List<int> listIdBatch, bool isReady)async{
-    final batchTable = BatchTable();
-    if (isReady) {await batchTable.updateStatusReady(listIdBatch);}
-    // else {await batchTable.updateStatusBrak(listIdBatch);}
-  }
+  // Future<void> setBatchStatus(List<int> listIdBatch, bool isReady)async{
+  //   final batchTable = BatchTable();
+  //   if (isReady) {await batchTable.updateStatusReady(listIdBatch);}
+  //   // else {await batchTable.updateStatusBrak(listIdBatch);}
+  // }
 
   Future<void> setChiefBatchStatus(List<int> listIdCiefBatch, bool isReady)async{
     final chiefBatchTable = ChiefBatchTable();
-    if (isReady) {await chiefBatchTable.updateStatusReady(listIdCiefBatch);}
-    else {await chiefBatchTable.updateStatusBrak(listIdCiefBatch);}
+    if (!isReady) {await chiefBatchTable.updateStatusBrak(listIdCiefBatch);}
+    //{await chiefBatchTable.updateStatusReady(listIdCiefBatch);}
   }
 
   Future<void> setDistribStageStatus(List<OperatorOperations> list, bool isReady)async{
     final distribStageTable = DistributionStageTable();
     for (var e in list) {
-      if (isReady) {await distribStageTable.updateStatusReady(e.stage.id, e.chiefBatchId!);}
-      else {await distribStageTable.updateStatusBrak(e.stage.id, e.chiefBatchId!);}
+      if (!isReady){await distribStageTable.updateStatusBrak(e.stage.id, e.chiefBatchId!);}
+      //  {await distribStageTable.updateStatusReady(e.stage.id, e.chiefBatchId!);}
     }
   }
 
-  Future<void> setOrderBatchStatus(List<int> listIdOrder, bool isReady)async{
-    final orderTable = OrderTable();
-    if (isReady) {await orderTable.updateStatusReady(listIdOrder);}
-    // else {await orderTable.updateStatusBrak(listIdOrder);}
-  }
+  // Future<void> setOrderBatchStatus(List<int> listIdOrder, bool isReady)async{
+  //   final orderTable = OrderTable();
+  //   if (isReady) {await orderTable.updateStatusReady(listIdOrder);}
+  //   // else {await orderTable.updateStatusBrak(listIdOrder);}
+  // }
 }

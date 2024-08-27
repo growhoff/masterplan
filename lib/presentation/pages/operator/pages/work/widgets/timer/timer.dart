@@ -48,11 +48,14 @@ class Time extends StatelessWidget {
                             onPressed: () =>  Navigator.push(context, MaterialPageRoute(builder: (context) => QueuePage(dataPage: stateWork.pageData[activePage]))), 
                             icon: Icons.list,
                           ),
-                          const SizedBox(width: 20),
-                          ButtonCircleIcon(
-                            isActive: true,
-                            onPressed: () =>  Navigator.push(context, MaterialPageRoute(builder: (context) => TransferPage(operation: stateWork.pageData[activePage].operActive))), 
-                            icon: Icons.transfer_within_a_station,
+                          SizedBox(width: operActive.list.first.listTransfer!.isNotEmpty ? 20: 0),
+                          Visibility(
+                            visible: operActive.list.first.listTransfer!.isNotEmpty,
+                            child: ButtonCircleIcon(
+                              isActive: true,
+                              onPressed: () =>  Navigator.push(context, MaterialPageRoute(builder: (context) => TransferPage(operation: stateWork.pageData[activePage].operActive, stateWork.activeTransfer))), 
+                              icon: Icons.transfer_within_a_station,
+                            ),
                           ),
                         ],
                       ),

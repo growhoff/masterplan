@@ -1,7 +1,6 @@
 import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/staff_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/status_machine_dto.dart';
-// import 'package:master_plan/data/repositories/supabase/dto/user_dto.dart';
 import 'package:master_plan/domain/model/monitoring_machine.dart';
 import 'package:master_plan/domain/usecase/change_logic.dart';
 import 'package:master_plan/domain/usecase/time_converter.dart';
@@ -224,7 +223,7 @@ class MonitoringTimeList{
     List<MonitoringMachine> newList = [];
       final dateNow = DateTime.now();
       final dateNowSec = DateTime.now().millisecondsSinceEpoch;
-      final nowChange = ChangeLogic(count: 2, firstTime: 8).getChange();
+      final nowChange = ChangeLogic(count: listStatus.machine!.shiftSchedule!.count, firstTime: listStatus.machine!.shiftSchedule!.timeFirst).getChange();
 
       int dateStartCh = getDateTimeSinceEpoch(dateNow, change == 1 ? listTime[change - 1] : listTime[change-1], 0);
       int dateStopCh = getDateTimeSinceEpoch(dateNow, change == 1 ? listTime[change] : listTime[change - 2], change == 1 ? 0 : 1);

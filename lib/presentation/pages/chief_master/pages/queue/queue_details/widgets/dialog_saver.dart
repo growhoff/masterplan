@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:master_plan/presentation/pages/chief_master/pages/queue/queue_details/bloc/cubit.dart';
-// import 'package:master_plan/presentation/pages/master/bloc/cubit.dart';
+import '../bloc/cubit.dart';
 
 class DialogSaver extends StatelessWidget {
   const DialogSaver({super.key});

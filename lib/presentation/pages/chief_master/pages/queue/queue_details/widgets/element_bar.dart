@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:master_plan/presentation/pages/chief_master/pages/queue/queue_details/bloc/cubit.dart';
-import 'package:master_plan/presentation/pages/chief_master/pages/queue/queue_details/bloc/state.dart';
+import '../bloc/cubit.dart';
+import '../bloc/state.dart';
 import '../widgets/drop_area.dart';
 import '../widgets/drop_machine.dart';
 import 'contetn_queue.dart';
