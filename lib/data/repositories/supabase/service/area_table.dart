@@ -55,6 +55,10 @@ class AreaTable extends SupabaseTable {
     return table.select().eq('unit_id', unitId).order('name', ascending: true);
   }
 
+  Future<List<Map<String, dynamic>>> selectUnitIdList(List<int> unitId) {
+    return table.select().inFilter('unit_id', unitId).order('name', ascending: true);
+  }
+
   Future<List<Map<String, dynamic>>> selectByUnitIdList(
       List<int> unitIdList) async {
     return await table.select().inFilter('unit_id', unitIdList);

@@ -7,18 +7,15 @@ import 'package:master_plan/data/repositories/supabase/dto/shift_schedule_dto.da
 import 'package:master_plan/data/repositories/supabase/dto/shifts_distribution_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/staff_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/type_machine_dto.dart';
-// import 'package:master_plan/data/repositories/supabase/dto/view_machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/area_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/control_machine_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/machine_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/position_staff_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/shift_schedule_table.dart';
-
 import 'package:master_plan/data/repositories/supabase/service/shifts_distribution.dart';
 import 'package:master_plan/data/repositories/supabase/service/staff_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/type_machine_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/version_table.dart';
-// import 'package:master_plan/data/repositories/supabase/service/view_machine_table.dart';
 import 'package:master_plan/domain/model/area.dart';
 import 'package:master_plan/domain/model/area_machine.dart';
 import 'package:master_plan/domain/model/machine.dart';
@@ -60,17 +57,14 @@ class CubitMain extends Cubit<StateMain> {
           //начальник
             case 2:
               await fetchUnitId(state.user!.id);
-              List<int> listAreaId = await getAreaForStaff(query['id']);
-              await getMachineToUnit(listAreaId);
+              // List<int> listAreaId = await getAreaForStaff(query['id']);
+              await getMachineToUnit();
               await getListsMachine();
               break;
           //мастер
             case 3:
               await getMachineToArea(state.user!.area!);
-              // await getMachineToUnit([state.user!.area!.id]);
               await fetchAreasList(state.user!.id);
-              // print(AreasListService.instance.areasIdsList);
-              // await getOperators(); v21 пока убрал
               final staffModel = Staff.fromDTO(StaffDTO.fromMap(query));
               emit(state.copyWith(staff: staffModel));
               print('Master staffId : ${state.staff?.id}');
@@ -82,9 +76,8 @@ class CubitMain extends Cubit<StateMain> {
           //начальник мастер
             case 7:
               await fetchUnitId(query['id']);
-              List<int> listAreaId = await getAreaForStaff(query['id']);
-              await getMachineToUnit(listAreaId);
-              // await getOperatorsToUnit();
+              // List<int> listAreaId = await getAreaForStaff(query['id']);
+              await getMachineToUnit();
               break;
           //ИНАЧЕ
             default:
@@ -152,22 +145,22 @@ class CubitMain extends Cubit<StateMain> {
     final list = await getStaffPosition(dto.id);
     Unit? unit;
     Area? area;
+    List<int> idArea = [];
+    List<int> idUnit = [];
     for (var element in list) {
-      // if (element.positionId != 7) {
-
-      // }
+      if (element.positionId == 2) {idUnit.add(element.unitId!);}
+      if (element.positionId == 3) {idArea.add(element.areaId!);}
       unit = Unit.fromDTO(element.unit!);
       area = Area.fromDTO(element.area!);
     }
     final userDto = User.fromDTO(dto, unit, area);
-    emit(state.copyWith(user: userDto));
+    emit(state.copyWith(user: userDto, unitChiefMaster: idUnit, areaChiefMaster: idArea));
   }
 
   Future fetchUnitId(int staffId) async {
     //
     final positionStaffTable = PositionStaffTable();
-    var fetchedList =
-    await positionStaffTable.selectByStaffId(staffId: staffId);
+    var fetchedList = await positionStaffTable.selectByStaffId(staffId: staffId);
     final positionStaffDto = PositionStaffDTO.fromMap(fetchedList.first);
     print('posStaffDto: ${positionStaffDto.unitId}');
     final int unitId = positionStaffDto.unitId ?? 1;
@@ -204,9 +197,9 @@ class CubitMain extends Cubit<StateMain> {
   }
 
   // chief && chief-master
-  Future<void> getMachineToUnit(List<int> listAreaId) async {
+  Future<void> getMachineToUnit() async {
     final areaTable = AreaTable();
-    final queruArea = await areaTable.selectUnitId(state.user!.unit!.id);
+    final queruArea = await areaTable.selectUnitIdList(state.unitChiefMaster);
     List<int> listIdArea = [];
     List<Area> listArea = [];
     for (var maps in queruArea) {
@@ -238,20 +231,37 @@ class CubitMain extends Cubit<StateMain> {
           listMachine: value,
           idListMachine: value.map((e) => e.id).toList()));
     });
-    List<AreaMachine> listAreaMachineUser = [];
+    List<AreaMachine> listAreaMachinChief = [];
     for (var areaMachine in listAreaMachine) {
-      for (var id in listAreaId) {
-        if (areaMachine.area.id == id) listAreaMachineUser.add(areaMachine);
+      for (var id in state.areaChiefMaster) {
+        if (areaMachine.area.id == id) listAreaMachinChief.add(areaMachine);
       }
     }
 
+    //area master
+    final machineQueryArea = await machineTable.selectMachineToAreaList(state.areaChiefMaster);
+    List<Machine> listMachineDto = [];
+    for (var machine in machineQueryArea) {
+      final model = MachineDTO.fromMap(machine);
+      listMachineDto.add(ConvertDtoModel.converterToMachine(model));
+    }
+    List<AreaMachine> listAreaMachineMaster = [];
+    var newMapAreaMachMaster = groupBy(listMachineDto, (el) => el.areaId);
+    newMapAreaMachMaster.forEach((key, value) {
+      listAreaMachineMaster.add(AreaMachine(
+          area: value.first.area!,
+          listMachine: value,
+          idListMachine: value.map((e) => e.id).toList()));
+    });
+
     emit(state.copyWith(
       machineList: listMachine,
-      machineIdList: listId,
-      listAreaId: listIdArea,
+      // machineIdList: listId,
+      // listAreaId: listIdArea,
       listArea: listArea,
       listAreaMachine: listAreaMachine,
-      listAreaMachineUser: listAreaMachineUser,
+      listAreaMachineChief: listAreaMachinChief,
+      listAreaMachineMaster: listAreaMachineMaster,
     ));
   }
 

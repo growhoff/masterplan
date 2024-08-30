@@ -6,7 +6,8 @@ import 'package:master_plan/data/repositories/supabase/service/chief_operation_t
 import 'package:master_plan/data/repositories/supabase/service/distribution_stage_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/order_table.dart';
-import 'package:master_plan/domain/model/machine.dart';
+import 'package:master_plan/domain/model/area_machine.dart';
+import 'package:master_plan/domain/model/name_index.dart';
 import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/domain/usecase/convert_dto_model.dart';
 import 'package:master_plan/presentation/pages/master/pages/readyDetails/model/batch_to_stage.dart';
@@ -19,15 +20,15 @@ import 'state.dart';
 import 'package:collection/collection.dart';
 
 class CubitReadyDetails extends Cubit<StateReadyDetails> {
-  final List<Machine>? machineList;
-  final List<int> machineIdList;
   final tableOperations = OperatorOperationsTable();
+  final List<AreaMachine> listAreaMachine;
 
-  CubitReadyDetails(this.machineList, this.machineIdList)
-      : super(const StateReadyDetails()) {
+  CubitReadyDetails(this.listAreaMachine) : super(const StateReadyDetails()) {
+    emit(state.copyWith(listAreaMachine: listAreaMachine));
+    setListItemDrop();
     tableOperations.table
         .stream(primaryKey: ['id'])
-        .inFilter('machine_id', machineIdList)
+        .inFilter('machine_id', listAreaMachine[state.activeArea].idListMachine)
         .listen((event) {})
         .onData((data) async {
           if (state.isActiveStream) await getQuere(data);
@@ -64,7 +65,7 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
 
     List<ItemMachine> listMachine = [];
     List<List<StatusNext>> statusList = [];
-    for (var machine in machineList!) {
+    for (var machine in listAreaMachine[state.activeArea].listMachine) {
       int timeWorking = 0;
       List<ItemOperReady> list = [];
       List<StatusNext> intList = [];
@@ -82,15 +83,39 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
     emit(state.copyWith(listMachine: listMachine, statusList: statusList, isLoading: false));
   }
 
+  void setListItemDrop() {
+    List<NameIndex> listItemArea = [];
+    List<NameIndex> listItemMachine = [];
+    if (state.listAreaMachine.isNotEmpty) {
+      for (var i = 0; i < state.listAreaMachine.length; i++) {
+        listItemArea.add(NameIndex(name: state.listAreaMachine[i].area.name, index: i));
+      }
 
-  void setActivePage(int index) {
-    emit(state.copyWith(activePage: index));
+      if (state.listAreaMachine[state.activeArea].listMachine.isNotEmpty) {
+        var listMachine = state.listAreaMachine[state.activeArea].listMachine;
+        for (var i = 0; i < listMachine.length; i++) {
+          listItemMachine.add(NameIndex(name: listMachine[i].name, index: i));
+        }
+      }
+    }
+    emit(state.copyWith(listItemArea: listItemArea, listItemMachine: listItemMachine));
+  }
+
+  void setActiveMachine(int index) {
+    emit(state.copyWith(activeMachine: index));
+  }
+
+  Future<void> setActiveArea(int index) async{
+    emit(state.copyWith(activeArea: index, activeMachine: 0, listMachine: []));
+    setListItemDrop();
+    final queue = await tableOperations.selectListMachineId(state.listAreaMachine[index].idListMachine);
+    await getQuere(queue);
   }
 
   void toggleBrak(int indexOper, String countStr, String comment) {
     int count = int.parse(countStr);
     int length =
-        state.listMachine![state.activePage].listOper[indexOper].list.length;
+        state.listMachine![state.activeMachine].listOper[indexOper].list.length;
     if (count > length) {
       count = length;
     }
@@ -98,25 +123,25 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
       count = 0;
     }
     List<List<StatusNext>> l = [...state.statusList];
-    int it = l[state.activePage][indexOper].status;
+    int it = l[state.activeMachine][indexOper].status;
     if (it == 0 || it == 2) {
       it = 1;
     } else {
       it = 0;
     }
-    List<StatusNext> item = l[state.activePage];
+    List<StatusNext> item = l[state.activeMachine];
     item.removeAt(indexOper);
     item.insert(
         indexOper, StatusNext(status: it, count: count, comment: comment));
-    l.removeAt(state.activePage);
-    l.insert(state.activePage, item);
+    l.removeAt(state.activeMachine);
+    l.insert(state.activeMachine, item);
     emit(state.copyWith(statusList: l, count: state.count + 1));
   }
 
   void toggleModific(int indexOper, String countStr, String comment) {
     int count = int.parse(countStr);
     int length =
-        state.listMachine![state.activePage].listOper[indexOper].list.length;
+        state.listMachine![state.activeMachine].listOper[indexOper].list.length;
     if (count > length) {
       count = length;
     }
@@ -124,17 +149,17 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
       count = 0;
     }
     List<List<StatusNext>> l = [...state.statusList];
-    int it = l[state.activePage][indexOper].status;
+    int it = l[state.activeMachine][indexOper].status;
     if (it == 0 || it == 1) {
       it = 2;
     } else {
       it = 0;
     }
-    List<StatusNext> item = l[state.activePage];
+    List<StatusNext> item = l[state.activeMachine];
     item.removeAt(indexOper);
     item.insert(indexOper, StatusNext(status: it, count: count, comment: comment));
-    l.removeAt(state.activePage);
-    l.insert(state.activePage, item);
+    l.removeAt(state.activeMachine);
+    l.insert(state.activeMachine, item);
     emit(state.copyWith(statusList: l, count: state.count + 1));
   }
 
@@ -142,9 +167,9 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
     emit(state.copyWith(isActiveStream: false));
     final tableOperations = OperatorOperationsTable();
     // final chiefBatchTable = ChiefBatchTable();
-    final listOper = state.listMachine![state.activePage].listOper;
+    final listOper = state.listMachine![state.activeMachine].listOper;
     if (listOper.isNotEmpty) {
-      final listStatus = state.statusList[state.activePage];
+      final listStatus = state.statusList[state.activeMachine];
       final List<int> listIdStatusReady = [];
       final List<OperatorOperations> listOperReady = [];
       // final List<int> listChiefOperationId = [];
@@ -217,8 +242,8 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
     }
     List<ItemMachine> listMachine = state.listMachine!;
     List<List<StatusNext>> listStatus = state.statusList;
-    listStatus[state.activePage].clear();
-    listMachine[state.activePage].listOper.clear();
+    listStatus[state.activeMachine].clear();
+    listMachine[state.activeMachine].listOper.clear();
     // emit(state.copyWith(listMachine: listMachine, statusList: listStatus, isActiveStream: true));
     emit(state.copyWith(listMachine: []));
     emit(state.copyWith(listMachine: listMachine, statusList: listStatus, isActiveStream: true));

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
-import 'package:master_plan/presentation/pages/master/pages/monitoring/bloc/cubit.dart';
-import 'package:master_plan/presentation/pages/master/pages/monitoring/widgets/element_bar.dart';
+import 'package:master_plan/presentation/pages/master/pages/monitoring/monitoringMachine/bloc/cubit.dart';
+import 'package:master_plan/presentation/pages/master/pages/monitoring/monitoringMachine/widgets/element_bar.dart';
 
 class MonitoringPageChM extends StatelessWidget {
   const MonitoringPageChM({super.key});
@@ -11,7 +11,7 @@ class MonitoringPageChM extends StatelessWidget {
   Widget build(BuildContext context) {
     final stateMain = context.read<CubitMain>().state;
     return BlocProvider<CubitMonitoring>(
-      create: (context) => CubitMonitoring(stateMain.listAreaMachineUser!),
+      create: (context) => CubitMonitoring(stateMain.listAreaMachineMaster!),
       child: const MonitoringPageContent(),
     );
   }

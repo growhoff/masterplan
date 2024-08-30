@@ -30,7 +30,6 @@ abstract class DataMaster {
         actions: [],
         page: const BrakReadyDetailsPage(),
         icon: Icons.check_box),
-
     TabBarData(
         title: 'Мониторинг участка',
         actions: [],
@@ -39,7 +38,7 @@ abstract class DataMaster {
     TabBarData(
         title: 'Аналитика',
         actions: [],
-        page: AnalyticsPage(),
+        page: const AnalyticsPage(),
         icon: Icons.fact_check_sharp),
   ];
 }

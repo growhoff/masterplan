@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
-import 'package:master_plan/presentation/pages/master/pages/monitoring/bloc/cubit.dart';
-import 'package:master_plan/presentation/pages/master/pages/monitoring/widgets/element_bar.dart';
+import 'package:master_plan/presentation/pages/master/pages/monitoring/monitoringMachine/bloc/cubit.dart';
+import 'package:master_plan/presentation/pages/master/pages/monitoring/monitoringMachine/widgets/element_bar.dart';
 
 class MonitoringPageChief extends StatelessWidget {
   const MonitoringPageChief({super.key});

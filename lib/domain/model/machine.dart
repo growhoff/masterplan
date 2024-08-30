@@ -4,6 +4,7 @@ import 'package:master_plan/data/repositories/supabase/dto/control_machine_dto.d
 import 'package:master_plan/data/repositories/supabase/dto/shift_schedule_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/type_machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/view_machine_dto.dart';
+import 'package:master_plan/domain/model/area.dart';
 
 class Machine{
   final int id;
@@ -21,6 +22,7 @@ class Machine{
   final int? viewMachineId;
   final int? controlMachineId;
   final int? typeMachineId;
+  final Area? area;
   Machine({
     required this.id,
     required this.inventoryNumber,
@@ -37,5 +39,6 @@ class Machine{
     this.viewMachineId,
     this.controlMachineId,
     this.typeMachineId,
+    this.area,
   });
 }

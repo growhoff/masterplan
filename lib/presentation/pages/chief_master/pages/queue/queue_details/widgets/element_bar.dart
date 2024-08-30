@@ -16,6 +16,10 @@ class ElementBarQueue extends StatelessWidget {
       state.listItemMachine.isNotEmpty
       ? Column(
         children: [
+          Visibility(
+              visible: state.listAreaMachine.length == 1,
+              child: Text(state.listAreaMachine[state.activeArea].area.name),
+            ),
             Visibility(
               visible: state.listAreaMachine.length > 1,
               child: DropAreaQueue(state.activeArea, state.listItemArea),

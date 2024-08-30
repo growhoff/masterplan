@@ -1,8 +1,10 @@
+import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/monitoring_machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/order_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/transfer_dto.dart';
+import 'package:master_plan/domain/model/area.dart';
 import 'package:master_plan/domain/model/batch.dart';
 import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/monitoring_machine.dart';
@@ -36,6 +38,10 @@ class ConvertDtoModel {
     );
   }
 
+  static Area converterToArea(AreaDTO dto) {
+    return Area(id: dto.id, name: dto.name, number: dto.number, unitId: dto.unitId);
+  }
+
   static Machine converterToMachine(MachineDTO dto) {
     return Machine(
       id: dto.id,
@@ -43,6 +49,7 @@ class ConvertDtoModel {
       isActivated: dto.isActivated,
       name: dto.name,
       areaId: dto.areaId,
+      area: dto.area != null ? converterToArea(dto.area!) : null,
       model: dto.model,
       prefix: dto.prefix,
       shiftSchedule: dto.shiftSchedule,

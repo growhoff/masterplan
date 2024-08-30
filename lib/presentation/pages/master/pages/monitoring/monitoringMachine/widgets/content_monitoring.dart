@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/data/repositories/supabase/dto/status_machine_dto.dart';
 import 'package:master_plan/domain/model/monitoring_machine.dart';
-import '../../monitoring/bloc/cubit.dart';
-import '../../monitoring/model/item_machine_monitor.dart';
-import './calendar.dart';
+import '../bloc/cubit.dart';
+import '../model/item_machine_monitor.dart';
+import 'calendar.dart';
 import 'button_change.dart';
 import 'status_item.dart';
 import 'status_line.dart';
@@ -22,7 +22,6 @@ class ContentListWidgetMaster extends StatelessWidget {
       if (listStatusActive.first.user != null){
         nameOperator = listStatusActive.first.user!.fio;
       }
-      
     }
     return Column(
       children: [

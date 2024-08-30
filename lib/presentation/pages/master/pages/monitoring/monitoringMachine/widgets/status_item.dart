@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/monitoring_machine.dart';
 import 'package:master_plan/domain/usecase/time_converter.dart';
-import 'package:master_plan/presentation/pages/master/pages/monitoring/widgets/dialog_info_status.dart';
+import 'package:master_plan/presentation/pages/master/pages/monitoring/monitoringMachine/widgets/dialog_info_status.dart';
 import '../bloc/cubit.dart';
 
 

@@ -7,4 +7,8 @@ class CubitChiefMaster extends Cubit<StateChiefMaster> {
   void setPage(int index){
     emit(state.copyWith(activePage: index));
   }
+
+  void toggleMonitor(){
+    emit(state.copyWith(isThisMonitoring: !state.isThisMonitoring));
+  }
 }

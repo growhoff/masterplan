@@ -12,7 +12,7 @@ class ReadyPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final cubitMain = context.read<CubitMain>().state;
     return BlocProvider<CubitReadyDetailsChM>(
-      create: (context) => CubitReadyDetailsChM(cubitMain.listAreaMachineUser!),
+      create: (context) => CubitReadyDetailsChM(cubitMain.listAreaMachineMaster!),
       child: const ReadyDetailsContent(),
     );
   }

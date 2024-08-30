@@ -11,7 +11,7 @@ class DetailDistribPageChM extends StatelessWidget {
   Widget build(BuildContext context) {
     final stateMain = context.read<CubitMain>().state;
     return BlocProvider(
-      create: (context) => CubitDistributionDetails(stateMain.listAreaMachineUser!),
+      create: (context) => CubitDistributionDetails(stateMain.listAreaMachineMaster!),
       child: Scaffold(
         appBar: AppBar(title: const Text('Распределение деталей'),),
         body: const DetailDistribContent()),

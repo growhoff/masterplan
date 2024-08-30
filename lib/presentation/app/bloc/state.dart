@@ -39,16 +39,17 @@ class StateMain extends Equatable {
   final List<int>? listAreaId;
   final List<Area>? listArea;
   final List<AreaMachine>? listAreaMachine;
-  final List<AreaMachine>? listAreaMachineUser;
+  final List<AreaMachine>? listAreaMachineMaster;
+  final List<AreaMachine>? listAreaMachineChief;
   final int? unitId;
-  // final List<ViewMachineDTO>? viewMachineList;
-  // final List<TypeMachineDTO>? typeMachineList;
   final List<ViewMachine>? listViewMachine;
   final List<ControlMachineDTO>? controlMachineList;
   final List<ShiftScheduleDTO>? shiftScheduleList;
+  final List<int> unitChiefMaster;
+  final List<int> areaChiefMaster;
 
   const StateMain({
-    this.version = 'v2.7.5',
+    this.version = 'v2.7.6',
     this.user,
     this.unitId,
     this.staff,
@@ -67,12 +68,13 @@ class StateMain extends Equatable {
     this.listAreaId,
     this.listArea,
     this.listAreaMachine,
-    this.listAreaMachineUser,
-    // this.viewMachineList,
-    // this.typeMachineList,
+    this.listAreaMachineMaster,
+    this.listAreaMachineChief,
     this.listViewMachine = const [],
     this.controlMachineList,
     this.shiftScheduleList,
+    this.unitChiefMaster = const [],
+    this.areaChiefMaster = const [],
   });
 
   @override
@@ -106,13 +108,14 @@ class StateMain extends Equatable {
     listAreaId ?? [],
     listArea ?? [],
     listAreaMachine ?? [],
-    listAreaMachineUser ?? [],
+    listAreaMachineMaster ?? [],
+    listAreaMachineChief ?? [],
     staff ?? Staff.empty,
-    // viewMachineList,
-    // typeMachineList,
     listViewMachine,
     controlMachineList,
     shiftScheduleList,
+    unitChiefMaster,
+    areaChiefMaster,
   ];
 
   StateMain copyWith({
@@ -134,12 +137,13 @@ class StateMain extends Equatable {
     List<int>? listAreaId,
     List<Area>? listArea,
     List<AreaMachine>? listAreaMachine,
-    List<AreaMachine>? listAreaMachineUser,
-    // List<ViewMachineDTO>? viewMachineList,
-    // List<TypeMachineDTO>? typeMachineList,
+    List<AreaMachine>? listAreaMachineMaster,
+    List<AreaMachine>? listAreaMachineChief,
     List<ViewMachine>? listViewMachine,
     List<ControlMachineDTO>? controlMachineList,
     List<ShiftScheduleDTO>? shiftScheduleList,
+    List<int>? unitChiefMaster,
+    List<int>? areaChiefMaster,
   }) {
     return StateMain(
       user: user ?? this.user,
@@ -162,12 +166,13 @@ class StateMain extends Equatable {
       listAreaId: listAreaId ?? this.listAreaId,
       listArea: listArea ?? this.listArea,
       listAreaMachine: listAreaMachine ?? this.listAreaMachine,
-      listAreaMachineUser: listAreaMachineUser ?? this.listAreaMachineUser,
-      // viewMachineList: viewMachineList ?? this.viewMachineList,
-      // typeMachineList: typeMachineList ?? this.typeMachineList,
+      listAreaMachineMaster: listAreaMachineMaster ?? this.listAreaMachineMaster,
+      listAreaMachineChief: listAreaMachineChief ?? this.listAreaMachineChief,
       listViewMachine: listViewMachine ?? this.listViewMachine,
       controlMachineList: controlMachineList ?? this.controlMachineList,
       shiftScheduleList: shiftScheduleList ?? this.shiftScheduleList,
+      unitChiefMaster: unitChiefMaster ?? this.unitChiefMaster,
+      areaChiefMaster: areaChiefMaster ?? this.areaChiefMaster,
     );
   }
 

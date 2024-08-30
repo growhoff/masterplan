@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../monitoring/bloc/cubit.dart';
-import '../../monitoring/bloc/state.dart';
+import '../bloc/cubit.dart';
+import '../bloc/state.dart';
 
 
 class ButtonChange extends StatelessWidget {

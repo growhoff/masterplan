@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/pages/master/pages/readyDetails/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/master/pages/readyDetails/bloc/state.dart';
 import 'package:master_plan/presentation/pages/master/pages/readyDetails/widgets/content_ready.dart';
+import 'package:master_plan/presentation/pages/master/pages/readyDetails/widgets/drop_area.dart';
+import 'package:master_plan/presentation/pages/master/pages/readyDetails/widgets/drop_machine.dart';
 
 class ElementBarReady extends StatelessWidget {
   const ElementBarReady({super.key});
@@ -10,25 +12,24 @@ class ElementBarReady extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CubitReadyDetails, StateReadyDetails>(
-      builder:(context, state) => state.listMachine!.isNotEmpty && state.statusList.isNotEmpty
+      builder:(context, state) => 
+      
+      state.listItemMachine.isNotEmpty
       ? Column(
         children: [
-          SizedBox(
-            height: 60,
-            child: ListView.separated(
-              shrinkWrap: true,
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) => GestureDetector(
-                onTap: () => context.read<CubitReadyDetails>().setActivePage(index),
-                child: SizedBox(width: 200, child: Card(color: state.activePage == index ? Colors.blueGrey : const Color.fromARGB(0, 0, 0, 0), child: Center(child: Text(state.listMachine![index].machine.name, textAlign: TextAlign.center)))),
-              ), 
-              separatorBuilder: (context, index) => const SizedBox(width: 5),
-              itemCount: state.listMachine!.length),
-          ),
+            Visibility(
+              visible: state.listAreaMachine.length > 1,
+              child: DropAreaReady(state.activeArea, state.listItemArea),
+            ),
+            const SizedBox(height: 8),
+            DropMachineReady(state.activeMachine, state.listItemMachine),
             const SizedBox(height: 18),
-            state.isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : ContetnReadyMaster(l: state.statusList[state.activePage], operList: state.listMachine![state.activePage].listOper, machine: state.listMachine![state.activePage].machine, timeWorking: state.listMachine![state.activePage].time)
+            state.listMachine!.isNotEmpty
+            ? 
+              state.isLoading 
+              ? const Center(child: CircularProgressIndicator())
+              : ContetnReadyMaster(l: state.statusList[state.activeMachine], operList: state.listMachine![state.activeMachine].listOper, machine: state.listMachine![state.activeMachine].machine, timeWorking: state.listMachine![state.activeMachine].time)
+            : const Center(child: CircularProgressIndicator())
         ],
       )
       : const Center(child: Text('Нет станков')),
