@@ -9,12 +9,12 @@ class ButtonChange extends StatelessWidget {
   final int change;
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CubitMonitoring, StateMonitoring>(
+    return BlocBuilder<CubitMonitoringMachine, StateMonitoringMachine>(
         builder: (context, state) => Expanded(
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 5),
             child: ElevatedButton(
-                onPressed: () => context.read<CubitMonitoring>().setChange(change),
+                onPressed: () => context.read<CubitMonitoringMachine>().setChange(change),
                 style: ElevatedButton.styleFrom(
                     backgroundColor:
                         state.change == change ? const Color.fromARGB(255, 155, 235, 157) : const Color.fromARGB(255, 185, 208, 219),

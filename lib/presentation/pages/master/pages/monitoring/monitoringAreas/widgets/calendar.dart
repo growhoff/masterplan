@@ -17,10 +17,7 @@ class Calendar extends StatelessWidget {
               lastDay: DateTime.now(),
               focusedDay: state.days,
               selectedDayPredicate: (day) => isSameDay(day, state.days),
-              onDaySelected: (selectedDay, focusedDay) {
-                context.read<CubitMonitoringAreas>().setDate(selectedDay);
-                // context.read<CubitMain>().getShiftsDistribution(selectedDay);
-              },
+              onDaySelected: (selectedDay, focusedDay) => context.read<CubitMonitoringAreas>().setDate(selectedDay),
             ));
   }
 }

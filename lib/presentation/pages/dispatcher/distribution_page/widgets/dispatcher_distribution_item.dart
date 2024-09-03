@@ -37,9 +37,11 @@ class DispatcherDistributionTitleItem extends StatelessWidget {
 }
 
 class DispatcherDistributionBodyItem extends StatefulWidget {
-  const DispatcherDistributionBodyItem({required this.stage, super.key});
+  const DispatcherDistributionBodyItem(
+      {required this.stage, required this.cubit, super.key});
 
   final DistributionStageModel stage;
+  final DispatcherDistributionCubit cubit;
 
   @override
   State<DispatcherDistributionBodyItem> createState() =>
@@ -49,7 +51,6 @@ class DispatcherDistributionBodyItem extends StatefulWidget {
 class _DispatcherDistributionBodyItemState
     extends State<DispatcherDistributionBodyItem> {
   Unit? activeValue;
-  bool _isChecked = false;
   bool _validateTextField = true;
   bool _validateDropDown = true;
   final TextEditingController _textEditingController = TextEditingController();
@@ -111,58 +112,6 @@ class _DispatcherDistributionBodyItemState
                     const SizedBox(
                       width: 10,
                     ),
-                    Checkbox(
-                        value: _isChecked,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            if (_isChecked) {
-                              setState(() {
-                                _validateTextField = true;
-                                _isChecked = value!;
-                                context
-                                    .read<DispatcherDistributionCubit>()
-                                    .stagesForDistributionList
-                                    .removeWhere((stage) =>
-                                        (stage.batch.numberRS ==
-                                                widget.stage.batch.numberRS &&
-                                            stage.stageNumber ==
-                                                widget.stage.stageNumber));
-
-                                print(context
-                                    .read<DispatcherDistributionCubit>()
-                                    .stagesForDistributionList);
-                              });
-                            } else {
-                              if (_textEditingController.text == '' ||
-                                  int.parse(_textEditingController.text) >
-                                      widget.stage.quantity) {
-                                _validateTextField = false;
-                              }
-                              activeValue == null
-                                  ? _validateDropDown = false
-                                  : _validateDropDown = true;
-                              if (_validateDropDown == true &&
-                                  _validateTextField == true) {
-                                _isChecked = value!;
-                                context
-                                    .read<DispatcherDistributionCubit>()
-                                    .stagesForDistributionList
-                                    .add(DistributionStageModel(
-                                        batch: widget.stage.batch,
-                                        batchId: widget.stage.batchId,
-                                        stageArchiveId:
-                                            widget.stage.stageArchiveId,
-                                        quantity: int.parse(
-                                            _textEditingController.text),
-                                        stageName: widget.stage.stageName,
-                                        stageNumber: widget.stage.stageNumber,
-                                        unitId: activeValue?.id,
-                                        stagesList: widget.stage.stagesList));
-                              }
-                              setState(() {});
-                            }
-                          });
-                        })
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -188,7 +137,16 @@ class _DispatcherDistributionBodyItemState
                                   _validateTextField ? null : Colors.red[200]),
                         ))
                   ],
-                )
+                ),
+                Center(
+                    child: ElevatedButton(
+                        onPressed: () {
+                          widget.cubit.distributeStagesNew(
+                              quantity: int.parse(_textEditingController.text),
+                              distributionStageModel: widget.stage,
+                              selectedUnitId: activeValue?.id ?? 0);
+                        },
+                        child: Text('отправить в работу')))
               ],
             ),
           ),

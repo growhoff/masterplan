@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/presentation/pages/chief_master/pages/queue/queue_details/widgets/dialog_button_group.dart';
 import '../bloc/cubit.dart';
 import '../bloc/state.dart';
 import '../widgets/drop_area.dart';
@@ -16,7 +17,49 @@ class ElementBarQueue extends StatelessWidget {
       state.listItemMachine.isNotEmpty
       ? Column(
         children: [
-          Visibility(
+          state.listMachine!.isEmpty
+        ? const Text('')
+        : Visibility(
+          visible: state.listMachine![state.activeMachine].listPathOper.isNotEmpty,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                ElevatedButton(
+                  style: const ButtonStyle(padding: WidgetStatePropertyAll( EdgeInsets.all(0))),
+                  onPressed: ()async{
+                  int? val = 0;
+                  val = await showDialog<int>(context: context,builder: (BuildContext context) => const DialogButtonGroup());
+                  if (val == 1){}
+                  switch (val){
+                    case 1: if (context.mounted) context.read<CubitQueueMaster>().groupNameOper();break;
+                    case 2: if (context.mounted) context.read<CubitQueueMaster>().groupStageNumber();break;
+                    default: break;
+                  } 
+                }, child: const Tooltip(message: 'Группировка', child: Icon(Icons.group))),
+                const SizedBox(width: 8),
+                ElevatedButton(
+                  style: const ButtonStyle(padding: WidgetStatePropertyAll( EdgeInsets.all(0))),
+                  onPressed: !state.isGroup ? null : ()=> context.read<CubitQueueMaster>().reGroup(), child: const Tooltip(message: 'Разгруппировка', child: Icon(Icons.group_off_sharp))),
+                ],
+              ),
+              Row(
+                children: [
+                ElevatedButton(
+                  style: const ButtonStyle(padding: WidgetStatePropertyAll( EdgeInsets.all(0))),
+                  onPressed: () => context.read<CubitQueueMaster>().getUp(), child: const Icon(Icons.arrow_upward)),
+                const SizedBox(width: 8),
+                ElevatedButton(
+                  style: const ButtonStyle(padding: WidgetStatePropertyAll( EdgeInsets.all(0))),
+                  onPressed: () => context.read<CubitQueueMaster>().getDown(), child: const Icon(Icons.arrow_downward)),
+                ],
+              )
+            ],
+          ),
+        ),
+        const SizedBox(height: 8),
+            Visibility(
               visible: state.listAreaMachine.length == 1,
               child: Text(state.listAreaMachine[state.activeArea].area.name),
             ),
@@ -28,8 +71,9 @@ class ElementBarQueue extends StatelessWidget {
             DropMachineQueue(state.activeMachine, state.listItemMachine),
             const SizedBox(height: 18),
             state.listMachine!.isNotEmpty
-            ? ContetnQueue(itemMachine: state.listMachine![state.activeMachine])
-            : const Center(child: CircularProgressIndicator())
+            ? ContetnQueue(itemMachine: state.listMachine![state.activeMachine], isGroup: state.isGroup)
+            // : const Center(child: CircularProgressIndicator())
+            : const Center(child: Text('Пусто'))
         ],
       )
       : const Center(child: Text('Нет станков')),

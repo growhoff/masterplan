@@ -19,7 +19,7 @@ class StatusLine extends StatelessWidget {
       child: Row(
         children: [...list.map((e) => Expanded(
           flex: e.timeWorking!,
-          child: Container(decoration: BoxDecoration(color: context.read<CubitMonitoring>().convertColor(e.statusMachine!.id)))
+          child: Container(decoration: BoxDecoration(color: context.read<CubitMonitoringMachine>().convertColor(e.statusMachine!.id)))
           )
         ).toList(),
         Expanded(flex: lastTime,

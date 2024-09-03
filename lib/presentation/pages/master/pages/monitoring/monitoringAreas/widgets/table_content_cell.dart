@@ -19,19 +19,3 @@ class TableContentCell extends StatelessWidget {
         ));
   }
 }
-
-/*
-Container(
-                                      alignment: Alignment.center,
-                                      padding: const EdgeInsets.all(8),
-                                      child: const FittedBox(
-                                        fit: BoxFit.fitWidth,
-                                        child: RotatedBox(
-                                          quarterTurns: 3,
-                                          child: Text(
-                                            'участок',
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ),
-                                      )),
-*/

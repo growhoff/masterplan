@@ -9,7 +9,7 @@ class Calendar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CubitMonitoring, StateMonitoring>(builder: (context, state) => TableCalendar(
+    return BlocBuilder<CubitMonitoringMachine, StateMonitoringMachine>(builder: (context, state) => TableCalendar(
               calendarFormat: CalendarFormat.week,
               headerStyle: const HeaderStyle(formatButtonVisible: false, titleCentered: true),
               rowHeight: 43,
@@ -18,8 +18,7 @@ class Calendar extends StatelessWidget {
               focusedDay: state.days,
               selectedDayPredicate: (day) => isSameDay(day, state.days),
               onDaySelected: (selectedDay, focusedDay) {
-                context.read<CubitMonitoring>().setDate(selectedDay);
-                // context.read<CubitMain>().getShiftsDistribution(selectedDay);
+                context.read<CubitMonitoringMachine>().setDate(selectedDay);
               },
             ));
   }

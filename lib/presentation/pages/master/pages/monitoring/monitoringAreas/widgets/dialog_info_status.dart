@@ -40,12 +40,6 @@ class DialogInfoStatus extends StatelessWidget {
                   color: Colors.black,fontSize: 20),
                 actionsOverflowButtonSpacing: 20,
                 actionsAlignment: MainAxisAlignment.center,
-              //   actions: [
-              //   ElevatedButton(
-              //     onPressed: () {Navigator.pop(context, '');},
-              //     child: const Text('ЗАКРЫТЬ'),
-              //   ),
-              // ],
             );
 }
 }

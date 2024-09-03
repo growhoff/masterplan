@@ -52,7 +52,7 @@ class DispatcherDistributionCubit extends Cubit<DispatcherDistributionState> {
         print('batchesKey: $batchesKey   ,  stageKey: $stagesKey ');
         final distributionStage = DistributionStageModel(
             batch: stagesValue.first.chiefBatch?.batch ?? BatchDTO.empty,
-            stageArchiveId: stagesValue.first.stageId,
+            stageId: stagesValue.first.stageId,
             quantity: stagesValue.first.chiefBatch?.batch.count ?? 0,
             stageName: stagesValue.first.stage?.name ?? '',
             stageNumber: stagesValue.first.stage?.number ?? '',
@@ -95,7 +95,7 @@ class DispatcherDistributionCubit extends Cubit<DispatcherDistributionState> {
     List<int> stagesIdList = [];
     List<int> unitsIdForStageList = [];
     for (var stage in stagesForDistributionList) {
-      stagesIdList.add(stage.stageArchiveId);
+      stagesIdList.add(stage.stageId);
       unitsIdForStageList.add(stage.unitId ?? 0);
     }
     var fetchedOperationsList =
@@ -124,7 +124,7 @@ class DispatcherDistributionCubit extends Cubit<DispatcherDistributionState> {
     List<int> stagesIdForChangeStatusList = [];
 
     for (var stage in stagesForDistributionList) {
-      final operationList = operationsMap[stage.stageArchiveId];
+      final operationList = operationsMap[stage.stageId];
 
       for (var operation in operationList!) {
         await _chiefDistributionOperationsTable.insert(
@@ -132,7 +132,7 @@ class DispatcherDistributionCubit extends Cubit<DispatcherDistributionState> {
                 unitId: stage.unitId,
                 id: 0,
                 operationId: operation.id,
-                stageId: operation.stageId,
+                stageId: stage.stageId,
                 stage: StageDTO.empty,
                 operation: OperationDTO.empty,
                 batchId: stage.batchId,
@@ -162,4 +162,77 @@ class DispatcherDistributionCubit extends Cubit<DispatcherDistributionState> {
 
     stagesForDistributionList = [];
   }
+
+  Future distributeStagesNew(
+      {required int quantity,
+      required DistributionStageModel distributionStageModel,
+      required int selectedUnitId}) async {
+
+    emit(state.copyWith(status: DispatcherDistributionStatus.loading));
+
+    var fetchedOperationsList = await _operationTable.selectByStageId(
+        stageId: distributionStageModel.stageId);
+
+    List<Operation> operationsList = [];
+
+    for (var fetchedOperation in fetchedOperationsList) {
+      final operationDto = OperationDTO.fromMap(fetchedOperation);
+      final operation = Operation(
+          id: operationDto.id,
+          number: operationDto.number,
+          name: operationDto.name,
+          code: operationDto.code,
+          timepz: operationDto.timepz,
+          stageId: operationDto.stageId);
+      operationsList.add(operation);
+    }
+
+    List<ChiefOperationDto> distributionOperationList = [];
+    List<int> unitsIdForStagesList = [];
+
+    List<int> stagesIdForChangeStatusList = [];
+
+    for (var operation in operationsList) {
+      await _chiefDistributionOperationsTable.insert(
+          ChiefDistributionOperationsDTO(
+              unitId: selectedUnitId,
+              id: 0,
+              operationId: operation.id,
+              stageId: distributionStageModel.stageId,
+              stage: StageDTO.empty,
+              operation: OperationDTO.empty,
+              batchId: distributionStageModel.batchId,
+              batch: BatchDTO.empty,
+              quantity: quantity));
+
+      for (int i = 0; i < quantity; i++) {
+        distributionOperationList.add(ChiefOperationDto(
+            id: 0,
+            operationId: operation.id,
+            stageId: operation.stageId,
+            distributionStageId: distributionStageModel.stagesList?[i].id,
+            chiefBatchId:
+                distributionStageModel.stagesList?[i].chiefBatchId ?? 0));
+        if (!stagesIdForChangeStatusList
+            .contains(distributionStageModel.stagesList?[i].id)) {
+          stagesIdForChangeStatusList
+              .add(distributionStageModel.stagesList?[i].id ?? 0);
+          _distributionStageTable.updateUnit(
+              distributionStageModel.stagesList?[i].id ?? 0,
+              selectedUnitId);
+          unitsIdForStagesList.add(selectedUnitId);
+        }
+      }
+    }
+
+    await _chiefOperationTable.bulkInsert(dtosList: distributionOperationList);
+    await _distributionStageTable
+        .bulkChangeStatusToExecute(stagesIdForChangeStatusList);
+
+    fetchStages();
+
+    emit(state.copyWith(status: DispatcherDistributionStatus.success));
+
+  }
+
 }

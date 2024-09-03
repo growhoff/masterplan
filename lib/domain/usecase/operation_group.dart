@@ -2,11 +2,12 @@
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
 import 'package:collection/collection.dart';
 import 'package:master_plan/domain/model/group_opt_path.dart';
+import 'package:master_plan/domain/model/item_machine.dart';
 import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/domain/model/otp_path_operations.dart';
 import 'package:master_plan/domain/usecase/convert_dto_model.dart';
-import 'package:master_plan/presentation/pages/master/pages/queue/model/item_machine.dart';
+// import 'package:master_plan/presentation/pages/master/pages/queue/model/item_machine.dart';
 
 class OperationsGroup {
   OperationsGroup();

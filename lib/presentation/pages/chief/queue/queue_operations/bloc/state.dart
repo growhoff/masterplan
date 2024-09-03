@@ -4,12 +4,12 @@ import 'package:master_plan/domain/model/area_machine.dart';
 import '../model/distrib_item.dart';
 
 
-class StateOperatQueueMasterChM extends Equatable {
+class StateOperatQueueChief extends Equatable {
   final List<DistribItem> listResOper;
   final int activeMachine;
   final int activeArea;
   final List<AreaMachine> listAreaMachine;
-  const StateOperatQueueMasterChM({
+  const StateOperatQueueChief({
     this.listResOper = const [],
     this.activeMachine = 0,
     this.activeArea = 0,
@@ -19,13 +19,13 @@ class StateOperatQueueMasterChM extends Equatable {
   @override
   List<Object> get props => [listResOper, activeMachine, activeArea, listAreaMachine];
 
-  StateOperatQueueMasterChM copyWith({
+  StateOperatQueueChief copyWith({
     List<DistribItem>? listResOper,
     int? activeMachine,
     int? activeArea,
     List<AreaMachine>? listAreaMachine,
   }) {
-    return StateOperatQueueMasterChM(
+    return StateOperatQueueChief(
       listResOper: listResOper ?? this.listResOper,
       activeMachine: activeMachine ?? this.activeMachine,
       activeArea: activeArea ?? this.activeArea,

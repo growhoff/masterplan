@@ -24,7 +24,8 @@ class NavbarChiefMaster extends StatelessWidget {
               ]);
               }
               ),
-            actions: DataChiefMaster.listPage[stateMaster.activePage].actions,
+            // actions: DataChiefMaster.listPage[stateMaster.activePage].actions,
+            actions: stateMaster.activePage == 6 ? [IconButton(onPressed: () => context.read<CubitChiefMaster>().toggleMonitor(), icon: const Icon(Icons.transform_rounded, color: Colors.amber,))] : [const Text('')],
           ),
           body: DataChiefMaster.listPage[stateMaster.activePage].page,
           bottomNavigationBar: NavigationBar(

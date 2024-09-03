@@ -186,9 +186,8 @@ class _StagesInUnitTitleItemViewState extends State<StagesInUnitTitleItemView> {
                                                                 .read<
                                                                     StagesInUnitCubit>()
                                                                 .uploadStages(
-                                                                    distributionStagesIdsList: widget
-                                                                        .stageModel
-                                                                        .distributionStagesIdsList),
+                                                                    stageModel: widget
+                                                                        .stageModel),
                                                             widget.setState()
                                                           }
                                                         : setState(() {

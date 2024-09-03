@@ -86,6 +86,8 @@ class _ChiefDistributionPageViewState extends State<ChiefDistributionPageView> {
                                       ChiefOperationDistributionBodyItem(
                                         operation:
                                             state.chiefOperationsList[index],
+                                        cubit: context
+                                            .read<ChiefDistributionCubit>(),
                                       )
                                     ],
                                   )
@@ -100,27 +102,9 @@ class _ChiefDistributionPageViewState extends State<ChiefDistributionPageView> {
                     : Center(
                         child: CircularProgressIndicator(),
                       ),
-                const SizedBox(
-                  height: 50,
-                ),
               ],
             ),
           ),
-          Container(
-            alignment: Alignment.bottomCenter,
-            child: ElevatedButton(
-              onPressed: () {
-                context
-                    .read<ChiefDistributionCubit>()
-                    .sendOperationsToDistribution();
-              },
-              style: ElevatedButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 15)),
-              child: const Text('отправить в работу',
-                  style: TextStyle(fontSize: 18)),
-            ),
-          )
         ],
       );
     });

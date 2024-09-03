@@ -23,7 +23,7 @@ class DropArea extends StatelessWidget {
                 value: activeArea,
                 items: listItemArea.map((e) => DropdownMenuItem(value: e.index, child: Text(e.name)),).toList(),
                 selectedItemBuilder: (context) => listItemArea.map((e) => Center(child: Text(e.name),)).toList(),
-                onChanged: (value) => value != null ? context.read<CubitMonitoring>().setActiveArea(value) : null,
+                onChanged: (value) => value != null ? context.read<CubitMonitoringMachine>().setActiveArea(value) : null,
               ),
             );
   }

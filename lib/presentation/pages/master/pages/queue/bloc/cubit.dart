@@ -7,11 +7,11 @@ import 'package:master_plan/data/repositories/supabase/service/operator_operatio
 import 'package:master_plan/data/repositories/supabase/service/order_table.dart';
 import 'package:master_plan/domain/model/area_machine.dart';
 import 'package:master_plan/domain/model/group_opt_path.dart';
+import 'package:master_plan/domain/model/item_machine.dart';
 import 'package:master_plan/domain/model/name_index.dart';
 import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/domain/model/otp_path_operations.dart';
 import 'package:master_plan/domain/usecase/operation_group.dart';
-import '../model/item_machine.dart';
 import 'state.dart';
 
 class CubitQueueMaster extends Cubit<StateQueueMaster> {

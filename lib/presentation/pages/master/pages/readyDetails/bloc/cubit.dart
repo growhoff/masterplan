@@ -5,7 +5,7 @@ import 'package:master_plan/data/repositories/supabase/service/batch_table.dart'
 import 'package:master_plan/data/repositories/supabase/service/chief_operation_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/distribution_stage_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
-import 'package:master_plan/data/repositories/supabase/service/order_table.dart';
+// import 'package:master_plan/data/repositories/supabase/service/order_table.dart';
 import 'package:master_plan/domain/model/area_machine.dart';
 import 'package:master_plan/domain/model/name_index.dart';
 import 'package:master_plan/domain/model/operator_operations.dart';
@@ -287,7 +287,7 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
       listBatchToStage.add(BatchToStage(chiefBatchId: keyBatch, listDto: listDto));
     });
     List<int> listStageId = [];
-    List<int> listIdOrder = [];
+    // List<int> listIdOrder = [];
     List<ChiefOperationDto> lastIdStage = [];
     List<ChiefOperationDto> lastIdBatch = [];
     for (var i = 0; i < listOperatorOperations.length; i++) {
@@ -298,7 +298,7 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
             if (element.operationId == listOperatorOperations[i].operation.id) {
               lastIdStage.add(element);
               listStageId.add(listOperatorOperations[i].stage.id);
-              listIdOrder.add(listOperatorOperations[i].batch.orderId!);
+              // listIdOrder.add(listOperatorOperations[i].batch.orderId!);
             }
           }
           //проверка на конец
@@ -306,7 +306,7 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
         }
       }
     }
-    final orderTable = OrderTable();
+    // final orderTable = OrderTable();
     final batchTable = BatchTable();
 
     List<int> listStagechiefBatchIdLast = [];
@@ -323,17 +323,17 @@ class CubitReadyDetails extends Cubit<StateReadyDetails> {
     }
     await chiefBatchTable.updateStatusReady(listChiefBatchLast);
     await batchTable.updateStatusReady(listIdBatch);
-    await orderTable.updateStatusReady(listIdOrder);
+    // await orderTable.updateStatusReady(listIdOrder);
   }
 
   Future<void> updateStatusBatchChiefBatchStage(List<OperatorOperations> listOperatorOperations, bool isReady)async{
       List<int> listIdBatch = [];
       List<int> listIdChiefBatch = [];
-      List<int> listIdOrder = [];
+      // List<int> listIdOrder = [];
       for (var e in listOperatorOperations) {
         listIdBatch.add(e.batch.id);
         listIdChiefBatch.add(e.chiefBatchId!);
-        listIdOrder.add(e.batch.orderId!);
+        // listIdOrder.add(e.batch.orderId!);
       }
       // await setBatchStatus(listIdBatch, isReady);
       await setChiefBatchStatus(listIdChiefBatch, isReady);

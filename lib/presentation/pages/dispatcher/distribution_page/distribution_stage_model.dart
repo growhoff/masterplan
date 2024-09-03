@@ -8,7 +8,7 @@ class DistributionStageModel {
     this.stagesList,
     required this.batch,
     required this.batchId,
-    required this.stageArchiveId,
+    required this.stageId,
     required this.quantity,
 
     required this.stageName,
@@ -19,7 +19,7 @@ class DistributionStageModel {
   final int quantity;
   final int batchId;
   final BatchDTO batch;
-  final int stageArchiveId;
+  final int stageId;
   final String stageNumber;
   final String stageName;
   final int? unitId;

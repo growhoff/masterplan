@@ -15,7 +15,7 @@ class ChiefBatchTable extends SupabaseTable {
     throw UnimplementedError();
   }
 
-  Future bulkDeleteByBatchId(int batchId)async{
+  Future bulkDeleteByBatchId(int batchId) async {
     await table.delete().eq('batch_id', batchId);
   }
 
@@ -66,7 +66,17 @@ class ChiefBatchTable extends SupabaseTable {
   Future<List<Map<String, dynamic>>> selectByBatchId(int batchId) async {
     return await table
         .select('*,z_batch(*,z_batch_archive(*))')
-        .eq('batch_id', batchId);
+        .eq('batch_id', batchId)
+        .order('id', ascending: true);
+  }
+
+  Future<List<Map<String, dynamic>>> selectByBatchIdWithInWorkStatus(
+      int batchId) async {
+    return await table
+        .select('*,z_batch(*,z_batch_archive(*))')
+        .eq('batch_id', batchId)
+        .eq('batch_status_id', 7)
+        .order('id', ascending: true);
   }
 
   Future<List<Map<String, dynamic>>> selectByBatchesIdList(
@@ -143,7 +153,6 @@ class ChiefBatchTable extends SupabaseTable {
   Future<void> updateStatusReady(List<int> idList) {
     return table.update({'batch_status_id': 2}).inFilter('id', idList);
   }
-
 
   Future<void> updateStatusBrak(List<int> idList) {
     return table.update({'batch_status_id': 3}).inFilter('id', idList);

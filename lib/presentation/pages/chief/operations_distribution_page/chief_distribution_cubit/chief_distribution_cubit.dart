@@ -225,6 +225,62 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
         operationsIdList: chiefOperationsIdList);
   }
 
+  Future<void> distributeOperation(
+      {required int quantity,
+      required ChiefDistributionOperation chiefDistributionOperation, required String selectedAreaName}) async {
+    emit(state.copyWith(status: DistributionPageStatus.loading));
+
+    List<OperatorOperationsDTO> operatorOperationsDtoList = [];
+    List<int> chiefOperationsIdList = [];
+
+    print('quantity : $quantity');
+
+    var fetchedChiefOperationsList =
+    await _chiefOperationTable.fetchOperationsByOperationIdWithLimit(
+        limit: quantity, operationId:chiefDistributionOperation.operationId);
+
+    int orderNumber = 1;
+    for (var chiefOperation in fetchedChiefOperationsList) {
+      print(
+          'distribution_stage_id: ${chiefOperation['distribution_stage_id']}');
+      chiefOperationsIdList.add(chiefOperation['id']);
+      operatorOperationsDtoList.add(OperatorOperationsDTO(
+          id: 0,
+          timeplan: chiefDistributionOperation.operation.timeSH,
+          timeFirstStart: 0,
+          statusId: 2,
+          status: StatusDTO(id: 0, name: ''),
+          batchId: chiefDistributionOperation.batchId,
+          order: orderNumber,
+          batch: BatchDTO.empty,
+          distributionStageId: chiefOperation['distribution_stage_id'],
+          stageId: chiefDistributionOperation.operation.stageId,
+          stage: StageDTO.empty,
+          operationId: chiefDistributionOperation.operation.id,
+          operation: OperationDTO.empty,
+          areaId: areasMap[selectedAreaName],
+          chiefOperationId: chiefOperation['id'],
+          chiefBatchId: chiefOperation['chief_batch_id'],
+          area: AreaDTO(id: 0, name: '', number: '', unitId: 0)));
+      orderNumber++;
+    }
+
+    await _chiefDistributionOperationsTable.updateQuantity(
+        chiefOperationId: chiefDistributionOperation.id,
+        newQuantity: chiefDistributionOperation.quantity - quantity);
+
+    await _operatorOperationsTable.bulkInsert(
+        operationsList: operatorOperationsDtoList);
+
+    fetchChiefOperations();
+
+    _chiefOperationTable.changeIsDistributed(
+        operationsIdList: chiefOperationsIdList);
+
+
+    emit(state.copyWith(status: DistributionPageStatus.success));
+  }
+
   void listControllerAddListener() {
     listController.addListener(() {
       if (chiefOperationsSelectMinRange != 0 &&

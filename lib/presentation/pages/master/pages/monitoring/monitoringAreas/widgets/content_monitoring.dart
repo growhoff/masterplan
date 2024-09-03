@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/data/repositories/supabase/dto/status_machine_dto.dart';
-import 'package:master_plan/presentation/pages/master/pages/monitoring/monitoringAreas/bloc/cubit.dart';
-import 'package:master_plan/presentation/pages/master/pages/monitoring/monitoringAreas/widgets/table_content_cell.dart';
-import 'package:master_plan/presentation/pages/master/pages/monitoring/monitoringAreas/widgets/table_content_row.dart';
-import 'package:master_plan/presentation/pages/master/pages/monitoring/monitoringAreas/widgets/table_content_row_line.dart';
-import 'package:master_plan/presentation/pages/master/pages/monitoring/monitoringAreas/widgets/table_content_row_status.dart';
-import '../model/item_machine_monitor.dart';
+import 'package:master_plan/domain/model/item_machine_monitor.dart';
+import '../bloc/cubit.dart';
+import 'table_content_cell.dart';
+import 'table_content_row.dart';
+import 'table_content_row_line.dart';
+import 'table_content_row_status.dart';
 import 'calendar.dart';
 import 'button_change.dart';
 

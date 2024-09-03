@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/data/repositories/supabase/dto/status_machine_dto.dart';
+import 'package:master_plan/domain/model/item_machine_monitor.dart';
 import 'package:master_plan/domain/model/monitoring_machine.dart';
 import '../bloc/cubit.dart';
-import '../model/item_machine_monitor.dart';
 import 'calendar.dart';
 import 'button_change.dart';
 import 'status_item.dart';
@@ -32,7 +32,7 @@ class ContentListWidgetMaster extends StatelessWidget {
             const SizedBox(width: 10),
             Flexible(
               child: Visibility(visible: statusActive.id != -1, child: Card(
-                color: statusActive.id != -1 ? context.read<CubitMonitoring>().convertColor(statusActive.id) : Colors.white, 
+                color: statusActive.id != -1 ? context.read<CubitMonitoringMachine>().convertColor(statusActive.id) : Colors.white, 
                 child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 5),
                 child: Text(statusActive.id != -1 ? statusActive.name : ''),
@@ -47,21 +47,7 @@ class ContentListWidgetMaster extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: List.generate(monitor.machine.shiftSchedule!.count, (int index) => ButtonChange(index+1)),
         ),
-        // ListView.separated(
-        //   scrollDirection: Axis.horizontal,
-        //   shrinkWrap: true,
-        //   itemBuilder: (context, index) => ButtonChange(index+1), 
-        //   separatorBuilder: (context, index) => const SizedBox(width: 8,), 
-        //   itemCount: monitor.machine.shiftSchedule!.count
-        //   ),
-        // const Row(
-        //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-        //   children: [
-        //     ButtonChange(1),
-        //     Spacer(),
-        //     ButtonChange(2),
-        //   ],
-        // ),
+
       const SizedBox(height: 8),
       const Divider(),
       const SizedBox(height: 8),

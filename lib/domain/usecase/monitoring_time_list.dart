@@ -52,15 +52,15 @@ class MonitoringTimeList{
     );
   }
 
-    MonitoringMachine createMonitoringMachineLastStatus(int timeStart, int timeStop, int change, StatusMachineDTO status) {
+  MonitoringMachine createMonitoringMachineLastStatus(int timeStart, int timeStop, int change, StatusMachineDTO status) {
     return MonitoringMachine(
-      timeStart: timeStart,
-      timeStop: timeStop,
-      timeWorking: getTimeWorking(timeStart, timeStop),
-      changeId: change,
-      date: DateTime.fromMillisecondsSinceEpoch(timeStart),
-      statusMachine: status,
-      comment: 'Автоматический'
+        timeStart: timeStart,
+        timeStop: timeStop,
+        timeWorking: getTimeWorking(timeStart, timeStop),
+        changeId: change,
+        date: DateTime.fromMillisecondsSinceEpoch(timeStart),
+        statusMachine: status,
+        comment: 'Автоматический'
     );
   }
 
@@ -73,7 +73,7 @@ class MonitoringTimeList{
     return timeConverter.getStringDataYYMMDDdate(time1) == timeConverter.getStringDataYYMMDDdate(time2);
   }
 
-  
+
 
 
   List<MonitoringMachine> convertTimeStatus(List<MonitoringMachine> listStatus, int change, int lastChange) {
@@ -211,39 +211,39 @@ class MonitoringTimeList{
         int dateStopCh = getDateTimeSinceEpoch(listStatus.last.date, change != lastChange ? listTime[change] : listTime.first, change != lastChange ? 0 : 1);
         newList.add(createMonitoringMachineLastStatus(dateStartCh, dateStopCh, change, listStatus.last.statusMachine!));
       }
-      
+
     }
-    
+
 
     return newList;
   }
 
 
-    List<MonitoringMachine> convertTimeStatusLastItem(MonitoringMachine listStatus, int change, DateTime days, int lastChange) {
+  List<MonitoringMachine> convertTimeStatusLastItem(MonitoringMachine listStatus, int change, DateTime days, int lastChange) {
     List<MonitoringMachine> newList = [];
-      final dateNow = DateTime.now();
-      final dateNowSec = DateTime.now().millisecondsSinceEpoch;
-      final nowChange = ChangeLogic(count: listStatus.machine!.shiftSchedule!.count, firstTime: listStatus.machine!.shiftSchedule!.timeFirst).getChange();
+    final dateNow = DateTime.now();
+    final dateNowSec = DateTime.now().millisecondsSinceEpoch;
+    final nowChange = ChangeLogic(count: listStatus.machine!.shiftSchedule!.count, firstTime: listStatus.machine!.shiftSchedule!.timeFirst).getChange();
 
-      int dateStartCh = getDateTimeSinceEpoch(dateNow, listTime[change - 1], 0);
-      int dateStopCh = getDateTimeSinceEpoch(dateNow, change != lastChange ? listTime[change] : listTime.first, change != lastChange ? 0 : 1);
-      final next = getBoolDataEndDataNow(days.millisecondsSinceEpoch, dateNowSec);
-      if (next){
-        if (change == nowChange){
+    int dateStartCh = getDateTimeSinceEpoch(dateNow, listTime[change - 1], 0);
+    int dateStopCh = getDateTimeSinceEpoch(dateNow, change != lastChange ? listTime[change] : listTime.first, change != lastChange ? 0 : 1);
+    final next = getBoolDataEndDataNow(days.millisecondsSinceEpoch, dateNowSec);
+    if (next){
+      if (change == nowChange){
+        if (dateNowSec > dateStopCh) {newList.add(createMonitoringMachineLastStatus(dateStartCh, dateStopCh, change, listStatus.statusMachine!));}
+        else {newList.add(createMonitoringMachineLastStatus(dateStartCh, dateNowSec, change, listStatus.statusMachine!));}
+      } else {
+        //
+        if (dateStartCh < dateNowSec){
           if (dateNowSec > dateStopCh) {newList.add(createMonitoringMachineLastStatus(dateStartCh, dateStopCh, change, listStatus.statusMachine!));}
           else {newList.add(createMonitoringMachineLastStatus(dateStartCh, dateNowSec, change, listStatus.statusMachine!));}
-        } else {
-          //
-          if (dateStartCh < dateNowSec){
-            if (dateNowSec > dateStopCh) {newList.add(createMonitoringMachineLastStatus(dateStartCh, dateStopCh, change, listStatus.statusMachine!));}
-            else {newList.add(createMonitoringMachineLastStatus(dateStartCh, dateNowSec, change, listStatus.statusMachine!));}
-          }
         }
-      } else {
-        int dateStartCh = getDateTimeSinceEpoch(listStatus.date, listTime[change - 1], 0);
-        int dateStopCh = getDateTimeSinceEpoch(listStatus.date, change != lastChange ? listTime[change] : listTime.first, change != lastChange ? 0 : 1);
-        newList.add(createMonitoringMachineLastStatus(dateStartCh, dateStopCh, change, listStatus.statusMachine!));
       }
+    } else {
+      int dateStartCh = getDateTimeSinceEpoch(listStatus.date, listTime[change - 1], 0);
+      int dateStopCh = getDateTimeSinceEpoch(listStatus.date, change != lastChange ? listTime[change] : listTime.first, change != lastChange ? 0 : 1);
+      newList.add(createMonitoringMachineLastStatus(dateStartCh, dateStopCh, change, listStatus.statusMachine!));
+    }
 
     return newList;
   }
@@ -251,9 +251,9 @@ class MonitoringTimeList{
 
   List<MonitoringMachine> convertTimeStatusNull(int change, DateTime days, int lastChange) {
     List<MonitoringMachine> newList = [];
-      int dateStartCh = getDateTimeSinceEpoch(days, listTime[change - 1], 0);
-      int dateStopCh = getDateTimeSinceEpoch(days, change != lastChange ? listTime[change] : listTime.first, change != lastChange ? 0 : 1);
-      newList.add(createMonitoringMachineLastStatus(dateStartCh, dateStopCh, change, StatusMachineDTO(id: 8, name: 'Отключено')));
+    int dateStartCh = getDateTimeSinceEpoch(days, listTime[change - 1], 0);
+    int dateStopCh = getDateTimeSinceEpoch(days, change != lastChange ? listTime[change] : listTime.first, change != lastChange ? 0 : 1);
+    newList.add(createMonitoringMachineLastStatus(dateStartCh, dateStopCh, change, StatusMachineDTO(id: 8, name: 'Отключено')));
     return newList;
   }
 

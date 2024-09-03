@@ -726,6 +726,25 @@ class ExcelService {
             excel.tables[table]!.rows[3][7]!.value.toString();
         String description = excel.tables[table]!.rows[3][8]!.value.toString();
 
+        print('planNumber : $planNumber');
+        print('planName : $planName');
+
+        print('[3][4] :  ${excel.tables[table]!.rows[3][4]!.value.toString()}');
+        print('[3][5] :  ${excel.tables[table]!.rows[3][5]!.value.toString()}');
+        print('[3][6] :  ${excel.tables[table]!.rows[3][6]!.value.toString()}');
+        print('[3][7] :  ${excel.tables[table]!.rows[3][7]!.value.toString()}');
+        print('[3][8] :  ${excel.tables[table]!.rows[3][8]!.value.toString()}');
+        print('[3][9] :  ${excel.tables[table]!.rows[3][9]!.value.toString()}');
+        print('[3][10] :  ${excel.tables[table]!.rows[3][10]!.value.toString()}');
+        print('[3][11] :  ${excel.tables[table]!.rows[3][11]!.value.toString()}');
+
+
+
+
+
+
+
+
         int batchArchiveId = await _batchArchiveTable.insert(BatchArchiveDto(
           code: batchCode,
           id: 0,
@@ -829,11 +848,15 @@ class ExcelService {
             operationName = excel.tables[table]!.rows[i][13]!.value.toString();
 
             if (row[i][16]?.value != null) {
+
               timepz = (int.parse(
                   (excel.tables[table]!.rows[i][16]!.value).toString()));
+              print('[$i][16] : ${excel.tables[table]!.rows[i][16]!.value}');
             }
             operationTimeSH = int.parse(row[i][17]!.value.toString());
-
+            print('[$i][17] : ${excel.tables[table]!.rows[i][17]!.value}');
+            print(
+                'operation code: $operationCode,  operationNumber: $operationNumber, operationName: $operationName');
 
             operationArchiveId =
                 await _operationArchiveTable.insert(OperationArchiveDto(
@@ -853,9 +876,9 @@ class ExcelService {
             transferTimeSH = int.parse(row[i][17]!.value.toString());
             operationTimeSH = operationTimeSH + transferTimeSH;
 
-            _transferArchiveTable.insert(TransferArchiveDto(
+            await _transferArchiveTable.insert(TransferArchiveDto(
                 id: 0,
-                name: transferName ?? '',
+                name: transferName,
                 code: transferCode,
                 timeSH: transferTimeSH,
                 operationArchiveId: operationArchiveId));

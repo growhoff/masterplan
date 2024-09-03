@@ -2,11 +2,11 @@
 import 'package:equatable/equatable.dart';
 import 'package:master_plan/data/repositories/supabase/dto/status_machine_dto.dart';
 import 'package:master_plan/domain/model/area_machine.dart';
+import 'package:master_plan/domain/model/item_machine_monitor.dart';
 import 'package:master_plan/domain/model/monitoring_machine.dart';
 import 'package:master_plan/domain/model/name_index.dart';
-import 'package:master_plan/presentation/pages/master/pages/monitoring/monitoringMachine/model/item_machine_monitor.dart';
 
-class StateMonitoring extends Equatable {
+class StateMonitoringMachine extends Equatable {
   final List<ItemMachineMonitorMaster>? listMonitor;
   final DateTime days;
   final int change;
@@ -20,7 +20,7 @@ class StateMonitoring extends Equatable {
   final List<NameIndex> listItemMachine;
   final bool isLoading;
 
-  const StateMonitoring({
+  const StateMonitoringMachine({
     this.listMonitor = const[],
     required this.days,
     this.change = 1,
@@ -38,7 +38,7 @@ class StateMonitoring extends Equatable {
   @override
   List<Object> get props => [isLoading, listMonitor ?? [], days, change, activePage, listStatusActive, statusActive ?? StatusMachineDTO(id: -1, name: '-'), activeArea, activeMachine, listAreaMachine, listItemArea, listItemMachine];
 
-  StateMonitoring copyWith({
+  StateMonitoringMachine copyWith({
     List<ItemMachineMonitorMaster>? listMonitor,
     DateTime? days,
     int? change,
@@ -52,7 +52,7 @@ class StateMonitoring extends Equatable {
     List<NameIndex>? listItemMachine,
     bool? isLoading,
   }) {
-    return StateMonitoring(
+    return StateMonitoringMachine(
       listMonitor: listMonitor ?? this.listMonitor,
       days: days ?? this.days,
       change: change ?? this.change,

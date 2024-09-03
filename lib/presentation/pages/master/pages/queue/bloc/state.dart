@@ -1,9 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:master_plan/domain/model/area_machine.dart';
+import 'package:master_plan/domain/model/item_machine.dart';
 import 'package:master_plan/domain/model/name_index.dart';
-// import 'package:master_plan/domain/model/otp_path_operations.dart';
-import 'package:master_plan/presentation/pages/master/pages/queue/model/item_machine.dart';
 
 class StateQueueMaster extends Equatable {
   final List<ItemMachine>? listMachine;

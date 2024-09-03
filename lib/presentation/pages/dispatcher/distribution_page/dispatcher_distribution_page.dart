@@ -62,6 +62,7 @@ class _DispatcherDistributionPageViewState
                                     expandedAlignment: Alignment.topLeft,
                                     children: [
                                       DispatcherDistributionBodyItem(
+                                        cubit: context.read<DispatcherDistributionCubit>(),
                                         stage:
                                             state.distributionStagesList[index],
                                       )
@@ -75,30 +76,11 @@ class _DispatcherDistributionPageViewState
                         : Center(
                             child: CircularProgressIndicator(),
                           )),
-                const SizedBox(
-                  height: 50,
-                ),
+
               ],
             ),
           ),
-          Container(
-            alignment: Alignment.bottomCenter,
-            child: ElevatedButton(
-              onPressed: () async {
-                await context
-                    .read<DispatcherDistributionCubit>()
-                    .distributeStages();
-                setState(() {
-                  context.read<DispatcherDistributionCubit>().fetchStages();
-                });
-              },
-              style: ElevatedButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 15)),
-              child: const Text('отправить в работу',
-                  style: TextStyle(fontSize: 18)),
-            ),
-          )
+
         ],
       );
     });

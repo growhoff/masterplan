@@ -23,7 +23,7 @@ class DropMachine extends StatelessWidget {
                 value: activeMachine, 
                 items: listItemMachine.map((e) => DropdownMenuItem(value: e.index, child: Text(e.name)),).toList(),
                 selectedItemBuilder: (context) => listItemMachine.map((e) => Center(child: Text(e.name),)).toList(),
-                onChanged: (value) => value != null ? context.read<CubitMonitoring>().setActiveMachine(value) : null,
+                onChanged: (value) => value != null ? context.read<CubitMonitoringMachine>().setActiveMachine(value) : null,
               ),
             );
   }

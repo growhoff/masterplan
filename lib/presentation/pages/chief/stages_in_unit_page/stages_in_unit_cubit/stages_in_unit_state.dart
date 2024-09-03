@@ -1,23 +1,29 @@
 part of 'stages_in_unit_cubit.dart';
 
+enum StagesInUnitStateStatus { initial, loading, success, failure }
+
 class StagesInUnitState extends Equatable {
   const StagesInUnitState({
     this.stagesList = const [],
-    this.stagesInBatchList = const [],
+    this.status = StagesInUnitStateStatus.initial,
   });
 
   final List<StageModel> stagesList;
-  final List<StageModel> stagesInBatchList;
+final StagesInUnitStateStatus status;
 
   @override
-  List<Object?> get props => [stagesList, stagesInBatchList, ];
+  List<Object?> get props => [
+        stagesList,
+    status
+      ];
 
   StagesInUnitState copyWith({
     List<StageModel>? stagesList,
-    List<StageModel>? stagesInBatchList,
+    StagesInUnitStateStatus? status,
   }) {
     return StagesInUnitState(
-        stagesList: stagesList ?? this.stagesList,
-        stagesInBatchList: stagesInBatchList ?? this.stagesInBatchList);
+      stagesList: stagesList ?? this.stagesList,
+      status: status ?? this.status,
+    );
   }
 }

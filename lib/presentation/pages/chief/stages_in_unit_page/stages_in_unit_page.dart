@@ -34,89 +34,95 @@ class _StagesInUnitPageViewState extends State<StagesInUnitPageView> {
   Widget build(BuildContext context) {
     return SafeArea(child: BlocBuilder<StagesInUnitCubit, StagesInUnitState>(
         builder: (context, state) {
-      return Column(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          const SizedBox(
-            height: 10,
-          ),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Container(
-                      child: Text(
-                        '№ этапа',
-                        textAlign: TextAlign.center,
+      if (state.status == StagesInUnitStateStatus.success) {
+        return Column(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            const SizedBox(
+              height: 10,
+            ),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Container(
+                        child: Text(
+                          '№ этапа',
+                          textAlign: TextAlign.center,
+                        ),
                       ),
+                      flex: 1,
                     ),
-                    flex: 1,
-                  ),
-                  Expanded(
-                    child: Container(
-                      child: Text(
-                        '№ чертежа',
-                        textAlign: TextAlign.center,
+                    Expanded(
+                      child: Container(
+                        child: Text(
+                          '№ чертежа',
+                          textAlign: TextAlign.center,
+                        ),
                       ),
+                      flex: 1,
                     ),
-                    flex: 1,
-                  ),
-                  Expanded(
-                    child: Container(
-                      child: Text(
-                        'Наименование',
-                        textAlign: TextAlign.center,
+                    Expanded(
+                      child: Container(
+                        child: Text(
+                          'Наименование',
+                          textAlign: TextAlign.center,
+                        ),
                       ),
+                      flex: 1,
                     ),
-                    flex: 1,
-                  ),
-                  Expanded(
-                    child: Container(
-                      child: Text(
-                        '% выполнения этапа',
-                        textAlign: TextAlign.center,
+                    Expanded(
+                      child: Container(
+                        child: Text(
+                          '% выполнения этапа',
+                          textAlign: TextAlign.center,
+                        ),
                       ),
+                      flex: 1,
                     ),
-                    flex: 1,
-                  ),
-                  Expanded(
-                    child: Container(
-                      child: Text(
-                        'Состояние этапа',
-                        textAlign: TextAlign.center,
+                    Expanded(
+                      child: Container(
+                        child: Text(
+                          'Состояние этапа',
+                          textAlign: TextAlign.center,
+                        ),
                       ),
+                      flex: 1,
                     ),
-                    flex: 1,
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: ListView.separated(
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) => StagesInUnitTitleItem(
-                        state.stagesList[index],
-                        setState: () => setState(() {
-                          Navigator.pop(context);
-                          context.read<StagesInUnitCubit>().fetchStages();
-                        }),
-                      ),
-                  separatorBuilder: (context, i) => SizedBox(height: 10),
-                  itemCount: state.stagesList.length),
+            const SizedBox(
+              height: 10,
             ),
-          ),
-        ],
-      );
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: ListView.separated(
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) => StagesInUnitTitleItem(
+                          state.stagesList[index],
+                          setState: () => setState(() {
+                            Navigator.pop(context);
+                            context.read<StagesInUnitCubit>().fetchStages();
+                          }),
+                        ),
+                    separatorBuilder: (context, i) => SizedBox(height: 10),
+                    itemCount: state.stagesList.length),
+              ),
+            ),
+          ],
+        );
+      } else {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      }
     }));
   }
 }

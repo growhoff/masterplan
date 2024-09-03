@@ -4,22 +4,21 @@ import 'package:master_plan/data/repositories/supabase/dto/monitoring_machine_dt
 import 'package:master_plan/data/repositories/supabase/dto/status_machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/monitoring_machine_table.dart';
 import 'package:master_plan/domain/model/area_machine.dart';
+import 'package:master_plan/domain/model/item_machine_monitor.dart';
 import 'package:master_plan/domain/model/machine.dart';
-// import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/monitoring_machine.dart';
 import 'package:master_plan/domain/model/name_index.dart';
 import 'package:master_plan/domain/usecase/convert_dto_model.dart';
 import 'package:master_plan/domain/usecase/machine_change.dart';
 import 'package:master_plan/domain/usecase/monitoring_time_list.dart';
 import 'package:master_plan/domain/usecase/time_converter.dart';
-import 'package:master_plan/presentation/pages/master/pages/monitoring/monitoringMachine/model/item_machine_monitor.dart';
 import 'state.dart';
 
-class CubitMonitoring extends Cubit<StateMonitoring> {
+class CubitMonitoringMachine extends Cubit<StateMonitoringMachine> {
   final tableMonitoring = MonitoringMachineTable();
   TimeConverter timeConverter = TimeConverter();
   final List<AreaMachine> listAreaMachine;
-  CubitMonitoring( this.listAreaMachine): super(StateMonitoring(days: DateTime.now())) {
+  CubitMonitoringMachine( this.listAreaMachine): super(StateMonitoringMachine(days: DateTime.now())) {
     emit(state.copyWith(listAreaMachine: listAreaMachine));
     tableMonitoring.table
         .stream(primaryKey: ['id'])

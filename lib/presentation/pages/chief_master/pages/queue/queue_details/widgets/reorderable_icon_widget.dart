@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 
 class ReorderableIconWidget extends StatelessWidget {
-  const ReorderableIconWidget(this.index, {super.key});
+  const ReorderableIconWidget(this.index, this.isGroup, {super.key});
   final int index;
+  final bool isGroup;
 
   @override
   Widget build(BuildContext context) {
     return ReorderableDragStartListener(
       index: index,
-      child: const Icon(Icons.reorder),
+      child: Icon(Icons.reorder, color: isGroup ? Colors.amber : Colors.black,),
     );
   }
 }

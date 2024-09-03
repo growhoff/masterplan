@@ -87,7 +87,7 @@ class _QueueStageItemViewState extends State<QueueStageItemView> {
                                                             .start,
                                                     children: [
                                                       Text(
-                                                          'Номер чертежа: ${widget.stageModel.batch.number} ${widget.stageModel.batch.name}'),
+                                                          'Номер чертежа: ${widget.stageModel.batch.numberRS} ${widget.stageModel.batch.name}'),
                                                       const SizedBox(
                                                         height: 5,
                                                       ),
@@ -161,31 +161,37 @@ class _QueueStageItemViewState extends State<QueueStageItemView> {
                             ],
                           ),
                         ),
-                        Divider(
-                          height: 1,
-                        ),
-                        SimpleDialogOption(
-                          onPressed: () async{
-                            await context
-                                .read<QueueStagesCubit>()
-                                .redistribute(widget.stageModel);
-
-                            widget.setState();
-                          },
-                          child: const Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Icon(Icons.undo_rounded),
-                              SizedBox(
-                                width: 8,
+                        (widget.stageModel.status == 'Выполняется' ||
+                                widget.stageModel.status == 'Готов')
+                            ? Container()
+                            : Divider(
+                                height: 1,
                               ),
-                              Text(
-                                'перераспределить',
-                                style: TextStyle(fontSize: 18),
+                        (widget.stageModel.status == 'Выполняется' ||
+                                widget.stageModel.status == 'Готов')
+                            ? Container()
+                            : SimpleDialogOption(
+                                onPressed: () async {
+                                  await context
+                                      .read<QueueStagesCubit>()
+                                      .redistribute(widget.stageModel);
+
+                                  widget.setState();
+                                },
+                                child: const Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.undo_rounded),
+                                    SizedBox(
+                                      width: 8,
+                                    ),
+                                    Text(
+                                      'перераспределить',
+                                      style: TextStyle(fontSize: 18),
+                                    )
+                                  ],
+                                ),
                               )
-                            ],
-                          ),
-                        )
                       ],
                     ));
           },

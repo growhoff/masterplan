@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:master_plan/presentation/pages/master/pages/queue/widgets/dialog_button_group.dart';
-import '../widgets/drop_area.dart';
-import '../widgets/drop_machine.dart';
+import 'dialog_button_group.dart';
+import 'drop_area.dart';
+import 'drop_machine.dart';
 import '../../queue/bloc/cubit.dart';
 import '../../queue/bloc/state.dart';
 import 'contetn_queue.dart';
@@ -59,18 +59,22 @@ class ElementBarQueue extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-            Visibility(
-              visible: state.listAreaMachine.length > 1,
-              child: DropAreaQueue(state.activeArea, state.listItemArea),
-            ),
-            const SizedBox(height: 8),
-            DropMachineQueue(state.activeMachine, state.listItemMachine),
-            const SizedBox(height: 8),
-            state.isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : state.listMachine!.isNotEmpty 
-              ? ContetnQueue(itemMachine: state.listMachine![state.activeMachine], isGroup: state.isGroup)
-              : const Center(child: Text('Пусто'))
+        Visibility(
+          visible: state.listAreaMachine.length == 1,
+          child: Text(state.listAreaMachine[state.activeArea].area.name),
+        ),
+        Visibility(
+          visible: state.listAreaMachine.length > 1,
+          child: DropAreaQueue(state.activeArea, state.listItemArea),
+        ),
+        const SizedBox(height: 8),
+        DropMachineQueue(state.activeMachine, state.listItemMachine),
+        const SizedBox(height: 8),
+        state.isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : state.listMachine!.isNotEmpty
+          ? ContetnQueue(itemMachine: state.listMachine![state.activeMachine], isGroup: state.isGroup)
+          : const Center(child: Text('Пусто'))
         ],
       )
       : const Center(child: Text('Нет станков')),

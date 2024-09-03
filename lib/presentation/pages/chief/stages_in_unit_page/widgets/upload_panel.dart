@@ -104,9 +104,9 @@ class _UploadPanelState extends State<UploadPanel> {
                                         context
                                             .read<StagesInUnitCubit>()
                                             .uploadStages(
-                                                distributionStagesIdsList: widget
+                                                stageModel: widget
                                                     .stageModel
-                                                    .distributionStagesIdsList),
+                                                    ),
                                         widget.setState()
                                       }
                                     : setState(() {

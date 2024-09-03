@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/pages/dispatcher/orders_page/orders_page.dart';
 import 'package:master_plan/presentation/pages/dispatcher/queue_stages_page/queue_stages_page.dart';
+import 'package:master_plan/presentation/pages/dispatcher/ready_orders_page/ready_orders_page.dart';
 
 import '../../../widgets/in_development_page.dart';
 import '../../chief/model/tab_bar_model.dart';
@@ -64,7 +65,7 @@ abstract class DispatcherData {
     TabBarModel(
         title: 'Готовые заказы',
         actions: [],
-        page: InDevelopmentPage(),
+        page: ReadyOrdersPage(),
         icon: Icons.check_box),
     TabBarModel(
         title: 'Аналитика',

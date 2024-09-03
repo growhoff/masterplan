@@ -8,9 +8,8 @@ class TableContentRowStatus extends StatelessWidget {
   Widget build(BuildContext context) {
     return TableRowInkWell(
       child: Container(
-        margin: EdgeInsets.all(10),
+        margin: const EdgeInsets.all(10),
         color: color,
-        // padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
         child: Text(
           text,
           textAlign: TextAlign.center,

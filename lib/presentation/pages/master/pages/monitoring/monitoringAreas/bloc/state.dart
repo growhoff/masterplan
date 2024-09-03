@@ -2,8 +2,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:master_plan/data/repositories/supabase/dto/status_machine_dto.dart';
 import 'package:master_plan/domain/model/area_machine.dart';
+import 'package:master_plan/domain/model/item_machine_monitor.dart';
 import 'package:master_plan/domain/model/name_index.dart';
-import '../model/item_machine_monitor.dart';
 
 class StateMonitoringAreas extends Equatable {
   final List<ItemMachineMonitorMaster>? listMonitor;

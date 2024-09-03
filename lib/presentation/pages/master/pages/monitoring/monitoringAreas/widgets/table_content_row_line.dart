@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:master_plan/presentation/pages/master/pages/monitoring/monitoringAreas/model/item_machine_monitor.dart';
-import 'package:master_plan/presentation/pages/master/pages/monitoring/monitoringAreas/widgets/status_line.dart';
+import 'package:master_plan/domain/model/item_machine_monitor.dart';
+import 'status_line.dart';
 
 class TableContentRowLine extends StatelessWidget {
   const TableContentRowLine(this.itemMachine,{super.key});
@@ -9,7 +9,6 @@ class TableContentRowLine extends StatelessWidget {
   Widget build(BuildContext context) {
     return TableRowInkWell(
       child: Container(
-        // margin: ,
         color: Colors.white,
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
         child: StatusLine(itemMachine.listStatus, itemMachine.machine),

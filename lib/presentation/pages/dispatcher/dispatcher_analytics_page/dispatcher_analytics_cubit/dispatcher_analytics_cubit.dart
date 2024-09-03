@@ -93,7 +93,7 @@ class DispatcherAnalyticsCubit extends Cubit<DispatcherAnalyticsState> {
     return areasIdsList;
   }
 
-  Future fetchAreas({bool? isInit}) async {
+  Future fetchAreas() async {
     emit(state.copyWith(status: DispatcherAnalyticsStateStatus.loading));
     List<Area> areasList = [];
 
@@ -107,7 +107,8 @@ class DispatcherAnalyticsCubit extends Cubit<DispatcherAnalyticsState> {
       areasList.add(area);
     }
 
-
+    selectedAreasList = areasList;
+    print(selectedAreasList);
 
     emit(state.copyWith(
         areasList: areasList, status: DispatcherAnalyticsStateStatus.success));
@@ -255,7 +256,7 @@ class DispatcherAnalyticsCubit extends Cubit<DispatcherAnalyticsState> {
             operationId: 0,
             code: value.first.operation.code,
             comment: '',
-            detailNumber: value.first.batch.number ?? '_',
+            detailNumber: value.first.batch.numberRS,
             detailName: value.first.batch.name,
             operationNumber: value.first.operation.number,
             operationName: value.first.operation.name,

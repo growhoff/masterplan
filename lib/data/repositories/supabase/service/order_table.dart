@@ -42,6 +42,14 @@ class OrderTable extends SupabaseTable {
         .order('priority', ascending: true);
   }
 
+  Future<List<Map<String, dynamic>>> selectReadyOrders() {
+    return table
+        .select('*, z_order_status(*)')
+        .eq('company_id', _companyId)
+        .eq('order_status_id', 5)
+        .order('priority', ascending: true);
+  }
+
   Future changeStatusToFormed(int orderId) async {
     await table.update({'order_status_id': 2}).eq('id', orderId);
   }
@@ -67,7 +75,7 @@ class OrderTable extends SupabaseTable {
     return table.update({'name': '1'}).eq('id', id);
   }
 
-  Future<void> updateOrder(OrderDTO orderDto) async{
+  Future<void> updateOrder(OrderDTO orderDto) async {
     print('ID : ${orderDto.id}');
     await table.update({
       'number': orderDto.number,

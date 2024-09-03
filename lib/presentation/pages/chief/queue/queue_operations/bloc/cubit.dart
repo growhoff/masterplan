@@ -10,14 +10,14 @@ import 'package:master_plan/domain/usecase/convert_dto_model.dart';
 import '../model/distrib_item.dart';
 import 'state.dart';
 
-class CubitOperatQueueMasterChM extends Cubit<StateOperatQueueMasterChM> {
+class CubitOperatQueueChief extends Cubit<StateOperatQueueChief> {
   final List<OperatorOperations>? queueList;
   final int userId;
   final List<Area> listArea;
    final List<AreaMachine> listAreaMachine;
   final tableOperations = OperatorOperationsTable();
 
-  CubitOperatQueueMasterChM( this.queueList,  this.userId, this.listArea, this.listAreaMachine) : super(const StateOperatQueueMasterChM()) {
+  CubitOperatQueueChief( this.queueList,  this.userId, this.listArea, this.listAreaMachine) : super(const StateOperatQueueChief()) {
     emit(state.copyWith(listAreaMachine: listAreaMachine));
     tableOperations.table.stream(primaryKey: ['id']).inFilter('area_id', [listAreaMachine[state.activeArea].area.id]).listen((event) {}).onData((data) async {
       await getQuere(data);

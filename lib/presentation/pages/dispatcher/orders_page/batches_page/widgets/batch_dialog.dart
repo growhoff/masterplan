@@ -16,77 +16,107 @@ class BatchDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SimpleDialog(
-      title: Text('${batch.batch.numberRS}\n${batch.batch.name}'),
-      children: [
-        SimpleDialogOption(
-          child: Row(
-            children: [
-              Icon(Icons.ac_unit),
-              const SizedBox(
-                width: 10,
-              ),
-              Text(
-                'этапы',
-                style: TextStyle(fontSize: 18),
-              )
-            ],
+    if (batch.batch.status?.id == 7) {
+      return SimpleDialog(
+        title: Text('${batch.batch.numberRS}\n${batch.batch.name}'),
+        children: [
+          SimpleDialogOption(
+            child: Row(
+              children: [
+                Icon(Icons.ac_unit),
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  'этапы',
+                  style: TextStyle(fontSize: 18),
+                )
+              ],
+            ),
+            onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        StagesInBatchPage(batch: batch.batch))),
           ),
-          onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => StagesInBatchPage(batch: batch.batch))),
-        ),
-        Divider(
-          height: 1,
-        ),
-        SimpleDialogOption(
+
+        ],
+      );
+    } else {
+      return SimpleDialog(
+        title: Text('${batch.batch.numberRS}\n${batch.batch.name}'),
+        children: [
+          SimpleDialogOption(
             child: Row(
               children: [
-                Icon(Icons.edit_rounded),
+                Icon(Icons.ac_unit),
                 const SizedBox(
                   width: 10,
                 ),
                 Text(
-                  'редактировать',
+                  'этапы',
                   style: TextStyle(fontSize: 18),
                 )
               ],
             ),
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pushNamed(context, '/editBatchPage',
-                      arguments: batch.batch)
-                  .then((_) => cubit.fetchBatchesInOrder(batch.batch.orderId));
-            }),
-        Divider(
-          height: 1,
-        ),
-        SimpleDialogOption(
-            child: Row(
-              children: [
-                Icon(Icons.delete_rounded),
-                const SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  'удалить',
-                  style: TextStyle(fontSize: 18),
-                )
-              ],
-            ),
-            onPressed: () {
-              cubit.deleteBatch(batch.batch);
-              Navigator.pop(context);
-            }),
-        Divider(
-          height: 1,
-        ),
-        BatchToFormDialogButton(
-          batch.batch,
-          fetchBatches: () => cubit.fetchBatchesInOrder(batch.batch.orderId),
-        )
-      ],
-    );
+            onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        StagesInBatchPage(batch: batch.batch))),
+          ),
+          Divider(
+            height: 1,
+          ),
+          SimpleDialogOption(
+              child: Row(
+                children: [
+                  Icon(Icons.edit_rounded),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    'редактировать',
+                    style: TextStyle(fontSize: 18),
+                  )
+                ],
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/editBatchPage',
+                        arguments: batch.batch)
+                    .then(
+                        (_) => cubit.fetchBatchesInOrder(batch.batch.orderId));
+              }),
+          Divider(
+            height: 1,
+          ),
+          SimpleDialogOption(
+              child: Row(
+                children: [
+                  Icon(Icons.delete_rounded),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    'удалить',
+                    style: TextStyle(fontSize: 18),
+                  )
+                ],
+              ),
+              onPressed: () {
+                cubit.deleteBatch(batch.batch);
+                Navigator.pop(context);
+              }),
+          Divider(
+            height: 1,
+          ),
+          BatchToFormDialogButton(
+            batch.batch,
+            fetchBatches: () => cubit.fetchBatchesInOrder(batch.batch.orderId),
+          )
+        ],
+      );
+    }
   }
 }

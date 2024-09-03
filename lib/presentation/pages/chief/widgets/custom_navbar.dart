@@ -2,52 +2,42 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import 'package:master_plan/presentation/app/bloc/state.dart';
+import 'package:master_plan/presentation/pages/chief/bloc/cubit.dart';
+import 'package:master_plan/presentation/pages/chief/bloc/state.dart';
 
 import '../data/chief_data.dart';
 
-class NavBarCustomChief extends StatefulWidget {
+class NavBarCustomChief extends StatelessWidget {
   const NavBarCustomChief({super.key});
 
   @override
-  State<NavBarCustomChief> createState() => _NavBarCustomChiefState();
-}
-
-class _NavBarCustomChiefState extends State<NavBarCustomChief> {
-  int selectedIndex = 0;
-
-  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      child: Scaffold(
-        appBar: AppBar(
-          title: BlocBuilder<CubitMain, StateMain>(builder: (context, state) {
-            final user = state.user!;
-            return Column(
-              children: [
-                Text(DataChief.listPage[selectedIndex].title),
-                Text(' ${user.fio} / ${user.position.name} / ${user.unit!.name}', style: const TextStyle(fontSize: 12)),
-              ],
-            );
-          }),
-          actions: DataChief.listPage[selectedIndex].actions,
+    return BlocBuilder<CubitChief,StateChief>(
+        builder:(context, stateMaster) => GestureDetector(
+          child: Scaffold(
+            appBar: AppBar(
+              title: BlocBuilder<CubitMain, StateMain>(builder: (context, state) 
+              {
+                final user = state.user!;
+                return Column(children: [
+                  Text(DataChief.listPage[stateMaster.activePage].title), 
+                  Text('${user.fio} / ${user.position.name} / ${user.unit!.name}', style: const TextStyle(fontSize: 12)),
+                ]);
+                }
+                ),
+              actions: stateMaster.activePage == 5 ? [IconButton(onPressed: () => context.read<CubitChief>().toggleMonitor(), icon: const Icon(Icons.transform_rounded, color: Colors.amber,))] : [const Text('')],
+              // DataMaster.listPage[stateMaster.activePage].actions,
+            ),
+            body: DataChief.listPage[stateMaster.activePage].page,
+            bottomNavigationBar: NavigationBar(
+              labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+              selectedIndex: stateMaster.activePage,
+              height: 50,
+              destinations: DataChief.listPage.map((e) => NavigationDestination(icon: Icon(e.icon, color: Colors.black),label: e.title,)).toList(),
+              onDestinationSelected: (value) => context.read<CubitChief>().setPage(value)
+            ),
+          ),
         ),
-        body: DataChief.listPage[selectedIndex].page,
-        bottomNavigationBar: NavigationBar(
-          labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-          selectedIndex: selectedIndex,
-          height: 50,
-          destinations: DataChief.listPage
-              .map((e) => NavigationDestination(
-                    icon: Icon(e.icon, color: Colors.black),
-                    label: e.title,
-                  ))
-              .toList(),
-          onDestinationSelected: (value) {
-            selectedIndex = value;
-            setState(() {});
-          },
-        ),
-      ),
-    );
+      );
   }
 }

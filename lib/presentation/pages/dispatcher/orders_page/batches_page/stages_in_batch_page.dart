@@ -252,7 +252,6 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                                   TableCell(
                                     child: Container(
                                         height: 100,
-                                        color: Colors.blue[200],
                                         alignment: Alignment.center,
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 8),
@@ -286,59 +285,6 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                                   TableCell(
                                     child: Container(
                                         height: 100,
-                                        color: Colors.blue[200],
-                                        alignment: Alignment.center,
-                                        child: RotatedBox(
-                                          quarterTurns: 3,
-                                          child: FittedBox(
-                                            child: Text(
-                                              'Готовые к\nвыгрузке',
-                                              softWrap: true,
-                                              maxLines: 3,
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        )),
-                                  ),
-                                  TableCell(
-                                    child: Container(
-                                        height: 100,
-                                        color: Colors.blue[300],
-                                        alignment: Alignment.center,
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 8),
-                                        child: const FittedBox(
-                                          fit: BoxFit.fill,
-                                          child: RotatedBox(
-                                            quarterTurns: 3,
-                                            child: Text(
-                                              'Всего на\nтекущем этапе',
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        )),
-                                  ),
-                                  TableCell(
-                                    child: Container(
-                                        height: 100,
-                                        color: Colors.orange[200],
-                                        alignment: Alignment.center,
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 8),
-                                        child: const FittedBox(
-                                          fit: BoxFit.fill,
-                                          child: RotatedBox(
-                                            quarterTurns: 3,
-                                            child: Text(
-                                              'Ожидается от\nпредыдущих этапов',
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        )),
-                                  ),
-                                  TableCell(
-                                    child: Container(
-                                        height: 100,
                                         color: Colors.yellow[200],
                                         alignment: Alignment.center,
                                         padding: const EdgeInsets.symmetric(
@@ -348,28 +294,7 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                                           child: RotatedBox(
                                             quarterTurns: 3,
                                             child: Text(
-                                              'Выгружено на\nследующий этап/склад',
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        )),
-                                  ),
-                                  TableCell(
-                                    child: Container(
-                                        height: 100,
-                                        color: Colors.green[300],
-                                        alignment: Alignment.center,
-                                        padding:
-                                            EdgeInsets.symmetric(vertical: 8),
-                                        child: const RotatedBox(
-                                          quarterTurns: 3,
-                                          child: FittedBox(
-                                            fit: BoxFit.fill,
-                                            child: Text(
-                                              softWrap: true,
-                                              'Всего доступно в этапе',
-                                              textAlign: TextAlign.center,
-                                              maxLines: 3,
+                                              'Готово на отправку в цехе',
                                             ),
                                           ),
                                         )),
@@ -384,7 +309,41 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                                           child: RotatedBox(
                                             quarterTurns: 3,
                                             child: const Text(
-                                              'Всего отбраковано\nв этапе',
+                                              'Отбраковано',
+                                              softWrap: true,
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        )),
+                                  ),
+                                  TableCell(
+                                    child: Container(
+                                        height: 100,
+                                        color: Colors.green[300],
+                                        alignment: Alignment.center,
+                                        child: FittedBox(
+                                          fit: BoxFit.fill,
+                                          child: RotatedBox(
+                                            quarterTurns: 3,
+                                            child: const Text(
+                                              'Отправлено',
+                                              softWrap: true,
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        )),
+                                  ),
+                                  TableCell(
+                                    child: Container(
+                                        height: 100,
+                                        color: Colors.orange[200],
+                                        alignment: Alignment.center,
+                                        child: FittedBox(
+                                          fit: BoxFit.fill,
+                                          child: RotatedBox(
+                                            quarterTurns: 3,
+                                            child: const Text(
+                                              'Ожидается',
                                               softWrap: true,
                                               textAlign: TextAlign.center,
                                             ),
@@ -435,7 +394,6 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                                             ? true
                                             : false,
                                       ),
-
                                       StagesInBatchTableCell(
                                         '${state.stagesInBatchList[index].stageName}',
                                         stageModel:
@@ -447,17 +405,17 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                                             ? true
                                             : false,
                                       ),
-                                  StagesInBatchTableCell(
-                                    '${state.stagesInBatchList[index].unitNumber}',
-                                    stageModel:
-                                    state.stagesInBatchList[index],
-                                    isSelected: state
-                                        .stagesInBatchList[index]
-                                        .stageId ==
-                                        widget.selectedStageId
-                                        ? true
-                                        : false,
-                                  ),
+                                      StagesInBatchTableCell(
+                                        '${state.stagesInBatchList[index].unitNumber}',
+                                        stageModel:
+                                            state.stagesInBatchList[index],
+                                        isSelected: state
+                                                    .stagesInBatchList[index]
+                                                    .stageId ==
+                                                widget.selectedStageId
+                                            ? true
+                                            : false,
+                                      ),
                                       StagesInBatchTableCell(
                                         '${state.stagesInBatchList[index].inWorkQuantity}',
                                         stageModel:
@@ -481,18 +439,7 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                                             : false,
                                       ),
                                       StagesInBatchTableCell(
-                                        '${state.stagesInBatchList[index].allOnStageQuantity}',
-                                        stageModel:
-                                            state.stagesInBatchList[index],
-                                        isSelected: state
-                                                    .stagesInBatchList[index]
-                                                    .stageId ==
-                                                widget.selectedStageId
-                                            ? true
-                                            : false,
-                                      ),
-                                      StagesInBatchTableCell(
-                                        '${state.stagesInBatchList[index].waitFromPrevStagesQuantity}',
+                                        '${state.stagesInBatchList[index].defectQuantity}',
                                         stageModel:
                                             state.stagesInBatchList[index],
                                         isSelected: state
@@ -514,18 +461,7 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                                             : false,
                                       ),
                                       StagesInBatchTableCell(
-                                        '${state.stagesInBatchList[index].readyQuantity}',
-                                        stageModel:
-                                            state.stagesInBatchList[index],
-                                        isSelected: state
-                                                    .stagesInBatchList[index]
-                                                    .stageId ==
-                                                widget.selectedStageId
-                                            ? true
-                                            : false,
-                                      ),
-                                      StagesInBatchTableCell(
-                                        '${state.stagesInBatchList[index].defectQuantity}',
+                                        '${state.stagesInBatchList[index].waitFromPrevStagesQuantity}',
                                         stageModel:
                                             state.stagesInBatchList[index],
                                         isSelected: state

@@ -39,21 +39,23 @@ class OrdersCubit extends Cubit<OrdersState> {
       for (var fetchedOrder in fetchedOrdersList) {
         final orderDto = OrderDTO.fromMap(fetchedOrder);
 
-        final order = Order(
-            id: orderDto.id,
-            number: orderDto.number,
-            dateReceipt: orderDto.dateReceipt,
-            requiredCompletionDate: orderDto.requiredCompletionDate,
-            calculatedCompletionDate: orderDto.calculatedCompletionDate,
-            actualCompletionDate: orderDto.actualCompletionDate,
-            customer: orderDto.customer,
-            priority: orderDto.priority,
-            statusId: orderDto.statusId,
-            status: OrderStatus(
-                id: orderDto.status?.id ?? 0,
-                name: statusNameFromId(orderDto.statusId)));
+        if (orderDto.statusId!=5){
+          final order = Order(
+              id: orderDto.id,
+              number: orderDto.number,
+              dateReceipt: orderDto.dateReceipt,
+              requiredCompletionDate: orderDto.requiredCompletionDate,
+              calculatedCompletionDate: orderDto.calculatedCompletionDate,
+              actualCompletionDate: orderDto.actualCompletionDate,
+              customer: orderDto.customer,
+              priority: orderDto.priority,
+              statusId: orderDto.statusId,
+              status: OrderStatus(
+                  id: orderDto.status?.id ?? 0,
+                  name: statusNameFromId(orderDto.statusId)));
 
-        ordersList.add(order);
+          ordersList.add(order);
+        }
       }
 
       emit(

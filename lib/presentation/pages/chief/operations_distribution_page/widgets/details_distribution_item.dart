@@ -43,9 +43,10 @@ class ChiefOperationDistributionTitleItem extends StatelessWidget {
 
 class ChiefOperationDistributionBodyItem extends StatefulWidget {
   const ChiefOperationDistributionBodyItem(
-      {required this.operation, super.key});
+      {required this.operation, required this.cubit, super.key});
 
   final ChiefDistributionOperation operation;
+  final ChiefDistributionCubit cubit;
 
   @override
   State<ChiefOperationDistributionBodyItem> createState() =>
@@ -55,7 +56,6 @@ class ChiefOperationDistributionBodyItem extends StatefulWidget {
 class _ChiefOperationDistributionBodyItemState
     extends State<ChiefOperationDistributionBodyItem> {
   String? activeValue;
-  bool _isChecked = false;
   bool _validateTextField = true;
   bool _validateDropDown = true;
   final TextEditingController _textEditingController = TextEditingController();
@@ -114,54 +114,6 @@ class _ChiefOperationDistributionBodyItemState
                 const SizedBox(
                   width: 10,
                 ),
-                Checkbox(
-                    value: _isChecked,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        if (_isChecked) {
-                          setState(() {
-                            _validateTextField = true;
-                            _isChecked = value!;
-                            context
-                                .read<ChiefDistributionCubit>()
-                                .operationsForDistributionList
-                                .removeWhere((operation) =>
-                                    operation.chiefOperationId ==
-                                    widget.operation.id);
-                          });
-                        } else {
-                          if (_textEditingController.text == '' ||
-                              int.parse(_textEditingController.text) >
-                                  widget.operation.quantity) {
-                            _validateTextField = false;
-                          }
-                          activeValue == null
-                              ? _validateDropDown = false
-                              : _validateDropDown = true;
-                          if (_validateDropDown == true &&
-                              _validateTextField == true) {
-                            _isChecked = value!;
-                            context
-                                .read<ChiefDistributionCubit>()
-                                .operationsForDistributionList
-                                .add(DistributionOperationModel(
-                                    oldQuantity: widget.operation.quantity,
-                                    chiefOperationId: widget.operation.id,
-                                    batchId: widget.operation.batchId,
-                                    operationId: widget.operation.operationId,
-                                    quantity:
-                                        int.parse(_textEditingController.text),
-                                    stageId: widget.operation.stageId,
-                                    areaId: context
-                                        .read<ChiefDistributionCubit>()
-                                        .areasMap[activeValue],
-                                    timePlan:
-                                        widget.operation.operation.timeSH));
-                          }
-                          setState(() {});
-                        }
-                      });
-                    })
               ],
             ),
             const SizedBox(height: 8),
@@ -186,9 +138,18 @@ class _ChiefOperationDistributionBodyItemState
                       decoration: InputDecoration(
                           fillColor:
                               _validateTextField ? null : Colors.red[200]),
-                    ))
+                    )),
               ],
-            )
+            ),
+            Center(
+                child: ElevatedButton(
+                    onPressed: () {
+                      widget.cubit.distributeOperation(
+                          quantity: int.parse(_textEditingController.text),
+                          chiefDistributionOperation: widget.operation,
+                          selectedAreaName: activeValue ?? '');
+                    },
+                    child: Text('отправить в работу')))
           ],
         ),
       ),

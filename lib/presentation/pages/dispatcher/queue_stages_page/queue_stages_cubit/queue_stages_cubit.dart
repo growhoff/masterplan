@@ -32,6 +32,8 @@ class QueueStagesCubit extends Cubit<QueueStagesState> {
   final _distributionStageTable = DistributionStageTable();
   final _chiefDistributionOperationsTable = ChiefDistributionOperationsTable();
   final _chiefOperationsTable = ChiefOperationTable();
+  final _operationTable = OperationTable();
+  final _operatorOperationsTable = OperatorOperationsTable();
 
   final _unitTable = UnitTable();
 
@@ -63,6 +65,11 @@ class QueueStagesCubit extends Cubit<QueueStagesState> {
     emit(state.copyWith(status: QueueStagesPageStatus.loading));
     List<DistributionStage> distributionStagesList = [];
     List<StageModel> stagesInBatchModelList = [];
+    List<int> stagesIdsList = [];
+    List<int> distributionStagesIdsList = [];
+    Map<int, int> operationsInStageQuantityMap = {};
+    List<OperatorOperationsDTO> operatorOperationsList = [];
+
 
     var fetchedStagesList =
         await _distributionStageTable.selectByUnitId(selectedUnit.id);
@@ -73,92 +80,172 @@ class QueueStagesCubit extends Cubit<QueueStagesState> {
       final distributionStage = DistributionStage.fromDto(fetchedStageDto);
 
       distributionStagesList.add(distributionStage);
+      distributionStagesIdsList.add(distributionStage.id);
+      stagesIdsList.add(distributionStage.stageId);
+      print('получили стейджи');
     }
 
-    var stagesMap = groupBy(distributionStagesList, (stage) => stage.stageId);
+    var fetchedOperationsList =
+    await _operationTable.selectByStageIdList(stagesIdsList);
 
-    stagesMap.forEach((key, value) {
-      // print('value number: ${value.first.chiefBatch?.batch.number}');
+    for (var operation in fetchedOperationsList) {
+      final operationDto = OperationDTO.fromMap(operation);
 
-      final stageModel = StageModel(
-          batch: Batch(
-              id: value.first.chiefBatch?.batch.id ?? 0,
-              numberRS: value.first.chiefBatch?.batch.numberRS ?? '',
-              number: value.first.chiefBatch?.batch.number,
-              name: value.first.chiefBatch?.batch.name ?? '',
-              order: Order(
-                  id: value.first.chiefBatch?.batch.order?.id ?? 0,
-                  number: value.first.chiefBatch?.batch.order?.number ?? '',
-                  priority: value.first.chiefBatch?.batch.order?.priority ?? 0,
-                  statusId: value.first.chiefBatch?.batch.order?.statusId ?? 0),
-              count: value.first.chiefBatch?.batch.count ?? 0,
-              code: value.first.chiefBatch?.batch.code ?? '',
-              technology: value.first.chiefBatch?.batch.technology ?? '',
-              isready: value.first.chiefBatch?.batch.isready ?? false,
-              orderId: value.first.chiefBatch?.batch.orderId),
-          stageId: value.first.stageId,
-          stageNumber: value.first.stage?.number ?? '',
-          stageName: value.first.stage?.name ?? '',
-          unitNumber: value.first.unit?.number ?? '');
-
-      List<int> stagesStatusesIdsList = [];
-      for (var stage in value) {
-        stageModel.distributionStagesIdsList.add(stage.id);
-        stagesStatusesIdsList.add(stage.statusId);
-        switch (stage.statusId) {
-          case 2:
-            stageModel.inWorkQuantity++;
-          case 3:
-            stageModel.readyToUploadQuantity++;
-            stagesStatusesIdsList.add(stage.statusId);
-          case 4:
-            stageModel.uploadedQuantity++;
-          case 5:
-            stageModel.defectQuantity++;
-        }
-      }
-
-      stageModel.allOnStageQuantity =
-          stageModel.inWorkQuantity + stageModel.readyToUploadQuantity;
-
-      stageModel.readyQuantity =
-          stageModel.readyToUploadQuantity + stageModel.uploadedQuantity;
-
-      stagesInBatchModelList.add(stageModel);
-
-      if (stageModel.uploadedQuantity != 0 && stageModel.readyQuantity != 0) {
-        stageModel.readyPercent =
-            ((stageModel.uploadedQuantity / stageModel.readyQuantity) * 100)
-                .round();
-      }
-
-      print(stagesStatusesIdsList);
-
-      if (stagesStatusesIdsList.contains(1)) {
-        stageModel.status = 'На распределении';
+      if (operationsInStageQuantityMap.containsKey(operationDto.stageId)) {
+        operationsInStageQuantityMap[operationDto.stageId] =
+        (operationsInStageQuantityMap[operationDto.stageId]! + 1);
       } else {
-        if (stagesStatusesIdsList.contains(2)) {
-          stageModel.status = 'Выполняется';
+        operationsInStageQuantityMap[operationDto.stageId] = 1;
+      }
+      print('получили операции');
+    }
+    print('начали получать ОПОП');
+    var fetchedOperatorOperationsList = await _operatorOperationsTable
+        .selectByDistributionStagesIdsListAndNotDefectDistributionStage(
+        distributionStagesIdsList);
+    print('получили ОПОП');
+
+
+    for (var operatorOperation in fetchedOperatorOperationsList) {
+      print('зашли в цикл');
+      final operatorOperationDto =
+      OperatorOperationsDTO.fromMap(operatorOperation);
+
+      print('operatorOperation id : ${operatorOperationDto.id}');
+      operatorOperationsList.add(operatorOperationDto);
+
+    }
+
+    print('запросы получили');
+    var batchesMap =
+    groupBy(distributionStagesList, (stage) => stage.chiefBatch?.batchId);
+
+    batchesMap.forEach((batchKey, batchValue) {
+      print('batchKey : $batchKey');
+      var stagesMap = groupBy(batchValue, (stage) => stage.stageId);
+
+      StageModel prevStageInBatch = StageModel(
+          stageId: 0,
+          stageNumber: '',
+          stageName: '',
+          batch: Batch.empty,
+          unitNumber: '',
+          operationsQuantity: 0);
+
+      stagesMap.forEach((stageKey, stageValue) {
+        var operatorOperationsInStageList = operatorOperationsList.where(
+                (operation) =>
+            operation.batchId == batchKey && operation.stageId == stageKey);
+
+        int readyOperationsQuantity = 0;
+        for (var operation in operatorOperationsInStageList) {
+          if (operation.statusId == 9) {
+            readyOperationsQuantity++;
+          }
+        }
+
+        final stageModel = StageModel(
+          batch: Batch(
+              order: Order(
+                  id: stageValue.first.chiefBatch?.batch.order?.id ?? 0,
+                  number:
+                  stageValue.first.chiefBatch?.batch.order?.number ?? '',
+                  priority:
+                  stageValue.first.chiefBatch?.batch.order?.priority ?? 0,
+                  statusId:
+                  stageValue.first.chiefBatch?.batch.order?.statusId ?? 0),
+              id: stageValue.first.chiefBatch?.batch.id ?? 0,
+              numberRS: stageValue.first.chiefBatch?.batch.numberRS ?? '',
+              number: stageValue.first.chiefBatch?.batch.number,
+              name: stageValue.first.chiefBatch?.batch.name ?? '',
+              count: stageValue.first.chiefBatch?.batch.count ?? 0,
+              code: stageValue.first.chiefBatch?.batch.code ?? '',
+              technology: stageValue.first.chiefBatch?.batch.technology ?? '',
+              isready: stageValue.first.chiefBatch?.batch.isready ?? false,
+              orderId: stageValue.first.chiefBatch?.batch.orderId),
+          stageId: stageValue.first.stageId,
+          operationsQuantity:
+          operationsInStageQuantityMap[stageValue.first.stageId] ?? 0,
+          stageNumber: stageValue.first.stage?.number ?? '',
+          stageName: stageValue.first.stage?.name ?? '',
+          unitNumber: stageValue.first.unit?.number ?? '',
+        );
+
+        stageModel.status = stageValue.last.stageStatus?.name ?? '';
+
+        List<int> stagesStatusesIdsList = [];
+        for (var stage in stageValue) {
+          stagesStatusesIdsList.add(stage.statusId);
+          switch (stage.statusId) {
+            case 2:
+              stageModel.inWorkQuantity++;
+            case 3:
+              stageModel.readyToUploadQuantity++;
+              stageModel.distributionStagesList.add(stage);
+            case 4:
+              stageModel.uploadedQuantity++;
+            case 5:
+              stageModel.defectQuantity++;
+
+            case 6:
+              stageModel.onDistributionQuantity++;
+          }
+        }
+
+        int totalQuantity = batchValue.first.chiefBatch?.batch.count ?? 0;
+
+        stageModel.allOnStageQuantity =
+            stageModel.inWorkQuantity + stageModel.readyToUploadQuantity;
+
+        stageModel.readyQuantity =
+            stageModel.readyToUploadQuantity + stageModel.uploadedQuantity;
+
+        print(
+            '${stageModel.stageNumber} ${stageModel.stageName}  detail: ${stageModel.batch.id}');
+
+        if (stageModel.operationsQuantity != 0) {
+          stageModel.readyPercent = ((readyOperationsQuantity /
+              (stageModel.operationsQuantity *
+                  (totalQuantity - stageModel.defectQuantity))) *
+              100)
+              .round();
+        }
+
+
+        stageModel.availableQuantity = totalQuantity -
+            stageModel.defectQuantity -
+            stageModel.uploadedQuantity;
+
+        if (stagesStatusesIdsList.contains(1)) {
+          stageModel.status = 'на распределении';
         } else {
-          if (stagesStatusesIdsList.contains(3)) {
-            stageModel.status = 'Частично готов';
+          if (stagesStatusesIdsList.contains(2)) {
+            stageModel.status = 'выполняется';
           } else {
-            if (stagesStatusesIdsList.contains(4)) {
-              stageModel.status = 'Готов';
+            if (stagesStatusesIdsList.contains(3)) {
+              stageModel.status = 'готов';
+            } else {
+              if (stagesStatusesIdsList.contains(4)) {
+                stageModel.status = 'выгружен';
+              } else {
+                if (stagesStatusesIdsList.contains(6)) {
+                  stageModel.status = 'к выполнению';
+                }
+              }
             }
           }
         }
-      }
 
-      stagesInBatchModelList
-          .sort((a, b) => a.readyPercent.compareTo(b.readyPercent));
+        if (stageModel.uploadedQuantity != totalQuantity){
+          stagesInBatchModelList.add(stageModel);
+        }
 
-      //stagesInBatchModelList.forEach((stage) => print('batch number: ${stage.batch.number}'));
-
-      emit(state.copyWith(
-          status: QueueStagesPageStatus.success,
-          stagesList: stagesInBatchModelList.reversed.toList()));
+        prevStageInBatch = stageModel;
+      });
     });
+    stagesInBatchModelList
+        .sort((a, b) => a.readyPercent.compareTo(b.readyPercent));
+    emit(state.copyWith(stagesList: stagesInBatchModelList.reversed.toList(), status: QueueStagesPageStatus.success));
   }
 
   Future redistribute(StageModel stageModel) async {
@@ -167,6 +254,11 @@ class QueueStagesCubit extends Cubit<QueueStagesState> {
     var fetchedChiefDistributionOperations =
         await _chiefDistributionOperationsTable.selectByBatchAndStageId(
             batchId: stageModel.batch.id, stageId: stageModel.stageId);
+
+    List<int> distributionStagesIdsList = [];
+
+    stageModel.distributionStagesList
+        .forEach((stage) => distributionStagesIdsList.add(stage.id));
 
     for (var chiefDistributionOperation in fetchedChiefDistributionOperations) {
       final chiefDistributionOperationDto =
@@ -178,10 +270,10 @@ class QueueStagesCubit extends Cubit<QueueStagesState> {
       .bulkDelete(chiefDistributionOperationsIdsList);
 
     await _chiefOperationsTable.deleteByDistributionStagesIdsList(
-        stageModel.distributionStagesIdsList);
+        distributionStagesIdsList);
 
     await _distributionStageTable.bulkUpdateUnitOnNullAndStatusToOnDistribution(
-        stageModel.distributionStagesIdsList);
+        distributionStagesIdsList);
   }
 
   Future initQueueStagesPage() async {

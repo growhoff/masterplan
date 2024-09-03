@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'dialog_job.dart';
+import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import 'drop_area.dart';
-// import '../widgets/drop_machine.dart';
 import '../bloc/cubit.dart';
 import '../bloc/state.dart';
 import 'content_monitoring.dart';
 
 class ElementBarMonitor extends StatelessWidget {
-  const ElementBarMonitor(this.oneArea, {super.key});
-  final bool oneArea;
+  const ElementBarMonitor({super.key});
   @override
   Widget build(BuildContext context) {
+    final stateMain = context.read<CubitMain>().state;
+    bool oneArea = stateMain.user!.positionId == 3;
     return BlocBuilder<CubitMonitoringAreas, StateMonitoringAreas>(
       builder:(context, state) => 
       state.listItemMachine.isNotEmpty

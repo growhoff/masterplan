@@ -10,7 +10,7 @@ class ElementBarQueue extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CubitOperatQueueMasterChM, StateOperatQueueMasterChM>(
+    return BlocBuilder<CubitOperatQueueChief, StateOperatQueueChief>(
       builder:(context, state) {
         List<NameIndex> listItemArea = [];
         if (state.listAreaMachine.isNotEmpty){
@@ -35,7 +35,7 @@ class ElementBarQueue extends StatelessWidget {
                 value: state.activeArea,
                 items: listItemArea.map((e) => DropdownMenuItem(value: e.index, child: Text(e.name)),).toList(),
                 selectedItemBuilder: (context) => listItemArea.map((e) => Center(child: Text(e.name),)).toList(),
-                onChanged: (value) => value != null ? context.read<CubitOperatQueueMasterChM>().setActiveArea(value) : null,
+                onChanged: (value) => value != null ? context.read<CubitOperatQueueChief>().setActiveArea(value) : null,
               ),
             ),
             const SizedBox(height: 20),

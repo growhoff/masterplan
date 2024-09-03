@@ -32,7 +32,7 @@ class _DispatcherAnalyticsPageViewState
   @override
   void initState() {
     context.read<DispatcherAnalyticsCubit>().fetchUnits();
-    context.read<DispatcherAnalyticsCubit>().fetchAreas(isInit: true);
+    context.read<DispatcherAnalyticsCubit>().fetchAreas();
     super.initState();
   }
 
@@ -56,158 +56,171 @@ class _DispatcherAnalyticsPageViewState
                 height: 5,
               ),
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  ElevatedButton(
-                    style: ButtonStyle(
-                        padding: WidgetStateProperty.all<EdgeInsets>(
-                            EdgeInsets.all(10))),
-                    onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (ctx) => StatefulBuilder(
-                            builder: (ctx, setStateLocal) {
-                              return SimpleDialog(
-                                title: Text('Выберите цех'),
-                                children: [
-                                  Container(
-                                      padding: EdgeInsets.all(10),
-                                      alignment: Alignment.center,
-                                      child: DropdownButton<Unit>(
-                                          value: context
-                                              .read<
-                                                  DispatcherAnalyticsCubit>()
-                                              .selectedUnit,
-                                          items: state.unitsList
-                                              .map((Unit unit) =>
-                                                  DropdownMenuItem(
-                                                    value: unit,
-                                                    child: Text(
-                                                        '${unit.number} ${unit.name}'),
-                                                  ))
-                                              .toList(),
-                                          onChanged: (Unit? value) =>
-                                              setStateLocal(() {
-                                                context
-                                                    .read<
-                                                        DispatcherAnalyticsCubit>()
-                                                    .changeSelectedUnit(
-                                                        value ??
-                                                            Unit.empty);
-
-                                                context
-                                                    .read<
-                                                        DispatcherAnalyticsCubit>()
-                                                    .fetchAreas();
-
-                                                context
-                                                    .read<
-                                                        DispatcherAnalyticsCubit>()
-                                                    .selectedArea = Area.empty;
-                                              }))),
-                                ],
-                              );
-                            }
-                          ));
-                    },
-                    child: Text('цех'),
-                  ),
-                  ElevatedButton(
-                    style: ButtonStyle(
-                        padding: WidgetStateProperty.all<EdgeInsets>(
-                            EdgeInsets.all(10))),
-                    onPressed: () {
-                      setState(() {
-                        context
-                            .read<DispatcherAnalyticsCubit>()
-                            .pressAreasButton();
-                      });
-                      showDialog(
-                          context: context,
-                          builder: (ctx) => StatefulBuilder(
-                                builder: (ctx, setState) {
-                                  return SimpleDialog(
-                                    title: Text('Выберите участок'),
-                                    children: [
-                                      Container(
-                                        padding: EdgeInsets.all(10),
-                                        alignment: Alignment.center,
-                                        child: DropdownButton<Area>(
-                                            value: context
-                                                .read<
-                                                    DispatcherAnalyticsCubit>()
-                                                .selectedArea,
-                                            items: state.areasList
-                                                .map((Area area) =>
-                                                    DropdownMenuItem(
-                                                      value: area,
-                                                      child: Text(
-                                                          '${area.number} ${area.name}'),
-                                                    ))
-                                                .toList(),
-                                            onChanged: (Area? value) =>
-                                                setState(() {
-                                                  context
-                                                          .read<
-                                                              DispatcherAnalyticsCubit>()
-                                                          .selectedArea =
-                                                      value ?? Area.empty;
-
-                                                  context
+                  Flexible(
+                    child: Column(
+                      children: [
+                        ElevatedButton(
+                          style: ButtonStyle(
+                              padding: WidgetStateProperty.all<EdgeInsets>(
+                                  EdgeInsets.all(10))),
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (ctx) => StatefulBuilder(
+                                        builder: (ctx, setStateLocal) {
+                                      return SimpleDialog(
+                                        title: Text('Выберите цех'),
+                                        children: [
+                                          Container(
+                                              padding: EdgeInsets.all(10),
+                                              alignment: Alignment.center,
+                                              child: DropdownButton<Unit>(
+                                                  value: context
                                                       .read<
                                                           DispatcherAnalyticsCubit>()
-                                                      .addSelectedAreaToList();
+                                                      .selectedUnit,
+                                                  items: state.unitsList
+                                                      .map((Unit unit) =>
+                                                          DropdownMenuItem(
+                                                            value: unit,
+                                                            child: Text(
+                                                                '${unit.number} ${unit.name}'),
+                                                          ))
+                                                      .toList(),
+                                                  onChanged: (Unit? value) =>
+                                                      setStateLocal(() {
+                                                        context
+                                                            .read<
+                                                                DispatcherAnalyticsCubit>()
+                                                            .changeSelectedUnit(
+                                                                value ??
+                                                                    Unit.empty);
 
-                                                  print(
-                                                      '${context.read<DispatcherAnalyticsCubit>().selectedArea.number} ${context.read<DispatcherAnalyticsCubit>().selectedArea.name}');
-                                                }),
-                                            isExpanded: true),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              ));
-                    },
-                    child: Text('участок'),
+                                                        context
+                                                            .read<
+                                                                DispatcherAnalyticsCubit>()
+                                                            .fetchAreas();
+
+                                                        context
+                                                                .read<
+                                                                    DispatcherAnalyticsCubit>()
+                                                                .selectedArea =
+                                                            Area.empty;
+
+                                                        print(context.read<DispatcherAnalyticsCubit>().selectedAreasList);
+                                                      }))),
+                                        ],
+                                      );
+                                    }));
+                          },
+                          child: Text('цех'),
+                        ),
+                        Text(
+                            textAlign: TextAlign.center,
+                            softWrap: true,
+                            '${context.read<DispatcherAnalyticsCubit>().selectedUnit.number} ${context.read<DispatcherAnalyticsCubit>().selectedUnit.name}'),
+                      ],
+                    ),
                   ),
-                  ElevatedButton(
-                    style: ButtonStyle(
-                        padding: WidgetStateProperty.all<EdgeInsets>(
-                            EdgeInsets.all(10))),
-                    onPressed: () async {
-                      await context
-                          .read<DispatcherAnalyticsCubit>()
-                          .fetchTime(context);
-                      print(context.read<DispatcherAnalyticsCubit>().timeStart);
-                      print(context.read<DispatcherAnalyticsCubit>().timeEnd);
-                      setState(() {});
-                    },
-                    child: Text('дата'),
+                  Flexible(
+                    child: Column(
+                      children: [
+                        ElevatedButton(
+                          style: ButtonStyle(
+                              padding: WidgetStateProperty.all<EdgeInsets>(
+                                  EdgeInsets.all(10))),
+                          onPressed: () {
+                            setState(() {
+                              context
+                                  .read<DispatcherAnalyticsCubit>()
+                                  .pressAreasButton();
+                            });
+                            showDialog(
+                                context: context,
+                                builder: (ctx) => StatefulBuilder(
+                                      builder: (ctx, setState) {
+                                        return SimpleDialog(
+                                          title: Text('Выберите участок'),
+                                          children: [
+                                            Container(
+                                              padding: EdgeInsets.all(10),
+                                              alignment: Alignment.center,
+                                              child: DropdownButton<Area>(
+                                                  value: context
+                                                      .read<
+                                                          DispatcherAnalyticsCubit>()
+                                                      .selectedArea,
+                                                  items: state.areasList
+                                                      .map((Area area) =>
+                                                          DropdownMenuItem(
+                                                            value: area,
+                                                            child: Text(
+                                                                '${area.number} ${area.name}'),
+                                                          ))
+                                                      .toList(),
+                                                  onChanged: (Area? value) =>
+                                                      setState(() {
+                                                        context
+                                                                .read<
+                                                                    DispatcherAnalyticsCubit>()
+                                                                .selectedArea =
+                                                            value ?? Area.empty;
+
+                                                        context
+                                                            .read<
+                                                                DispatcherAnalyticsCubit>()
+                                                            .addSelectedAreaToList();
+
+                                                        print(
+                                                            '${context.read<DispatcherAnalyticsCubit>().selectedArea.number} ${context.read<DispatcherAnalyticsCubit>().selectedArea.name}');
+                                                      }),
+                                                  isExpanded: true),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    ));
+                          },
+                          child: Text('участок'),
+                        ),
+                        Text(
+                            textAlign: TextAlign.center,
+                            softWrap: true,
+                            '${context.read<DispatcherAnalyticsCubit>().selectedArea.number != '' ? context.read<DispatcherAnalyticsCubit>().selectedArea.number : 'все в выбранном цехе'} ${context.read<DispatcherAnalyticsCubit>().selectedArea.name}'),
+                      ],
+                    ),
                   ),
-                ],
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                children: [
-                  Text('цех: '),
-                  Text(
-                      '${context.read<DispatcherAnalyticsCubit>().selectedUnit.number} ${context.read<DispatcherAnalyticsCubit>().selectedUnit.name}')
-                ],
-              ),
-              Row(
-                children: [
-                  Text('участок: '),
-                  Text(
-                      '${context.read<DispatcherAnalyticsCubit>().selectedArea.number != '' ? context.read<DispatcherAnalyticsCubit>().selectedArea.number : 'все в выбранном цехе'} ${context.read<DispatcherAnalyticsCubit>().selectedArea.name}')
-                ],
-              ),
-              Row(
-                children: [
-                  Text('дата: '),
-                  Text(
-                      '${context.read<DispatcherAnalyticsCubit>().getDate(context.read<DispatcherAnalyticsCubit>().timeStart)} - ${context.read<DispatcherAnalyticsCubit>().getDate(context.read<DispatcherAnalyticsCubit>().timeEnd)}')
+                  Flexible(
+                    child: Column(
+                      children: [
+                        ElevatedButton(
+                          style: ButtonStyle(
+                              padding: WidgetStateProperty.all<EdgeInsets>(
+                                  EdgeInsets.all(10))),
+                          onPressed: () async {
+                            await context
+                                .read<DispatcherAnalyticsCubit>()
+                                .fetchTime(context);
+                            print(context
+                                .read<DispatcherAnalyticsCubit>()
+                                .timeStart);
+                            print(context
+                                .read<DispatcherAnalyticsCubit>()
+                                .timeEnd);
+                            setState(() {});
+                          },
+                          child: Text('дата'),
+                        ),
+                        Text(
+                            textAlign: TextAlign.center,
+                            softWrap: true,
+                            '${context.read<DispatcherAnalyticsCubit>().getDate(context.read<DispatcherAnalyticsCubit>().timeStart)} - ${context.read<DispatcherAnalyticsCubit>().getDate(context.read<DispatcherAnalyticsCubit>().timeEnd)}'),
+                      ],
+                    ),
+                  ),
                 ],
               ),
               Divider(

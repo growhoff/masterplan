@@ -81,6 +81,21 @@ class DistributionStageTable extends SupabaseTable {
         .order('id', ascending: true);
   }
 
+  Future<List<Map<String, dynamic>>> select691() async {
+    return await _table
+        .select(
+            '*, z_chief_batch!inner(*, z_batch!inner(*, z_batch_archive(*), z_order(*))), z_stage(*), z_stage_status(*)')
+        .eq('z_chief_batch.z_batch.company_id', _companyId)
+        .eq('z_chief_batch.batch_id', 691)
+        .inFilter('stage_id', [1238, 1240]).order('id', ascending: true);
+  }
+
+  Future updateStage(int id) async {
+    await _table
+        .update({'status_id': 1, 'unit_id': null})
+        .eq('id', id);
+  }
+
   Future<List<Map<String, dynamic>>> selectByBatchId(int batchId) async {
     return await _table
         .select(
