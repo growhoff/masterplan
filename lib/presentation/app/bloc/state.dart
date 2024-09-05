@@ -49,7 +49,7 @@ class StateMain extends Equatable {
   final List<int> areaChiefMaster;
 
   const StateMain({
-    this.version = 'v2.7.7',
+    this.version = 'v2.7.9',
     this.user,
     this.unitId,
     this.staff,

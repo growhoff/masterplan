@@ -22,7 +22,7 @@ class OperationsGroup {
         list.add(ConvertDtoModel.convertToOperatorOperations(element));
         if (element.timeplan != null) {time += element.timeplan!;}
       }
-      listB.add(OptPathOperations(idPath: key!, list: list, order: list.first.order ?? 0, time: time, active: list.first.status.id == 7, batchNumber: list.first.batch.number!, stageNumber:  list.first.stage.number));
+      listB.add(OptPathOperations(idPath: key!, list: list, order: list.first.order ?? 0, time: time, active: list.first.status.id == 7, batchNumber: list.first.batch.numberRS, stageNumber:  '${list.first.batch.order?.number}.${list.first.batch.number}.${list.first.stage.number}'));
     });
     return listB;
   }

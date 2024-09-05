@@ -5,10 +5,10 @@ import 'package:master_plan/theme/theme.dart';
 
 // import './../model/item_oper.dart';
 // import './../widgets/reorderable_icon_widget.dart';
-// import '../bloc/cubit.dart';
+import '../bloc/cubit.dart';
 import 'row_list_four.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Reorder extends StatelessWidget {
   const Reorder(this.list, {super.key});
@@ -44,7 +44,7 @@ class Reorder extends StatelessWidget {
               //передать на готовые детали
               // Expanded(child: IconButton(onPressed: () {}, icon: const Icon(Icons.check_rounded, color: Colors.green))),
               //передать на распределение
-              // Expanded(child: IconButton(onPressed: () => context.read<CubitOperatQueueMasterChM>().saveDateList(list[index], index), icon: const Icon(Icons.close, color: Colors.red))),
+              Expanded(child: IconButton(onPressed: () => context.read<CubitOperatQueueChief>().saveDateList(list[index], index), icon: const Icon(Icons.close, color: Colors.red))),
             ],
                   ),
           );

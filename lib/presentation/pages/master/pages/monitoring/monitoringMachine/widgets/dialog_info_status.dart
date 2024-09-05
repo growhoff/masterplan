@@ -26,7 +26,7 @@ class DialogInfoStatus extends StatelessWidget {
                     const SizedBox(height: 8),
 
                     item.batch != null 
-                      ? Text('Деталь: ${item.batch!.number} ${item.batch!.name}')
+                      ? Text('Деталь: ${item.batch!.numberRS} ${item.batch!.name}')
                       : const Text('Деталь: -'),
                     const SizedBox(height: 8),
                     Text('Комментарий: ${item.comment}'),

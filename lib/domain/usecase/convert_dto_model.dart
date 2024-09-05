@@ -1,4 +1,5 @@
 import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/monitoring_machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
@@ -69,6 +70,20 @@ class ConvertDtoModel {
 
   static Order convertToOrder(OrderDTO dto){
     return Order(id: dto.id, number: dto.number, priority: dto.priority, statusId: dto.statusId);
+  }
+
+  static Batch convertToBatch(BatchDTO dto){
+    return Batch(
+          id: dto.id,
+          numberRS: dto.numberRS,
+          name: dto.name,
+          count: dto.count,
+          code: dto.code,
+          orderId: dto.orderId,
+          technology: dto.technology,
+          number: dto.number,
+          order: dto.order != null ? convertToOrder(dto.order!) : null,
+          isready: dto.isready);
   }
 
   static OperatorOperations convertToOperatorOperations(OperatorOperationsDTO dto, {List<Transfer>? listTransfer}) {

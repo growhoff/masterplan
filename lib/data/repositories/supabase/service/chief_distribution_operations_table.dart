@@ -66,7 +66,7 @@ class ChiefDistributionOperationsTable extends SupabaseTable {
             '*, z_batch:batch_id!inner(*), z_stage:stage_id(*, z_area(*)), z_operation:operation_id(*)')
         .inFilter('batch_id', batchId)
         .eq('z_batch.company_id', _companyId ?? 1)
-        .order('id', ascending: true);
+        .order('operation_id', ascending: true);
     return res;
   }
 
