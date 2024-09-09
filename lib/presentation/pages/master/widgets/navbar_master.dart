@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import 'package:master_plan/presentation/app/bloc/state.dart';
@@ -12,8 +13,23 @@ class NavbarMaster extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     return BlocBuilder<CubitMaster,StateMaster>(
-      builder:(context, stateMaster) => GestureDetector(
+      builder:(context, stateMaster) {
+        if (stateMaster.activePage == 5){
+          SystemChrome.setPreferredOrientations([
+            DeviceOrientation.landscapeRight,
+            DeviceOrientation.landscapeLeft,
+          ]);
+        } else {
+          SystemChrome.setPreferredOrientations([
+            DeviceOrientation.landscapeRight,
+            DeviceOrientation.landscapeLeft,
+            DeviceOrientation.portraitUp,
+            DeviceOrientation.portraitDown,
+          ]);
+        }       
+        return GestureDetector(
         child: Scaffold(
           appBar: AppBar(
             title: BlocBuilder<CubitMain, StateMain>(builder: (context, state) 
@@ -51,7 +67,7 @@ class NavbarMaster extends StatelessWidget {
               }
           ),
         ),
-      ),
+      );},
     );
   }
 }

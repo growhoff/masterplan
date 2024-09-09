@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:master_plan/presentation/pages/dispatcher/dispatcher_analytics_page/dispatcher_analytics_cubit/dispatcher_analytics_cubit.dart';
-import 'package:master_plan/presentation/pages/dispatcher/orders_page/batches_page/stages_in_batch_page.dart';
+// import 'package:go_router/go_router.dart';
+import 'package:master_plan/presentation/app/bloc/cubit.dart';
+// import 'package:master_plan/presentation/pages/dispatcher/dispatcher_analytics_page/dispatcher_analytics_cubit/dispatcher_analytics_cubit.dart';
+// import 'package:master_plan/presentation/pages/dispatcher/orders_page/batches_page/stages_in_batch_page.dart';
 import 'package:master_plan/presentation/pages/dispatcher/orders_page/batches_page/widgets/batch_dialog.dart';
 
 import '../../../../../domain/model/order.dart';
@@ -13,9 +14,10 @@ class BatchesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final stateMain = context.read<CubitMain>().state;
     final order = ModalRoute.of(context)?.settings.arguments as Order?;
     return BlocProvider(
-        create: (context) => BatchesCubit(order: order),
+        create: (context) => BatchesCubit(order: order, stateMain.user!.positionId == 3, stateMain.user!.area!.number),
         child: BatchesPageView(order: order));
   }
 }

@@ -22,18 +22,16 @@ abstract class DispatcherData {
         title: 'Заказы на производство',
         actions: [
           BlocProvider(
-            create: (context) => BatchesCubit(),
+            create: (context) => BatchesCubit(false,'1'),
             child: IconButton(
                 onPressed: () {
-                  BatchesCubit().loadOrder();
+                  BatchesCubit(false,'1').loadOrder();
                 },
-                icon: Icon(Icons.download)),
+                icon: const Icon(Icons.download)),
           ),
           Builder(builder: (context) {
             return IconButton(
-              icon: Icon(
-                Icons.add_rounded,
-              ),
+              icon: const Icon(Icons.add_rounded),
               onPressed: () {
                 Navigator.pushNamed(context, '/addOrderPage');
               },
@@ -45,22 +43,22 @@ abstract class DispatcherData {
     TabBarModel(
         title: 'Распределение этапов',
         actions: [],
-        page: DispatcherDistributionPage(),
+        page: const DispatcherDistributionPage(),
         icon: Icons.lan),
     TabBarModel(
         title: 'Очередь этапов',
         actions: [],
-        page: QueueStagesPage(),
+        page: const QueueStagesPage(),
         icon: Icons.library_add),
     TabBarModel(
         title: 'Задания на производстве',
         actions: [],
-        page: InDevelopmentPage(),
+        page: const InDevelopmentPage(),
         icon: Icons.task_rounded),
     TabBarModel(
         title: 'Отбракованные детали',
         actions: [],
-        page: InDevelopmentPage(),
+        page: const InDevelopmentPage(),
         icon: Icons.broken_image),
     TabBarModel(
         title: 'Готовые заказы',
@@ -70,7 +68,7 @@ abstract class DispatcherData {
     TabBarModel(
         title: 'Аналитика',
         actions: [],
-        page: DispatcherAnalyticsPage(),
+        page: const DispatcherAnalyticsPage(),
         icon: Icons.fact_check_sharp),
 
   ];

@@ -33,6 +33,8 @@ class DialogInfoStatus extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text('Идентификатор опт.партии: ${item.operationId}'),
                     const SizedBox(height: 8),
+                    Text('Оператор: ${item.user?.fio}'),
+                    const SizedBox(height: 8),
                   ],
                 ),
                 titleTextStyle: const TextStyle(

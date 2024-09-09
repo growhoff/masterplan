@@ -13,15 +13,14 @@ class RowExpand extends StatelessWidget {
       child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(flex: 10, child: Text(text1, textAlign: TextAlign.start)),
-                  Expanded(flex: 10, child: Text(text2, textAlign: TextAlign.center)),
-                  Expanded(flex: 6, child: Text(text3, textAlign: TextAlign.center)),
-                  Expanded(flex: 6, child: Text(text4, textAlign: TextAlign.center)),
-                  const Spacer(flex: 3),
+                  Expanded(flex: 5, child: Text(text1, textAlign: TextAlign.start)),
+                  Expanded(flex: 4, child: Text(text2, textAlign: TextAlign.center)),
+                  Expanded(flex: 3, child: Text(text3, textAlign: TextAlign.center)),
+                  Expanded(flex: 3, child: Text(text4, textAlign: TextAlign.center)),
                   const Spacer(),
-                  const Spacer(flex: 3),
                   const Spacer(),
-                  const Spacer(flex: 3),
+                  const Spacer(),
+                  const Spacer(),
                 ],
               ),
     );

@@ -46,8 +46,9 @@ class CubitMonitoringMachine extends Cubit<StateMonitoringMachine> {
     final listStatus = listMonitor[state.activeMachine].listStatus;
     final machine = listMonitor[state.activeMachine].machine;
     await getListMonitorChange(listStatus, machine);
-    emit(state.copyWith(listMonitor: listMonitor, isLoading: false));
     setListItemDrop();
+    emit(state.copyWith(listMonitor: listMonitor, isLoading: false));
+    
   }
 
 

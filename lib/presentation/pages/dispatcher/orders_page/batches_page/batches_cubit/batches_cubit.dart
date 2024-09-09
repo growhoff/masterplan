@@ -7,24 +7,24 @@ import 'package:master_plan/data/repositories/local/service/excel_service.dart';
 
 import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/chief_batch_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto/chief_operation_dto.dart';
+// import 'package:master_plan/data/repositories/supabase/dto/chief_operation_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/distribution_stage_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operation_archive_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operation_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto/stage_archive_dto.dart';
+// import 'package:master_plan/data/repositories/supabase/dto/stage_archive_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/transfer_archive_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/transfer_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/batch_archive_table.dart';
 
 import 'package:master_plan/data/repositories/supabase/service/batch_table.dart';
-import 'package:master_plan/data/repositories/supabase/service/chief_operation_table.dart';
+// import 'package:master_plan/data/repositories/supabase/service/chief_operation_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/distribution_stage_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operation_archive_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operation_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
-import 'package:master_plan/data/repositories/supabase/service/stage_archive_table.dart';
+// import 'package:master_plan/data/repositories/supabase/service/stage_archive_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/stage_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/transfer_archive_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/transfer_table.dart';
@@ -45,8 +45,9 @@ import '../batch_model.dart';
 part 'batches_state.dart';
 
 class BatchesCubit extends Cubit<BatchesState> {
-  BatchesCubit({this.order, this.selectedStageId})
-      : super(const BatchesState());
+  final bool positionMaster;
+  final String areaNumber;
+  BatchesCubit(this.positionMaster, this.areaNumber, {this.order, this.selectedStageId}): super(const BatchesState());
 
   final Order? order;
   final int? selectedStageId;
@@ -58,7 +59,7 @@ class BatchesCubit extends Cubit<BatchesState> {
   final _distributionStageTable = DistributionStageTable();
   final _stageTable = StageTable();
   final _operatorOperationsTable = OperatorOperationsTable();
-  final _stageArchiveTable = StageArchiveTable();
+  // final _stageArchiveTable = StageArchiveTable();
   final _operationArchiveTable = OperationArchiveTable();
   final _operationTable = OperationTable();
   final _transferTable = TransferTable();

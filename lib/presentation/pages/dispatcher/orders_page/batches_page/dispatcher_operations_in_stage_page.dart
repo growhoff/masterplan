@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/dispatcher/orders_page/batches_page/batches_cubit/batches_cubit.dart';
 
 import 'batch_model.dart';
@@ -10,10 +11,10 @@ class OperationsInStagePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final stage =
-        ModalRoute.of(context)?.settings.arguments as StageModel;
+    final stateMain = context.read<CubitMain>().state;
+    final stage = ModalRoute.of(context)?.settings.arguments as StageModel;
     return BlocProvider(
-      create: (context) => BatchesCubit(),
+      create: (context) => BatchesCubit(stateMain.user!.positionId == 3, stateMain.user!.area!.number),
       child: OperationsInStagePageView(
         stage: stage,
       ),
@@ -253,11 +254,12 @@ class _OperationsInStagePageViewState
                         ]),
                     ...List.generate(
                         state.operationsInStageList.length,
-                        (index) => TableRow(children: [
+                        (index) => TableRow(
+                          decoration: BoxDecoration(border: showBorder(context.read<BatchesCubit>().positionMaster && state.operationsInStageList[index].areaNumber == context.read<BatchesCubit>().areaNumber, true, true)),
+                          children: [
                               TableRowInkWell(
                                 child: Container(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 5),
+                                  padding: const EdgeInsets.symmetric(vertical: 5),
                                   child: Text(
                                     '${state.operationsInStageList[index].operation.number} ${state.operationsInStageList[index].operation.name}',
                                     textAlign: TextAlign.center,
@@ -376,5 +378,27 @@ class _OperationsInStagePageViewState
         ),
       ),
     );
+  }
+}
+
+showBorder(bool isSelected, bool isFirstInRow, bool isLastInRow) {
+  if (isSelected) {
+    if (isFirstInRow) {
+      return const Border(
+          left: BorderSide(width: 3, color: Colors.red),
+          top: BorderSide(width: 3, color: Colors.red),
+          bottom: BorderSide(width: 3, color: Colors.red));
+    }
+    if (isLastInRow) {
+      return const Border(
+          right: BorderSide(width: 3, color: Colors.red),
+          top: BorderSide(width: 3, color: Colors.red),
+          bottom: BorderSide(width: 3, color: Colors.red));
+    } else {
+      return const Border.symmetric(
+          horizontal: BorderSide(width: 3, color: Colors.red));
+    }
+  } else {
+    return const Border();
   }
 }

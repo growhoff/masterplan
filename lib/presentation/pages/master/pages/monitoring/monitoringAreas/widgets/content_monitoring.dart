@@ -64,7 +64,7 @@ class ContentListWidgetMaster extends StatelessWidget {
                     TableContentRow('${listStatusActiveNew[index].machine.shiftSchedule?.timeChange}'),
                     TableContentRow('${listStatusActiveNew[index].listStatus.isNotEmpty ? listStatusActiveNew[index].listStatus.first.user != null ? listStatusActiveNew[index].listStatus.first.user?.fio : '-' : '-'}'),
                     TableContentRowLine(listStatusActiveNew[index]),
-                    TableContentRowStatus(statusActiveList[index].name, context.read<CubitMonitoringAreas>().convertColor(statusActiveList[index].id)),
+                    TableContentRowStatus(statusActiveList[index].name, context.read<CubitMonitoringAreas>().convertColor(statusActiveList[index].id), listStatusActiveNew[index]),
                   ]))
         ],
       )

@@ -92,15 +92,17 @@ class MonitoringMachineTable extends SupabaseTable {
   }
 
   Future<List<Map<String, dynamic>>> selectListId(List<int> listId, DateTime date) {
-    String filters = '';
-    for (var i = 0; i < listId.length; i++) {
-      if (i == (listId.length - 1)) {
-        filters += 'id.eq.${listId[i]}';
-      } else {
-        filters += 'id.eq.${listId[i]},';
-      }
-    }
-    return table.select(userMonitor).or(filters).eq('date', date).order('time_start', ascending: true);
+    final dat = '${date.year}-${date.month}-${date.day}';
+    // String filters = '';
+    // for (var i = 0; i < listId.length; i++) {
+    //   if (i == (listId.length - 1)) {
+    //     filters += 'id.eq.${listId[i]}';
+    //   } else {
+    //     filters += 'id.eq.${listId[i]},';
+    //   }
+    // }
+    // return table.select(userMonitor).or(filters).eq('date', date).order('time_start', ascending: true);
+    return table.select(userMonitor).inFilter('id', listId).eq('date', dat).order('time_start', ascending: true);
   }
 
   @override

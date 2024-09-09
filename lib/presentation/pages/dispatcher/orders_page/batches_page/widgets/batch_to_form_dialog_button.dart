@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/dispatcher/orders_page/batches_page/batches_cubit/batches_cubit.dart';
 
 import '../../../../../../domain/model/batch.dart';
@@ -12,8 +13,9 @@ class BatchToFormDialogButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final stateMain = context.read<CubitMain>().state;
     return BlocProvider(
-      create: (context) => BatchesCubit(),
+      create: (context) => BatchesCubit(stateMain.user!.positionId == 3, stateMain.user!.area!.number),
       child: BlocBuilder<BatchesCubit, BatchesState>(builder: (context, state) {
         switch (batch.batchStatusId) {
           case 5:

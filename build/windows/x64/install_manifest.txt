@@ -5,10 +5,12 @@ D:/Flutter project/masterplan/build/windows/x64/runner/Debug/file_selector_windo
 D:/Flutter project/masterplan/build/windows/x64/runner/Debug/permission_handler_windows_plugin.dll
 D:/Flutter project/masterplan/build/windows/x64/runner/Debug/url_launcher_windows_plugin.dll
 D:/Flutter project/masterplan/build/windows/x64/runner/Debug/data/flutter_assets/AssetManifest.bin
+D:/Flutter project/masterplan/build/windows/x64/runner/Debug/data/flutter_assets/AssetManifest.bin.json
 D:/Flutter project/masterplan/build/windows/x64/runner/Debug/data/flutter_assets/AssetManifest.json
 D:/Flutter project/masterplan/build/windows/x64/runner/Debug/data/flutter_assets/FontManifest.json
 D:/Flutter project/masterplan/build/windows/x64/runner/Debug/data/flutter_assets/fonts/MaterialIcons-Regular.otf
 D:/Flutter project/masterplan/build/windows/x64/runner/Debug/data/flutter_assets/kernel_blob.bin
+D:/Flutter project/masterplan/build/windows/x64/runner/Debug/data/flutter_assets/NOTICES
 D:/Flutter project/masterplan/build/windows/x64/runner/Debug/data/flutter_assets/NOTICES.Z
 D:/Flutter project/masterplan/build/windows/x64/runner/Debug/data/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf
 D:/Flutter project/masterplan/build/windows/x64/runner/Debug/data/flutter_assets/shaders/ink_sparkle.frag

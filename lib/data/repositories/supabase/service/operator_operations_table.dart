@@ -263,6 +263,7 @@ class OperatorOperationsTable extends SupabaseTable {
       List<int> listId, int machineId, int random) async {
     await table.update({
       'machine_id': machineId,
+      'order': 1000,
       'status_id': 3,
       'optimal_part': DateTime.now().millisecondsSinceEpoch + random
     }).inFilter('id', listId);
@@ -277,8 +278,7 @@ class OperatorOperationsTable extends SupabaseTable {
     await table.update({'status_id': 4}).inFilter('id', listId);
   }
 
-  Future<void> updateMasterModificateListCount(
-      List<int> listId2, String comment) async {
+  Future<void> updateMasterModificateListCount(List<int> listId2, String comment) async {
     await table.update({
       'status_id': 4,
       'pause': null,

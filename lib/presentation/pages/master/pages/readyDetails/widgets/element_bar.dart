@@ -28,7 +28,7 @@ class ElementBarReady extends StatelessWidget {
             ? 
               state.isLoading 
               ? const Center(child: CircularProgressIndicator())
-              : ContetnReadyMaster(l: state.statusList[state.activeMachine], operList: state.listMachine![state.activeMachine].listOper, machine: state.listMachine![state.activeMachine].machine, timeWorking: state.listMachine![state.activeMachine].time)
+              : ContetnReadyMaster(operList: state.listMachine![state.activeMachine].listOper, machine: state.listMachine![state.activeMachine].machine, timeWorking: state.listMachine![state.activeMachine].time)
             : const Center(child: CircularProgressIndicator())
         ],
       )

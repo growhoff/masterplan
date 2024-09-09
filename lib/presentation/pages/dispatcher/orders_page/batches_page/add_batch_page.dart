@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../../../domain/model/batch.dart';
+import 'package:master_plan/presentation/app/bloc/cubit.dart';
+// import '../../../../../domain/model/batch.dart';
 import '../../../../../domain/model/batch_archive.dart';
 import '../../../../../domain/model/order.dart';
 import 'batches_cubit/batches_cubit.dart';
@@ -15,8 +15,9 @@ class AddBatchPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final order = ModalRoute.of(context)?.settings.arguments as Order?;
+    final stateMain = context.read<CubitMain>().state;
     return BlocProvider(
-        create: (context) => BatchesCubit(order: order),
+        create: (context) => BatchesCubit(order: order, stateMain.user!.positionId == 3, stateMain.user!.area!.number),
         child: const AddBatchPagePageView());
   }
 }
