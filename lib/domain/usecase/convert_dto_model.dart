@@ -1,18 +1,24 @@
 import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/company_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/monitoring_machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/order_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/position_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/staff_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/transfer_dto.dart';
 import 'package:master_plan/domain/model/area.dart';
 import 'package:master_plan/domain/model/batch.dart';
+import 'package:master_plan/domain/model/company.dart';
 import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/monitoring_machine.dart';
 import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/domain/model/order.dart';
+import 'package:master_plan/domain/model/position.dart';
 import 'package:master_plan/domain/model/status.dart';
 import 'package:master_plan/domain/model/transfer.dart';
+import 'package:master_plan/domain/model/user.dart';
 import 'package:master_plan/domain/usecase/time_converter.dart';
 
 class ConvertDtoModel {
@@ -63,6 +69,14 @@ class ConvertDtoModel {
       controlMachineId: dto.controlId,
     );
   }
+  
+  static Position convertToPosition(PositionDTO dto){
+    return Position(id: dto.id, name: dto.name);
+  }
+
+  static Company convertToCompany(CompanyDTO dto){
+    return Company(id: dto.id, name: dto.name, code: dto.code);
+  }
 
   static Transfer convertToTransfer(TransferDTO dto){
     return Transfer(id: dto.id, number: dto.number, name: dto.name, code: dto.code, timesh: dto.timesh, operationId: dto.operationId);
@@ -70,6 +84,10 @@ class ConvertDtoModel {
 
   static Order convertToOrder(OrderDTO dto){
     return Order(id: dto.id, number: dto.number, priority: dto.priority, statusId: dto.statusId);
+  }
+
+  static User convertToUser(StaffDTO dto){
+    return User(id: dto.id, fio: dto.fio, positionId: dto.positionId, companyId: dto.companyId!, company: convertToCompany(dto.company!), unitId: null, areaId: null, photo: dto.photo, position: convertToPosition(dto.position));
   }
 
   static Batch convertToBatch(BatchDTO dto){
@@ -97,18 +115,9 @@ class ConvertDtoModel {
       timestart: dto.timestart,
       timestop: dto.timestop,
       timeworking: dto.timeworking,
+      user: dto.staff == null ? null : convertToUser(dto.staff!),
       status: Status(id: dto.status.id, name: dto.status.name),
-      batch: Batch(
-          id: dto.batch.id,
-          numberRS: dto.batch.numberRS,
-          name: dto.batch.name,
-          count: dto.batch.count,
-          code: dto.batch.code,
-          orderId: dto.batch.orderId,
-          technology: dto.batch.technology,
-          number: dto.batch.number,
-          order: dto.batch.order != null ? convertToOrder(dto.batch.order!) : null,
-          isready: dto.batch.isready),
+      batch: convertToBatch(dto.batch),
       order: dto.order,
       machine: dto.machine == null ? null : converterToMachine(dto.machine!),
       chiefBatchId: dto.chiefBatchId,

@@ -90,6 +90,7 @@ class CubitWork extends Cubit<StateWork> {
     Set<int> listOperationsId = {};
     for (var element in data!) {
       if (element['status_id'] == 3 ||
+          element['status_id'] == 5 ||
           element['status_id'] == 6 ||
           element['status_id'] == 7 ||
           element['status_id'] == 8) {
@@ -126,6 +127,7 @@ class CubitWork extends Cubit<StateWork> {
       listB.add(ItemOperOp(
           idPath: key!,
           list: list,
+          staffId: list.first.user?.id,
           machineId: list.first.machine!.id,
           statusId: list.first.status.id,
           listId: listId,
@@ -147,11 +149,13 @@ class CubitWork extends Cubit<StateWork> {
     for (var shiftsDistr in zShiftsDistributionList!) {
       List<ItemOperOp> listOperReady = [];
       List<ItemOperOp> listOperQueue = [];
+      List<ItemOperOp> listBrak = [];
       ItemOperOp? operActive;
       //проход по опт. операциям
       for (var operPath in listB) {
         if (shiftsDistr.machine.id == operPath.machineId) {
-          if (operPath.statusId == 6) listOperReady.add(operPath);
+          if (operPath.statusId == 5 && operPath.staffId == userIds) listBrak.add(operPath);
+          if (operPath.statusId == 6 && operPath.staffId == userIds) listOperReady.add(operPath);
           if (operPath.statusId == 3) listOperQueue.add(operPath);
           if (operPath.statusId == 7) operActive = operPath;
         }
@@ -245,6 +249,7 @@ class CubitWork extends Cubit<StateWork> {
           machine: shiftsDistr.machine,
           operReadyList: listOperReady,
           operQueueList: listOperQueue,
+          operBrakList: listBrak,
           operActive: operActive));
     }
     emit(state.copyWith(

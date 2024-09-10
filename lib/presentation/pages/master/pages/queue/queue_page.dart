@@ -22,9 +22,14 @@ class QueuePageMasterContent extends StatelessWidget {
   const QueuePageMasterContent({super.key});
   @override
   Widget build(BuildContext context) {
-    return const SafeArea(
-      child: SingleChildScrollView(
-        child: Padding(padding: EdgeInsets.all(16), child: ElementBarQueue()),
+    return Scrollbar(
+        thickness: 10,
+        thumbVisibility: true,
+        radius: const Radius.circular(10),
+      child: ListView(
+        children: const [SafeArea(
+          child: Padding(padding: EdgeInsets.all(16), child: ElementBarQueue()),
+        )],
       ),
     );
   }

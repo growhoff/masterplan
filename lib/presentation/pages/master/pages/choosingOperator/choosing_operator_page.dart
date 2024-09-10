@@ -43,53 +43,58 @@ class ChoosingOperatorContent extends StatelessWidget {
       body: SafeArea(
     child: Stack(
       children: [
-        SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child:  BlocBuilder<CubitChoosingOperator, StateChoosingOperator>(builder:(context, stateoper) => Column(
-                children: [
-                 Card(
-                   child: Padding(
-                     padding: const EdgeInsets.all(12.0),
-                     child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Смена № ${stateoper.change}'),
-                          Text(stateoper.machine.name),
-                          Text(DateFormat('dd/MM/yyyy').format(stateoper.time))
-                        ],
-                       ),
+        Scrollbar(
+          thickness: 10,
+          thumbVisibility: true,
+          radius: const Radius.circular(10),
+        child: ListView(
+          children: [Padding(
+            padding: const EdgeInsets.all(16),
+            child:  BlocBuilder<CubitChoosingOperator, StateChoosingOperator>(builder:(context, stateoper) => Column(
+                  children: [
+                   Card(
+                     child: Padding(
+                       padding: const EdgeInsets.all(12.0),
+                       child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Смена № ${stateoper.change}'),
+                            Text(stateoper.machine.name),
+                            Text(DateFormat('dd/MM/yyyy').format(stateoper.time))
+                          ],
+                         ),
+                     ),
                    ),
-                 ),
-                //  const SizedBox(height: 8),
-                //  const Divider(),
-                 const SizedBox(height: 8),
-                  BlocBuilder<CubitChoosingOperator, StateChoosingOperator>(
-                   builder:(context, state) => ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: state.operatorList.length,
-                    itemBuilder: (context, index) => ListTile(
-                      tileColor: stateoper.user == state.operatorList[index].id ? Colors.green : Colors.white10,
-                      title: Text(state.operatorList[index].fio),
-                      onTap: () => context.read<CubitChoosingOperator>().saveUser(state.operatorList[index].id),
-                    ),
-                    ),
-                 ),
-                  // const SizedBox(height: 8),
-                  // SizedBox(
-                  //   width: double.maxFinite,
-                  //   child: ElevatedButton(
-                  //     onPressed: (){
-                  //       context.read<CubitChoosingOperator>().insertTable();
-                  //       Navigator.pop(context);
-                  //     },
-                  //     child: const Text('Выбрать'),
-                  //   ),
-                  // )
-                ],
-              ),
-          ),
-          )
+                  //  const SizedBox(height: 8),
+                  //  const Divider(),
+                   const SizedBox(height: 8),
+                    BlocBuilder<CubitChoosingOperator, StateChoosingOperator>(
+                     builder:(context, state) => ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: state.operatorList.length,
+                      itemBuilder: (context, index) => ListTile(
+                        tileColor: stateoper.user == state.operatorList[index].id ? Colors.green : Colors.white10,
+                        title: Text(state.operatorList[index].fio),
+                        onTap: () => context.read<CubitChoosingOperator>().saveUser(state.operatorList[index].id),
+                      ),
+                      ),
+                   ),
+                    // const SizedBox(height: 8),
+                    // SizedBox(
+                    //   width: double.maxFinite,
+                    //   child: ElevatedButton(
+                    //     onPressed: (){
+                    //       context.read<CubitChoosingOperator>().insertTable();
+                    //       Navigator.pop(context);
+                    //     },
+                    //     child: const Text('Выбрать'),
+                    //   ),
+                    // )
+                  ],
+                ),
+            ),
+            )],
+        )
         ),
         Container(
             margin: const EdgeInsets.only(bottom: 8),

@@ -12,40 +12,64 @@ class DetailDistribContent extends StatelessWidget {
     return  SafeArea(
       child: Stack(
         children:[ 
-          SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                const DropAreaDistrib(),
-                const SizedBox(height: 8),
-                BlocBuilder<CubitDistributionDetails, StateDistributionDetails>(
-                  builder: (context, state) {
-                      List<ExpansionPanel> list = [];
-                      for (var i = 0; i < state.pathListOper.length; i++) {
-                        Color colorMain = ((state.pathListOper[i].setCount != null) && (state.pathListOper[i].setCount != 0) && (state.pathListOper[i].setMachine != null) ) ? Colors.greenAccent : Colors.white;
-                        list.add(
-                          ExpansionPanel(
-                            headerBuilder: (context, isExpanded) => TitleItem(state.pathListOper[i], state.pathListOper[i].statusId == 4 ? Colors.amberAccent : colorMain), 
-                            body: BodyItem(i, colorMain, state.pathListOper[i].countTransfer > 0),
-                            isExpanded: state.pathListOper[i].isSelected,
-                            backgroundColor: colorMain,
-                          ));
-                      }
-                      return state.isLoading 
-                      ?  const Center(child: CircularProgressIndicator()) 
-                      : state.pathListOper.isNotEmpty 
-                      ? ExpansionPanelList(
-                        children: list,
-                        expansionCallback: (index, isExpanded) => context.read<CubitDistributionDetails>().toggleSelect(index),
-                      )
-                      : const Center(child: Text('Список пуст'));
-                  }
-                ),
-                const SizedBox(height: 8),
-                
-              ],
-            )
+          Scrollbar(
+            thickness: 10,
+            thumbVisibility: true,
+            radius: const Radius.circular(10),
+          child: ListView(
+            children: [Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  const DropAreaDistrib(),
+                  const SizedBox(height: 8),
+
+                  // const Card(
+                  //   color: Colors.amber,
+                  //   child: Row(
+                  //     children: [
+                  //       Column(
+                  //         children: [
+                  //           Text('Деталь'),
+                  //           Text('Операция')
+                  //         ],
+                  //       ),
+                  //       Text('Приоритет'),
+                  //       Text('На распр./ на участке, шт.'),
+                  //     ],
+                  //   ),
+                  // ),
+
+                  const SizedBox(height: 8),
+
+                  BlocBuilder<CubitDistributionDetails, StateDistributionDetails>(
+                    builder: (context, state) {
+                        List<ExpansionPanel> list = [];
+                        for (var i = 0; i < state.pathListOper.length; i++) {
+                          Color colorMain = ((state.pathListOper[i].setCount != null) && (state.pathListOper[i].setCount != 0) && (state.pathListOper[i].setMachine != null) ) ? Colors.greenAccent : Colors.white;
+                          list.add(
+                            ExpansionPanel(
+                              headerBuilder: (context, isExpanded) => TitleItem(state.pathListOper[i], state.pathListOper[i].statusId == 4 ? Colors.amberAccent : colorMain), 
+                              body: BodyItem(i, colorMain, state.pathListOper[i].countTransfer > 0),
+                              isExpanded: state.pathListOper[i].isSelected,
+                              backgroundColor: colorMain,
+                            ));
+                        }
+                        return state.isLoading 
+                        ?  const Center(child: CircularProgressIndicator()) 
+                        : state.pathListOper.isNotEmpty 
+                        ? ExpansionPanelList(
+                          children: list,
+                          expansionCallback: (index, isExpanded) => context.read<CubitDistributionDetails>().toggleSelect(index),
+                        )
+                        : const Center(child: Text('Список пуст'));
+                    }
+                  ),
+                  const SizedBox(height: 8),
+                  
+                ],
+              )
+            )],
           ),
         ),
         Container(

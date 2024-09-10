@@ -7,11 +7,13 @@ class PageItem {
   final Machine machine;
   final List<ItemOperOp> operReadyList;
   final List<ItemOperOp> operQueueList;
+  final List<ItemOperOp> operBrakList;
   final ItemOperOp? operActive;
   PageItem({
     required this.machine,
     required this.operReadyList,
-    required this.operQueueList,    
+    required this.operQueueList,
+    required this.operBrakList,  
     this.operActive,
   });
 }

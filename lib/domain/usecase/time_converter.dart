@@ -17,6 +17,12 @@ class TimeConverter {
     return time;
   }
 
+  String convertTimeFromSecondsToMin(int timeSec) {
+    var seconds = timeSec;
+    var minutes = seconds ~/ 60;
+    return '$minutes';
+  }
+
 
   String convertTimeFromMinutes(int timeMin) {
     var minutes = timeMin;

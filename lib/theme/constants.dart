@@ -10,6 +10,6 @@ abstract class AppColors {
   static const  greyLight = Color.fromRGBO(236, 236, 236, 1);
   static const  greyLight2 = Color.fromRGBO(217, 217, 217, 1);
   static const  grey = Color.fromRGBO(167, 167, 167, 1);
-  static const modific = Color.fromARGB(255, 255, 228, 237);
+  static const modific = Colors.amber;
   static const notModific = Colors.white;
 }

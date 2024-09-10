@@ -12,6 +12,7 @@ class ItemOperOp {
   final int order;
   final List<int> listChiefBatchId;
   final List<int> listChiefOperationId;
+  final int? staffId;
   ItemOperOp({
     required this.list,
     required this.listId,
@@ -22,5 +23,6 @@ class ItemOperOp {
     required this.order,
     required this.listChiefBatchId,
     required this.listChiefOperationId,
+    this.staffId,
   });
 }

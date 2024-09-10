@@ -21,12 +21,17 @@ class BrakReadyDetailsContent extends StatelessWidget {
   const BrakReadyDetailsContent({super.key});
   @override
   Widget build(BuildContext context) {
-    return  const SafeArea(
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          child:  ElementBarReady()
-        ),
+    return  Scrollbar(
+        thickness: 10,
+        thumbVisibility: true,
+        radius: const Radius.circular(10),
+      child: ListView(
+        children: const [SafeArea(
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child:  ElementBarReady()
+          ),
+        )],
       ),
     );
   }
