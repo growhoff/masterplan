@@ -102,6 +102,16 @@ class CubitStageOnArea extends Cubit<StateStageOnArea> {
       }
     }
 
+    // for (var i = 0; i < listRes.length; i++) {
+    //   if (listRes[i].status == 'Выгружен') listRes.removeAt(i);
+    // }
+
+    int i = 0;
+    do {
+      if (listRes[i].status == 'Выгружен') {listRes.removeAt(i);}
+      else {i++;}
+    } while (i < listRes.length);
+
     emit(state.copyWith(listRes: listRes));
   }
 

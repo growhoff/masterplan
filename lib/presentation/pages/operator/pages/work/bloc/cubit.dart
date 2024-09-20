@@ -37,11 +37,20 @@ class CubitWork extends Cubit<StateWork> {
     //таймер
     periodicTimer = Timer.periodic(const Duration(minutes: 1), (timer) {
       final date = DateTime.now();
-      if ((date.hour == 20 || date.hour == 8) && date.minute == 0) {
-        emit(state.copyWith(exit: true));
-        print('Завершил сессию');
-      } else {
-        emit(state.copyWith(exit: false));
+      if (state.pageData.isNotEmpty){
+        for (var i = 0; i < state.pageData.length; i++) {
+          final changeLogic = ChangeLogic(count: state.pageData[i].machine.shiftSchedule!.count, firstTime: state.pageData[i].machine.shiftSchedule!.timeFirst);
+          int change = changeLogic.getChange();
+          int time = 0;
+          if (changeLogic.listTime.length == change){time = changeLogic.listTime[0];}
+          else{time = changeLogic.listTime[change];}
+          if (date.hour == time - 1 && date.minute == 55){
+            print('Завершил сессию ${state.pageData[i].machine.name}');
+            state.pageData.removeAt(i);
+            i--;
+            emit(state.copyWith(exit: state.pageData.isEmpty));
+          }
+        }
       }
     });
 
@@ -144,7 +153,7 @@ class CubitWork extends Cubit<StateWork> {
     List<String> statusBtn = [];
     List<bool> listStartBtn = [];
     List<bool> listStartTime = [];
-
+    List<int> listChange = [];
     //проход по списку машин в сменах
     for (var shiftsDistr in zShiftsDistributionList!) {
       List<ItemOperOp> listOperReady = [];
@@ -162,9 +171,9 @@ class CubitWork extends Cubit<StateWork> {
       }
       //активным ставим первый
       if (operActive == null && listOperQueue.isNotEmpty) {
-        operActive ??= listOperQueue.first;
-        listOperQueue.removeAt(0);
-        print('Need id oper: ${operActive.list.first.operation.id}');
+        // operActive ??= listOperQueue.first;
+        // listOperQueue.removeAt(0);
+        // print('Need id oper: ${operActive.list.first.operation.id}');
       }
 
       final dtoL = await selectMonitorStatus(shiftsDistr.machine.id);
@@ -195,7 +204,7 @@ class CubitWork extends Cubit<StateWork> {
             listStartBtn.add(true);
             listStartTime.add(false);
             timeActive.add(transferOper != null ? transferOper.timeworking ?? 0 :  operActive.list.first.timeworking!);
-            if (quereTransOper.isNotEmpty) emit(state.copyWith(activeTransfer: transferOper!.order));
+            if (quereTransOper.isNotEmpty) emit(state.copyWith(activeTransfer: transferOper!.order, newTransfer: false));
           } else {
             print('pause == false/ btn = Простой/ btnstart = false/ time = true');
             final quereTransOper = await transferOperTable.selectOptPathLast(operActive.idPath);
@@ -206,7 +215,7 @@ class CubitWork extends Cubit<StateWork> {
             listStartTime.add(true);
             final difference = getDifferenceSec(transferOper != null ? transferOper.timestart! : operActive.list.first.timestart!);
             timeActive.add(difference);
-            if (quereTransOper.isNotEmpty) emit(state.copyWith(activeTransfer: transferOper!.order));
+            if (quereTransOper.isNotEmpty) emit(state.copyWith(activeTransfer: transferOper!.order, newTransfer: false));
           }
         } else {
           statusBtn.add('Все');
@@ -245,6 +254,8 @@ class CubitWork extends Cubit<StateWork> {
         }
       }
 
+      listChange.add(ChangeLogic(count: shiftsDistr.machine.shiftSchedule!.count, firstTime: shiftsDistr.machine.shiftSchedule!.timeFirst).getChange());
+
       pageData.add(PageItem(
           machine: shiftsDistr.machine,
           operReadyList: listOperReady,
@@ -257,7 +268,9 @@ class CubitWork extends Cubit<StateWork> {
         timeActive: timeActive,
         statusBtn: statusBtn,
         listStartBtn: listStartTime,
-        listStartTime: listStartTime));
+        listStartTime: listStartTime,
+        listChange: listChange,
+        ));
   }
 
 
@@ -321,8 +334,7 @@ class CubitWork extends Cubit<StateWork> {
         oper.idPath);
     final model = MonitoringMachineDTO.fromMap(quereMon.last);
     if (model.timeStop == 0) {
-      await monitorTable.updateIdComment(
-          model.id, DateTime.now().millisecondsSinceEpoch, comment);
+      await monitorTable.updateIdComment(model.id, DateTime.now().millisecondsSinceEpoch, comment);
       // await ChangeLogic(count: 2, firstTime: 8).setDateNext(model.timeStart, model, userIds, oper.idPath);
     } else {
       print('ошибка.пустое значение');

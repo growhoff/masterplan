@@ -6,12 +6,14 @@ import 'package:master_plan/data/repositories/supabase/service/chief_distributio
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/transfer_table.dart';
 import 'package:master_plan/domain/model/area_machine.dart';
+import 'package:master_plan/domain/model/distrib_item_details.dart';
 import 'package:master_plan/domain/model/group_transfer.dart';
 import 'package:master_plan/domain/model/name_index.dart';
 import 'package:master_plan/domain/model/transfer.dart';
 import 'package:master_plan/domain/usecase/convert_dto_model.dart';
+import 'package:master_plan/domain/usecase/filter_list.dart';
 // import 'package:master_plan/domain/model/machine.dart';
-import 'package:master_plan/presentation/pages/master/pages/distributionDetails/model/distrib_item.dart';
+// import 'package:master_plan/presentation/pages/master/pages/distributionDetails/model/distrib_item.dart';
 import 'package:master_plan/presentation/pages/master/pages/distributionDetails/model/set_model.dart';
 import 'package:master_plan/presentation/pages/master/pages/distributionDetails/model/set_model_chief.dart';
 import 'state.dart';
@@ -101,7 +103,7 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
     }
 
     //группировка по операциям
-    List<DistribItem> listResOper = [];
+    List<DistribItemDetails> listResOper = [];
     for (var setI in setAllId) {
       final listName = setI.split('_');
       final batchId = listName[0];
@@ -117,9 +119,35 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
       if (listTrue2.isNotEmpty) listResOper.add(convertToDistrib(listTrue2, listTransGroup));
       if (listTrue4.isNotEmpty) listResOper.add(convertToDistrib(listTrue4, listTransGroup));
     }
-    emit(state.copyWith(pathListOper: listResOper, isLoading: false));
+
+    int timeWork = getTimeWork(listResOper);
+    emit(state.copyWith(pathListOper: listResOper, timeWork:timeWork, filterListOper: listResOper, isLoading: false));
   }
 
+  void getFilterList(String filter){
+    List<DistribItemDetails> newList = FilterList.getList(state.pathListOper, filter);
+    int timeWork = getTimeWork(newList);
+    emit(state.copyWith(filterListOper: newList, timeWork:timeWork));
+  }
+
+  int getTimeWork(List<DistribItemDetails> list){
+    int timeWork = 0;
+    for (var element in list) {
+      for (var oper in element.listOperat) {
+        timeWork += oper.timeplan ?? 0;
+      }
+    }
+    return timeWork;
+  }
+
+  void getFilterListStatus(int status){
+    switch (status){
+      case 0: 
+        // state.pathListOper.where((x) => x.detailNumber.contains(inputText.toLowerCase())).toList(); break;
+      case 1: break;
+      default: break;
+    }
+  }
 
   //получение порядка операций у деталей
   Future<List<SetModelChief>> getChiefTable (List<int> listIdBatch)async{
@@ -157,16 +185,16 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
     return listGroupTransfer;
   }
 
-  DistribItem convertToDistrib(List<OperatorOperationsDTO> operOperat, List<GroupTransfer> listTransGroup) {
+  DistribItemDetails convertToDistrib(List<OperatorOperationsDTO> operOperat, List<GroupTransfer> listTransGroup) {
     int count = 0;
     for (var element in listTransGroup) {
       if (operOperat.first.operationId == element.operId) count = element.listTransfer.length;
     }
-    return DistribItem(
+    return DistribItemDetails(
         id: operOperat.first.id,
         stageNumber: '${operOperat.first.batch.order?.number}.${operOperat.first.batch.number}.${operOperat.first.stage!.number}',
         statusId: operOperat.first.status.id,
-        detailNumber: '${operOperat.first.batch.number} ${operOperat.first.batch.name}',
+        detailNumber: '${operOperat.first.batch.numberRS} ${operOperat.first.batch.name}',
         operationName: '${operOperat.first.operation.number} ${operOperat.first.operation.name}',
         count: operOperat.length,
         isSelected: false,
@@ -174,59 +202,60 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
         timeSh: operOperat.first.operation.timeSH,
         timePZ: operOperat.first.operation.timepz,
         setOptPart: 1,
+        setCount: operOperat.length,
         countTransfer: count,
       );
   }
 
   void toggleSelect(int index){
-    List<DistribItem> list = [...state.pathListOper];
-    DistribItem item = state.pathListOper[index];
-    bool select = state.pathListOper[index].isSelected;
+    List<DistribItemDetails> list = [...state.filterListOper];
+    DistribItemDetails item = state.filterListOper[index];
+    bool select = state.filterListOper[index].isSelected;
     final newitem = item.copyWith(isSelected: !select);
     list.removeAt(index);
     list.insert(index,newitem);
-    emit(state.copyWith(pathListOper: list));
+    emit(state.copyWith(filterListOper: list));
   }
 
   void setMachine(int index, String machine){
-    List<DistribItem> list = [...state.pathListOper];
-    DistribItem item = state.pathListOper[index];
+    List<DistribItemDetails> list = [...state.filterListOper];
+    DistribItemDetails item = state.filterListOper[index];
     final newitem = item.copyWith(setMachine: machine);
     list.removeAt(index);
     list.insert(index,newitem);
-    emit(state.copyWith(pathListOper: list));
+    emit(state.copyWith(filterListOper: list));
   }
 
   void setCount(int index, String countStr){
       if (countStr == '') {countStr = '0';}
       int count = int.parse(countStr);
-      if (count > state.pathListOper[index].listOperat.length) {count = state.pathListOper[index].listOperat.length;}
-      List<DistribItem> list = [...state.pathListOper];
-      DistribItem item = state.pathListOper[index];
+      if (count > state.filterListOper[index].listOperat.length) {count = state.filterListOper[index].listOperat.length;}
+      List<DistribItemDetails> list = [...state.filterListOper];
+      DistribItemDetails item = state.filterListOper[index];
       final newitem = item.copyWith(setCount: count);
       list.removeAt(index);
       list.insert(index,newitem);
-      emit(state.copyWith(pathListOper: list));
+      emit(state.copyWith(filterListOper: list));
   }
 
   void setOptPath(int index, String countStr){
       if (countStr == '') {countStr = '1';}
       int count = int.parse(countStr);
-      if (count > state.pathListOper[index].listOperat.length) {count = state.pathListOper[index].listOperat.length;}
-      List<DistribItem> list = [...state.pathListOper];
-      DistribItem item = state.pathListOper[index];
+      if (count > state.filterListOper[index].listOperat.length) {count = state.filterListOper[index].listOperat.length;}
+      List<DistribItemDetails> list = [...state.filterListOper];
+      DistribItemDetails item = state.filterListOper[index];
       final newitem = item.copyWith(setOptPart: count);
       list.removeAt(index);
       list.insert(index,newitem);
-      emit(state.copyWith(pathListOper: list));
+      emit(state.copyWith(filterListOper: list));
   }
 
   int getRandom(){
     return Random().nextInt(1000000);
   }
 
-  void updateOperation(){
-    for (var pathOper in state.pathListOper) {
+  void updateOperation(int index){
+    DistribItemDetails pathOper = state.filterListOper[index];
       //проверяем заполнены ли поля
       if ((pathOper.setCount != null) && (pathOper.setCount != 0) && (pathOper.setMachine != '')) {
         //проходим по списку машин и сравниваем
@@ -277,7 +306,7 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
           }
         }
       }
-    }
+    
   }
 
   Future<void> setActiveArea(int index) async{

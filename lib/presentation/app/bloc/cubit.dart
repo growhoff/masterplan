@@ -390,25 +390,31 @@ class CubitMain extends Cubit<StateMain> {
     //   print('2 shift');
     // }
 
-    final changeLog = ChangeLogic(count: 2, firstTime: 8);
-    int change = changeLog.getChange();
-    DateTime time = changeLog.getDayChange();
+    // final changeLog = ChangeLogic(count: 2, firstTime: 8);
+    // int change = changeLog.getChange();
+    // DateTime time = changeLog.getDayChange();
+    DateTime time = DateTime.now();
 
     final zshiftsDistributionTable = ShiftsDistributionTable();
     final zshiftsDistributionQuery =
-    await zshiftsDistributionTable.selectEqUser(userId, time, change);
+    await zshiftsDistributionTable.selectEqUser(userId, time);
     List<ShiftsDistribution> zshiftsDistributionList = [];
     List<int> machineListId = [];
     for (var shiftsDistr in zshiftsDistributionQuery) {
       final model = ShiftsDistributionDTO.fromMap(shiftsDistr);
-      zshiftsDistributionList.add(convertToShiftsDistribution(model));
-      machineListId.add(model.machine!.id);
+      final count = model.machine!.shiftSchedule!.count;
+      final firstTime = model.machine!.shiftSchedule!.timeFirst;
+      final change = ChangeLogic(count: count, firstTime: firstTime).getChange();
+      if (model.change!.number == change){
+        zshiftsDistributionList.add(convertToShiftsDistribution(model));
+        machineListId.add(model.machine!.id);
+      }
+      
     }
 
     emit(state.copyWith(
         zshiftsDistributionList: zshiftsDistributionList,
-        machineIdList: machineListId,
-        change: change));
+        machineIdList: machineListId));
   }
 
   ShiftsDistribution convertToShiftsDistribution(ShiftsDistributionDTO model) {

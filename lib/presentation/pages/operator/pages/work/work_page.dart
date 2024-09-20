@@ -5,7 +5,6 @@ import 'package:master_plan/presentation/pages/operator/pages/work/widgets/timer
 import 'package:master_plan/presentation/pages/operator/widgets/element_bar.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
-import 'package:master_plan/presentation/app/bloc/state.dart';
 
 class WorkPage extends StatelessWidget {
   const WorkPage({super.key});
@@ -30,20 +29,11 @@ class ContentWork extends StatelessWidget {
     return GestureDetector(
       child: Scaffold(
           appBar: AppBar(
-            title: BlocBuilder<CubitMain, StateMain>(builder: (context, state) {
-                final user = state.user!;
-                return Column(
-                children: [
-                  const Text('Монитор'),
-                  Text('${user.fio} / ${user.position.name}', style: const TextStyle(fontSize: 12)),
-            ]);
-          }),
+            title: const Text('Монитор операций'),
           ),
           body: BlocListener<CubitWork,StateWork>(
             listener: (innerContext, state) {
-              if (state.exit) {
-                Navigator.pop(context);
-                }
+              if (state.exit) {Navigator.pop(context);}
             },
             child: const SafeArea(
               child: SingleChildScrollView(

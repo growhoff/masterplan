@@ -10,6 +10,7 @@ import 'package:master_plan/data/repositories/supabase/service/monitoring_machin
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/order_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/transfer_operations_table.dart';
+import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/domain/usecase/change_logic.dart';
 import 'package:master_plan/domain/usecase/time_converter.dart';
@@ -101,29 +102,29 @@ class CubitTimer extends Cubit<StateTimer> {
       transferOperTable.insertDto(TransferOperationsDTO(id: 0, operatorOperationId: operActive.list.first.id, order: order, transferId: operActive.list.first.listTransfer?[activeTransfer].id, batchId: operActive.list.first.batch.id, operationId: operActive.list.first.operation.id, optPath: operActive.idPath, pause: false, timeFirstStart: DateTime.now().millisecondsSinceEpoch, timestart: DateTime.now().millisecondsSinceEpoch, timestop: 0, timeworking: 0, machineId: machineId, staffId: staffId));
   }
 //
-  Future<void> startOrStop(int index, bool isStart, int idOptPath, int userId, int machineId, int batchId, int firstTimeBatch)async{
+  Future<void> startOrStop(int index, bool isStart, int idOptPath, int userId, int batchId, int firstTimeBatch, Machine machine)async{
     final monitorTable = MonitoringMachineTable();
     List<bool> listState = [...state.listState];
     if (isStart){
 
-      final lastStatusMap = await monitorTable.selectStatusLastMachine(machineId);
+      final lastStatusMap = await monitorTable.selectStatusLastMachine(machine.id);
       if (lastStatusMap != null){
         final dtoLast = MonitoringMachineDTO.fromMap(lastStatusMap);
         await monitorTable.updateId(dtoLast.id, DateTime.now().millisecondsSinceEpoch);
       }
-      await monitorTable.insert(MonitoringMachineDTO(id: 0, operationId: idOptPath, date: DateTime.now(), changeId: ChangeLogic(count: 2, firstTime: 8).getChange(), timeStart: DateTime.now().millisecondsSinceEpoch, timeStop: 0, statusMachineId: 1, userId: userId, machineId: machineId, batchId: batchId, comment: 'Продолжение обработки', firstStartBatch: firstTimeBatch));
+      await monitorTable.insert(MonitoringMachineDTO(id: 0, operationId: idOptPath, date: DateTime.now(), changeId: ChangeLogic(count: machine.shiftSchedule!.count, firstTime: machine.shiftSchedule!.timeFirst).getChange(), timeStart: DateTime.now().millisecondsSinceEpoch, timeStop: 0, statusMachineId: 1, userId: userId, machineId: machine.id, batchId: batchId, comment: 'Продолжение обработки', firstStartBatch: firstTimeBatch));
       
       listState[index] = true;
       await operatorOperTable.updateTimeStart(idOptPath, DateTime.now().millisecondsSinceEpoch, userId);
     }
     else {
       
-      final lastStatusMap = await monitorTable.selectStatusLastMachine(machineId);
+      final lastStatusMap = await monitorTable.selectStatusLastMachine(machine.id);
       if (lastStatusMap != null){
         final dtoLast = MonitoringMachineDTO.fromMap(lastStatusMap);
         await monitorTable.updateId(dtoLast.id, DateTime.now().millisecondsSinceEpoch);
       }
-      await monitorTable.insert(getMonitoringStatus2(userId, machineId));
+      await monitorTable.insert(getMonitoringStatus2(userId, machine));
       
 
       listState[index] = false;
@@ -157,17 +158,17 @@ class CubitTimer extends Cubit<StateTimer> {
     }
   }
 
-    MonitoringMachineDTO getMonitoringStatus2(int userId, int machineId){
+    MonitoringMachineDTO getMonitoringStatus2(int userId, Machine machine){
     return MonitoringMachineDTO(
           id: 0,
           operationId: -1,
           date: DateTime.now(),
-          changeId: ChangeLogic(count: 2, firstTime: 8).getChange(),
+          changeId: ChangeLogic(count: machine.shiftSchedule!.count, firstTime: machine.shiftSchedule!.timeFirst).getChange(),
           timeStart: DateTime.now().millisecondsSinceEpoch,
           timeStop: 0,
           statusMachineId: 2,
           userId: userId,
-          machineId: machineId,
+          machineId: machine.id,
           batchId: null,
           comment: '-');
   }

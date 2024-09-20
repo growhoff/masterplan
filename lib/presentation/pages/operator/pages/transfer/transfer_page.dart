@@ -15,11 +15,11 @@ class TransferPage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: BlocBuilder<CubitMain, StateMain>(builder: (context, state) {
-            final user = state.user!;
-            return Column(
+            // final user = state.user!;
+            return const Column(
             children: [
-              const Text('Список переходов'),
-              Text('${user.fio} / ${user.position.name}', style: const TextStyle(fontSize: 12)),
+               Text('Список переходов'),
+              // Text('${user.fio} / ${user.position.name}', style: const TextStyle(fontSize: 12)),
             ]);
           }),
         ),
@@ -29,47 +29,44 @@ class TransferPage extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child:  Column(
                 children: [
-                  Text('Лист переходов операции ${operation!.list.first.operation.number}.${operation!.list.first.operation.name}', style: const TextStyle(fontWeight: FontWeight.w600),),
-                  const SizedBox(height: 20),
-                  Card(
-                    color: Colors.white60,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          const SizedBox(
-                    width: double.maxFinite,
-                    child: Card(
-                      color: Colors.white24,
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Row(children: [
-                          Expanded(child: Text('Порядковый номер', textAlign: TextAlign.center)),
-                          Expanded(flex: 4, child: Text('Код перехода.Наименование перехода', textAlign: TextAlign.center,))
-                        ],),
-                    ),),
-                  ),
-                  const SizedBox(height: 20),
-                  ListView.separated(
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) => Card(
-                      color: index == activeTransfer ? Colors.amber : index > activeTransfer ? Colors.white70 : Colors.greenAccent,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(child: Text('$index', textAlign: TextAlign.center)),
-                            Expanded(flex: 4, child: Text('${listTransfer[index].number}.${listTransfer[index].name}', textAlign: TextAlign.center,))
-                          ],
-                        ),
-                      ),
+                  // Text('Лист переходов операции ${operation!.list.first.operation.number}.${operation!.list.first.operation.name}', style: const TextStyle(fontWeight: FontWeight.w600),),
+                  // const SizedBox(height: 20),
+                  Column(
+                    children: [
+                      const SizedBox(
+                                    width: double.maxFinite,
+                                    child: Card(
+                  color: Colors.white24,
+                  child: Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Row(children: [
+                      Expanded(child: Text('№ п/п', textAlign: TextAlign.center)),
+                      Expanded(flex: 5, child: Text('Наименование перехода', textAlign: TextAlign.center,)),
+                      Expanded(child: Text('Т шт., мин', textAlign: TextAlign.center)),
+                    ],),
+                                    ),),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  ListView.separated(
+                                    shrinkWrap: true,
+                                    itemBuilder: (context, index) => Card(
+                  color: index == activeTransfer ? Colors.amber : index > activeTransfer ? Colors.white70 : Colors.greenAccent,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(child: Text('$index', textAlign: TextAlign.center)),
+                        Expanded(flex: 5, child: Text(listTransfer[index].name, textAlign: TextAlign.center,)),
+                        Expanded(child: Text('${listTransfer[index].timesh}', textAlign: TextAlign.center)),
+                      ],
                     ),
-                    separatorBuilder: (context, index) => const SizedBox(height: 2),
-                    itemCount: listTransfer!.length,
                   ),
-                        ],
-                      ),),
+                                    ),
+                                    separatorBuilder: (context, index) => const SizedBox(height: 2),
+                                    itemCount: listTransfer!.length,
+                                  ),
+                    ],
                   ),
                 ],
               )

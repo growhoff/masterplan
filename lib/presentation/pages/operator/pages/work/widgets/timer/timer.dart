@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/domain/usecase/button_status.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
-import 'package:master_plan/presentation/pages/operator/pages/queue/queue_page.dart';
-import 'package:master_plan/presentation/pages/operator/pages/transfer/transfer_page.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/bloc/state.dart';
-// import 'package:master_plan/presentation/pages/operator/pages/work/model/item_oper.dart';
+import 'package:master_plan/presentation/pages/operator/pages/work/widgets/dialog_input_comment.dart';
+import 'package:master_plan/presentation/pages/operator/pages/work/widgets/dialog_input_work.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/widgets/elevated_button_castom.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/widgets/timer/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/widgets/timer/bloc/state.dart';
-import '../button_icon.dart';
+
 
 class Time extends StatelessWidget {
   const Time(this.error, {super.key});
@@ -25,7 +25,7 @@ class Time extends StatelessWidget {
         if (!error){
           activePage = stateWork.activePage;
           statusBtn = stateWork.statusBtn[activePage];
-          operActive = stateWork.pageData[stateWork.activePage].operActive!;
+          operActive = stateWork.pageData[stateWork.activePage].operActive ?? stateWork.pageData[stateWork.activePage].operQueueList.first;
         } 
         // else {operActive = ItemOperOp(list: [], listId: [], idPath: 0, machineId: 0, statusId: 0, order: 0, listChiefBatchId: [], listChiefOperationId: []);}
         // activePage = stateWork.activePage;
@@ -39,27 +39,15 @@ class Time extends StatelessWidget {
                   visible: !error,
                   child: Column(
                     children: [
-                      const SizedBox(height: 12),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ButtonCircleIcon(
-                            isActive: (statusBtn == 'Все') || (statusBtn == 'В работе') || (statusBtn == 'Простой'),
-                            onPressed: () =>  Navigator.push(context, MaterialPageRoute(builder: (context) => QueuePage(dataPage: stateWork.pageData[activePage]))), 
-                            icon: Icons.list,
-                          ),
-                          SizedBox(width: operActive.list.first.listTransfer!.isNotEmpty ? 20: 0),
-                          Visibility(
-                            visible: operActive.list.first.listTransfer!.isNotEmpty,
-                            child: ButtonCircleIcon(
-                              isActive: true,
-                              onPressed: () =>  Navigator.push(context, MaterialPageRoute(builder: (context) => TransferPage(operation: stateWork.pageData[activePage].operActive, stateWork.activeTransfer))), 
-                              icon: Icons.transfer_within_a_station,
-                            ),
-                          ),
-                        ],
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        child: Row(
+                          children: [
+                            const Expanded(flex: 2, child: Text('Статус:')),
+                            Expanded(flex: 3, child: Text(statusBtn == 'Все' ? 'Простой' : statusBtn, style: TextStyle(color: ButtonStatus().getColorStatus(statusBtn), fontWeight: FontWeight.w700), textAlign: TextAlign.start,)),
+                          ],
+                        ),
                       ),
-                      const SizedBox(height: 12),
                       SizedBox(
                         width: double.maxFinite,
                         child: ElevatedButtonCastom(
@@ -86,6 +74,50 @@ class Time extends StatelessWidget {
                               },
                           ),
                       ),
+                      const SizedBox(height: 8),
+                      SizedBox(
+                          width: double.maxFinite,
+                          child: ElevatedButtonCastom(
+                              text: 'Брак: ${stateWork.count}',
+                              isActive: (statusBtn == 'Все') || (statusBtn == 'В работе') || (statusBtn == 'Простой'),
+                              color: const Color.fromARGB(255, 61, 16, 222),
+                              onPressed: () {
+                                showDialog(
+                                  context: context, 
+                                  builder: (BuildContext innerContext){
+                                    return BlocProvider.value(
+                                      value: context.watch<CubitWork>(),
+                                      child: Material(
+                                        child: BlocBuilder<CubitWork, StateWork>(
+                                          builder: (context, state) => DialogInputWork(count: operActive!.list.length, indexOper: 1),
+                                        )
+                                      ),
+                                      );
+                                  });
+                      })),
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        width: double.maxFinite,
+                        child: ElevatedButtonCastom(
+                          text: operActive.list.first.listTransfer!.isEmpty ? 'Деталь готова' : 'Переход готов',
+                          isActive: (statusBtn == 'Все') || (statusBtn == 'В работе') || (statusBtn == 'Простой'),
+                          color: Colors.green,
+                          onPressed: () async{
+                            String? val = '';
+                            val = await showDialog<String>(context: context,builder: (BuildContext context) => const DialogInputComment());
+                            if (val != ''){
+                              if (stateWork.count > 0){ 
+                                if (context.mounted) context.read<CubitWork>().setBrak(operActive!, context.read<CubitTimer>().state.listTick[activePage], val!);
+                              } else {
+                                if (context.mounted) {
+                                  if (operActive!.list.first.listTransfer!.isEmpty) {context.read<CubitWork>().setReady(operActive, context.read<CubitTimer>().state.listTick[activePage], val!);}
+                                  else {context.read<CubitWork>().setReadyTransfer(operActive, context.read<CubitTimer>().state.listTick[activePage], val!);}
+                                }
+                              }
+                              if (context.mounted) context.read<CubitTimer>().refresh(activePage);
+                            }
+                          },
+                        )),
                     ],
                   )
                 ) : const Text(''),

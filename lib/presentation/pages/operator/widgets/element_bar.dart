@@ -12,27 +12,29 @@ class ElementBarOperator extends StatelessWidget {
     return BlocBuilder<CubitWork, StateWork>(
       builder: (context, state) => state.pageData.isNotEmpty ? Column(
         children: [
+          const Divider(),
           SizedBox(
-            height: 40,
+            height: 50,
             child: ListView.separated(
                 shrinkWrap: true,
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) => GestureDetector(
-                      onTap: () =>
-                          context.read<CubitWork>().setActivePage(index),
-                      child: SizedBox(
-                          width: 200,
-                          child: Card(
-                              color: state.activePage == index ? Colors.blueGrey : const Color.fromARGB(0, 0, 0, 0),
-                              child: Center(child: Text(state.pageData[index].machine.name)))),
+                      onTap: () => context.read<CubitWork>().setActivePage(index),
+                      child: Card(
+                          color: state.activePage == index ? const Color.fromARGB(255, 27, 179, 255) : const Color.fromARGB(0, 189, 189, 189),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Center(child: Text(state.pageData[index].machine.name)),
+                          )),
                     ),
                 separatorBuilder: (context, index) => const SizedBox(width: 5),
                 itemCount: state.pageData.length),
           ),
-          const SizedBox(height: 8),
+          const Divider(),
+          Text('${state.listChange[state.activePage]} смена'),
           const Divider(),
           const SizedBox(height: 16),
-          ContentDetail(state.pageData[state.activePage], state.statusBtn[state.activePage], state.count)
+          ContentDetail(state.pageData[state.activePage], state.statusBtn[state.activePage], state.count, state.activeTransfer)
         ],
       )
       : const Center(child: CircularProgressIndicator()),

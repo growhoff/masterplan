@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
+import 'package:master_plan/data/repositories/supabase/dto/shifts_distribution_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/status_machine_dto.dart';
 import 'package:master_plan/domain/model/area_machine.dart';
 import 'package:master_plan/domain/model/item_machine_monitor.dart';
@@ -19,6 +20,7 @@ class StateMonitoringMachine extends Equatable {
   final List<NameIndex> listItemArea;
   final List<NameIndex> listItemMachine;
   final bool isLoading;
+  final List<ShiftsDistributionDTO> listShifts;
 
   const StateMonitoringMachine({
     this.listMonitor = const[],
@@ -33,10 +35,11 @@ class StateMonitoringMachine extends Equatable {
     this.listItemArea = const [],
     this.listItemMachine = const [],
     this.isLoading = false,
+    this.listShifts = const [],
   });
 
   @override
-  List<Object> get props => [isLoading, listMonitor ?? [], days, change, activePage, listStatusActive, statusActive ?? StatusMachineDTO(id: -1, name: '-'), activeArea, activeMachine, listAreaMachine, listItemArea, listItemMachine];
+  List<Object> get props => [isLoading, listMonitor ?? [], listShifts, days, change, activePage, listStatusActive, statusActive ?? StatusMachineDTO(id: -1, name: '-'), activeArea, activeMachine, listAreaMachine, listItemArea, listItemMachine];
 
   StateMonitoringMachine copyWith({
     List<ItemMachineMonitorMaster>? listMonitor,
@@ -51,6 +54,7 @@ class StateMonitoringMachine extends Equatable {
     List<NameIndex>? listItemArea,
     List<NameIndex>? listItemMachine,
     bool? isLoading,
+    List<ShiftsDistributionDTO>? listShifts,
   }) {
     return StateMonitoringMachine(
       listMonitor: listMonitor ?? this.listMonitor,
@@ -65,6 +69,7 @@ class StateMonitoringMachine extends Equatable {
       listItemArea: listItemArea ?? this.listItemArea,
       listItemMachine: listItemMachine ?? this.listItemMachine,
       isLoading: isLoading ?? this.isLoading,
+      listShifts: listShifts ?? this.listShifts
     );
   }
 

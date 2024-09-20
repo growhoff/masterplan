@@ -24,6 +24,10 @@ class CubitMaster extends Cubit<StateMaster> {
     emit(state.copyWith(isThisMonitoring: !state.isThisMonitoring));
   }
 
+  void toggleFilterDistribution(){
+    emit(state.copyWith(isThisMonitoring: !state.isThisMonitoring));
+  }
+
   void setList(List<GroupOptPath> list){
     List<OptPathOperations> listNew = [];
     for (var e in list) {

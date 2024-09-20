@@ -7,6 +7,13 @@ D:/Flutter project/masterplan/build/windows/x64/runner/Debug/url_launcher_window
 D:/Flutter project/masterplan/build/windows/x64/runner/Debug/data/flutter_assets/AssetManifest.bin
 D:/Flutter project/masterplan/build/windows/x64/runner/Debug/data/flutter_assets/AssetManifest.bin.json
 D:/Flutter project/masterplan/build/windows/x64/runner/Debug/data/flutter_assets/AssetManifest.json
+D:/Flutter project/masterplan/build/windows/x64/runner/Debug/data/flutter_assets/assets/images/operator/clear.jpg
+D:/Flutter project/masterplan/build/windows/x64/runner/Debug/data/flutter_assets/assets/images/operator/notDetails.jpg
+D:/Flutter project/masterplan/build/windows/x64/runner/Debug/data/flutter_assets/assets/images/operator/notkdandtd.jpg
+D:/Flutter project/masterplan/build/windows/x64/runner/Debug/data/flutter_assets/assets/images/operator/notMachine.jpg
+D:/Flutter project/masterplan/build/windows/x64/runner/Debug/data/flutter_assets/assets/images/operator/otsutyp.jpg
+D:/Flutter project/masterplan/build/windows/x64/runner/Debug/data/flutter_assets/assets/images/operator/perenalad.jpg
+D:/Flutter project/masterplan/build/windows/x64/runner/Debug/data/flutter_assets/assets/images/operator/polomka.jpg
 D:/Flutter project/masterplan/build/windows/x64/runner/Debug/data/flutter_assets/FontManifest.json
 D:/Flutter project/masterplan/build/windows/x64/runner/Debug/data/flutter_assets/fonts/MaterialIcons-Regular.otf
 D:/Flutter project/masterplan/build/windows/x64/runner/Debug/data/flutter_assets/kernel_blob.bin

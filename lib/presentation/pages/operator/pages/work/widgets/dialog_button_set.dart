@@ -9,12 +9,21 @@ class DialogButtonSet extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Выбор статуса'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            width: double.maxFinite,
-            child: ElevatedButtonCastom(
+      content: 
+      SizedBox(
+        width: double.maxFinite,
+        height: double.maxFinite,
+        child: GridView(
+          // mainAxisSize: MainAxisSize.min,
+           shrinkWrap: true,
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2, 
+                        crossAxisSpacing: 16, 
+                        mainAxisSpacing: 16,
+                        childAspectRatio: 2
+                      ),
+          children: [
+            ElevatedButtonCastom(
                 text: 'Переналадка',
                 isActive: (statusBtn == 'Все') || (statusBtn == 'Переналадка'),
                 color: ButtonStatus().getColorStatus('Переналадка'),
@@ -28,11 +37,8 @@ class DialogButtonSet extends StatelessWidget {
                   // }
                   Navigator.pop(context, 'Переналадка');
                 }),
-          ),
-          const SizedBox(height: 8),
-          SizedBox(
-            width: double.maxFinite,
-            child: ElevatedButtonCastom(
+            // const SizedBox(height: 8),
+            ElevatedButtonCastom(
                 text: 'Уборка',
                 isActive: (statusBtn == 'Все') || (statusBtn == 'Уборка'),
                 color: ButtonStatus().getColorStatus('Уборка'),
@@ -46,11 +52,8 @@ class DialogButtonSet extends StatelessWidget {
                   // }
                   Navigator.pop(context, 'Уборка');
                 }),
-          ),
-          const SizedBox(height: 8),
-          SizedBox(
-            width: double.maxFinite,
-            child: ElevatedButtonCastom(
+            // const SizedBox(height: 8),
+            ElevatedButtonCastom(
                 text: 'Поломка',
                 isActive: (statusBtn == 'Все') ||
                     (statusBtn == 'В работе') ||
@@ -68,11 +71,8 @@ class DialogButtonSet extends StatelessWidget {
                   // }
                   Navigator.pop(context, 'Поломка');
                 }),
-          ),
-          const SizedBox(height: 8),
-          SizedBox(
-            width: double.maxFinite,
-            child: ElevatedButtonCastom(
+            // const SizedBox(height: 8),
+            ElevatedButtonCastom(
                 text: 'Нет УП',
                 isActive: (statusBtn == 'Все') || (statusBtn == 'НетУП'),
                 color: ButtonStatus().getColorStatus('НетУП'),
@@ -86,11 +86,8 @@ class DialogButtonSet extends StatelessWidget {
                   //   }
                   Navigator.pop(context, 'НетУП');
                 }),
-          ),
-          const SizedBox(height: 8),
-          SizedBox(
-            width: double.maxFinite,
-            child: ElevatedButtonCastom(
+            // const SizedBox(height: 8),
+            ElevatedButtonCastom(
                 text: 'Нет чертежа, нет технологии',
                 isActive: (statusBtn == 'Все') || (statusBtn == 'НетЧертеж'),
                 color: ButtonStatus().getColorStatus('НетЧертеж'),
@@ -104,8 +101,8 @@ class DialogButtonSet extends StatelessWidget {
                   //   }
                   Navigator.pop(context, 'НетЧертеж');
                 }),
-          ),
-        ],
+          ],
+        ),
       ),
       titleTextStyle: const TextStyle(
           fontWeight: FontWeight.bold, color: Colors.black, fontSize: 20),

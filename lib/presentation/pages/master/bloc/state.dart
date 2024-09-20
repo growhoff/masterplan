@@ -8,16 +8,18 @@ class StateMaster extends Equatable {
   final List<OptPathOperations>? list;
   final bool isActiveStream;
   final bool isThisMonitoring;
+  final int isFilterDistribution;
   const StateMaster({
     this.activePage = 0,
     this.isSaveOrder = false,
     this.list,
     this.isActiveStream = true,
     this.isThisMonitoring = true,
+    this.isFilterDistribution = 0,
   });
 
   @override
-  List<Object> get props => [activePage, isSaveOrder, list ?? [], isActiveStream, isThisMonitoring];
+  List<Object> get props => [activePage, isSaveOrder, list ?? [], isActiveStream, isThisMonitoring, isFilterDistribution];
 
   StateMaster copyWith({
     int? activePage,
@@ -25,6 +27,7 @@ class StateMaster extends Equatable {
     List<OptPathOperations>? list,
     bool? isActiveStream,
     bool? isThisMonitoring,
+    int? isFilterDistribution,
   }) {
     return StateMaster(
       activePage: activePage ?? this.activePage,
@@ -32,6 +35,7 @@ class StateMaster extends Equatable {
       list: list ?? this.list,
       isActiveStream: isActiveStream ?? this.isActiveStream,
       isThisMonitoring: isThisMonitoring ?? this.isThisMonitoring,
+      isFilterDistribution: isFilterDistribution ?? this.isFilterDistribution,
     );
   }
 

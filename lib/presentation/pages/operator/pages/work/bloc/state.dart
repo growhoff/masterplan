@@ -16,6 +16,8 @@ class StateWork extends Equatable {
     final bool visibleStatus;
     final int activeTransfer;
     final bool newTransfer;
+    final List<int> listChange;
+
   const StateWork({
     this.pageData = const [],
     this.activePage = 0,
@@ -29,10 +31,11 @@ class StateWork extends Equatable {
     this.visibleStatus = false,
     this.activeTransfer = 0,
     this.newTransfer = true,
+    this.listChange = const [],
   });
 
   @override
-  List<Object> get props => [pageData, activePage, statusBtn, monitorId ?? 0, listStartBtn, timeActive, listStartTime, count, exit, visibleStatus, activeTransfer, newTransfer];
+  List<Object> get props => [pageData, listChange, activePage, statusBtn, monitorId ?? 0, listStartBtn, timeActive, listStartTime, count, exit, visibleStatus, activeTransfer, newTransfer];
 
   StateWork copyWith({
     List<PageItem>? pageData,
@@ -48,6 +51,7 @@ class StateWork extends Equatable {
     bool? visibleStatus,
     int? activeTransfer,
     bool? newTransfer,
+    List<int>? listChange,
   }) {
     return StateWork(
       pageData: pageData ?? this.pageData,
@@ -62,6 +66,7 @@ class StateWork extends Equatable {
       visibleStatus: visibleStatus ?? this.visibleStatus,
       activeTransfer: activeTransfer ?? this.activeTransfer,
       newTransfer: newTransfer ?? this.newTransfer,
+      listChange: listChange ?? this.listChange,
     );
   }
 }

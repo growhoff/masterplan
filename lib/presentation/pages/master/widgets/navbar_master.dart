@@ -41,7 +41,12 @@ class NavbarMaster extends StatelessWidget {
               ]);
               }
               ),
-            actions: stateMaster.activePage == 5 ? [IconButton(onPressed: () => context.read<CubitMaster>().toggleMonitor(), icon: const Icon(Icons.transform_rounded, color: Colors.amber,))] : [const Text('')],
+            actions: 
+            stateMaster.activePage == 5 
+              ? [IconButton(onPressed: () => context.read<CubitMaster>().toggleMonitor(), icon: const Icon(Icons.transform_rounded, color: Colors.amber,))] 
+              // : stateMaster.activePage == 1 
+              // ? [IconButton(onPressed: () => context.read<CubitMaster>().toggleFilterDistribution(), icon: const Icon(Icons.filter_alt_off_outlined, color: Colors.amber,))] 
+              : [const Text('')],
             // DataMaster.listPage[stateMaster.activePage].actions,
           ),
           body: DataMaster.listPage[stateMaster.activePage].page,

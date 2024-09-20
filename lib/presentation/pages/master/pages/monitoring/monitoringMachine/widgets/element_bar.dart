@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/data/repositories/supabase/dto/shifts_distribution_dto.dart';
 import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import './drop_area.dart';
 import './drop_machine.dart';
@@ -14,7 +15,12 @@ class ElementBarMonitor extends StatelessWidget {
     final stateMain = context.read<CubitMain>().state;
     bool oneArea = stateMain.user!.positionId == 3;
     return BlocBuilder<CubitMonitoringMachine, StateMonitoringMachine>(
-      builder:(context, state) => 
+      builder:(context, state) {
+      List<ShiftsDistributionDTO> listShifts = [];
+      for (var element in state.listShifts) {
+        if (element.machineId == state.listMonitor![state.activeMachine].machine.id) listShifts.add(element);
+      }
+      return 
       state.listItemMachine.isNotEmpty
       ? Column(
         children: [
@@ -28,11 +34,11 @@ class ElementBarMonitor extends StatelessWidget {
             state.listMonitor!.isNotEmpty
             ? state.isLoading
               ? const Center(child: CircularProgressIndicator())
-              : ContentListWidgetMaster(state.listMonitor![state.activeMachine], state.change, state.listStatusActive, state.statusActive!)
+              : ContentListWidgetMaster(state.listMonitor![state.activeMachine], state.change, state.listStatusActive, state.statusActive!, listShifts)
             : const Center(child: Text('Пусто'))
         ],
       )
-      : const Center(child: Text('Нет станков')),
+      : const Center(child: Text('Нет станков'));}
     );
   }
 }

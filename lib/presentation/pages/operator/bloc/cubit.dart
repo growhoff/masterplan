@@ -16,10 +16,11 @@ class CubitOperator extends Cubit<StateOperator> {
   final operatorOperationsTable = OperatorOperationsTable();
   final int userId;
   final List<int> machineIdList;
-  final int change;
   late Timer periodicTimer;
   final  timeConverter =TimeConverter();
-  CubitOperator(this.userId, this.machineIdList, this.change) : super(const StateOperator()){
+  //доделать
+  int change = ChangeLogic(count: 2, firstTime: 8).getChange();
+  CubitOperator(this.userId, this.machineIdList) : super(const StateOperator()){
     getListShifts();
     //таймер
     periodicTimer = Timer.periodic(const Duration(minutes: 1), (timer) {

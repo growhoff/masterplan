@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/data/repositories/supabase/dto/monitoring_machine_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/shifts_distribution_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/status_machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/monitoring_machine_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/shifts_distribution.dart';
 import 'package:master_plan/domain/model/area_machine.dart';
 import 'package:master_plan/domain/model/item_machine_monitor.dart';
 import 'package:master_plan/domain/model/machine.dart';
@@ -16,6 +18,7 @@ import 'state.dart';
 
 class CubitMonitoringMachine extends Cubit<StateMonitoringMachine> {
   final tableMonitoring = MonitoringMachineTable();
+  final zshiftsDistributionTable = ShiftsDistributionTable();
   TimeConverter timeConverter = TimeConverter();
   final List<AreaMachine> listAreaMachine;
   CubitMonitoringMachine( this.listAreaMachine): super(StateMonitoringMachine(days: DateTime.now())) {
@@ -42,7 +45,8 @@ class CubitMonitoringMachine extends Cubit<StateMonitoringMachine> {
         queueList.add(MonitoringMachineDTO.fromMap(item));
       }
     }
-    List<ItemMachineMonitorMaster> listMonitor = getListMonitor(queueList);
+   
+    List<ItemMachineMonitorMaster> listMonitor = await getListMonitor(queueList);
     final listStatus = listMonitor[state.activeMachine].listStatus;
     final machine = listMonitor[state.activeMachine].machine;
     await getListMonitorChange(listStatus, machine);
@@ -51,7 +55,6 @@ class CubitMonitoringMachine extends Cubit<StateMonitoringMachine> {
     
   }
 
-
   Future<void> setDate(DateTime date) async {
     emit(state.copyWith(days: date, isLoading: true));
     final quere = await tableMonitoring.selectListIdMachine(listAreaMachine[state.activeArea].idListMachine, date);
@@ -59,7 +62,7 @@ class CubitMonitoringMachine extends Cubit<StateMonitoringMachine> {
     for (var item in quere) {
       queueList.add(MonitoringMachineDTO.fromMap(item));
     }
-    List<ItemMachineMonitorMaster> listMonitor = getListMonitor(queueList);
+    List<ItemMachineMonitorMaster> listMonitor = await getListMonitor(queueList);
     final listStatus = listMonitor[state.activeMachine].listStatus;
     final machine = listMonitor[state.activeMachine].machine;
     await getListMonitorChange(listStatus, machine);
@@ -86,7 +89,7 @@ class CubitMonitoringMachine extends Cubit<StateMonitoringMachine> {
   }
 
 
-  List<ItemMachineMonitorMaster> getListMonitor(List<MonitoringMachineDTO> queueList) {
+  Future<List<ItemMachineMonitorMaster>> getListMonitor(List<MonitoringMachineDTO> queueList) async{
     List<ItemMachineMonitorMaster> listMonitor = [];
     for (var machine in listAreaMachine[state.activeArea].listMachine) {
       List<MonitoringMachine> listStatus = [];
@@ -99,8 +102,32 @@ class CubitMonitoringMachine extends Cubit<StateMonitoringMachine> {
       }
       listMonitor.add(ItemMachineMonitorMaster(machine: machine, listStatus: listStatus, allTime: allTime));
     }
+    List<ShiftsDistributionDTO> listShifts = await getUsers();
+    emit(state.copyWith(listShifts:listShifts));
+    // List<ItemMachineMonitorMaster> listMonitorUser = getListMonitorUsers(listMonitor,listShifts);
     return listMonitor;
   }
+
+
+  Future<List<ShiftsDistributionDTO>> getUsers()async{
+    final quereShifts = await zshiftsDistributionTable.selectEqMachineList(listAreaMachine[state.activeArea].idListMachine, state.days);
+    List<ShiftsDistributionDTO> listShifts = [];
+    for (var element in quereShifts) {
+      listShifts.add(ShiftsDistributionDTO.fromMap(element));
+    }
+    return listShifts;
+  }
+
+
+  // List<ItemMachineMonitorMaster> getListMonitorUsers(List<ItemMachineMonitorMaster> list, List<ShiftsDistributionDTO> listShifts) {
+  //   // List<ItemMachineMonitorMaster> listMonitor = [];
+  //   for (var item in list) {
+  //     for (var shift in listShifts) {
+  //       if (item.machine.id == shift.machineId) item.copyWith(user: shift.user);
+  //     }
+  //   }
+  //   return list;
+  // }
 
 
   StatusMachineDTO getActiveStatus(List<MonitoringMachine> listStatus){
@@ -125,12 +152,6 @@ class CubitMonitoringMachine extends Cubit<StateMonitoringMachine> {
     final machine = state.listMonitor![state.activeMachine].machine;
     getListMonitorChange(listStatus, machine);
   }
-
-  // void setActivePage(int index) {
-  //   final listStatus = state.listMonitor![index].listStatus;
-  //   getListMonitorChange(listStatus);
-  //   emit(state.copyWith(activePage: index));
-  // }
 
     void setActiveMachine(int index) {
     final listStatus = state.listMonitor![index].listStatus;

@@ -29,7 +29,8 @@ class ShiftsDistributionTable extends SupabaseTable{
   }
 
   Future<List<Map<String, dynamic>>> selectListId(List<int> listId, DateTime date) {
-    String filters = '';
+    final dat = '${date.year}-${date.month}-${date.day}';
+    String filters = '';  
     for (var i = 0; i < listId.length; i++) {
       if (i == (listId.length - 1)) {
         filters += 'id.eq.${listId[i]}';
@@ -37,7 +38,7 @@ class ShiftsDistributionTable extends SupabaseTable{
         filters += 'id.eq.${listId[i]},';
       }
     }
-    return table.select(selectShifts).or(filters).eq('date', date);
+    return table.select(selectShifts).or(filters).eq('date', dat);
   }
 
   @override
@@ -45,12 +46,19 @@ class ShiftsDistributionTable extends SupabaseTable{
     return table.select();
   }
 
-  Future<List<Map<String, dynamic>>> selectEqMachineTimeChange(int machineId, DateTime time, int change) {
-    return table.select(selectShifts).eq('machine_id', machineId).eq('date', time).eq('change_id', change);
+  Future<List<Map<String, dynamic>>> selectEqMachineTimeChange(int machineId, DateTime date, int change) {
+    final dat = '${date.year}-${date.month}-${date.day}';
+    return table.select(selectShifts).eq('machine_id', machineId).eq('date', dat).eq('change_id', change);
   }
 
-  Future<List<Map<String, dynamic>>> selectEqUser(int userId, DateTime time, int change) {
-    return table.select(selectShifts).eq('staff_id', userId).eq('date', time).eq('change_id', change);
+  Future<List<Map<String, dynamic>>> selectEqMachineList(List<int> machineId, DateTime date) {
+    final dat = '${date.year}-${date.month}-${date.day}';
+    return table.select(selectShifts).inFilter('machine_id', machineId).eq('date', dat);
+  }
+
+  Future<List<Map<String, dynamic>>> selectEqUser(int userId, DateTime time) {
+    String dat = '${time.year}-${time.month}-${time.day}';
+    return table.select(selectShifts).eq('staff_id', userId).eq('date', dat);
   }
 
   Future<List<Map<String, dynamic>>> selectListIdMachine(List<int> machineListId, DateTime date) {

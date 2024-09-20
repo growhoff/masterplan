@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/data/repositories/supabase/dto/shifts_distribution_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/status_machine_dto.dart';
 import 'package:master_plan/domain/model/item_machine_monitor.dart';
 import 'package:master_plan/domain/model/monitoring_machine.dart';
@@ -10,17 +11,23 @@ import 'status_item.dart';
 import 'status_line.dart';
 
 class ContentListWidgetMaster extends StatelessWidget {
-  const ContentListWidgetMaster(this.monitor, this.changeId, this.listStatusActive, this.statusActive, {super.key});
+  const ContentListWidgetMaster(this.monitor, this.changeId, this.listStatusActive, this.statusActive, this.listShifts, {super.key});
   final ItemMachineMonitorMaster monitor;
   final int changeId;
   final StatusMachineDTO statusActive;
   final List<MonitoringMachine> listStatusActive;
+  final List<ShiftsDistributionDTO> listShifts;
   @override
   Widget build(BuildContext context) {
     String nameOperator = '-';
-    if (listStatusActive.isNotEmpty){
-      if (listStatusActive.first.user != null){
-        nameOperator = listStatusActive.first.user!.fio;
+    // if (listStatusActive.isNotEmpty){
+    //   if (listStatusActive.first.user != null){
+    //     nameOperator = listStatusActive.first.user!.fio;
+    //   }
+    // }
+    if (listShifts.isNotEmpty){
+      for (var element in listShifts) {
+        if (element.changeId == changeId) nameOperator = element.user!.fio;
       }
     }
     return Column(
