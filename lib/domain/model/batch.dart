@@ -14,7 +14,7 @@ class Batch {
   final String code;
   final String technology;
   final Order? order;
-  final bool isready;
+
   final int? batchStatusId;
   final int? orderId;
   final BatchArchive? batchArchive;
@@ -33,7 +33,7 @@ class Batch {
     this.batchStatusId,
     this.order,
     this.batchArchive,
-    required this.isready,
+
     required this.orderId,
     this.batchArchiveId,
   });
@@ -47,7 +47,7 @@ class Batch {
       code: '',
       technology: '',
       order: Order(id: 0, number: '', priority: 0, statusId: 0),
-      isready: false,
+
       orderId: 0);
 
 

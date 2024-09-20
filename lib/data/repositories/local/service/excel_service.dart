@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:lecle_downloads_path_provider/lecle_downloads_path_provider.dart';
+import 'package:master_plan/data/repositories/local/service/excel_cell_styles.dart';
 import 'package:master_plan/data/repositories/supabase/dto/batch_archive_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/chief_batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/chief_distribution_operations_dto.dart';
@@ -17,6 +18,8 @@ import 'package:master_plan/data/repositories/supabase/service/order_table.dart'
 import 'package:master_plan/data/repositories/supabase/service/stage_archive_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/transfer_table.dart';
 import 'package:master_plan/domain/usecase/chief_unit_service.dart';
+import 'package:master_plan/domain/usecase/staff_service.dart';
+import 'package:master_plan/domain/usecase/time_converter.dart';
 import 'package:master_plan/presentation/pages/master/pages/analytics_page/analytics_operation_model.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -31,13 +34,18 @@ import '../../supabase/dto/operation_dto.dart';
 import '../../supabase/dto/stage_archive_dto.dart';
 import '../../supabase/dto/stage_dto.dart';
 import '../../supabase/dto/transfer_archive_dto.dart';
+import '../../supabase/dto/uploaded_report_dto.dart';
 import '../../supabase/service/batch_archive_table.dart';
 import '../../supabase/service/batch_table.dart';
 import '../../supabase/service/operation_table.dart';
 import '../../supabase/service/stage_table.dart';
 import '../../supabase/service/transfer_archive_table.dart';
+import '../../supabase/service/uploaded_report_table.dart';
+import '../dto/filters_info_model.dart';
 
 class ExcelService {
+  final staff = StaffService.instance.staff;
+
   final _batchTable = BatchTable();
   final _batchArchiveTable = BatchArchiveTable();
   final _stageTable = StageTable();
@@ -52,68 +60,32 @@ class ExcelService {
   final _stageArchiveTable = StageArchiveTable();
   final _operationArchiveTable = OperationArchiveTable();
   final _unitId = ChiefUnitService.instance.unitId ?? 1;
+  final _timeConverter = TimeConverter.instance;
 
   List<ChiefOperationDto> chiefOperationsList = [];
   List<int> stagesIdForDistributionStagesList = [];
+  final _uploadedReportTable = UploadedReportTable();
   List<int> chiefDistributionsOperationsIdList = [];
   List<int> batchesIdsList = [];
   List<BatchDTO> batchesDtosList = [];
   int serviceBatchId = 0;
   int serviceQuantity = 0;
 
-  final CellStyle _cellHeaderStyle = CellStyle(
-    textWrapping: TextWrapping.WrapText,
-    bold: true,
-    horizontalAlign: HorizontalAlign.Center,
-    verticalAlign: VerticalAlign.Center,
-    leftBorder: Border(borderStyle: BorderStyle.Thin),
-    rightBorder: Border(borderStyle: BorderStyle.Thin),
-    topBorder: Border(borderStyle: BorderStyle.Thin),
-    bottomBorder: Border(borderStyle: BorderStyle.Thin),
-  );
+  final _cellHeaderStyle = ExcelCellStyles.headerCellStyle;
 
-  final CellStyle _cellTextStyle = CellStyle(
-    textWrapping: TextWrapping.WrapText,
-    horizontalAlign: HorizontalAlign.Center,
-    verticalAlign: VerticalAlign.Center,
-    leftBorder: Border(borderStyle: BorderStyle.Thin),
-    rightBorder: Border(borderStyle: BorderStyle.Thin),
-    topBorder: Border(borderStyle: BorderStyle.Thin),
-    bottomBorder: Border(borderStyle: BorderStyle.Thin),
-  );
+  final _cellBoldTextStyle = ExcelCellStyles.boldTextCellStyle;
 
-  final CellStyle _cellDefectTextStyle = CellStyle(
-    backgroundColorHex: ExcelColor.red100,
-    textWrapping: TextWrapping.WrapText,
-    horizontalAlign: HorizontalAlign.Center,
-    verticalAlign: VerticalAlign.Center,
-    leftBorder: Border(borderStyle: BorderStyle.Thin),
-    rightBorder: Border(borderStyle: BorderStyle.Thin),
-    topBorder: Border(borderStyle: BorderStyle.Thin),
-    bottomBorder: Border(borderStyle: BorderStyle.Thin),
-  );
+  final _cellTextStyle = ExcelCellStyles.cellStyle;
 
-  final CellStyle _cellModificationTextStyle = CellStyle(
-    backgroundColorHex: ExcelColor.yellow50,
-    textWrapping: TextWrapping.WrapText,
-    horizontalAlign: HorizontalAlign.Center,
-    verticalAlign: VerticalAlign.Center,
-    leftBorder: Border(borderStyle: BorderStyle.Thin),
-    rightBorder: Border(borderStyle: BorderStyle.Thin),
-    topBorder: Border(borderStyle: BorderStyle.Thin),
-    bottomBorder: Border(borderStyle: BorderStyle.Thin),
-  );
+  final _cellDefectTextStyle = ExcelCellStyles.defectCellStyle;
 
-  final CellStyle _cellFocusTextStyle = CellStyle(
-    backgroundColorHex: ExcelColor.orange100,
-    textWrapping: TextWrapping.WrapText,
-    horizontalAlign: HorizontalAlign.Center,
-    verticalAlign: VerticalAlign.Center,
-    leftBorder: Border(borderStyle: BorderStyle.Thin),
-    rightBorder: Border(borderStyle: BorderStyle.Thin),
-    topBorder: Border(borderStyle: BorderStyle.Thin),
-    bottomBorder: Border(borderStyle: BorderStyle.Thin),
-  );
+  final _cellModificationTextStyle = ExcelCellStyles.modificationCellStyle;
+
+  final _cellFocusTextStyle = ExcelCellStyles.focusCellStyle;
+
+  final _horizontalBorderBoldCellStyle = ExcelCellStyles.horizontalBorderBoldCellStyle;
+
+  final _rightBorderBoldCellStyle = ExcelCellStyles.rightBorderBoldCellStyle;
 
   static const List<String> stagesHeaderList = [
     '№ п/п',
@@ -154,17 +126,18 @@ class ExcelService {
     'Наименование чертежа',
     'наименование операции',
     'наименование перехода',
+    'Код',
     'T план',
     'Т факт',
-    'Оборудование',
-    'Инв. №',
-    'ФИО оператора',
-    'Код',
     'Дата начала',
     'Время начала',
     'Дата окончания',
     'Время окончания',
+    'Оборудование',
+    'Инв. №',
+    'ФИО оператора',
     'Смена',
+    '№ цеха',
     '№ участка',
     'Брак',
     'Доработка',
@@ -174,6 +147,8 @@ class ExcelService {
 
   static const List<String> totalNumberReadyOperationsReportHeadersList = [
     '№ этапа',
+    '№ цеха',
+    '№ участка',
     'Чертежный номер',
     'Наименование чертежа',
     'Наименование операции',
@@ -181,6 +156,12 @@ class ExcelService {
     'Брак',
     'Доработка',
     'Кол-во',
+  ];
+
+  static const List<String> filtersInfoHeadersList = [
+    'Цех',
+    'Участок',
+    'Период'
   ];
 
   Future dispatcherLoadOrder() async {
@@ -230,7 +211,7 @@ class ExcelService {
             count: quantity,
             code: batchCode,
             technology: technologyNumber,
-            isready: false));
+           ));
 
         BatchDTO insertedBatchDto = BatchDTO(
             id: batchId,
@@ -242,7 +223,7 @@ class ExcelService {
             count: quantity,
             code: batchCode,
             technology: technologyNumber,
-            isready: false);
+           );
 
         batchesDtosList.add(insertedBatchDto);
 
@@ -288,13 +269,15 @@ class ExcelService {
         String? transferName =
             excel.tables[table]!.rows[3][15]!.value.toString();
 
-        await _transferTable.insert(TransferDTO(
-            id: 0,
-            name: transferName,
-            code: transferCode,
-            timesh: transferTimeSH,
-            operationId: operationId));
-        print('insert transfer $transferCode $transferName');
+        if (excel.tables[table]!.rows[3][14]?.value != null) {
+          await _transferTable.insert(TransferDTO(
+              id: 0,
+              name: transferName,
+              code: transferCode,
+              timesh: transferTimeSH,
+              operationId: operationId));
+          print('insert transfer $transferCode $transferName');
+        }
 
         for (int i = 4; i < excel.tables[table]!.maxRows; i++) {
           var row = excel.tables[table]!.rows;
@@ -332,7 +315,7 @@ class ExcelService {
                 count: quantity,
                 code: batchCode,
                 technology: technologyNumber,
-                isready: false));
+               ));
 
             BatchDTO insertedBatchDto = BatchDTO(
                 id: batchId,
@@ -344,7 +327,7 @@ class ExcelService {
                 count: quantity,
                 code: batchCode,
                 technology: technologyNumber,
-                isready: false);
+                );
 
             batchesDtosList.add(insertedBatchDto);
           }
@@ -475,7 +458,7 @@ class ExcelService {
           count: quantity,
           code: code,
           technology: technologyNumber,
-          isready: false,
+
           orderId: null,
         ));
 
@@ -735,15 +718,10 @@ class ExcelService {
         print('[3][7] :  ${excel.tables[table]!.rows[3][7]!.value.toString()}');
         print('[3][8] :  ${excel.tables[table]!.rows[3][8]!.value.toString()}');
         print('[3][9] :  ${excel.tables[table]!.rows[3][9]!.value.toString()}');
-        print('[3][10] :  ${excel.tables[table]!.rows[3][10]!.value.toString()}');
-        print('[3][11] :  ${excel.tables[table]!.rows[3][11]!.value.toString()}');
-
-
-
-
-
-
-
+        print(
+            '[3][10] :  ${excel.tables[table]!.rows[3][10]!.value.toString()}');
+        print(
+            '[3][11] :  ${excel.tables[table]!.rows[3][11]!.value.toString()}');
 
         int batchArchiveId = await _batchArchiveTable.insert(BatchArchiveDto(
           code: batchCode,
@@ -792,7 +770,7 @@ class ExcelService {
         String? transferCode;
         String? transferName;
 
-        if (excel.tables[table]!.rows[1][9]?.value != null) {
+        if (excel.tables[table]!.rows[1][14]?.value != null) {
           transferCode = excel.tables[table]!.rows[3][14]!.value.toString();
           transferName = excel.tables[table]!.rows[3][15]!.value.toString();
           _transferArchiveTable.insert(TransferArchiveDto(
@@ -848,7 +826,6 @@ class ExcelService {
             operationName = excel.tables[table]!.rows[i][13]!.value.toString();
 
             if (row[i][16]?.value != null) {
-
               timepz = (int.parse(
                   (excel.tables[table]!.rows[i][16]!.value).toString()));
               print('[$i][16] : ${excel.tables[table]!.rows[i][16]!.value}');
@@ -1498,11 +1475,68 @@ class ExcelService {
   }
 
   Future<String> uploadReadyOperationsReport(
-      {required List<AnalyticsOperationModel> analyticsOperationsList}) async {
+      {required List<AnalyticsOperationModel> analyticsOperationsList,
+      FiltersInfoModel? filtersInfo}) async {
     var excel = Excel.createExcel();
-    excel.rename('Sheet1', 'Выполненные операции');
+    excel.rename('Sheet1', 'Отчет о выполненных операциях');
 
-    Sheet readyOperationsExcel = excel['Выполненные операции'];
+    Sheet readyOperationsExcel = excel['Отчет о выполненных операциях'];
+
+    //название отчета
+    readyOperationsExcel.merge(
+        CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 0),
+        CellIndex.indexByColumnRow(
+            columnIndex: totalNumberReadyOperationsReportHeadersList.length - 1,
+            rowIndex: 0));
+    print('мердж названия');
+    final cell = readyOperationsExcel
+        .cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 0));
+    cell.value = TextCellValue('Отчет о выполненных операциях');
+    cell.cellStyle = _cellHeaderStyle;
+
+    readyOperationsExcel.merge(
+        CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 1),
+        CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: 1));
+
+    readyOperationsExcel.merge(
+        CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: 1),
+        CellIndex.indexByColumnRow(columnIndex: 9, rowIndex: 1));
+
+    for (int filterInfoColumnIndex = 0;
+        filterInfoColumnIndex <
+            totalNumberReadyOperationsReportHeadersList.length;
+        filterInfoColumnIndex++) {
+      final cellFilterInfo = readyOperationsExcel.cell(
+          CellIndex.indexByColumnRow(
+              columnIndex: filterInfoColumnIndex, rowIndex: 1));
+
+      switch (filterInfoColumnIndex) {
+        case 0:
+          cellFilterInfo.value = TextCellValue('Цех');
+        case 3:
+          cellFilterInfo.value =
+              TextCellValue('${filtersInfo?.unitsNumbersList}');
+        case 4:
+          cellFilterInfo.value = TextCellValue('Участок');
+        case 5:
+          cellFilterInfo.value =
+              TextCellValue('${filtersInfo?.areasNumbersList}');
+        case 6:
+          cellFilterInfo.value = TextCellValue('Период');
+        case 7:
+          cellFilterInfo.value = TextCellValue(
+              '${filtersInfo?.timeStart} - ${filtersInfo?.timeEnd}');
+      }
+
+      cellFilterInfo.cellStyle = _cellTextStyle;
+    }
+    print('перед пустой строкой');
+    //пустая строка
+    readyOperationsExcel.merge(
+        CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 2),
+        CellIndex.indexByColumnRow(
+            columnIndex: totalNumberReadyOperationsReportHeadersList.length - 1,
+            rowIndex: 2));
 
     for (int operationRowIndex = 0;
         operationRowIndex < analyticsOperationsList.length;
@@ -1510,9 +1544,9 @@ class ExcelService {
       for (int operationColumnIndex = 0;
           operationColumnIndex < readyOperationsHeaderList.length;
           operationColumnIndex++) {
-        if (operationRowIndex == 0) {
+        if (operationRowIndex == 3) {
           final cell = readyOperationsExcel.cell(CellIndex.indexByColumnRow(
-              columnIndex: operationColumnIndex, rowIndex: 0));
+              columnIndex: operationColumnIndex, rowIndex: 3));
 
           cell.value =
               TextCellValue(readyOperationsHeaderList[operationColumnIndex]);
@@ -1520,7 +1554,7 @@ class ExcelService {
         }
         final cell = readyOperationsExcel.cell(CellIndex.indexByColumnRow(
             columnIndex: operationColumnIndex,
-            rowIndex: operationRowIndex + 1));
+            rowIndex: operationRowIndex + 3));
 
         switch (operationColumnIndex) {
           case 0:
@@ -1544,11 +1578,11 @@ class ExcelService {
             cell.cellStyle = _cellTextStyle;
           case 5:
             cell.value = TextCellValue(
-                analyticsOperationsList[operationRowIndex].timePlan);
+                '${_timeConverter.convertTimeFromMinutes(analyticsOperationsList[operationRowIndex].timePlan)}');
             cell.cellStyle = _cellFocusTextStyle;
           case 6:
             cell.value = TextCellValue(
-                analyticsOperationsList[operationRowIndex].timeFact);
+                '${_timeConverter.convertTimeFromSeconds(analyticsOperationsList[operationRowIndex].timeFact)}');
             cell.cellStyle = _cellFocusTextStyle;
           case 7:
             cell.value = TextCellValue(
@@ -1618,82 +1652,496 @@ class ExcelService {
       String? downloadsDirectoryPath =
           (await DownloadsPath.downloadsDirectory())?.path;
       print(downloadsDirectoryPath);
-      final fileName = '${downloadsDirectoryPath}/Выполненные операции.xlsx';
+
+      int reportNumber = await insertReportInfoIntoDatabase(1);
+
+      final fileName =
+          '${downloadsDirectoryPath}/Отчет о выполненных операциях $reportNumber ${staff?.fio} (${filtersInfo?.timeStart} - ${filtersInfo?.timeEnd}).xlsx';
 
       File(fileName).writeAsBytes(fileBytes!);
 
       print('вывелось');
-      return downloadsDirectoryPath ?? '';
+      return fileName ?? '';
+    }
+
+    return '';
+  }
+
+  Future<String> uploadReadyOperationsReportNew(
+      {required List<AnalyticsOperationModel> analyticsOperationsList,
+      FiltersInfoModel? filtersInfo}) async {
+    var excel = Excel.createExcel();
+    excel.rename('Sheet1', 'Отчет о выполненных операциях');
+
+    Sheet readyOperationsExcel = excel['Отчет о выполненных операциях'];
+
+    //название отчета
+    readyOperationsExcel.merge(
+        CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 0),
+        CellIndex.indexByColumnRow(
+            columnIndex: totalNumberReadyOperationsReportHeadersList.length - 1,
+            rowIndex: 0));
+    print('мердж названия');
+    final cell = readyOperationsExcel
+        .cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 0));
+    cell.value = TextCellValue('Отчет о выполненных операциях');
+    cell.cellStyle = _cellHeaderStyle;
+
+    readyOperationsExcel.merge(
+        CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 1),
+        CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: 1));
+
+    readyOperationsExcel.merge(
+        CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: 1),
+        CellIndex.indexByColumnRow(columnIndex: 9, rowIndex: 1));
+
+    for (int filterInfoColumnIndex = 0;
+        filterInfoColumnIndex <
+            totalNumberReadyOperationsReportHeadersList.length;
+        filterInfoColumnIndex++) {
+      final cellFilterInfo = readyOperationsExcel.cell(
+          CellIndex.indexByColumnRow(
+              columnIndex: filterInfoColumnIndex, rowIndex: 1));
+
+      switch (filterInfoColumnIndex) {
+        case 0:
+          cellFilterInfo.value = TextCellValue('Цех');
+        case 3:
+          cellFilterInfo.value =
+              TextCellValue('${filtersInfo?.unitsNumbersList}');
+        case 4:
+          cellFilterInfo.value = TextCellValue('Участок');
+        case 5:
+          cellFilterInfo.value =
+              TextCellValue('${filtersInfo?.areasNumbersList}');
+        case 6:
+          cellFilterInfo.value = TextCellValue('Период');
+        case 7:
+          cellFilterInfo.value = TextCellValue(
+              '${filtersInfo?.timeStart} - ${filtersInfo?.timeEnd}');
+      }
+
+      cellFilterInfo.cellStyle = _cellTextStyle;
+    }
+    print('перед пустой строкой');
+    //пустая строка
+    readyOperationsExcel.merge(
+        CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 2),
+        CellIndex.indexByColumnRow(
+            columnIndex: totalNumberReadyOperationsReportHeadersList.length - 1,
+            rowIndex: 2));
+
+    int rowIndex = 3;
+
+    for (int operationIndex = 0;
+        operationIndex < analyticsOperationsList.length;
+        operationIndex++) {
+      for (int operationColumnIndex = 0;
+          operationColumnIndex < readyOperationsHeaderList.length;
+          operationColumnIndex++) {
+        final cell = readyOperationsExcel.cell(CellIndex.indexByColumnRow(
+            columnIndex: operationColumnIndex, rowIndex: rowIndex));
+
+        if (rowIndex == 3) {
+          cell.value =
+              TextCellValue(readyOperationsHeaderList[operationColumnIndex]);
+          cell.cellStyle = _cellHeaderStyle;
+        } else {
+          switch (operationColumnIndex) {
+            case 0:
+              cell.value = TextCellValue(
+                  '${analyticsOperationsList[operationIndex].batch.order?.number ?? '_'}.${analyticsOperationsList[operationIndex].batch.number}.${analyticsOperationsList[operationIndex].stage.number}');
+              cell.cellStyle = _horizontalBorderBoldCellStyle;
+            case 1:
+              cell.value = TextCellValue(
+                  '${analyticsOperationsList[operationIndex].detailNumber}');
+              cell.cellStyle = _cellBoldTextStyle;
+            case 2:
+              cell.value = TextCellValue(
+                  '${analyticsOperationsList[operationIndex].detailName}');
+              cell.cellStyle = _cellTextStyle;
+            case 3:
+              cell.value = TextCellValue(
+                  '${analyticsOperationsList[operationIndex].operationNumber} ${analyticsOperationsList[operationIndex].operationName}');
+              cell.cellStyle = _cellTextStyle;
+            case 4:
+              cell.value = TextCellValue('');
+              cell.cellStyle = _rightBorderBoldCellStyle;
+            case 5:
+              cell.value = TextCellValue(
+                  analyticsOperationsList[operationIndex].transfersList.isEmpty
+                      ? analyticsOperationsList[operationIndex].code
+                      : '');
+              cell.cellStyle = _cellTextStyle;
+            case 6:
+              cell.value = TextCellValue(
+                  '${_timeConverter.convertTimeFromMinutes(analyticsOperationsList[operationIndex].timePlan)}');
+              cell.cellStyle = _cellFocusTextStyle;
+            case 7:
+              cell.value = TextCellValue(
+                  '${_timeConverter.convertTimeFromSeconds(analyticsOperationsList[operationIndex].timeFact)}');
+              cell.cellStyle = analyticsOperationsList[operationIndex]
+                          .timeFact >
+                      (analyticsOperationsList[operationIndex].timePlan * 60)
+                  ? _cellDefectTextStyle
+                  : _cellFocusTextStyle;
+            case 8:
+              cell.value = TextCellValue(
+                  analyticsOperationsList[operationIndex].dateStart);
+              cell.cellStyle = _cellTextStyle;
+            case 9:
+              cell.value = TextCellValue(
+                  analyticsOperationsList[operationIndex].timeStart);
+              cell.cellStyle = _cellTextStyle;
+            case 10:
+              cell.value = TextCellValue(
+                  analyticsOperationsList[operationIndex].dateEnd);
+              cell.cellStyle = _cellTextStyle;
+
+            case 11:
+              cell.value = TextCellValue(
+                  analyticsOperationsList[operationIndex].timeEnd);
+              cell.cellStyle = _rightBorderBoldCellStyle;
+            case 12:
+              cell.value = TextCellValue(
+                  analyticsOperationsList[operationIndex].machineName);
+              cell.cellStyle = _cellTextStyle;
+            case 13:
+              cell.value = IntCellValue(analyticsOperationsList[operationIndex]
+                  .machineInventoryNumber);
+              cell.cellStyle = _rightBorderBoldCellStyle;
+            case 14:
+              cell.value =
+                  TextCellValue(analyticsOperationsList[operationIndex].fio);
+              cell.cellStyle = _cellTextStyle;
+            case 15:
+              cell.value =
+                  IntCellValue(analyticsOperationsList[operationIndex].change);
+              cell.cellStyle = _cellTextStyle;
+            case 16:
+              cell.value = TextCellValue(
+                  analyticsOperationsList[operationIndex].unitNumber);
+              cell.cellStyle = _cellTextStyle;
+            case 17:
+              cell.value = TextCellValue(
+                  analyticsOperationsList[operationIndex].areaNumber);
+              cell.cellStyle = _rightBorderBoldCellStyle;
+            case 18:
+              cell.value = IntCellValue(
+                  analyticsOperationsList[operationIndex].defectQuantity);
+              cell.cellStyle =
+                  analyticsOperationsList[operationIndex].defectQuantity != 0
+                      ? _cellDefectTextStyle
+                      : _cellTextStyle;
+
+            case 19:
+              cell.value = IntCellValue(
+                  analyticsOperationsList[operationIndex].modificationQuantity);
+              cell.cellStyle = analyticsOperationsList[operationIndex]
+                          .modificationQuantity !=
+                      0
+                  ? _cellModificationTextStyle
+                  : _cellTextStyle;
+            case 20:
+              cell.value = IntCellValue(
+                  analyticsOperationsList[operationIndex].quantity);
+              cell.cellStyle = _cellFocusTextStyle;
+            case 21:
+              cell.value = TextCellValue(
+                  analyticsOperationsList[operationIndex].comment);
+              cell.cellStyle = _rightBorderBoldCellStyle;
+          }
+        }
+      }
+
+      rowIndex++;
+      if (analyticsOperationsList[operationIndex].transfersList.isNotEmpty) {
+        for (int transferIndex = 0;
+            transferIndex <
+                analyticsOperationsList[operationIndex].transfersList.length;
+            transferIndex++) {
+          for (int transferColumnIndex = 0;
+              transferColumnIndex < readyOperationsHeaderList.length;
+              transferColumnIndex++) {
+            final cell = readyOperationsExcel.cell(CellIndex.indexByColumnRow(
+                columnIndex: transferColumnIndex, rowIndex: rowIndex));
+
+            switch (transferColumnIndex) {
+              case 0:
+                cell.cellStyle = _horizontalBorderBoldCellStyle;
+              case 1:
+                cell.cellStyle = _cellTextStyle;
+              case 2:
+                cell.cellStyle = _cellTextStyle;
+              case 3:
+                cell.cellStyle = _cellTextStyle;
+              case 4:
+                cell.value = TextCellValue(
+                    '${analyticsOperationsList[operationIndex].transfersList[transferIndex].id} ${analyticsOperationsList[operationIndex].transfersList[transferIndex].name}');
+                cell.cellStyle = _rightBorderBoldCellStyle;
+              case 5:
+                cell.value = TextCellValue(
+                    '${analyticsOperationsList[operationIndex].transfersList[transferIndex].code}');
+                cell.cellStyle = _cellTextStyle;
+              case 6:
+                cell.value = TextCellValue(
+                    '${_timeConverter.convertTimeFromMinutes(analyticsOperationsList[operationIndex].transfersList[transferIndex].timePlan)}');
+                cell.cellStyle = _cellFocusTextStyle;
+              case 7:
+                cell.value = TextCellValue(
+                    '${_timeConverter.convertTimeFromSeconds(analyticsOperationsList[operationIndex].transfersList[transferIndex].timeFact)}');
+                cell.cellStyle = analyticsOperationsList[operationIndex]
+                            .transfersList[transferIndex]
+                            .timeFact >
+                        (analyticsOperationsList[operationIndex]
+                                .transfersList[transferIndex]
+                                .timePlan *
+                            60)
+                    ? _cellDefectTextStyle
+                    : _cellFocusTextStyle;
+              case 8:
+                cell.value = TextCellValue(
+                    '${analyticsOperationsList[operationIndex].transfersList[transferIndex].dateStart}');
+                cell.cellStyle = _cellTextStyle;
+              case 9:
+                cell.value = TextCellValue(
+                    '${analyticsOperationsList[operationIndex].transfersList[transferIndex].timeStart}');
+                cell.cellStyle = _cellTextStyle;
+              case 10:
+                cell.value = TextCellValue(
+                    '${analyticsOperationsList[operationIndex].transfersList[transferIndex].dateEnd}');
+                cell.cellStyle = _cellTextStyle;
+              case 11:
+                cell.value = TextCellValue(
+                    '${analyticsOperationsList[operationIndex].transfersList[transferIndex].timeEnd}');
+                cell.cellStyle = _rightBorderBoldCellStyle;
+              case 12:
+                cell.value = TextCellValue(
+                    '${analyticsOperationsList[operationIndex].transfersList[transferIndex].machineName}');
+                cell.cellStyle = _cellTextStyle;
+              case 13:
+                cell.value = TextCellValue(
+                    '${analyticsOperationsList[operationIndex].transfersList[transferIndex].machineInventoryNumber}');
+                cell.cellStyle = _rightBorderBoldCellStyle;
+              case 14:
+                cell.value = TextCellValue(
+                    '${analyticsOperationsList[operationIndex].transfersList[transferIndex].fio}');
+                cell.cellStyle = _cellTextStyle;
+              case 15:
+                cell.value = TextCellValue(
+                    '${analyticsOperationsList[operationIndex].transfersList[transferIndex].change}');
+                cell.cellStyle = _cellTextStyle;
+              case 16:
+                cell.value = TextCellValue(
+                    '${analyticsOperationsList[operationIndex].transfersList[transferIndex].unitNumber}');
+                cell.cellStyle = _cellTextStyle;
+              case 17:
+                cell.value = TextCellValue(
+                    '${analyticsOperationsList[operationIndex].transfersList[transferIndex].areaNumber}');
+                cell.cellStyle = _rightBorderBoldCellStyle;
+
+              case 18:
+                cell.cellStyle = _cellTextStyle;
+              case 19:
+                cell.cellStyle = _cellTextStyle;
+              case 20:
+                cell.cellStyle = _cellTextStyle;
+              case 21:
+                cell.cellStyle = _rightBorderBoldCellStyle;
+            }
+          }
+          rowIndex++;
+        }
+      }
+    }
+
+    var fileBytes = excel.save();
+
+    final granted = await requestPermissions();
+
+    if (granted) {
+      String? downloadsDirectoryPath =
+          (await DownloadsPath.downloadsDirectory())?.path;
+      print(downloadsDirectoryPath);
+
+      int reportNumber = await insertReportInfoIntoDatabase(1);
+
+      final fileName =
+          '${downloadsDirectoryPath}/Отчет о выполненных операциях $reportNumber ${staff?.fio} (${filtersInfo?.timeStart} - ${filtersInfo?.timeEnd}).xlsx';
+
+      File(fileName).writeAsBytes(fileBytes!);
+
+      print('вывелось');
+      return fileName;
     }
 
     return '';
   }
 
   Future<String> uploadTotalNumberReadyOperationsReport(
-      {required List<AnalyticsOperationModel> analyticsOperationsList}) async {
+      {required List<TotalNumberReadyOperationModel>
+          totalNumberReadyOperationModelsList,
+      FiltersInfoModel? filtersInfo}) async {
     var excel = Excel.createExcel();
     excel.rename('Sheet1', 'Отчет суммарного количества выполненных операций');
 
     Sheet totalNumberReadyOperationsExcel =
         excel['Отчет суммарного количества выполненных операций'];
 
+    //название отчета
+    totalNumberReadyOperationsExcel.merge(
+        CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 0),
+        CellIndex.indexByColumnRow(
+            columnIndex: totalNumberReadyOperationsReportHeadersList.length - 1,
+            rowIndex: 0));
+    print('мердж названия');
+    final cell = totalNumberReadyOperationsExcel
+        .cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 0));
+    cell.value = TextCellValue('Отчет суммарного кол-ва выполненных операций');
+    cell.cellStyle = _cellHeaderStyle;
+
+    totalNumberReadyOperationsExcel.merge(
+        CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 1),
+        CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: 1));
+
+    totalNumberReadyOperationsExcel.merge(
+        CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: 1),
+        CellIndex.indexByColumnRow(columnIndex: 9, rowIndex: 1));
+
+    for (int filterInfoColumnIndex = 0;
+        filterInfoColumnIndex <
+            totalNumberReadyOperationsReportHeadersList.length;
+        filterInfoColumnIndex++) {
+      final cellFilterInfo = totalNumberReadyOperationsExcel.cell(
+          CellIndex.indexByColumnRow(
+              columnIndex: filterInfoColumnIndex, rowIndex: 1));
+
+      switch (filterInfoColumnIndex) {
+        case 0:
+          cellFilterInfo.value = TextCellValue('Цех');
+        case 3:
+          cellFilterInfo.value =
+              TextCellValue('${filtersInfo?.unitsNumbersList}');
+        case 4:
+          cellFilterInfo.value = TextCellValue('Участок');
+        case 5:
+          cellFilterInfo.value =
+              TextCellValue('${filtersInfo?.areasNumbersList}');
+        case 6:
+          cellFilterInfo.value = TextCellValue('Период');
+        case 7:
+          cellFilterInfo.value = TextCellValue(
+              '${filtersInfo?.timeStart} - ${filtersInfo?.timeEnd}');
+      }
+
+      cellFilterInfo.cellStyle = _cellTextStyle;
+    }
+    print('перед пустой строкой');
+    //пустая строка
+    totalNumberReadyOperationsExcel.merge(
+        CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 2),
+        CellIndex.indexByColumnRow(
+            columnIndex: totalNumberReadyOperationsReportHeadersList.length - 1,
+            rowIndex: 2));
+
     for (int operationRowIndex = 0;
-        operationRowIndex < analyticsOperationsList.length;
+        operationRowIndex < totalNumberReadyOperationModelsList.length;
         operationRowIndex++) {
+      print('вошли в цикл');
       for (int operationColumnIndex = 0;
           operationColumnIndex <
               totalNumberReadyOperationsReportHeadersList.length;
           operationColumnIndex++) {
-        if (operationRowIndex == 0) {
+        if (operationRowIndex == 3) {
           final cell = totalNumberReadyOperationsExcel.cell(
               CellIndex.indexByColumnRow(
-                  columnIndex: operationColumnIndex, rowIndex: 0));
+                  columnIndex: operationColumnIndex, rowIndex: 3));
 
           cell.value = TextCellValue(
               totalNumberReadyOperationsReportHeadersList[
                   operationColumnIndex]);
           cell.cellStyle = _cellHeaderStyle;
         }
+
         final cell = totalNumberReadyOperationsExcel.cell(
             CellIndex.indexByColumnRow(
                 columnIndex: operationColumnIndex,
-                rowIndex: operationRowIndex + 1));
+                rowIndex: operationRowIndex + 3));
+
+        print(
+            'stageNumber : ${totalNumberReadyOperationModelsList[operationRowIndex].stageNumber}');
 
         switch (operationColumnIndex) {
           case 0:
             cell.value = TextCellValue(
-                '${analyticsOperationsList[operationRowIndex].batch.order?.number}.${analyticsOperationsList[operationRowIndex].batch.number}.${analyticsOperationsList[operationRowIndex].stage.number}');
+                '${totalNumberReadyOperationModelsList[operationRowIndex].stageNumber}');
             cell.cellStyle = _cellTextStyle;
           case 1:
             cell.value = TextCellValue(
-                '${analyticsOperationsList[operationRowIndex].detailNumber}');
-            cell.cellStyle = _cellHeaderStyle;
+                '${totalNumberReadyOperationModelsList[operationRowIndex].unitNumber}');
+            cell.cellStyle = _cellTextStyle;
 
           case 2:
             cell.value = TextCellValue(
-                '   ${analyticsOperationsList[operationRowIndex].detailName}');
-            cell.cellStyle = _cellHeaderStyle;
+                '${totalNumberReadyOperationModelsList[operationRowIndex].areaNumber}');
+            cell.cellStyle = _cellTextStyle;
 
           case 3:
             cell.value = TextCellValue(
-                '${analyticsOperationsList[operationRowIndex].operationNumber} ${analyticsOperationsList[operationRowIndex].operationName}');
-            cell.cellStyle = _cellTextStyle;
+                '${totalNumberReadyOperationModelsList[operationRowIndex].planNumber}');
+            cell.cellStyle = _cellHeaderStyle;
           case 4:
             cell.value = TextCellValue(
-                '${analyticsOperationsList[operationRowIndex].batch.code}.${analyticsOperationsList[operationRowIndex].code}');
-            cell.cellStyle = _cellTextStyle;
+                '${totalNumberReadyOperationModelsList[operationRowIndex].planName}');
+            cell.cellStyle = _cellHeaderStyle;
           case 5:
             cell.value = TextCellValue(
-                '${analyticsOperationsList[operationRowIndex].defectQuantity}');
-            cell.cellStyle = _cellDefectTextStyle;
+                '${totalNumberReadyOperationModelsList[operationRowIndex].operationName}');
+            cell.cellStyle = _cellTextStyle;
           case 6:
             cell.value = TextCellValue(
-                '${analyticsOperationsList[operationRowIndex].modificationQuantity}');
-            cell.cellStyle = _cellModificationTextStyle;
+                '${totalNumberReadyOperationModelsList[operationRowIndex].code}');
+            cell.cellStyle = _cellTextStyle;
           case 7:
-            cell.value = TextCellValue(
-                '${analyticsOperationsList[operationRowIndex].quantity}');
-            cell.cellStyle = _cellFocusTextStyle;
+            cell.value = TextCellValue(totalNumberReadyOperationModelsList[
+                            operationRowIndex]
+                        .stageNumber !=
+                    ''
+                ? '${totalNumberReadyOperationModelsList[operationRowIndex].defectQuantity}'
+                : '');
+            cell.cellStyle =
+                totalNumberReadyOperationModelsList[operationRowIndex]
+                            .stageNumber ==
+                        ''
+                    ? _cellTextStyle
+                    : _cellDefectTextStyle;
+          case 8:
+            cell.value = TextCellValue(totalNumberReadyOperationModelsList[
+                            operationRowIndex]
+                        .stageNumber !=
+                    ''
+                ? '${totalNumberReadyOperationModelsList[operationRowIndex].modificationQuantity}'
+                : '');
+            cell.cellStyle =
+                totalNumberReadyOperationModelsList[operationRowIndex]
+                            .stageNumber ==
+                        ''
+                    ? _cellTextStyle
+                    : _cellModificationTextStyle;
+
+          case 9:
+            cell.value = TextCellValue(totalNumberReadyOperationModelsList[
+                            operationRowIndex]
+                        .stageNumber !=
+                    ''
+                ? '${totalNumberReadyOperationModelsList[operationRowIndex].totalQuantity}'
+                : '');
+            cell.cellStyle =
+                totalNumberReadyOperationModelsList[operationRowIndex]
+                            .stageNumber ==
+                        ''
+                    ? _cellTextStyle
+                    : _cellFocusTextStyle;
         }
       }
     }
@@ -1705,15 +2153,33 @@ class ExcelService {
       String? downloadsDirectoryPath =
           (await DownloadsPath.downloadsDirectory())?.path;
       print(downloadsDirectoryPath);
+
+      int reportNumber = await insertReportInfoIntoDatabase(2);
+
       final fileName =
-          '${downloadsDirectoryPath}/Отчет суммарного количества выполненных операций.xlsx';
+          '${downloadsDirectoryPath}/Отчет суммарного количества выполненных операций $reportNumber ${staff?.fio} (${filtersInfo?.timeStart} - ${filtersInfo?.timeEnd}).xlsx';
 
       File(fileName).writeAsBytes(fileBytes!);
 
       print('вывелось');
-      return downloadsDirectoryPath ?? '';
+      return fileName;
     }
 
     return '';
+  }
+
+  Future<int> insertReportInfoIntoDatabase(int reportTypeId) async {
+    final lastReportNumber = await _uploadedReportTable.fetchLastNumber();
+
+    print('lastReportNumber : $lastReportNumber');
+
+    print('staff id : ${staff?.id}');
+
+    await _uploadedReportTable.insert(UploadedReportDTO(
+        number: lastReportNumber + 1,
+        staffId: staff?.id,
+        reportTypeId: reportTypeId));
+
+    return lastReportNumber + 1;
   }
 }

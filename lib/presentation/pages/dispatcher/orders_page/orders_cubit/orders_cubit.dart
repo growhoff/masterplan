@@ -2,7 +2,12 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
+import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/distribution_stage_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/order_dto.dart';
+import 'package:master_plan/data/repositories/supabase/service/batch_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/chief_batch_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/distribution_stage_table.dart';
 
 import 'package:master_plan/data/repositories/supabase/service/order_table.dart';
 
@@ -12,14 +17,13 @@ part 'orders_state.dart';
 
 class OrdersCubit extends Cubit<OrdersState> {
   OrdersCubit() : super(const OrdersState()) {
-    ordersStream = _orderTable.stream().listen((list) async {
-      await fetchOrders(list);
+    _orderTable.stream().listen((list) {
+      fetchOrders(list);
     });
   }
 
-  late final ordersStream;
-
   final _orderTable = OrderTable();
+
   final numberController = TextEditingController();
   final customerController = TextEditingController();
   DateTime receiptDate = DateTime.now();
@@ -32,14 +36,14 @@ class OrdersCubit extends Cubit<OrdersState> {
 
   Future<void> fetchOrders(List<Map<String, dynamic>> fetchedOrdersList) async {
     print('фетч');
-    emit(state.copyWith(status: OrdersStatus.loading));
+    emit(state.copyWith(status: OrdersStatus.loading, ordersList: []));
     final List<Order> ordersList = [];
 
     try {
       for (var fetchedOrder in fetchedOrdersList) {
         final orderDto = OrderDTO.fromMap(fetchedOrder);
 
-        if (orderDto.statusId!=5){
+        if (orderDto.statusId != 5) {
           final order = Order(
               id: orderDto.id,
               number: orderDto.number,
@@ -77,7 +81,6 @@ class OrdersCubit extends Cubit<OrdersState> {
   }
 
   Future editOrder(Order order) async {
-
     await _orderTable.updateOrder(OrderDTO(
         id: order.id,
         number: numberController.text,
@@ -107,6 +110,47 @@ class OrdersCubit extends Cubit<OrdersState> {
   }
 
   Future deleteOrder(int id) async {
+    final batchTable = BatchTable();
+    final chiefBatchTable = ChiefBatchTable();
+    final distributionStageTable = DistributionStageTable();
+
+    var fetchedBatchesList = await batchTable.selectByOrderId(id);
+
+    List<int> batchesIdsList = [];
+    for (var batch in fetchedBatchesList) {
+      final batchDto = BatchDTO.fromMap(batch);
+
+      batchesIdsList.add(batchDto.id);
+    }
+
+    var fetchedDistributionStagesList =
+        await distributionStageTable.selectByBatchesIdsList(batchesIdsList);
+
+    List<int> distributionStagesIdsList = [];
+
+    for (var distributionStage in fetchedDistributionStagesList) {
+      final distributionStageDto =
+          DistributionStageDto.fromMap(distributionStage);
+      distributionStagesIdsList.add(distributionStageDto.id);
+    }
+
+    print(distributionStagesIdsList);
+
+    var halfList = distributionStagesIdsList
+        .skip((distributionStagesIdsList.length / 2).round());
+
+    //удаляется вторая половина всех этапов
+    await distributionStageTable.bulkDeleteByIdsList(halfList.toList());
+
+    var lastList = distributionStagesIdsList.getRange(0, halfList.length);
+
+    //удаляется оставшаяся часть этапов
+    await distributionStageTable.bulkDeleteByIdsList(lastList.toList());
+
+    await chiefBatchTable.bulkDeleteByBatchesIdsList(batchesIdsList);
+
+    await batchTable.deleteByIdsList(batchesIdsList);
+
     await _orderTable.delete(id);
   }
 

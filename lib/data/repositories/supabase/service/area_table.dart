@@ -32,7 +32,8 @@ class AreaTable extends SupabaseTable {
   Future<List<Map<String, dynamic>>> select() {
     return table
         .select('*, z_unit!inner(*)')
-        .eq('z_unit.company_id', _companyId).eq('unit_id', _unitId);
+        .eq('z_unit.company_id', _companyId)
+        .eq('unit_id', _unitId);
   }
 
   Future<List<Map<String, dynamic>>> selectAll() {
@@ -41,10 +42,11 @@ class AreaTable extends SupabaseTable {
         .eq('z_unit.company_id', _companyId);
   }
 
-  Future<List<Map<String, dynamic>>> selectByUnitId() {
+  Future<List<Map<String, dynamic>>> selectByUnitId({int? unitId}) {
     return table
         .select('*, z_unit!inner(*)')
-        .eq('z_unit.company_id', _companyId).eq('unit_id', _unitId);
+        .eq('z_unit.company_id', _companyId)
+        .eq('unit_id', unitId ?? _unitId);
   }
 
   Future<List<Map<String, dynamic>>> selectId(int id) {
@@ -56,7 +58,10 @@ class AreaTable extends SupabaseTable {
   }
 
   Future<List<Map<String, dynamic>>> selectUnitIdList(List<int> unitId) {
-    return table.select().inFilter('unit_id', unitId).order('name', ascending: true);
+    return table
+        .select()
+        .inFilter('unit_id', unitId)
+        .order('name', ascending: true);
   }
 
   Future<List<Map<String, dynamic>>> selectByUnitIdList(

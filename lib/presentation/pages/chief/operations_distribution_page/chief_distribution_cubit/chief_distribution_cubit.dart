@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:master_plan/data/repositories/local/service/excel_service.dart';
 import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto/chief_batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/chief_distribution_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/distribution_stage_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operation_dto.dart';
@@ -15,7 +14,6 @@ import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/status_dto.dart';
 
 import 'package:master_plan/data/repositories/supabase/service/area_table.dart';
-import 'package:master_plan/data/repositories/supabase/service/chief_batch_table.dart';
 
 import 'package:master_plan/data/repositories/supabase/service/chief_distribution_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/chief_operation_table.dart';
@@ -74,6 +72,7 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
         chiefOperationsList: [], status: DistributionPageStatus.loading));
     isElementOpenList = [];
     List<int> batchesIdsList = [];
+    List<DistributionStageDto> distributionStagesList = [];
     List<ChiefDistributionOperation> chiefOperationsList = [];
     var fetchedChiefOperationsList =
         await _chiefDistributionOperationsTable.selectNotDistributed(
@@ -103,7 +102,7 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
 
     var fetchedOperationList =
         await operationsTable.selectByBatchesIdsList(batchesIdsList);
-
+    print('получили оперейшнс лист');
     List<StageDTO> stagesDtoList = [];
     List<int> stagesIdsList = [];
     for (var operation in fetchedOperationList) {
@@ -119,10 +118,22 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
         stagesIdsList.add(operationDto.stageId);
       }
     }
-
+    print('перед груп бай');
     var stagesMap = groupBy(stagesDtoList, (stage) => stage.batchId);
 
     List<ChiefDistributionOperation> finalList = [];
+
+    final fetchedDistributionStagesList = await distributionStageTable
+        .selectUploadedByStageIdsList(stagesIdsList);
+
+    for (var distributionStage in fetchedDistributionStagesList) {
+      final distributionStageDto =
+          DistributionStageDto.fromMap(distributionStage);
+      distributionStagesList.add(distributionStageDto);
+    }
+
+    var distributionStagesMap =
+        groupBy(distributionStagesList, (stage) => stage.stageId);
 
     for (var operation in chiefOperationsList) {
       if (stagesMap[operation.stage.batchId]?.length == 1) {
@@ -134,12 +145,22 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
         if (index == 0) {
           finalList.add(operation);
         } else {
-          var fetchedStagesList =
-              await distributionStageTable.selectUploadedByStageId(
-                  stagesMap[operation.stage.batchId]![index! - 1].id);
-
-          if (fetchedStagesList.isNotEmpty) {
-            operation.quantity = fetchedStagesList.length;
+          // var fetchedStagesList =
+          //     await distributionStageTable.selectUploadedByStageId(
+          //         stagesMap[operation.stage.batchId]![index! - 1].id);
+          //
+          // if (fetchedStagesList.isNotEmpty) {
+          //   operation.quantity = fetchedStagesList.length;
+          //   finalList.add(operation);
+          // }
+          if (distributionStagesMap.containsKey(
+                  stagesMap[operation.stage.batchId]![index! - 1].id) &&
+              distributionStagesMap[
+                      stagesMap[operation.stage.batchId]?[index - 1].id]!
+                  .isNotEmpty) {
+            operation.quantity = distributionStagesMap[
+                    stagesMap[operation.stage.batchId]?[index - 1].id]!
+                .length;
             finalList.add(operation);
           }
         }
@@ -227,7 +248,8 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
 
   Future<void> distributeOperation(
       {required int quantity,
-      required ChiefDistributionOperation chiefDistributionOperation, required String selectedAreaName}) async {
+      required ChiefDistributionOperation chiefDistributionOperation,
+      required String selectedAreaName}) async {
     emit(state.copyWith(status: DistributionPageStatus.loading));
 
     List<OperatorOperationsDTO> operatorOperationsDtoList = [];
@@ -236,8 +258,9 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
     print('quantity : $quantity');
 
     var fetchedChiefOperationsList =
-    await _chiefOperationTable.fetchOperationsByOperationIdWithLimit(
-        limit: quantity, operationId:chiefDistributionOperation.operationId);
+        await _chiefOperationTable.fetchOperationsByOperationIdWithLimit(
+            limit: quantity,
+            operationId: chiefDistributionOperation.operationId);
 
     int orderNumber = 1;
     for (var chiefOperation in fetchedChiefOperationsList) {
@@ -276,7 +299,6 @@ class ChiefDistributionCubit extends Cubit<ChiefDistributionState> {
 
     _chiefOperationTable.changeIsDistributed(
         operationsIdList: chiefOperationsIdList);
-
 
     emit(state.copyWith(status: DistributionPageStatus.success));
   }

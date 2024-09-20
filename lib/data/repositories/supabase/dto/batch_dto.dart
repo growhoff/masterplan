@@ -14,7 +14,6 @@ class BatchDTO extends Dto {
   final String code;
   final String technology;
   final OrderDTO? order;
-  final bool isready;
   final int? orderId;
   final int? companyId;
 
@@ -30,7 +29,7 @@ class BatchDTO extends Dto {
     required this.count,
     required this.code,
     required this.technology,
-    required this.isready,
+
     this.description,
     this.status,
 
@@ -50,7 +49,7 @@ class BatchDTO extends Dto {
     code: '',
     order: OrderDTO(id: 0, number: '', priority: 0, statusId: 0),
     technology: '',
-    isready: false,
+
     orderId: 0,
   );
 
@@ -62,7 +61,7 @@ class BatchDTO extends Dto {
       'count': count,
       'code': code,
       'technology': technology,
-      'isready': isready,
+
       'order_id': orderId,
     };
   }
@@ -80,7 +79,7 @@ class BatchDTO extends Dto {
         code: map['code'] as String,
         order: map['z_order'] != null ? OrderDTO.fromMap(map['z_order']) : null,
         technology: map['technology'] as String,
-        isready: map['isready'] as bool,
+
         orderId: map['order_id'] != null ? map['order_id'] as int : null,
         companyId: map['company_id'],
 

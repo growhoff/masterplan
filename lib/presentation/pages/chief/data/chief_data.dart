@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:master_plan/presentation/pages/chief/chief_distribution_page/chief_distribution_page.dart';
 import 'package:master_plan/presentation/pages/chief/monitoring/monitoring_page.dart';
 import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_lists_page.dart';
 import 'package:master_plan/presentation/pages/chief/queue/queue_page.dart';
@@ -6,7 +7,7 @@ import 'package:master_plan/presentation/pages/chief/stages_in_unit_page/stages_
 
 import '../model/tab_bar_model.dart';
 
-import '../operations_distribution_page/chief_distribution_page.dart';
+//import '../operations_distribution_page/chief_distribution_page.dart';
 import '../reports_page/choose_report_page.dart';
 
 abstract class DataChief {
@@ -29,7 +30,7 @@ abstract class DataChief {
     TabBarModel(
         title: 'Распределение операций',
         actions: [],
-        page: const ChiefDistributionPage(),
+        page: ChiefDistributionPage(),
         icon: Icons.lan),
     TabBarModel(
         title: 'Очередь операций',

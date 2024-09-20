@@ -3,6 +3,7 @@ import 'package:collection/collection.dart';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/chief_batch_dto.dart';
 
 import 'package:master_plan/data/repositories/supabase/dto/distribution_stage_dto.dart';
@@ -13,6 +14,7 @@ import 'package:master_plan/data/repositories/supabase/service/chief_batch_table
 
 import 'package:master_plan/data/repositories/supabase/service/distribution_stage_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/order_table.dart';
 
 import 'package:master_plan/domain/model/order.dart';
 import 'package:master_plan/domain/usecase/chief_unit_service.dart';
@@ -36,6 +38,7 @@ class StagesInUnitCubit extends Cubit<StagesInUnitState> {
 
   final _distributionStageTable = DistributionStageTable();
   final _batchTable = BatchTable();
+  final _orderTable = OrderTable();
   final _stageTable = StageTable();
   final _chiefBatchTable = ChiefBatchTable();
   final _operatorOperationsTable = OperatorOperationsTable();
@@ -139,7 +142,7 @@ class StagesInUnitCubit extends Cubit<StagesInUnitState> {
               count: stageValue.first.chiefBatch?.batch.count ?? 0,
               code: stageValue.first.chiefBatch?.batch.code ?? '',
               technology: stageValue.first.chiefBatch?.batch.technology ?? '',
-              isready: stageValue.first.chiefBatch?.batch.isready ?? false,
+
               orderId: stageValue.first.chiefBatch?.batch.orderId),
           stageId: stageValue.first.stageId,
           operationsQuantity:
@@ -266,10 +269,22 @@ class StagesInUnitCubit extends Cubit<StagesInUnitState> {
         await _batchTable.updateStatusReady([stageModel.batch.id]);
       }
 
+      var fetchedBatchesInOrderList =
+          await _batchTable.selectByOrderId(stageModel.batch.orderId ?? 0);
 
+      int readyBatchesQuantity = 0;
+
+      for (var batch in fetchedBatchesInOrderList) {
+        final batchDto = BatchDTO.fromMap(batch);
+        if (batchDto.batchStatusId == 2) {
+          readyBatchesQuantity++;
+        }
+      }
+
+      if (readyBatchesQuantity == fetchedBatchesInOrderList.length) {
+        await _orderTable.updateStatusReady([stageModel.batch.orderId ?? 0]);
+      }
     }
-
-
 
     uploadStagesQuantityController.clear();
   }

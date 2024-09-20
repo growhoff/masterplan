@@ -24,33 +24,41 @@ class TransferOperationsTable extends SupabaseTable {
     return 0;
   }
 
-  Future<void> updateTimeStart(int idOptPath, int timeStart, int staffId, int transferId) async {
-    await table.update({
-      'time_start': timeStart,
-      'pause': false,
-      'staff_id': staffId
-    }).eq('opt_path', idOptPath).eq('transfer_id', transferId);
+  Future<void> updateTimeStart(
+      int idOptPath, int timeStart, int staffId, int transferId) async {
+    await table
+        .update({'time_start': timeStart, 'pause': false, 'staff_id': staffId})
+        .eq('opt_path', idOptPath)
+        .eq('transfer_id', transferId);
   }
 
-  Future<void> updateTimeStop(int idOptPath, int timeStop, int seconds, int transferId) async {
-    await table.update({
-      'time_stop': timeStop,
-      'pause': true,
-      'time_working': seconds
-    }).eq('opt_path', idOptPath).eq('transfer_id', transferId);
+  Future<void> updateTimeStop(
+      int idOptPath, int timeStop, int seconds, int transferId) async {
+    await table
+        .update({'time_stop': timeStop, 'pause': true, 'time_working': seconds})
+        .eq('opt_path', idOptPath)
+        .eq('transfer_id', transferId);
   }
 
-  Future<void> updateTimeStopAndReady(int idOptPath, int timeStop, int seconds, int staffId, int transferId) async {
-    await table.update({
-      'time_stop': timeStop,
-      'time_working': seconds,
-      'staff_id': staffId,
-      'pause': true,
-    }).eq('opt_path', idOptPath).eq('transfer_id', transferId);
+  Future<void> updateTimeStopAndReady(int idOptPath, int timeStop, int seconds,
+      int staffId, int transferId) async {
+    await table
+        .update({
+          'time_stop': timeStop,
+          'time_working': seconds,
+          'staff_id': staffId,
+          'pause': true,
+        })
+        .eq('opt_path', idOptPath)
+        .eq('transfer_id', transferId);
   }
 
-  Future<Map<String, dynamic>> selectOptPath(int optPath, int transferId) async {
-    final quere = await table.select().eq('opt_path', optPath).eq('transfer_id', transferId);
+  Future<Map<String, dynamic>> selectOptPath(
+      int optPath, int transferId) async {
+    final quere = await table
+        .select()
+        .eq('opt_path', optPath)
+        .eq('transfer_id', transferId);
     return quere.last;
   }
 
@@ -62,7 +70,7 @@ class TransferOperationsTable extends SupabaseTable {
   Future<int> selectOptPathTimeWork(int optPath) async {
     int time = 0;
     final quere = await table.select().eq('opt_path', optPath);
-    if (quere.isNotEmpty){
+    if (quere.isNotEmpty) {
       for (var element in quere) {
         time = time + element['time_working'] as int;
       }
@@ -71,7 +79,9 @@ class TransferOperationsTable extends SupabaseTable {
   }
 
   Future<void> insertDto(Dto dto) async {
-    if (dto is TransferOperationsDTO){await table.insert(dto.toMap());}
+    if (dto is TransferOperationsDTO) {
+      await table.insert(dto.toMap());
+    }
   }
 
   @override
@@ -79,11 +89,17 @@ class TransferOperationsTable extends SupabaseTable {
     return table.select('*');
   }
 
+  Future<List<Map<String, dynamic>>> selectByOperatorOperationsIdsList(
+      List<int> operatorOperationsIdsList) async {
+    return await table
+        .select('*, z_transfer(*)')
+        .inFilter('operator_operation_id', operatorOperationsIdsList)
+        .order('operator_operation_id', ascending: true).order('id', ascending: true);
+  }
 
   Future<List<Map<String, dynamic>>> selectId(int id) {
     return table.select().eq('id', id);
   }
-
 
   @override
   Future update(int id, Dto dto) async {

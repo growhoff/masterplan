@@ -7,11 +7,13 @@ import 'package:master_plan/data/repositories/local/service/excel_service.dart';
 
 import 'package:master_plan/data/repositories/supabase/dto/batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/chief_batch_dto.dart';
+
 // import 'package:master_plan/data/repositories/supabase/dto/chief_operation_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/distribution_stage_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operation_archive_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operation_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
+
 // import 'package:master_plan/data/repositories/supabase/dto/stage_archive_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/transfer_archive_dto.dart';
@@ -19,11 +21,13 @@ import 'package:master_plan/data/repositories/supabase/dto/transfer_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/batch_archive_table.dart';
 
 import 'package:master_plan/data/repositories/supabase/service/batch_table.dart';
+
 // import 'package:master_plan/data/repositories/supabase/service/chief_operation_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/distribution_stage_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operation_archive_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operation_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
+
 // import 'package:master_plan/data/repositories/supabase/service/stage_archive_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/stage_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/transfer_archive_table.dart';
@@ -47,7 +51,10 @@ part 'batches_state.dart';
 class BatchesCubit extends Cubit<BatchesState> {
   final bool positionMaster;
   final String areaNumber;
-  BatchesCubit(this.positionMaster, this.areaNumber, {this.order, this.selectedStageId}): super(const BatchesState());
+
+  BatchesCubit(this.positionMaster, this.areaNumber,
+      {this.order, this.selectedStageId})
+      : super(const BatchesState());
 
   final Order? order;
   final int? selectedStageId;
@@ -59,6 +66,7 @@ class BatchesCubit extends Cubit<BatchesState> {
   final _distributionStageTable = DistributionStageTable();
   final _stageTable = StageTable();
   final _operatorOperationsTable = OperatorOperationsTable();
+
   // final _stageArchiveTable = StageArchiveTable();
   final _operationArchiveTable = OperationArchiveTable();
   final _operationTable = OperationTable();
@@ -98,7 +106,7 @@ class BatchesCubit extends Cubit<BatchesState> {
                 number: batchDto.order?.number ?? '',
                 priority: batchDto.order?.priority ?? 0,
                 statusId: batchDto.order?.statusId ?? 0),
-            isready: batchDto.isready,
+
             orderId: order?.id);
         batchesList.add(BatchModel(batch: batch));
         batchesIdsList.add(batch.id);
@@ -126,6 +134,8 @@ class BatchesCubit extends Cubit<BatchesState> {
 
           case 4:
             batchModel.readyQuantity++;
+          case 7:
+            batchModel.inWorkQuantity++;
         }
         if (batchModel.readyQuantity != 0 && batchModel.batch.count != 0) {
           batchModel.readyPercent =
@@ -184,7 +194,7 @@ class BatchesCubit extends Cubit<BatchesState> {
         code: selectedBatch.code ?? '',
         technology: selectedBatch.technologyNumber,
         orderId: orderId ?? order?.id ?? 0,
-        isready: false));
+       ));
 
     var fetchedOperationsArchiveList =
         await _operationArchiveTable.selectByBatchArchiveId(selectedBatch.id);
@@ -260,7 +270,7 @@ class BatchesCubit extends Cubit<BatchesState> {
             count: int.parse(quantityController.text),
             companyId: 0,
             number: '',
-            isready: false,
+
           ));
 
       var fetchedOperationsArchiveList =
@@ -325,8 +335,7 @@ class BatchesCubit extends Cubit<BatchesState> {
   }
 
   Future<void> deleteBatch(Batch batch) async {
-    if ((batch.order?.statusId == 1) &&
-        (batch.batchStatusId == 5 || batch.batchStatusId == 6)) {
+    if (batch.batchStatusId == 5 || batch.batchStatusId == 6) {
       await _batchTable.delete(batch.id);
       await fetchBatchesInOrder(batch.orderId);
     }
@@ -596,7 +605,7 @@ class BatchesCubit extends Cubit<BatchesState> {
                 count: stageValue.first.chiefBatch?.batch.count ?? 0,
                 code: stageValue.first.chiefBatch?.batch.code ?? '',
                 technology: stageValue.first.chiefBatch?.batch.technology ?? '',
-                isready: stageValue.first.chiefBatch?.batch.isready ?? false,
+
                 orderId: stageValue.first.chiefBatch?.batch.orderId),
             stageId: stageValue.first.stageId,
             stageNumber: stageValue.first.stage?.number ?? '',
@@ -734,7 +743,7 @@ class BatchesCubit extends Cubit<BatchesState> {
         .forEach((stage) => distributionStagesIdsList.add(stage.id));
 
     var fetchedOperatorOperationsList = await _operatorOperationsTable
-        .selectByOperationIdListAndDistributionStagesIdList(
+        .selectByOperationIdListAndDistributionStagesIdListOrderedByChiefBatchId(
             operationsIdsList: operationsIdsList,
             distributionStageIdsList: distributionStagesIdsList);
 
@@ -743,8 +752,10 @@ class BatchesCubit extends Cubit<BatchesState> {
     for (int i = 0; i < fetchedOperatorOperationsList.length; i++) {
       var operation = fetchedOperatorOperationsList[i];
       final operatorOperationsDto = OperatorOperationsDTO.fromMap(operation);
-      // print(
-      //   'ID : ${operatorOperationsDto.id}  , name: ${operatorOperationsDto.operation.name}  ,  status: ${operatorOperationsDto.statusId}');
+
+      print(
+          'chiefBatchId : ${operatorOperationsDto.chiefBatchId} batchId:  ${operatorOperationsDto.batchId}  stageId : ${operatorOperationsDto.stageId}  operationId : ${operatorOperationsDto.operationId}');
+
       final operationInStage = operationsInStageList.firstWhere((operation) =>
           operation.operation.id == operatorOperationsDto.operationId);
 

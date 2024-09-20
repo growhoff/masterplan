@@ -19,6 +19,7 @@ import 'package:master_plan/presentation/pages/master/pages/addOperation/add_ope
 import 'package:master_plan/presentation/pages/operator/operator_page.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/work_page.dart';
 import '../../theme/theme.dart';
+import '../pages/chief/chief_distribution_page/distribution_operations_of_stage_page.dart';
 import '../pages/chief/chief_lists_pages/chief_staff_list_page/masters_list_page.dart';
 import '../pages/chief/chief_lists_pages/chief_staff_list_page/operators_list_page.dart';
 import '../pages/chief/chief_lists_pages/chief_staff_list_page/selection_staff_position_page.dart';
@@ -116,6 +117,8 @@ class MyApp extends StatelessWidget {
           '/dispatcherOperationsInStagePage': (BuildContext context) =>
               const OperationsInStagePage(),
           'editOrderPage': (BuildContext context) => const EditOrderPage(),
+          '/distributionOperationsOfStagePage': (BuildContext context) =>
+              const DistributionOperationsOfStagePage(),
         },
         home: const LoginPage(),
       ),

@@ -70,7 +70,6 @@ class QueueStagesCubit extends Cubit<QueueStagesState> {
     Map<int, int> operationsInStageQuantityMap = {};
     List<OperatorOperationsDTO> operatorOperationsList = [];
 
-
     var fetchedStagesList =
         await _distributionStageTable.selectByUnitId(selectedUnit.id);
 
@@ -82,46 +81,37 @@ class QueueStagesCubit extends Cubit<QueueStagesState> {
       distributionStagesList.add(distributionStage);
       distributionStagesIdsList.add(distributionStage.id);
       stagesIdsList.add(distributionStage.stageId);
-      print('получили стейджи');
     }
 
     var fetchedOperationsList =
-    await _operationTable.selectByStageIdList(stagesIdsList);
+        await _operationTable.selectByStageIdList(stagesIdsList);
 
     for (var operation in fetchedOperationsList) {
       final operationDto = OperationDTO.fromMap(operation);
 
       if (operationsInStageQuantityMap.containsKey(operationDto.stageId)) {
         operationsInStageQuantityMap[operationDto.stageId] =
-        (operationsInStageQuantityMap[operationDto.stageId]! + 1);
+            (operationsInStageQuantityMap[operationDto.stageId]! + 1);
       } else {
         operationsInStageQuantityMap[operationDto.stageId] = 1;
       }
-      print('получили операции');
     }
-    print('начали получать ОПОП');
+
     var fetchedOperatorOperationsList = await _operatorOperationsTable
         .selectByDistributionStagesIdsListAndNotDefectDistributionStage(
-        distributionStagesIdsList);
-    print('получили ОПОП');
-
+            distributionStagesIdsList);
 
     for (var operatorOperation in fetchedOperatorOperationsList) {
-      print('зашли в цикл');
       final operatorOperationDto =
-      OperatorOperationsDTO.fromMap(operatorOperation);
+          OperatorOperationsDTO.fromMap(operatorOperation);
 
-      print('operatorOperation id : ${operatorOperationDto.id}');
       operatorOperationsList.add(operatorOperationDto);
-
     }
 
-    print('запросы получили');
     var batchesMap =
-    groupBy(distributionStagesList, (stage) => stage.chiefBatch?.batchId);
+        groupBy(distributionStagesList, (stage) => stage.chiefBatch?.batchId);
 
     batchesMap.forEach((batchKey, batchValue) {
-      print('batchKey : $batchKey');
       var stagesMap = groupBy(batchValue, (stage) => stage.stageId);
 
       StageModel prevStageInBatch = StageModel(
@@ -134,8 +124,8 @@ class QueueStagesCubit extends Cubit<QueueStagesState> {
 
       stagesMap.forEach((stageKey, stageValue) {
         var operatorOperationsInStageList = operatorOperationsList.where(
-                (operation) =>
-            operation.batchId == batchKey && operation.stageId == stageKey);
+            (operation) =>
+                operation.batchId == batchKey && operation.stageId == stageKey);
 
         int readyOperationsQuantity = 0;
         for (var operation in operatorOperationsInStageList) {
@@ -149,11 +139,11 @@ class QueueStagesCubit extends Cubit<QueueStagesState> {
               order: Order(
                   id: stageValue.first.chiefBatch?.batch.order?.id ?? 0,
                   number:
-                  stageValue.first.chiefBatch?.batch.order?.number ?? '',
+                      stageValue.first.chiefBatch?.batch.order?.number ?? '',
                   priority:
-                  stageValue.first.chiefBatch?.batch.order?.priority ?? 0,
+                      stageValue.first.chiefBatch?.batch.order?.priority ?? 0,
                   statusId:
-                  stageValue.first.chiefBatch?.batch.order?.statusId ?? 0),
+                      stageValue.first.chiefBatch?.batch.order?.statusId ?? 0),
               id: stageValue.first.chiefBatch?.batch.id ?? 0,
               numberRS: stageValue.first.chiefBatch?.batch.numberRS ?? '',
               number: stageValue.first.chiefBatch?.batch.number,
@@ -161,17 +151,19 @@ class QueueStagesCubit extends Cubit<QueueStagesState> {
               count: stageValue.first.chiefBatch?.batch.count ?? 0,
               code: stageValue.first.chiefBatch?.batch.code ?? '',
               technology: stageValue.first.chiefBatch?.batch.technology ?? '',
-              isready: stageValue.first.chiefBatch?.batch.isready ?? false,
+
               orderId: stageValue.first.chiefBatch?.batch.orderId),
           stageId: stageValue.first.stageId,
           operationsQuantity:
-          operationsInStageQuantityMap[stageValue.first.stageId] ?? 0,
+              operationsInStageQuantityMap[stageValue.first.stageId] ?? 0,
           stageNumber: stageValue.first.stage?.number ?? '',
           stageName: stageValue.first.stage?.name ?? '',
           unitNumber: stageValue.first.unit?.number ?? '',
         );
 
         stageModel.status = stageValue.last.stageStatus?.name ?? '';
+
+        //stageModel.distributionStagesList = stageValue;
 
         List<int> stagesStatusesIdsList = [];
         for (var stage in stageValue) {
@@ -205,12 +197,11 @@ class QueueStagesCubit extends Cubit<QueueStagesState> {
 
         if (stageModel.operationsQuantity != 0) {
           stageModel.readyPercent = ((readyOperationsQuantity /
-              (stageModel.operationsQuantity *
-                  (totalQuantity - stageModel.defectQuantity))) *
-              100)
+                      (stageModel.operationsQuantity *
+                          (totalQuantity - stageModel.defectQuantity))) *
+                  100)
               .round();
         }
-
 
         stageModel.availableQuantity = totalQuantity -
             stageModel.defectQuantity -
@@ -236,7 +227,7 @@ class QueueStagesCubit extends Cubit<QueueStagesState> {
           }
         }
 
-        if (stageModel.uploadedQuantity != totalQuantity){
+        if (stageModel.uploadedQuantity != totalQuantity) {
           stagesInBatchModelList.add(stageModel);
         }
 
@@ -245,20 +236,30 @@ class QueueStagesCubit extends Cubit<QueueStagesState> {
     });
     stagesInBatchModelList
         .sort((a, b) => a.readyPercent.compareTo(b.readyPercent));
-    emit(state.copyWith(stagesList: stagesInBatchModelList.reversed.toList(), status: QueueStagesPageStatus.success));
+    emit(state.copyWith(
+        stagesList: stagesInBatchModelList.reversed.toList(),
+        status: QueueStagesPageStatus.success));
   }
 
   Future redistribute(StageModel stageModel) async {
+    List<int> distributionStagesIdsList = [];
+
+    var fetchedDistributionStagesList =
+        await _distributionStageTable.selectByBatchIdAndStageId(
+            stageId: stageModel.stageId, batchId: stageModel.batch.id);
+
+    for (var distributionStage in fetchedDistributionStagesList) {
+      final distributionStageDto =
+          DistributionStageDto.fromMap(distributionStage);
+      distributionStagesIdsList.add(distributionStageDto.id);
+    }
+
     List<int> chiefDistributionOperationsIdsList = [];
 
     var fetchedChiefDistributionOperations =
         await _chiefDistributionOperationsTable.selectByBatchAndStageId(
             batchId: stageModel.batch.id, stageId: stageModel.stageId);
 
-    List<int> distributionStagesIdsList = [];
-
-    stageModel.distributionStagesList
-        .forEach((stage) => distributionStagesIdsList.add(stage.id));
 
     for (var chiefDistributionOperation in fetchedChiefDistributionOperations) {
       final chiefDistributionOperationDto =
@@ -266,11 +267,11 @@ class QueueStagesCubit extends Cubit<QueueStagesState> {
       chiefDistributionOperationsIdsList.add(chiefDistributionOperationDto.id);
     }
 
-     await _chiefDistributionOperationsTable
-      .bulkDelete(chiefDistributionOperationsIdsList);
+    await _chiefDistributionOperationsTable
+        .bulkDelete(chiefDistributionOperationsIdsList);
 
-    await _chiefOperationsTable.deleteByDistributionStagesIdsList(
-        distributionStagesIdsList);
+    await _chiefOperationsTable
+        .deleteByDistributionStagesIdsList(distributionStagesIdsList);
 
     await _distributionStageTable.bulkUpdateUnitOnNullAndStatusToOnDistribution(
         distributionStagesIdsList);

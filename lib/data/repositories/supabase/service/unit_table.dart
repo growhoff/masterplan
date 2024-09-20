@@ -38,6 +38,10 @@ class UnitTable extends SupabaseTable {
     return table.select().eq('id', id);
   }
 
+  Future<List<Map<String, dynamic>>> selectByUnitsIdsList(List<int> idsList) {
+    return table.select().inFilter('id', idsList);
+  }
+
   @override
   Future<void> update(int id, Dto dto) async {
     if (dto is UnitDTO) {

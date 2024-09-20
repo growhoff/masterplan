@@ -11,8 +11,19 @@ class BatchTable extends SupabaseTable {
   final int? _companyId = CompanyService.instance.companyId;
 
   @override
-  Future<void> delete(int id) {
-    return table.delete().eq('id', id);
+  Future<void> delete(int id) async {
+    print('начали удалять');
+    await table.delete().eq('id', id);
+  }
+
+  Future<void> deleteByIdsList(List<int> batchesIdsList) async {
+    print('начали удалять');
+    await table.delete().inFilter('id', batchesIdsList);
+  }
+
+  Future<void> deleteByOrderId(int orderId) async {
+    print('начали удалять');
+    await table.delete().eq('order_id', orderId);
   }
 
   @override
@@ -85,8 +96,6 @@ class BatchTable extends SupabaseTable {
       }).eq('id', id);
     }
   }
-
-
 
   Future<void> updateFromBatchArchive(int id, BatchArchiveDto dto) async {
     await table.update({

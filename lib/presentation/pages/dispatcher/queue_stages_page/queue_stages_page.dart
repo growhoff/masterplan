@@ -87,12 +87,21 @@ class _QueueStagesPageViewState extends State<QueueStagesPageView> {
                         textAlign: TextAlign.center,
                       ),
                     ),
-                    flex: 1,
+                    flex: 2,
                   ),
                   Expanded(
                     child: Container(
                       child: Text(
                         'Наименование',
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    flex: 1,
+                  ),
+                  Expanded(
+                    child: Container(
+                      child: Text(
+                        'Готово к выгрузке',
                         textAlign: TextAlign.center,
                       ),
                     ),

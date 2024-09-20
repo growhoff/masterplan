@@ -7,6 +7,7 @@ import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
+
 // import 'package:master_plan/data/repositories/supabase/service/position_staff_table.dart';
 import 'package:master_plan/domain/model/batch.dart';
 import 'package:master_plan/domain/model/machine.dart';
@@ -19,24 +20,67 @@ import 'package:master_plan/domain/usecase/time_converter.dart';
 import 'package:master_plan/presentation/pages/master/pages/analytics_page/analytics_operation_model.dart';
 import 'package:open_filex/open_filex.dart';
 
+import '../../../../../../data/repositories/local/dto/filters_info_model.dart';
 import '../../../../../../data/repositories/local/service/notification_service.dart';
+import '../../../../../../data/repositories/supabase/dto/transfer_operations_dto.dart';
+import '../../../../../../data/repositories/supabase/service/transfer_operations_table.dart';
 import '../../../../../../domain/model/company.dart';
+import '../../../../../../domain/model/distribution_stage.dart';
 import '../../../../../../domain/model/operator_operations.dart';
+import '../../../../../../domain/model/staff.dart';
+import '../../../../../../domain/model/unit.dart';
+import '../../../../../../domain/usecase/staff_service.dart';
+import '../../../../../../domain/usecase/upload_reports_service.dart';
+
 part 'analytics_state.dart';
 
 class AnalyticsCubit extends Cubit<AnalyticsState> {
   AnalyticsCubit() : super(AnalyticsState());
 
+
+
   final _operatorOperationsTable = OperatorOperationsTable();
-  final _excelService = ExcelService();
-  // final _positionStaffTable = PositionStaffTable();
+  final _uploadReportsService = UploadReportsService();
+
+  final _transferOperationsTable = TransferOperationsTable();
 
   final _areasIdsList = AreasListService.instance.areasIdsList;
 
-  Future<void> fetchReadyOperations({int? timeStart, int? timeEnd}) async {
+  DateTime timeStart = DateTime.now();
+  DateTime timeEnd = DateTime.now();
+
+  Future fetchTime(BuildContext context) async {
+    DateTime start = DateTime(2024);
+    DateTime end = DateTime.now();
+
+    final dateTimeRange = await showDateRangePicker(
+        context: context, firstDate: start, lastDate: end);
+    if (dateTimeRange != null) {
+      start = dateTimeRange.start;
+      end = dateTimeRange.end;
+    }
+
+    timeStart = start;
+    timeEnd = end;
+  }
+
+  String getDate(DateTime date) {
+    return '${date.day}.${date.month}.${date.year}';
+  }
+
+  Future<void> fetchReadyOperations() async {
     List<AnalyticsOperationModel> analyticsOperationsList = [];
 
+    List<TransferAnalyticsModel> transfersAnalyticsModelsList = [];
+
+    List<int> operatorOperationsIdsList = [];
+
+    List<TransferOperationsDTO> transferOperationsList = [];
+
     List<OperatorOperations> operatorOperationsList = [];
+
+    int start = timeStart.millisecondsSinceEpoch;
+    int end = timeEnd.millisecondsSinceEpoch + 86399000;
 
     var fetchedOperationsList = await _operatorOperationsTable
         .selectReadyDefectAndModificationOnArea(_areasIdsList);
@@ -46,17 +90,24 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
 
       final operation = convertOperationDtoToModel(dto: operationDto);
 
-      if (timeStart != null && timeEnd != null) {
-        print(
-            'start: ${timeStart}  operation: ${operation.timeFirstStart} end: ${timeEnd}');
-        if ((operation.timeFirstStart >= timeStart &&
-            operation.timeFirstStart <= timeEnd)) {
-          operatorOperationsList.add(operation);
-        }
-      } else {
+      if ((operation.timeFirstStart >= start &&
+          operation.timeFirstStart <= end)) {
         operatorOperationsList.add(operation);
+        operatorOperationsIdsList.add(operation.id);
       }
     }
+
+    var fetchedTransfersList = await _transferOperationsTable
+        .selectByOperatorOperationsIdsList(operatorOperationsIdsList);
+
+    for (var transfer in fetchedTransfersList) {
+      final transferOperationDto = TransferOperationsDTO.fromMap(transfer);
+      transferOperationsList.add(transferOperationDto);
+    }
+
+    var transfersMap = groupBy(
+        transferOperationsList, (transfer) => transfer.operatorOperationId);
+
 
     var operationsMap =
         groupBy(operatorOperationsList, (operation) => operation.optimalPart);
@@ -87,16 +138,15 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
       AnalyticsOperationModel analyticsOperation = AnalyticsOperationModel(
           batch: value.first.batch,
           stage: value.first.stage,
+          unitNumber: value.first.distributionStage?.unit?.number ?? '',
           operationId: value.first.operation.id,
           code: '${value.first.batch.code}.${value.first.operation.code}',
           comment: value.first.comment ?? '',
           detailNumber: value.first.batch.numberRS,
           operationNumber: value.first.operation.number,
           operationName: value.first.operation.name,
-          timePlan: TimeConverter.instance
-              .convertTimeFromMinutes(value.first.timeplan),
-          timeFact: TimeConverter.instance
-              .convertTimeFromSeconds(value.first.timeworking ?? 0),
+          timePlan:value.first.timeplan,
+          timeFact: value.first.timeworking ?? 0,
           machineName: value.first.machine?.name ?? '',
           machineInventoryNumber: value.first.machine?.inventoryNumber ?? 0,
           fio: value.first.user?.fio ?? '',
@@ -107,6 +157,64 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
           change: change,
           areaNumber: value.first.area.number,
           detailName: value.first.batch.name);
+
+
+      transfersAnalyticsModelsList = [];
+
+      if (transfersMap[value.first.id] != null) {
+        for (var transfer in transfersMap[value.first.id]!) {
+          var transferHours =
+              DateTime.fromMillisecondsSinceEpoch(transfer.timestop ?? 0).hour;
+
+          var transferDateTimeEnd =
+          DateTime.fromMillisecondsSinceEpoch(transfer.timestop ?? 0);
+
+          String transferDateEnd =
+              '${transferDateTimeEnd.day}.${transferDateTimeEnd.month}.${transferDateTimeEnd.year}';
+          String transferTimeEnd =
+              '${transferDateTimeEnd.hour}:${transferDateTimeEnd.minute}';
+
+          var transferDateTimeStart =
+          DateTime.fromMillisecondsSinceEpoch(transfer.timeFirstStart ?? 0);
+
+          String transferDateStart =
+              '${transferDateTimeStart.day}.${transferDateTimeStart.month}.${transferDateTimeStart.year}';
+          String transferTimeStart =
+              '${transferDateTimeStart.hour}:${transferDateTimeStart.minute}';
+
+          int transferChange = 1;
+          (transferHours >= 8 && transferHours <= 20)
+              ? transferChange = 1
+              : transferChange = 2;
+
+          final transferAnalyticsModel = TransferAnalyticsModel(
+            id: transfer.id,
+            number: '${transfer.transferDTO?.number}',
+            name: transfer.transferDTO?.name ?? '',
+            timePlan: transfer.transferDTO?.timesh ?? 0,
+            //TimeConverter.instance.convertTimeFromMinutes(transfer.transferDTO?.timesh ?? 0),
+            areaNumber: value.first.area.number,
+            code:
+            '${value.first.batch.code}.${value.first.operation.code}.${transfer.transferDTO?.code}',
+            fio: value.first.user?.fio ?? '',
+            dateEnd: transferDateEnd,
+            timeEnd: transferTimeEnd,
+            dateStart: transferDateStart,
+            timeStart: transferTimeStart,
+            change: transferChange,
+            machineName: value.first.machine?.name ?? '',
+            machineInventoryNumber: value.first.machine?.inventoryNumber ?? 0,
+            timeFact: transfer.timeworking ?? 0,
+            // TimeConverter.instance.convertTimeFromSeconds(transfer.timeworking ?? 0),
+            unitNumber: value.first.distributionStage?.unit?.number ?? '',
+          );
+
+          transfersAnalyticsModelsList.add(transferAnalyticsModel);
+        }
+
+      }
+
+      analyticsOperation.transfersList = transfersAnalyticsModelsList;
 
       for (var operation in value) {
         analyticsOperation.quantity++;
@@ -123,9 +231,12 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
     emit(state.copyWith(analyticsOperationsList: analyticsOperationsList));
   }
 
-  Future<void> fetchGroupedReadyOperations(
-      {int? timeStart, int? timeEnd}) async {
-    List<AnalyticsOperationModel> analyticsOperationsList = [];
+  Future<void> fetchGroupedReadyOperations() async {
+    List<TotalNumberReadyOperationModel> totalNumberReadyOperationModelsList =
+        [];
+
+    int start = timeStart.millisecondsSinceEpoch;
+    int end = timeEnd.millisecondsSinceEpoch + 86399000;
 
     List<OperatorOperations> operatorOperationsList = [];
 
@@ -137,15 +248,8 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
 
       final operation = convertOperationDtoToModel(dto: operationDto);
 
-      if (timeStart != null && timeEnd != null) {
-        if ((operation.timeFirstStart >= timeStart &&
-            operation.timeFirstStart <= timeEnd)) {
-          operatorOperationsList.add(operation);
-
-          print(
-              'start: ${timeStart}  operation: ${operation.timeFirstStart} end: ${timeEnd}');
-        }
-      } else {
+      if ((operation.timeFirstStart >= start &&
+          operation.timeFirstStart <= end)) {
         operatorOperationsList.add(operation);
       }
     }
@@ -157,118 +261,128 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
       var operationsMap = groupBy(value, (operation) => operation.operation.id);
 
       operationsMap.forEach((key, value) {
-        print('operation code : ${value.first.operation.code}');
-        print('batch code : ${value.first.batch.code}');
-        final analyticsOperation = AnalyticsOperationModel(
-            batch: value.first.batch,
-            stage: value.first.stage,
-            operationId: 0,
-            code: value.first.operation.code,
-            comment: '',
-            detailNumber: value.first.batch.numberRS,
-            detailName: value.first.batch.name,
-            operationNumber: value.first.operation.number,
-            operationName: value.first.operation.name,
-            timePlan: '',
-            timeFact: '',
-            machineName: '',
-            machineInventoryNumber: 0,
-            fio: '',
-            dateStart: '',
-            dateEnd: '',
-            timeStart: '',
-            timeEnd: '',
-            change: 0,
-            areaNumber: '');
+        final totalNumberReadyOperationModel = TotalNumberReadyOperationModel(
+            stageNumber:
+                '${value.first.batch.order?.number}.${value.first.batch.number}.${value.first.stage.number}',
+            planNumber: value.first.batch.numberRS,
+            code: '${value.first.batch.code}.${value.first.operation.code}',
+            unitNumber: value.first.distributionStage?.unit?.number ?? '',
+            operationName:
+                '${value.first.operation.number} ${value.first.operation.name}',
+            areaNumber: value.first.area.number,
+            planName: value.first.batch.name);
 
         for (var operation in value) {
-          analyticsOperation.quantity++;
+          totalNumberReadyOperationModel.totalQuantity++;
           switch (operation.status.id) {
             case 4:
-              analyticsOperation.modificationQuantity++;
+              totalNumberReadyOperationModel.modificationQuantity++;
             case 5:
-              analyticsOperation.defectQuantity++;
+              totalNumberReadyOperationModel.defectQuantity++;
           }
         }
 
-        analyticsOperationsList.add(analyticsOperation);
+        totalNumberReadyOperationModelsList.add(totalNumberReadyOperationModel);
       });
     });
 
-    for (var op in analyticsOperationsList) {
-      print(op.operationName);
-    }
-
     print('перед эмитом');
-    emit(state.copyWith(analyticsOperationsList: analyticsOperationsList));
+    emit(state.copyWith(
+        totalNumberReadyOperationModelsList:
+            totalNumberReadyOperationModelsList));
   }
 
-  Future<void> uploadReadyOperationsReport(BuildContext context) async {
-    DateTime start = DateTime(2024);
-    DateTime end = DateTime.now();
+  Future<void> uploadReadyOperationsReport() async {
+    await fetchReadyOperations();
 
-    final dateTimeRange = await showDateRangePicker(
-        context: context, firstDate: start, lastDate: end);
-    if (dateTimeRange != null) {
-      start = dateTimeRange.start;
-      end = dateTimeRange.end;
-    }
+    var areasMap = groupBy(
+        state.analyticsOperationsList, (operation) => operation.areaNumber);
 
-    await fetchReadyOperations(
-        timeStart: start.millisecondsSinceEpoch,
-        timeEnd: end.millisecondsSinceEpoch + 86399000);
+    String filterAreasNumbersString = '';
 
-    String filePath = await _excelService.uploadReadyOperationsReport(
-        analyticsOperationsList: state.analyticsOperationsList);
-    if (filePath == '') {
-      filePath = 'что-то пошло не так';
-    } else {
-      filePath = '$filePath/Выполненные операции.xlsx';
-    }
-    NotificationService.showNotification(
-        title: 'Отчет о производстве загружен',
-        body: 'путь: $filePath',
-        payload: filePath);
-
-    NotificationService.onClickNotification.stream.listen((event) {
-      print(event);
-      OpenFilex.open(event);
+    areasMap.forEach((key, value) {
+      filterAreasNumbersString = '$filterAreasNumbersString $key';
     });
+
+
+
+    _uploadReportsService.uploadReadyOperationsReportWithStringFilter(
+        analyticsOperationsModelsList: state.analyticsOperationsList,
+        filterAreasNumbersString: filterAreasNumbersString,
+        filterUnitsNumbersString:
+            state.analyticsOperationsList.first.unitNumber,
+        timeEnd: timeEnd,
+        timeStart: timeStart);
   }
 
   Future<void> uploadTotalNumberReadyOperationsReport(
       BuildContext context) async {
-    DateTime start = DateTime(2024);
-    DateTime end = DateTime.now();
+    await fetchGroupedReadyOperations();
 
-    final dateTimeRange = await showDateRangePicker(
-        context: context, firstDate: start, lastDate: end);
-    if (dateTimeRange != null) {
-      start = dateTimeRange.start;
-      end = dateTimeRange.end;
-    }
-    await fetchGroupedReadyOperations(
-        timeStart: start.millisecondsSinceEpoch,
-        timeEnd: end.millisecondsSinceEpoch + 86399000);
+    var areasMap = groupBy(state.totalNumberReadyOperationModelsList,
+        (operation) => operation.areaNumber);
 
-    String filePath =
-        await _excelService.uploadTotalNumberReadyOperationsReport(
-            analyticsOperationsList: state.analyticsOperationsList);
-    if (filePath == '') {
-      filePath = 'что-то пошло не так';
-    } else {
-      filePath =
-          '$filePath/Отчет суммарного количества выполненных операций.xlsx';
-    }
-    NotificationService.showNotification(
-        title: 'Отчет о производстве загружен',
-        body: 'путь: $filePath',
-        payload: filePath);
+    String filterAreasNumbersString = '';
 
-    NotificationService.onClickNotification.stream.listen((event) {
-      print(event);
-      OpenFilex.open(event);
+    areasMap.forEach((key, value) {
+      filterAreasNumbersString = '$filterAreasNumbersString $key';
     });
+
+    _uploadReportsService
+        .uploadTotalNumberReadyOperationsReportWithStringFilter(
+            totalNumberReadyOperationModelsList:
+                state.totalNumberReadyOperationModelsList,
+            filterAreasNumbersString: filterAreasNumbersString,
+            filterUnitsNumbersString:
+                state.totalNumberReadyOperationModelsList.first.unitNumber,
+            timeStart: timeStart,
+            timeEnd: timeEnd);
+
+    // var filterTimeStart =
+    // DateTime.fromMillisecondsSinceEpoch(timeStart.millisecondsSinceEpoch);
+    //
+    // String dateStart =
+    //     '${filterTimeStart.day}.${filterTimeStart.month}.${filterTimeStart
+    //     .year}';
+    //
+    // var filterTimeEnd =
+    // DateTime.fromMillisecondsSinceEpoch(timeEnd.millisecondsSinceEpoch);
+    //
+    // String dateEnd =
+    //     '${filterTimeEnd.day}.${filterTimeEnd.month}.${filterTimeEnd.year}';
+    //
+
+    //
+    // final filtersInfoModel = FiltersInfoModel(
+    //     timeStart: dateStart,
+    //     timeEnd: dateEnd,
+    //     unitsNumbersList:
+    //     state.totalNumberReadyOperationModelsList.first.unitNumber,
+    //     areasNumbersList: filterAreasNumbersString);
+    //
+    // print('перед выводом ${state.totalNumberReadyOperationModelsList}');
+    //
+    // String filePath =
+    // await _excelService.uploadTotalNumberReadyOperationsReport(
+    //     filtersInfo: filtersInfoModel,
+    //     totalNumberReadyOperationModelsList:
+    //     state.totalNumberReadyOperationModelsList);
+    // if (filePath == '') {
+    //   filePath = 'что-то пошло не так';
+    // } else {
+    //   filePath =
+    //   '$filePath/Отчет суммарного количества выполненных операций (${filtersInfoModel
+    //       .timeStart} - ${filtersInfoModel.timeEnd}).xlsx';
+    // }
+    // NotificationService.showNotification(
+    //     title: 'Отчет о производстве загружен',
+    //     body: 'путь: $filePath',
+    //     payload: filePath);
+    //
+    // NotificationService.onClickNotification.stream.listen((event) {
+    //   print(event);
+    //   OpenFilex.open(event);
+    // });
   }
 
   OperatorOperations convertOperationDtoToModel(
@@ -309,7 +423,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
             count: dto.batch.count,
             code: dto.batch.code,
             technology: dto.batch.technology,
-            isready: dto.batch.isready,
+
             order: Order(
                 id: dto.batch.order?.id ?? 0,
                 number: dto.batch.order?.number ?? '',
@@ -317,6 +431,16 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
                 statusId: dto.batch.order?.statusId ?? 0),
             orderId: dto.batch.orderId),
         stage: dto.stage ?? StageDTO.empty,
+        distributionStage: DistributionStage(
+            id: dto.distributionStageDto?.id ?? 0,
+            chiefBatchId: dto.distributionStageDto?.chiefBatchId ?? 0,
+            unit: Unit(
+                id: dto.distributionStageDto?.unitDto?.id ?? 0,
+                name: dto.distributionStageDto?.unitDto?.name,
+                number: dto.distributionStageDto?.unitDto?.number,
+                companyId: dto.distributionStageDto?.unitDto?.companyId ?? 0),
+            stageId: dto.distributionStageDto?.stageId ?? 0,
+            statusId: dto.distributionStageDto?.statusId ?? 0),
         operation: dto.operation,
         area: dto.area ?? AreaDTO(id: 0, name: '', number: '', unitId: 0));
   }

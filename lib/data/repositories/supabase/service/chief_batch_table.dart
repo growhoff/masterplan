@@ -19,6 +19,10 @@ class ChiefBatchTable extends SupabaseTable {
     await table.delete().eq('batch_id', batchId);
   }
 
+  Future bulkDeleteByBatchesIdsList(List<int> batchesIdsList) async {
+    await table.delete().inFilter('batch_id', batchesIdsList);
+  }
+
   @override
   Future<int> insert(Dto dto) async {
     if (dto is ChiefBatchDTO) {

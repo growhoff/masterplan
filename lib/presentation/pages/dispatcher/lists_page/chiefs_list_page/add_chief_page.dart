@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:master_plan/presentation/pages/chief/chief_lists_pages/chief_staff_list_page/chief_staff_cubit/chief_staff_cubit.dart';
+import 'package:master_plan/presentation/pages/dispatcher/lists_page/chiefs_list_page/widgets/choosing_position_element.dart';
 
 import '../../../../../domain/model/area.dart';
 import '../../../../../domain/model/unit.dart';
@@ -35,7 +36,7 @@ class _AddChiefPageViewState extends State<AddChiefPageView> {
   @override
   void initState() {
     super.initState();
-    context.read<ChiefsListCubit>().fetchAreasAndUnits();
+    context.read<ChiefsListCubit>().fetchUnits();
   }
 
   @override
@@ -115,161 +116,181 @@ class _AddChiefPageViewState extends State<AddChiefPageView> {
                     const SizedBox(
                       height: 20,
                     ),
-                    Container(
-                      alignment: Alignment.center,
-                      child: const Text(
-                        'Должность',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
+
                     SingleChildScrollView(
                       child: ListView.separated(
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) => index ==
-                                  context
-                                      .read<ChiefsListCubit>()
-                                      .selectedPositionsList
-                                      .length
-                              ? IconButton(
-                                  onPressed: () {
-                                    showDialog(
-                                        context: context,
-                                        builder: (ctx) => SimpleDialog(
-                                              title: Text('выберите должность'),
-                                              children: List.generate(
-                                                  context
-                                                      .read<ChiefsListCubit>()
-                                                      .positionsToSelectList
-                                                      .length,
-                                                  (index) => SimpleDialogOption(
-                                                        onPressed: () =>
-                                                            setState(() {
-                                                          context
-                                                              .read<
-                                                                  ChiefsListCubit>()
-                                                              .addPositionElement(
-                                                                  index);
-                                                          Navigator.pop(ctx);
-                                                        }),
-                                                        child: Text(context
-                                                            .read<
-                                                                ChiefsListCubit>()
-                                                            .positionsToSelectList[index]),
-                                                      )),
-                                            ));
-                                  },
-                                  icon: Icon(Icons.add))
-                              : Column(
-                                  children: [
-                                    Container(
-                                      padding: EdgeInsets.only(left: 10),
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          border:
-                                              Border.all(color: Colors.black)),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            context
-                                                .read<ChiefsListCubit>()
-                                                .selectedPositionsList[index],
-                                            textAlign: TextAlign.center,
-                                          ),
-                                          IconButton(
-                                              onPressed: () {
-                                                setState(() {
-                                                  context
-                                                      .read<ChiefsListCubit>()
-                                                      .deletePositionElement(
-                                                          index,
-                                                          context
-                                                              .read<
-                                                                  ChiefsListCubit>()
-                                                              .selectedPositionsList[index]);
-                                                });
-                                              },
-                                              icon: Icon(Icons.delete))
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    context
-                                                .read<ChiefsListCubit>()
-                                                .selectedPositionsList[index] ==
-                                            'Начальник'
-                                        ? DropdownButton<Unit>(
-                                            isExpanded: true,
-                                            value: context
-                                                .read<ChiefsListCubit>()
-                                                .selectedUnit,
-                                            onChanged: (Unit? unit) =>
-                                                setState(() {
-                                              context
-                                                  .read<ChiefsListCubit>()
-                                                  .changeUnitsDropDownValue(
-                                                      index, unit);
-                                            }),
-                                            items: state.unitsList
-                                                .map((Unit unit) =>
-                                                    DropdownMenuItem(
-                                                      value: unit,
-                                                      child: Text(
-                                                          '${unit.number} ${unit.name}'),
-                                                    ))
-                                                .toList(),
-                                          )
-                                        : DropdownButton<Area>(
-                                            isExpanded: true,
-                                            value:state
-                                                    .areasList
-                                                    .isNotEmpty
-                                                ? context
-                                                        .read<ChiefsListCubit>()
-                                                        .areasForPositionsList[
-                                                    index]
-                                                : Area(
-                                                    id: 0,
-                                                    name: '',
-                                                    number: '',
-                                                    unitId: 0),
-                                            onChanged: (Area? area) =>
-                                                setState(() {
-                                              context
-                                                  .read<ChiefsListCubit>()
-                                                  .changeAreasDropDownValue(
-                                                      index, area);
-                                            }),
-                                            items: state.areasList
-                                                .map((Area area) =>
-                                                    DropdownMenuItem(
-                                                      value: area,
-                                                      child: Text(
-                                                          '${area.number} ${area.name}'),
-                                                    ))
-                                                .toList(),
-                                          ),
-                                  ],
-                                ),
-                          separatorBuilder: (ctx, i) => SizedBox(
-                                height: 5,
-                              ),
-                          itemCount: context
-                                  .read<ChiefsListCubit>()
-                                  .selectedPositionsList
-                                  .length +
-                              1),
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: context
+                                .read<ChiefsListCubit>()
+                                .positionsList
+                                .length +
+                            1,
+                        itemBuilder: (context, index) =>
+                            ChoosingPositionElement(
+                                index: index,
+                                cubit: context.read<ChiefsListCubit>()),
+                        separatorBuilder: (context, index) => const SizedBox(
+                          height: 15,
+                        ),
+                      ),
                     ),
-                    const SizedBox(
-                      height: 20,
-                    ),
+
+                    // Container(
+                    //   alignment: Alignment.center,
+                    //   child: const Text(
+                    //     'Должность',
+                    //     style: TextStyle(fontSize: 18),
+                    //   ),
+                    // ),
+                    // const SizedBox(
+                    //   height: 5,
+                    // ),
+                    // SingleChildScrollView(
+                    //   child: ListView.separated(
+                    //       physics: NeverScrollableScrollPhysics(),
+                    //       shrinkWrap: true,
+                    //       itemBuilder: (context, index) => index ==
+                    //               context
+                    //                   .read<ChiefsListCubit>()
+                    //                   .selectedPositionsList
+                    //                   .length
+                    //           ? IconButton(
+                    //               onPressed: () {
+                    //                 showDialog(
+                    //                     context: context,
+                    //                     builder: (ctx) => SimpleDialog(
+                    //                           title: Text('выберите должность'),
+                    //                           children: List.generate(
+                    //                               context
+                    //                                   .read<ChiefsListCubit>()
+                    //                                   .positionsToSelectList
+                    //                                   .length,
+                    //                               (index) => SimpleDialogOption(
+                    //                                     onPressed: () =>
+                    //                                         setState(() {
+                    //                                       context
+                    //                                           .read<
+                    //                                               ChiefsListCubit>()
+                    //                                           .addPositionElement(
+                    //                                               index);
+                    //                                       Navigator.pop(ctx);
+                    //                                     }),
+                    //                                     child: Text(context
+                    //                                         .read<
+                    //                                             ChiefsListCubit>()
+                    //                                         .positionsToSelectList[index]),
+                    //                                   )),
+                    //                         ));
+                    //               },
+                    //               icon: Icon(Icons.add))
+                    //           : Column(
+                    //               children: [
+                    //                 Container(
+                    //                   padding: EdgeInsets.only(left: 10),
+                    //                   decoration: BoxDecoration(
+                    //                       borderRadius:
+                    //                           BorderRadius.circular(8),
+                    //                       border:
+                    //                           Border.all(color: Colors.black)),
+                    //                   child: Row(
+                    //                     mainAxisSize: MainAxisSize.min,
+                    //                     children: [
+                    //                       Text(
+                    //                         context
+                    //                             .read<ChiefsListCubit>()
+                    //                             .selectedPositionsList[index],
+                    //                         textAlign: TextAlign.center,
+                    //                       ),
+                    //                       IconButton(
+                    //                           onPressed: () {
+                    //                             setState(() {
+                    //                               context
+                    //                                   .read<ChiefsListCubit>()
+                    //                                   .deletePositionElement(
+                    //                                       index,
+                    //                                       context
+                    //                                           .read<
+                    //                                               ChiefsListCubit>()
+                    //                                           .selectedPositionsList[index]);
+                    //                             });
+                    //                           },
+                    //                           icon: Icon(Icons.delete))
+                    //                     ],
+                    //                   ),
+                    //                 ),
+                    //                 const SizedBox(
+                    //                   height: 5,
+                    //                 ),
+                    //                 context
+                    //                             .read<ChiefsListCubit>()
+                    //                             .selectedPositionsList[index] ==
+                    //                         'Начальник'
+                    //                     ? DropdownButton<Unit>(
+                    //                         isExpanded: true,
+                    //                         value: context
+                    //                             .read<ChiefsListCubit>()
+                    //                             .selectedUnit,
+                    //                         onChanged: (Unit? unit) =>
+                    //                             setState(() {
+                    //                           context
+                    //                               .read<ChiefsListCubit>()
+                    //                               .changeUnitsDropDownValue(
+                    //                                   index, unit);
+                    //                         }),
+                    //                         items: state.unitsList
+                    //                             .map((Unit unit) =>
+                    //                                 DropdownMenuItem(
+                    //                                   value: unit,
+                    //                                   child: Text(
+                    //                                       '${unit.number} ${unit.name}'),
+                    //                                 ))
+                    //                             .toList(),
+                    //                       )
+                    //                     : DropdownButton<Area>(
+                    //                         isExpanded: true,
+                    //                         value:state
+                    //                                 .areasList
+                    //                                 .isNotEmpty
+                    //                             ? context
+                    //                                     .read<ChiefsListCubit>()
+                    //                                     .areasForPositionsList[
+                    //                                 index]
+                    //                             : Area(
+                    //                                 id: 0,
+                    //                                 name: '',
+                    //                                 number: '',
+                    //                                 unitId: 0),
+                    //                         onChanged: (Area? area) =>
+                    //                             setState(() {
+                    //                           context
+                    //                               .read<ChiefsListCubit>()
+                    //                               .changeAreasDropDownValue(
+                    //                                   index, area);
+                    //                         }),
+                    //                         items: state.areasList
+                    //                             .map((Area area) =>
+                    //                                 DropdownMenuItem(
+                    //                                   value: area,
+                    //                                   child: Text(
+                    //                                       '${area.number} ${area.name}'),
+                    //                                 ))
+                    //                             .toList(),
+                    //                       ),
+                    //               ],
+                    //             ),
+                    //       separatorBuilder: (ctx, i) => SizedBox(
+                    //             height: 5,
+                    //           ),
+                    //       itemCount: context
+                    //               .read<ChiefsListCubit>()
+                    //               .selectedPositionsList
+                    //               .length +
+                    //           1),
+                    // ),
+                    // const SizedBox(
+                    //   height: 20,
+                    // ),
                     const SizedBox(
                       height: 20,
                     ),
@@ -277,7 +298,7 @@ class _AddChiefPageViewState extends State<AddChiefPageView> {
                         child: ElevatedButton(
                       onPressed: () {
                         setState(() {
-                          context.read<ChiefsListCubit>().insertStaff();
+                          context.read<ChiefsListCubit>().insertStaffNew();
                           showModalBottomSheet(
                               context: context,
                               builder: (context) => Container(

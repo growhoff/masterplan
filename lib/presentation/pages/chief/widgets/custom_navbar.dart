@@ -16,11 +16,11 @@ class NavBarCustomChief extends StatelessWidget {
         builder:(context, stateMaster) => GestureDetector(
           child: Scaffold(
             appBar: AppBar(
-              title: BlocBuilder<CubitMain, StateMain>(builder: (context, state) 
+              title: BlocBuilder<CubitMain, StateMain>(builder: (context, state)
               {
                 final user = state.user!;
                 return Column(children: [
-                  Text(DataChief.listPage[stateMaster.activePage].title), 
+                  Text(DataChief.listPage[stateMaster.activePage].title),
                   Text('${user.fio} / ${user.position.name} / ${user.unit!.name}', style: const TextStyle(fontSize: 12)),
                 ]);
                 }

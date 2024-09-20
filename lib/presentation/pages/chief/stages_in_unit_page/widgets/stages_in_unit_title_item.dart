@@ -186,8 +186,9 @@ class _StagesInUnitTitleItemViewState extends State<StagesInUnitTitleItemView> {
                                                                 .read<
                                                                     StagesInUnitCubit>()
                                                                 .uploadStages(
-                                                                    stageModel: widget
-                                                                        .stageModel),
+                                                                    stageModel:
+                                                                        widget
+                                                                            .stageModel),
                                                             widget.setState()
                                                           }
                                                         : setState(() {
@@ -317,12 +318,21 @@ class _StagesInUnitTitleItemViewState extends State<StagesInUnitTitleItemView> {
                             textAlign: TextAlign.center,
                           ),
                         ),
-                        flex: 1,
+                        flex: 2,
                       ),
                       Expanded(
                         child: Container(
                           child: Text(
                             '${widget.stageModel.batch.name}',
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        flex: 1,
+                      ),
+                      Expanded(
+                        child: Container(
+                          child: Text(
+                            '${widget.stageModel.readyToUploadQuantity} / ${widget.stageModel.availableQuantity}',
                             textAlign: TextAlign.center,
                           ),
                         ),

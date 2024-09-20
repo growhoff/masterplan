@@ -12,6 +12,7 @@ class ChiefOperationDto extends Dto {
       required this.stageId,
       this.chiefBatch,
         this.distributionStageId,
+        this.isDistributed,
       required this.chiefBatchId});
 
   final int id;
@@ -19,6 +20,7 @@ class ChiefOperationDto extends Dto {
   final int chiefBatchId;
   final int stageId;
   final int operationId;
+  final bool? isDistributed;
   final ChiefBatchDTO? chiefBatch;
   final StageDTO? stage;
   final OperationDTO? operation;
@@ -43,6 +45,7 @@ class ChiefOperationDto extends Dto {
           : null,
       stage: map['z_stage'] != null ? StageDTO.fromMap(map['z_stage']) : null,
       operationId: map['operation_id'],
+      isDistributed: map['is_distributed'],
       stageId: map['stage_id'],
       chiefBatch: map['z_chief_batch'] != null
           ? ChiefBatchDTO.fromMap(map['z_chief_batch'])

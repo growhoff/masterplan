@@ -109,6 +109,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
       (hours >= 8 && hours <= 20) ? change = 1 : change = 2;
 
       AnalyticsOperationModel analyticsOperation = AnalyticsOperationModel(
+          unitNumber: value.first.distributionStage?.unit?.number ?? '',
           batch: value.first.batch,
           stage: value.first.stage,
           operationId: value.first.operation.id,
@@ -117,10 +118,8 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
           detailNumber: value.first.batch.numberRS,
           operationNumber: value.first.operation.number,
           operationName: value.first.operation.name,
-          timePlan: TimeConverter.instance
-              .convertTimeFromMinutes(value.first.timeplan),
-          timeFact: TimeConverter.instance
-              .convertTimeFromSeconds(value.first.timeworking ?? 0),
+          timePlan:value.first.timeplan,
+          timeFact: value.first.timeworking ?? 0,
           machineName: value.first.machine?.name ?? '',
           machineInventoryNumber: value.first.machine?.inventoryNumber ?? 0,
           fio: value.first.user?.fio ?? 'мастер',
@@ -381,6 +380,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
 
       operationsMap.forEach((key, value) {
         final analyticsOperation = AnalyticsOperationModel(
+          unitNumber: value.first.distributionStage?.unit?.number ?? '',
             batch: value.first.batch,
             stage: value.first.stage,
             operationId: 0,
@@ -390,8 +390,8 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
             detailName: value.first.batch.name,
             operationNumber: value.first.operation.number,
             operationName: value.first.operation.name,
-            timePlan: '',
-            timeFact: '',
+            timePlan: 0,
+            timeFact: 0,
             machineName: '',
             machineInventoryNumber: 0,
             fio: '',
@@ -480,7 +480,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
         timeEnd: end.millisecondsSinceEpoch + 86399000);
 
     String filePath = await _excelService.uploadTotalNumberReadyOperationsReport(
-        analyticsOperationsList: state.analyticsOperationsList);
+        totalNumberReadyOperationModelsList: state.totalNumberReadyOperationModelsList);
     if (filePath == '') {
       filePath = 'что-то пошло не так';
     } else {
@@ -536,7 +536,7 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
             count: dto.batch.count,
             code: dto.batch.code,
             technology: dto.batch.technology,
-            isready: dto.batch.isready,
+
             orderId: dto.batch.orderId),
         stage: dto.stage ?? StageDTO.empty,
         operation: dto.operation,

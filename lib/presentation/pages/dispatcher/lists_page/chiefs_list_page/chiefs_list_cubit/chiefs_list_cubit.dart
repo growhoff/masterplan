@@ -19,6 +19,7 @@ import '../../../../../../data/repositories/supabase/service/area_table.dart';
 import '../../../../../../data/repositories/supabase/service/staff_table.dart';
 import '../../../../../../domain/model/area.dart';
 import '../../../../../../domain/usecase/generate_password_service.dart';
+import '../chief_unit_and_area_model.dart';
 
 part 'chiefs_list_state.dart';
 
@@ -31,11 +32,16 @@ class ChiefsListCubit extends Cubit<ChiefsListState> {
   final TextEditingController numberController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
+  List<Unit> unitsList = [];
+  List<Area> areasList = [];
+
   final _unitTable = UnitTable();
   final _areaTable = AreaTable();
 
   final _staffTable = StaffTable();
   final _positionStaffTable = PositionStaffTable();
+
+  List<ChiefUnitAndAreaModel> positionsList = [];
 
   Area selectedArea = Area(id: 0, name: '', number: '', unitId: 0);
 
@@ -67,10 +73,10 @@ class ChiefsListCubit extends Cubit<ChiefsListState> {
         status: ChiefsListStatus.success, chiefsList: chiefsList));
   }
 
-  Future fetchAreas() async {
+  Future fetchAreas(int unitId, {int? index}) async {
     List<Area> areasList = [];
 
-    var fetchedAreasList = await _areaTable.selectUnitId(selectedUnit.id);
+    var fetchedAreasList = await _areaTable.selectUnitId(unitId);
 
     for (var fetchedArea in fetchedAreasList) {
       final areaDto = AreaDTO.fromMap(fetchedArea);
@@ -81,6 +87,12 @@ class ChiefsListCubit extends Cubit<ChiefsListState> {
           unitId: areaDto.unitId);
       areasList.add(area);
       areasMap[area.id] = area;
+    }
+
+    print('fromFetch: ${areasList}');
+
+    if (index != null) {
+      positionsList[index].availableAreasList = areasList;
     }
 
     emit(state.copyWith(areasList: areasList));
@@ -106,8 +118,6 @@ class ChiefsListCubit extends Cubit<ChiefsListState> {
       unitsMap[unit.id] = unit;
     }
 
-    selectedUnit = unitsList.first;
-
     emit(state.copyWith(unitsList: unitsList));
   }
 
@@ -116,7 +126,7 @@ class ChiefsListCubit extends Cubit<ChiefsListState> {
 
     await fetchUnits();
 
-    await fetchAreas();
+    await fetchAreas(selectedUnit.id);
 
     if (staffId != null) {
       await fetchStaffPositions(staffId: staffId);
@@ -143,7 +153,7 @@ class ChiefsListCubit extends Cubit<ChiefsListState> {
     await fetchUnits();
 
     selectedUnit = unitsMap[positionsStaffList.first.unitId]!;
-    await fetchAreas();
+    await fetchAreas(selectedUnit.id);
     for (var positionStaff in positionsStaffList) {
       selectedPositionsList.add(positionStaff.position.name);
       areasForPositionsList.add(areasMap[positionStaff.areaId] ??
@@ -152,6 +162,26 @@ class ChiefsListCubit extends Cubit<ChiefsListState> {
 
     positionsToSelectList = ['Мастер'];
     emit(state.copyWith(status: ChiefsListStatus.success));
+  }
+
+  addAreaToList(Area? area, {required int modelIndex, required int areaIndex}) {
+    emit(state.copyWith(status: ChiefsListStatus.loading));
+    if (areaIndex == positionsList[modelIndex].selectedAreasList.length) {
+      positionsList[modelIndex].selectedAreasList.add(Area.empty);
+    }
+    positionsList[modelIndex].selectedAreasList[areaIndex] = area ?? Area.empty;
+    emit(state.copyWith(status: ChiefsListStatus.success));
+  }
+
+  Future selectUnit(int index, Unit? unit) async {
+    selectedUnit = unit ?? Unit.empty;
+    if (index == positionsList.length) {
+      positionsList.add(ChiefUnitAndAreaModel());
+    }
+    positionsList[index].unit = unit ?? Unit.empty;
+    print('positionsList: $positionsList');
+
+    await fetchAreas(unit?.id ?? selectedUnit.id, index: index);
   }
 
   Future<void> fetchStaffPositions({required int staffId}) async {
@@ -210,7 +240,7 @@ class ChiefsListCubit extends Cubit<ChiefsListState> {
               id: 0,
               login: '',
               password: '',
-              position:PositionDTO(id: 0, name: ''),
+              position: PositionDTO(id: 0, name: ''),
               positionId: 0,
               fio: ''),
           areaId: areasForPositionsList[i].id,
@@ -235,16 +265,15 @@ class ChiefsListCubit extends Cubit<ChiefsListState> {
     }
 
     var staffId = await _staffTable.insert(StaffDTO(
-        id: 0,
-        login: numberController.text,
-        password:
-            passwordController.text == '' || passwordController.text == ' '
-                ? _password.generatePassword()
-                : passwordController.text,
-       positionId: positionId,
-        position:  PositionDTO(id: 0, name: ''),
-        fio: fioController.text,
-       ));
+      id: 0,
+      login: numberController.text,
+      password: passwordController.text == '' || passwordController.text == ' '
+          ? _password.generatePassword()
+          : passwordController.text,
+      positionId: positionId,
+      position: PositionDTO(id: 0, name: ''),
+      fio: fioController.text,
+    ));
 
     for (int i = 0; i < selectedPositionsList.length; i++) {
       await _positionStaffTable.insertChief(PositionStaffDTO(
@@ -256,7 +285,7 @@ class ChiefsListCubit extends Cubit<ChiefsListState> {
               id: 0,
               login: '',
               password: '',
-             positionId: 0,
+              positionId: 0,
               position: PositionDTO(id: 0, name: ''),
               fio: ''),
           areaId: areasForPositionsList.isNotEmpty
@@ -273,13 +302,77 @@ class ChiefsListCubit extends Cubit<ChiefsListState> {
     positionsToSelectList.clear();
   }
 
+  Future insertStaffNew() async {
+    int positionId = 2;
+
+    for (var position in positionsList) {
+      if (position.selectedAreasList.isNotEmpty) {
+        positionId = 7;
+      }
+    }
+
+    var staffId = await _staffTable.insert(StaffDTO(
+      id: 0,
+      login: numberController.text,
+      password: passwordController.text == '' || passwordController.text == ' '
+          ? _password.generatePassword()
+          : passwordController.text,
+      positionId: positionId,
+      position: PositionDTO(id: 0, name: ''),
+      fio: fioController.text,
+    ));
+
+    List<PositionStaffDTO> positionStaffDtosList = [];
+
+    for (var position in positionsList) {
+      positionStaffDtosList.add(PositionStaffDTO(
+          id: 0,
+          positionId: 2,
+          staffId: staffId,
+          unitId: position.unit.id,
+          position: PositionDTO(id: 0, name: ''),
+          staff: StaffDTO(
+              id: 0,
+              login: '',
+              password: '',
+              fio: '',
+              positionId: 0,
+              position: PositionDTO(id: 0, name: ''))));
+      if (position.selectedAreasList.isNotEmpty) {
+        for (var area in position.selectedAreasList) {
+          positionStaffDtosList.add(PositionStaffDTO(
+              id: 0,
+              positionId: 3,
+              staffId: staffId,
+              position: PositionDTO(id: 0, name: ''),
+              areaId: area.id,
+              staff: StaffDTO(
+                  id: 0,
+                  login: '',
+                  password: '',
+                  fio: '',
+                  positionId: 0,
+                  position: PositionDTO(id: 0, name: ''))));
+        }
+      }
+    }
+
+    await _positionStaffTable.bulkInsert(positionStaffDtosList);
+
+    fioController.clear();
+    numberController.clear();
+    passwordController.clear();
+    selectedPositionsList.clear();
+    positionsToSelectList.clear();
+  }
+
   changeAreasDropDownValue(int index, Area? value) {
     areasForPositionsList[index] = value ?? areasForPositionsList[index];
   }
 
   Future changeUnitsDropDownValue(int index, Unit? value) async {
     selectedUnit = value ?? selectedUnit;
-    await fetchAreas();
+    await fetchAreas(value?.id ?? selectedUnit.id);
     areasForPositionsList = [];
     for (int i = 0; i < selectedPositionsList.length; i++) {
       if (state.areasList.isNotEmpty) {
@@ -293,7 +386,7 @@ class ChiefsListCubit extends Cubit<ChiefsListState> {
 
     selectedPositionsList.add(positionsToSelectList[index]);
     if (positionsToSelectList[index] == 'Начальник') {
-      positionsToSelectList = ['Мастер'];
+      positionsToSelectList = positionsToSelectStartValue;
     }
 
     // в список выбранных участков добавляется значение
@@ -318,10 +411,10 @@ class ChiefsListCubit extends Cubit<ChiefsListState> {
     }
   }
 
-  Future deleteStaff(
-      {required int staffId,
-      required int positionStaffId,
-     }) async {
+  Future deleteStaff({
+    required int staffId,
+    required int positionStaffId,
+  }) async {
     await _positionStaffTable.delete(positionStaffId);
     await _staffTable.delete(staffId);
 

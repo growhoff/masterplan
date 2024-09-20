@@ -9,7 +9,7 @@ class OperatorOperationsTable extends SupabaseTable {
   final table = Supabase.instance.client.from('z_operator_operations');
   static const selectStaff = '*, z_position(*), z_company(*)';
   static const selectOperOperat =
-      '*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*, z_order(*)), z_staff($selectStaff), z_machine(*, z_shift_schedule(*)), z_area!inner(*), z_chief_operation(*), z_chief_batch(*), z_distribution_stage!inner(*)';
+      '*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*, z_order(*)), z_staff($selectStaff), z_machine(*, z_shift_schedule(*)), z_area!inner(*), z_chief_operation(*), z_chief_batch(*), z_distribution_stage!inner(*,z_unit(*))';
   static const selectOperOperatLite =
       '*, z_status(*), z_batch(*, z_order(*)), z_stage(*), z_operation(*), z_area(*), z_machine(*, z_shift_schedule(*)), z_staff($selectStaff)';
 
@@ -114,7 +114,7 @@ class OperatorOperationsTable extends SupabaseTable {
           List<int> areasIdList) {
     return table
         .select(
-            '*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*,z_order(*)), z_staff(*,z_position(*)) z_machine(*), z_area!inner(*), z_chief_operation(*), z_chief_batch(*), z_distribution_stage()')
+            '*, z_status(*), z_stage(*), z_operation(*) ,z_batch(*,z_order(*)), z_staff(*,z_position(*)), z_machine(*), z_area!inner(*), z_chief_operation(*), z_chief_batch(*), z_distribution_stage(*,z_unit(*))')
         .inFilter('area_id', areasIdList)
         .inFilter('status_id', [4, 5, 9])
         .order('batch_id', ascending: true)
@@ -122,7 +122,7 @@ class OperatorOperationsTable extends SupabaseTable {
   }
 
   Future<List<Map<String, dynamic>>>
-      selectByOperationIdListAndDistributionStagesIdList(
+      selectByOperationIdListAndDistributionStagesIdListOrderedByChiefBatchId(
           {required List<int> operationsIdsList,
           required List<int> distributionStageIdsList}) {
     return table
@@ -131,6 +131,7 @@ class OperatorOperationsTable extends SupabaseTable {
         .eq('z_area.company_id', _companyId)
         .inFilter('operation_id', operationsIdsList)
         .inFilter('distribution_stage_id', distributionStageIdsList)
+    .order('chief_batch_id', ascending: true)
         .order('id', ascending: true);
     //.order('chief_operation_id', ascending: true);
   }
@@ -278,7 +279,8 @@ class OperatorOperationsTable extends SupabaseTable {
     await table.update({'status_id': 4}).inFilter('id', listId);
   }
 
-  Future<void> updateMasterModificateListCount(List<int> listId2, String comment) async {
+  Future<void> updateMasterModificateListCount(
+      List<int> listId2, String comment) async {
     await table.update({
       'status_id': 4,
       'pause': null,

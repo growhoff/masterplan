@@ -5,6 +5,7 @@ import 'package:master_plan/presentation/pages/master/pages/analytics_page/cubit
 
 import '../../../../domain/model/area.dart';
 import '../../../../domain/model/unit.dart';
+import '../../../app/bloc/cubit.dart';
 import 'dispatcher_analytics_cubit/dispatcher_analytics_cubit.dart';
 
 class DispatcherAnalyticsPage extends StatelessWidget {
@@ -12,8 +13,10 @@ class DispatcherAnalyticsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return BlocProvider(
-      create: (context) => DispatcherAnalyticsCubit(),
+      create: (context) =>
+          DispatcherAnalyticsCubit(),
       child: DispatcherAnalyticsPageView(),
     );
   }
@@ -32,7 +35,6 @@ class _DispatcherAnalyticsPageViewState
   @override
   void initState() {
     context.read<DispatcherAnalyticsCubit>().fetchUnits();
-    context.read<DispatcherAnalyticsCubit>().fetchAreas();
     super.initState();
   }
 
@@ -109,8 +111,6 @@ class _DispatcherAnalyticsPageViewState
                                                                     DispatcherAnalyticsCubit>()
                                                                 .selectedArea =
                                                             Area.empty;
-
-                                                        print(context.read<DispatcherAnalyticsCubit>().selectedAreasList);
                                                       }))),
                                         ],
                                       );
@@ -133,11 +133,6 @@ class _DispatcherAnalyticsPageViewState
                               padding: WidgetStateProperty.all<EdgeInsets>(
                                   EdgeInsets.all(10))),
                           onPressed: () {
-                            setState(() {
-                              context
-                                  .read<DispatcherAnalyticsCubit>()
-                                  .pressAreasButton();
-                            });
                             showDialog(
                                 context: context,
                                 builder: (ctx) => StatefulBuilder(
@@ -172,7 +167,9 @@ class _DispatcherAnalyticsPageViewState
                                                         context
                                                             .read<
                                                                 DispatcherAnalyticsCubit>()
-                                                            .addSelectedAreaToList();
+                                                            .addSelectedAreaToList(
+                                                                value ??
+                                                                    Area.empty);
 
                                                         print(
                                                             '${context.read<DispatcherAnalyticsCubit>().selectedArea.number} ${context.read<DispatcherAnalyticsCubit>().selectedArea.name}');
@@ -189,7 +186,7 @@ class _DispatcherAnalyticsPageViewState
                         Text(
                             textAlign: TextAlign.center,
                             softWrap: true,
-                            '${context.read<DispatcherAnalyticsCubit>().selectedArea.number != '' ? context.read<DispatcherAnalyticsCubit>().selectedArea.number : 'все в выбранном цехе'} ${context.read<DispatcherAnalyticsCubit>().selectedArea.name}'),
+                            '${context.read<DispatcherAnalyticsCubit>().selectedArea.number} ${context.read<DispatcherAnalyticsCubit>().selectedArea.name}'),
                       ],
                     ),
                   ),

@@ -30,7 +30,7 @@ class ShiftsDistributionTable extends SupabaseTable{
 
   Future<List<Map<String, dynamic>>> selectListId(List<int> listId, DateTime date) {
     final dat = '${date.year}-${date.month}-${date.day}';
-    String filters = '';  
+    String filters = '';
     for (var i = 0; i < listId.length; i++) {
       if (i == (listId.length - 1)) {
         filters += 'id.eq.${listId[i]}';

@@ -66,7 +66,7 @@ class DistributionStage {
                                 dto.chiefBatchDto?.batch.order?.statusId ?? 0),
                         code: dto.chiefBatchDto?.batch.code ?? '',
                         technology: dto.chiefBatchDto?.batch.technology ?? '',
-                        isready: dto.chiefBatchDto?.batch.isready ?? false,
+
                         orderId: dto.chiefBatchDto?.orderId,
                         numberRS: dto.chiefBatchDto?.batch.numberRS ?? ''))
             : null,

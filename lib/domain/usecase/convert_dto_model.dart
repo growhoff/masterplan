@@ -69,7 +69,7 @@ class ConvertDtoModel {
       controlMachineId: dto.controlId,
     );
   }
-  
+
   static Position convertToPosition(PositionDTO dto){
     return Position(id: dto.id, name: dto.name);
   }
@@ -92,16 +92,16 @@ class ConvertDtoModel {
 
   static Batch convertToBatch(BatchDTO dto){
     return Batch(
-          id: dto.id,
-          numberRS: dto.numberRS,
-          name: dto.name,
-          count: dto.count,
-          code: dto.code,
-          orderId: dto.orderId,
-          technology: dto.technology,
-          number: dto.number,
-          order: dto.order != null ? convertToOrder(dto.order!) : null,
-          isready: dto.isready);
+        id: dto.id,
+        numberRS: dto.numberRS,
+        name: dto.name,
+        count: dto.count,
+        code: dto.code,
+        orderId: dto.orderId,
+        technology: dto.technology,
+        number: dto.number,
+        order: dto.order != null ? convertToOrder(dto.order!) : null,
+        );
   }
 
   static OperatorOperations convertToOperatorOperations(OperatorOperationsDTO dto, {List<Transfer>? listTransfer}) {

@@ -220,12 +220,21 @@ class _QueueStageItemViewState extends State<QueueStageItemView> {
                             textAlign: TextAlign.center,
                           ),
                         ),
-                        flex: 1,
+                        flex: 2,
                       ),
                       Expanded(
                         child: Container(
                           child: Text(
                             '${widget.stageModel.batch.name}',
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        flex: 1,
+                      ),
+                      Expanded(
+                        child: Container(
+                          child: Text(
+                            '${widget.stageModel.readyToUploadQuantity} / ${widget.stageModel.availableQuantity}',
                             textAlign: TextAlign.center,
                           ),
                         ),

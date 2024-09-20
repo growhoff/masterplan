@@ -36,6 +36,22 @@ class ChiefDistributionOperationsTable extends SupabaseTable {
     return 0;
   }
 
+  Future bulkInsert(List<ChiefDistributionOperationsDTO> dtosList)async{
+    List<Map<String, Object>> mapsList = [];
+
+    for (var dto in dtosList) {
+      mapsList.add({
+        'batch_id': dto.batchId,
+        'stage_id': dto.stageId,
+        'operation_id': dto.operationId,
+        'quantity': dto.quantity,
+        'unit_id': dto.unitId ?? 0
+      });
+    }
+
+    await table.insert(mapsList);
+  }
+
   @override
   Future<List<Map<String, dynamic>>> select() async {
     var res = await table
@@ -54,6 +70,7 @@ class ChiefDistributionOperationsTable extends SupabaseTable {
             '*, z_batch:batch_id!inner(*), z_stage:stage_id(*, z_area(*)), z_operation:operation_id(*)')
         .eq('batch_id', batchId)
         .eq('stage_id', stageId)
+    .neq('quantity', 0)
         .order('id', ascending: true);
 
     return res;
@@ -63,7 +80,7 @@ class ChiefDistributionOperationsTable extends SupabaseTable {
       List<int> batchId) async {
     var res = await table
         .select(
-            '*, z_batch:batch_id!inner(*), z_stage:stage_id(*, z_area(*)), z_operation:operation_id(*)')
+        '*, z_batch:batch_id!inner(*), z_stage:stage_id(*, z_area(*)), z_operation:operation_id(*)')
         .inFilter('batch_id', batchId)
         .eq('z_batch.company_id', _companyId ?? 1)
         .order('operation_id', ascending: true);

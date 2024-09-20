@@ -17,10 +17,12 @@ class PriorityCircle extends StatelessWidget {
             shape: BoxShape.circle,
             color: priorityToColor(priority),
           ),
-          child: Text(
-            '$priority',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontWeight: FontWeight.bold),
+          child: Center(
+            child: Text(
+              '$priority',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           )),
     );
   }

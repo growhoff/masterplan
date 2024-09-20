@@ -33,6 +33,8 @@ class _ChiefsListPageViewState extends State<ChiefsListPageView> {
     super.initState();
   }
 
+  Unit? _selectedUnit;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,7 +64,9 @@ class _ChiefsListPageViewState extends State<ChiefsListPageView> {
                   SizedBox(
                       height: 60,
                       child: DropdownButton<Unit>(
-                          value: context.read<ChiefsListCubit>().selectedUnit,
+                        hint: Text('Выберите цех'),
+                          value:
+                          _selectedUnit,
                           items: state.unitsList
                               .map((Unit unit) => DropdownMenuItem(
                                     child: Text('${unit.number} ${unit.name}'),
@@ -70,6 +74,7 @@ class _ChiefsListPageViewState extends State<ChiefsListPageView> {
                                   ))
                               .toList(),
                           onChanged: (Unit? value) => setState(() {
+                            _selectedUnit = value;
                                 context.read<ChiefsListCubit>().selectedUnit =
                                     value ?? Unit.empty;
 

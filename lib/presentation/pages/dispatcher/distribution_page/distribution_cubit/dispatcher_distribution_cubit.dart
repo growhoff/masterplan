@@ -49,7 +49,6 @@ class DispatcherDistributionCubit extends Cubit<DispatcherDistributionState> {
       var stagesMap = groupBy(batchesValue, (stage) => stage.stageId);
 
       stagesMap.forEach((stagesKey, stagesValue) {
-        print('batchesKey: $batchesKey   ,  stageKey: $stagesKey ');
         final distributionStage = DistributionStageModel(
             batch: stagesValue.first.chiefBatch?.batch ?? BatchDTO.empty,
             stageId: stagesValue.first.stageId,
@@ -167,13 +166,14 @@ class DispatcherDistributionCubit extends Cubit<DispatcherDistributionState> {
       {required int quantity,
       required DistributionStageModel distributionStageModel,
       required int selectedUnitId}) async {
-
     emit(state.copyWith(status: DispatcherDistributionStatus.loading));
 
     var fetchedOperationsList = await _operationTable.selectByStageId(
         stageId: distributionStageModel.stageId);
 
     List<Operation> operationsList = [];
+    List<ChiefDistributionOperationsDTO> chiefDistributionOperationsDTOsList =
+        [];
 
     for (var fetchedOperation in fetchedOperationsList) {
       final operationDto = OperationDTO.fromMap(fetchedOperation);
@@ -193,17 +193,19 @@ class DispatcherDistributionCubit extends Cubit<DispatcherDistributionState> {
     List<int> stagesIdForChangeStatusList = [];
 
     for (var operation in operationsList) {
-      await _chiefDistributionOperationsTable.insert(
-          ChiefDistributionOperationsDTO(
-              unitId: selectedUnitId,
-              id: 0,
-              operationId: operation.id,
-              stageId: distributionStageModel.stageId,
-              stage: StageDTO.empty,
-              operation: OperationDTO.empty,
-              batchId: distributionStageModel.batchId,
-              batch: BatchDTO.empty,
-              quantity: quantity));
+      final chiefDistributionOperationDTO = ChiefDistributionOperationsDTO(
+          unitId: selectedUnitId,
+          id: 0,
+          operationId: operation.id,
+          stageId: distributionStageModel.stageId,
+          stage: StageDTO.empty,
+          operation: OperationDTO.empty,
+          batchId: distributionStageModel.batchId,
+          batch: BatchDTO.empty,
+          quantity: quantity);
+
+
+      chiefDistributionOperationsDTOsList.add(chiefDistributionOperationDTO);
 
       for (int i = 0; i < quantity; i++) {
         distributionOperationList.add(ChiefOperationDto(
@@ -218,13 +220,13 @@ class DispatcherDistributionCubit extends Cubit<DispatcherDistributionState> {
           stagesIdForChangeStatusList
               .add(distributionStageModel.stagesList?[i].id ?? 0);
           _distributionStageTable.updateUnit(
-              distributionStageModel.stagesList?[i].id ?? 0,
-              selectedUnitId);
+              distributionStageModel.stagesList?[i].id ?? 0, selectedUnitId);
           unitsIdForStagesList.add(selectedUnitId);
         }
       }
     }
 
+    await _chiefDistributionOperationsTable.bulkInsert(chiefDistributionOperationsDTOsList);
     await _chiefOperationTable.bulkInsert(dtosList: distributionOperationList);
     await _distributionStageTable
         .bulkChangeStatusToExecute(stagesIdForChangeStatusList);
@@ -232,7 +234,5 @@ class DispatcherDistributionCubit extends Cubit<DispatcherDistributionState> {
     fetchStages();
 
     emit(state.copyWith(status: DispatcherDistributionStatus.success));
-
   }
-
 }
