@@ -57,7 +57,7 @@ class DetailDistribContent extends StatelessWidget {
                       Color colorMain = ((state.filterListOper[i].setCount != null) && (state.filterListOper[i].setCount != 0) && (state.filterListOper[i].setMachine != null) ) ? Colors.greenAccent : Colors.white;
                       list.add(
                         ExpansionPanel(
-                          headerBuilder: (context, isExpanded) => TitleItem(state.filterListOper[i], state.filterListOper[i].statusId == 4 ? Colors.amberAccent : Colors.white70), 
+                          headerBuilder: (context, isExpanded) => TitleItem(state.filterListOper[i], state.filterListOper[i].statusId == 4), 
                           body: BodyItem(i, colorMain, state.filterListOper[i].countTransfer > 0, state.filterListOper[i]),
                           isExpanded: state.filterListOper[i].isSelected,
                           backgroundColor: colorMain,

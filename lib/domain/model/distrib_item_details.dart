@@ -16,6 +16,7 @@ class DistribItemDetails {
   final int timeSh;
   final int timePZ;
   final int countTransfer;
+  final int orderPriority;
   DistribItemDetails({
     required this.id,
     required this.stageNumber,
@@ -31,6 +32,7 @@ class DistribItemDetails {
     required this.timeSh,
     required this.timePZ,
     required this.countTransfer,
+    required this.orderPriority,
   });
 
   DistribItemDetails copyWith({
@@ -48,6 +50,7 @@ class DistribItemDetails {
     int? timeSh,
     int? timePZ,
     int? countTransfer,
+    int? orderPriority,
   }) {
     return DistribItemDetails(
       id: id ?? this.id,
@@ -64,6 +67,7 @@ class DistribItemDetails {
       timeSh: timeSh ?? this.timeSh,
       timePZ: timePZ ?? this.timePZ,
       countTransfer: countTransfer ?? this.countTransfer,
+      orderPriority: orderPriority ?? this.orderPriority,
     );
   }
 }

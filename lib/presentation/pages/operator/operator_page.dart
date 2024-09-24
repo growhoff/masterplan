@@ -30,7 +30,7 @@ class ContentOperator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final machineList = context.read<CubitOperator>().machineIdList;
+    // final machineList = context.read<CubitOperator>().machineIdList;
     return GestureDetector(
       child: Scaffold(
         appBar: AppBar(
@@ -38,7 +38,7 @@ class ContentOperator extends StatelessWidget {
             return Column(
             children: [
               const Text('Оператор'),
-              Text('${state.user!.fio} / ${state.user!.position.name}', style: const TextStyle(fontSize: 12)),
+              Text('${state.user!.fio} / ${state.user!.unit!.number} ${state.user!.unit!.name} /\n${state.user!.area!.number} ${state.user!.area!.name} / бригада', style: const TextStyle(fontSize: 12)),
             ]);
             }),
           actions: const [],
@@ -46,26 +46,7 @@ class ContentOperator extends StatelessWidget {
         body:  SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(16),
-            child: 
-            machineList.isEmpty 
-            ? Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                const SizedBox(
-                  width: double.maxFinite,
-                  child: Card(
-                    color: Colors.red,
-                    child: Padding(
-                      padding:  EdgeInsets.all(8.0),
-                      child: Text('Оборудование не назначено.\nОбратитесь к мастеру!', textAlign: TextAlign.center,),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Image.asset('assets/images/operator/notDetails.jpg', width: 300,)
-              ],
-            )
-            : Center(
+            child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children : [
@@ -79,7 +60,7 @@ class ContentOperator extends StatelessWidget {
                         childAspectRatio: 2
                       ),
                       children: [
-                        BlocBuilder<CubitOperator, StateOperator>(builder: (context, state) => ButtonItem('Монитор оператора', ()=> Navigator.pushNamed(context, '/workPage'), state.isStart && machineList.isNotEmpty)),
+                        BlocBuilder<CubitOperator, StateOperator>(builder: (context, state) => ButtonItem('Монитор оператора', ()=> Navigator.pushNamed(context, '/workPage'), state.isStart)),//state.isStart && machineList.isNotEmpty
                         ButtonItem('Сменное задание', () => showDialog(context: context,builder: (BuildContext context) => const DialogWork()), true),
                         ButtonItem('Табель', () => showDialog(context: context,builder: (BuildContext context) => const DialogWork()), true),
                         ButtonItem('Расчёт сдельной ЗП', () => showDialog(context: context,builder: (BuildContext context) => const DialogWork()), true),

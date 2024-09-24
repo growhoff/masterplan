@@ -24,6 +24,7 @@ class DialogButtonSet extends StatelessWidget {
                       ),
           children: [
             ElevatedButtonCastom(
+              icon: null,
                 text: 'Переналадка',
                 isActive: (statusBtn == 'Все') || (statusBtn == 'Переналадка'),
                 color: ButtonStatus().getColorStatus('Переналадка'),
@@ -39,6 +40,7 @@ class DialogButtonSet extends StatelessWidget {
                 }),
             // const SizedBox(height: 8),
             ElevatedButtonCastom(
+              icon: null,
                 text: 'Уборка',
                 isActive: (statusBtn == 'Все') || (statusBtn == 'Уборка'),
                 color: ButtonStatus().getColorStatus('Уборка'),
@@ -54,6 +56,7 @@ class DialogButtonSet extends StatelessWidget {
                 }),
             // const SizedBox(height: 8),
             ElevatedButtonCastom(
+              icon: null,
                 text: 'Поломка',
                 isActive: (statusBtn == 'Все') ||
                     (statusBtn == 'В работе') ||
@@ -73,6 +76,7 @@ class DialogButtonSet extends StatelessWidget {
                 }),
             // const SizedBox(height: 8),
             ElevatedButtonCastom(
+              icon: null,
                 text: 'Нет УП',
                 isActive: (statusBtn == 'Все') || (statusBtn == 'НетУП'),
                 color: ButtonStatus().getColorStatus('НетУП'),
@@ -88,6 +92,7 @@ class DialogButtonSet extends StatelessWidget {
                 }),
             // const SizedBox(height: 8),
             ElevatedButtonCastom(
+              icon: null,
                 text: 'Нет чертежа, нет технологии',
                 isActive: (statusBtn == 'Все') || (statusBtn == 'НетЧертеж'),
                 color: ButtonStatus().getColorStatus('НетЧертеж'),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:master_plan/presentation/pages/master/pages/readyDetails/bloc/cubit.dart';
-import 'package:master_plan/presentation/pages/operator/pages/work/bloc/cubit.dart';
-import 'package:provider/provider.dart';
+// import 'package:master_plan/presentation/pages/operator/pages/work/bloc/cubit.dart';
+// import 'package:provider/provider.dart';
 
 class DialogInputWork extends StatelessWidget {
   const DialogInputWork({super.key, required this.indexOper, required this.count});
@@ -11,25 +11,38 @@ class DialogInputWork extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     
-    final TextEditingController brakController = TextEditingController();
-    final FocusNode brakFocusNode = FocusNode();
+    final TextEditingController brakController = TextEditingController(text: '$count');
+    // final FocusNode brakFocusNode = FocusNode();
 
-    // final TextEditingController commitController = TextEditingController();
+    final TextEditingController commitController = TextEditingController();
     // final FocusNode commitFocusNode = FocusNode();
     
     return AlertDialog(
-                title: const Text('Передача операций на брак'),
+                title: const Text('Брак. Отправить мастеру?'),
                 content: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text('Введите количество операций. Максимум: $count'),
+                    const Divider(),
+                    Text('Передать максимум: $count'),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        const Expanded(flex: 2, child: Text('Количество')),
+                        Expanded(
+                          child: TextFormField(
+                            controller: brakController,
+                            // focusNode: brakFocusNode,
+                            // decoration: const InputDecoration(labelText: 'Количество')
+                            ),
+                        ),
+                      ],
+                    ),
                     const SizedBox(height: 8),
                     TextFormField(
-                    controller: brakController,
-                    focusNode: brakFocusNode,
-                    decoration: const InputDecoration(labelText: 'Количество')),
-                const SizedBox(height: 8),                
+                    controller: commitController,
+                    // focusNode: commitController,
+                    decoration: const InputDecoration(labelText: 'Комментарий')),
                   ],
                 ),
                 titleTextStyle: const TextStyle(
@@ -40,15 +53,15 @@ class DialogInputWork extends StatelessWidget {
                 actions: [
                 ElevatedButton(
                   onPressed: () {
-                   context.read<CubitWork>().toggleBrak(brakController.text);
-                   Navigator.pop(context);
+                  //  context.read<CubitWork>().toggleBrak(brakController.text);
+                   Navigator.pop(context, '${brakController.text ?? 0}_${commitController.text ?? ''}');
                   },
-                  child: const Text('СОХРАНИТЬ'),
+                  child: const Text('Отправить'),
                 ),
-                ElevatedButton(
-                  onPressed: () {Navigator.pop(context);},
-                  child: const Text('ЗАКРЫТЬ'),
-                ),
+                // ElevatedButton(
+                //   onPressed: () {Navigator.pop(context);},
+                //   child: const Text('ЗАКРЫТЬ'),
+                // ),
               ],
             );
 }

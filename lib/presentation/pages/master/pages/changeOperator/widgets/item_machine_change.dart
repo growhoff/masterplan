@@ -25,6 +25,11 @@ class ItemMachineChange extends StatelessWidget {
                 Card(child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 6),
                   child: Text('${machineShif.machine.shiftSchedule!.timeChange}ч'),
+                ),),
+                const SizedBox(width: 2),
+                Card(child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  child: Text('инв.№ ${machineShif.machine.inventoryNumber}'),
                 ),)
               ],
             ),

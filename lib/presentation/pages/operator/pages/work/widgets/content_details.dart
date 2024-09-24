@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:master_plan/domain/usecase/button_status.dart';
+// import 'package:master_plan/domain/usecase/button_status.dart';
 import 'package:master_plan/presentation/pages/operator/pages/queue/queue_page.dart';
 import 'package:master_plan/presentation/pages/operator/pages/status/status_page.dart';
 import 'package:master_plan/presentation/pages/operator/pages/transfer/transfer_page.dart';
@@ -44,39 +44,43 @@ class ContentDetail extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const SizedBox(
-                  width: double.maxFinite,
-                  child: Card(
-                    color: Colors.red,
-                    child: Padding(
-                      padding:  EdgeInsets.all(8.0),
-                      child: Text('На оборудование не распределены детали. Обратитесь к мастеру!', textAlign: TextAlign.center,),
-                    ),
-                  ),
+              width: double.maxFinite,
+              child: Card(
+                color: Colors.red,
+                child: Padding(
+                  padding:  EdgeInsets.all(8.0),
+                  child: Text('На оборудование не распределены детали. Обратитесь к мастеру!', textAlign: TextAlign.center,),
                 ),
-                const SizedBox(height: 8),
+              ),
+            ),
+
             const Time(true),
+            Image.asset('assets/images/operator/notDetails.jpg', width: 300),
+
             const SizedBox(height: 8),
-            SizedBox(
-            width: double.maxFinite,
-            child: ElevatedButtonCastom(
-                text: 'Поломка',
-                isActive: (statusBtn == 'Все') || (statusBtn == 'В работе') || (statusBtn == 'Простой') || (statusBtn == 'Поломка'),
-                color: ButtonStatus().getColorStatus('Поломка'),
-                onPressed: () async{
-                  String? val = '';
-                  if (statusBtn != 'Поломка') {val = await showDialog<String>(context: context,builder: (BuildContext context) => const DialogInputComment());}
-                  else{val = '-';}
-                  if (val != ''){
-                    // if (context.mounted) await context.read<CubitWork>().setError(context.read<CubitTimer>().state.listTick[astivePage], operation.idPath);
-                    if (context.mounted) await context.read<CubitWork>().setMonitor('Поломка', val!, statusBtn != 'Поломка', -1);
-                    if (context.mounted) context.read<CubitTimer>().refreshAndStartStop(astivePage, statusBtn != 'Поломка');
-                  }
-                })),
+              SizedBox(
+                width: double.maxFinite,
+                child: ElevatedButtonCastom(
+                  icon: null,
+                    text: 'Выбор статуса',
+                    isActive: true,
+                    color: Colors.greenAccent,
+                    onPressed: () async{
+                      String? value = '';
+                      String? comment = '';
+                      value = await Navigator.push(context, MaterialPageRoute(builder: (context) => StatusPage(statusBtn, true)));
+                      if (value != null){
+                        if (statusBtn != value && context.mounted) {comment = await showDialog<String>(context: context,builder: (BuildContext context) => const DialogInputComment());}
+                        else{comment = '-';}
+                        if (comment != ''){
+                          if (context.mounted) await context.read<CubitWork>().setMonitor(value, comment!, statusBtn != value, operation!.idPath);
+                          if (context.mounted) context.read<CubitTimer>().refreshAndStartStop(astivePage, statusBtn != value);
+                        }
+                      }
+                    }))
           ],
         )
         : Column(
-            // mainAxisAlignment: MainAxisAlignment.center,
-            // mainAxisSize: MainAxisSize.min,
             children: [
               LineButtonInfo(pageData, activeTransfer, operation, statusBtn),
               Container(
@@ -102,13 +106,14 @@ class ContentDetail extends StatelessWidget {
               SizedBox(
                 width: double.maxFinite,
                 child: ElevatedButtonCastom(
+                    icon: null,
                     text: 'Выбор статуса',
                     isActive: true,
-                    color: const Color.fromARGB(255, 187, 194, 197),
+                    color: Colors.greenAccent,
                     onPressed: () async{
                       String? value = '';
                       String? comment = '';
-                      value = await Navigator.push(context, MaterialPageRoute(builder: (context) => StatusPage(statusBtn)));
+                      value = await Navigator.push(context, MaterialPageRoute(builder: (context) => StatusPage(statusBtn, false)));
                       if (value != null){
                         if (statusBtn != value && context.mounted) {comment = await showDialog<String>(context: context,builder: (BuildContext context) => const DialogInputComment());}
                         else{comment = '-';}

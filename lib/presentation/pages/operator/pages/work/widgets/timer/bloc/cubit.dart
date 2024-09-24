@@ -102,7 +102,7 @@ class CubitTimer extends Cubit<StateTimer> {
       transferOperTable.insertDto(TransferOperationsDTO(id: 0, operatorOperationId: operActive.list.first.id, order: order, transferId: operActive.list.first.listTransfer?[activeTransfer].id, batchId: operActive.list.first.batch.id, operationId: operActive.list.first.operation.id, optPath: operActive.idPath, pause: false, timeFirstStart: DateTime.now().millisecondsSinceEpoch, timestart: DateTime.now().millisecondsSinceEpoch, timestop: 0, timeworking: 0, machineId: machineId, staffId: staffId));
   }
 //
-  Future<void> startOrStop(int index, bool isStart, int idOptPath, int userId, int batchId, int firstTimeBatch, Machine machine)async{
+  Future<void> startOrStop({required int index,required bool isStart, required int idOptPath, required int userId, required int batchId, required int firstTimeBatch, required Machine machine})async{
     final monitorTable = MonitoringMachineTable();
     List<bool> listState = [...state.listState];
     if (isStart){
@@ -178,6 +178,16 @@ class CubitTimer extends Cubit<StateTimer> {
     List<int> listTick = [...state.listTick];
     List<String> listRes = [...state.listRes];
     listState[index] = false;
+    listTick[index] = 0;
+    listRes[index] = '00:00:00';
+    emit(state.copyWith(listState: listState, listTick: listTick, listRes: listRes));
+  }
+
+  void refreshNext(index) {
+    List<bool> listState = [...state.listState];
+    List<int> listTick = [...state.listTick];
+    List<String> listRes = [...state.listRes];
+    listState[index] = true;
     listTick[index] = 0;
     listRes[index] = '00:00:00';
     emit(state.copyWith(listState: listState, listTick: listTick, listRes: listRes));

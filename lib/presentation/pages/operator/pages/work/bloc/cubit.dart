@@ -31,8 +31,7 @@ class CubitWork extends Cubit<StateWork> {
   late Timer periodicTimer;
   final int userIds;
 
-  CubitWork(this.zShiftsDistributionList, this.machineListId, this.userIds)
-      : super(const StateWork()) {
+  CubitWork(this.zShiftsDistributionList, this.machineListId, this.userIds) : super(const StateWork()) {
     // getMonitorStart();
     //таймер
     periodicTimer = Timer.periodic(const Duration(minutes: 1), (timer) {
@@ -67,7 +66,6 @@ class CubitWork extends Cubit<StateWork> {
   @override
   Future<void> close() {
     periodicTimer.cancel();
-    // operatorOperationsTable.
     return super.close();
   }
 
@@ -95,6 +93,7 @@ class CubitWork extends Cubit<StateWork> {
   }
 
   Future<void> getQuere(List<Map<String, dynamic>>? data) async {
+    emit(state.copyWith(loading: true));
     List<int> listId = [];
     Set<int> listOperationsId = {};
     for (var element in data!) {
@@ -270,6 +269,7 @@ class CubitWork extends Cubit<StateWork> {
         listStartBtn: listStartTime,
         listStartTime: listStartTime,
         listChange: listChange,
+        loading: false,
         ));
   }
 
@@ -301,9 +301,11 @@ class CubitWork extends Cubit<StateWork> {
     setStateStart(false);
     // checkIsDetailReady(listChiefBatchId: oper.listChiefBatchId, listChiefOperationId: oper.listChiefOperationId);
   }
+
+  
    Future<void> setReadyTransfer(ItemOperOp oper, int seconds, String comment) async {
-    setStateStart(false);
-    setBtnStatus('Все');
+    // setStateStart(true);
+    // setBtnStatus('В работе'  );
     await transferOperTable.updateTimeStopAndReady(oper.idPath, DateTime.now().millisecondsSinceEpoch, seconds, userIds, oper.list.first.listTransfer![state.activeTransfer].id);
     if (oper.list.first.listTransfer!.length - 1 == state.activeTransfer){
       emit(state.copyWith(activeTransfer: 0, newTransfer: true));
@@ -314,9 +316,24 @@ class CubitWork extends Cubit<StateWork> {
     }
   }
 
-  Future<void> setBrak(ItemOperOp oper, int seconds, String comment) async {
-    getMonitoringIdAndSetMonitor(oper, comment);
-    setStatusOperationBrak(oper.listId, seconds);
+  Future<void> setBrak(ItemOperOp oper, int seconds, String commentCount, bool isTransfer) async {
+    if (isTransfer){
+      await transferOperTable.updateTimeStopAndReady(oper.idPath, DateTime.now().millisecondsSinceEpoch, seconds, userIds, oper.list.first.listTransfer![state.activeTransfer].id);
+      emit(state.copyWith(activeTransfer: 0, newTransfer: true));
+    }
+    List<String> listComment = commentCount.split('_');
+    int count = int.parse(listComment[0]);
+    int length = state.pageData[state.activePage].operActive!.list.length;
+    if (count > length) {
+      count = length;
+    }
+    if (count < 0) {
+      count = 0;
+    }
+    
+
+    getMonitoringIdAndSetMonitor(oper, listComment[1]);
+    setStatusOperationBrak(oper.listId, seconds, count);
     setStatusBatch(oper.list);
     setStateStart(false);
   }
@@ -349,8 +366,8 @@ class CubitWork extends Cubit<StateWork> {
     setBtnStatus('Все');
   }
 
-  Future<void> setStatusOperationBrak(List<int> listId, int seconds) async {
-    int count = state.count;
+  Future<void> setStatusOperationBrak(List<int> listId, int seconds, int count) async {
+    
     List<int> listId5 = [];
     List<int> listId0 = [];
     for (var id in listId) {
@@ -510,17 +527,17 @@ class CubitWork extends Cubit<StateWork> {
     return ConvertDtoModel.convertToOperatorOperations(dto, listTransfer: listTransfer);
   }
 
-  Future<void> toggleBrak(String countStr) async {
-    int count = int.parse(countStr);
-    int length = state.pageData[state.activePage].operActive!.list.length;
-    if (count > length) {
-      count = length;
-    }
-    if (count < 0) {
-      count = 0;
-    }
-    emit(state.copyWith(count: count));
-  }
+  // Future<void> toggleBrak(String countStr) async {
+  //   int count = int.parse(countStr);
+  //   int length = state.pageData[state.activePage].operActive!.list.length;
+  //   if (count > length) {
+  //     count = length;
+  //   }
+  //   if (count < 0) {
+  //     count = 0;
+  //   }
+  //   emit(state.copyWith(count: count));
+  // }
 
   void toggleVisibleStatus() {
     emit(state.copyWith(visibleStatus: !state.visibleStatus));

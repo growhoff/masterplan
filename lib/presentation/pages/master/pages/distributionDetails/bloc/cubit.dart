@@ -204,6 +204,7 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
         setOptPart: 1,
         setCount: operOperat.length,
         countTransfer: count,
+        orderPriority: operOperat.first.batch.order == null ? 0 : operOperat.first.batch.order!.priority, 
       );
   }
 
