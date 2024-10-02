@@ -64,7 +64,7 @@ class CubitOperator extends Cubit<StateOperator> {
         else {
           final model = MonitoringMachineDTO.fromMap(quereStatus.last);
           if (model.timeStop == 0) {
-          await monitorTable.updateId(model.id, DateTime.now().millisecondsSinceEpoch);
+          await monitorTable.updateId(model.id, DateTime.now().millisecondsSinceEpoch, TimeConverter().getTimeWorking(model.timeStart, DateTime.now().millisecondsSinceEpoch));
           await monitorTable.insert(getMonitoringStatus2(idMachine, dateNow));}
         }
       }
@@ -86,13 +86,13 @@ class CubitOperator extends Cubit<StateOperator> {
       final nowChange = ChangeLogic(count: 2, firstTime: 8).getChange();
       if (nowChange == model.changeId){
         if (model.statusMachineId == 8){
-          await monitorTable.updateId(model.id, dateNow.millisecondsSinceEpoch);
+          await monitorTable.updateId(model.id, dateNow.millisecondsSinceEpoch, TimeConverter().getTimeWorking(model.timeStart, DateTime.now().millisecondsSinceEpoch));
           await monitorTable.insert(getMonitoringStatus2(idMachine, dateNow));
         }
       } else {
         final dateStopCh = TimeConverter().getDateTimeSinceEpoch(DateTime.now(),model.changeId == 1 ? 20 : 8, 0);
         // заканчиваем предыдущий по смене
-        await monitorTable.updateId(model.id, dateStopCh);
+        await monitorTable.updateId(model.id, dateStopCh, TimeConverter().getTimeWorking(model.timeStart, DateTime.now().millisecondsSinceEpoch));
         //начинаем новый по смене
         await monitorTable.insertAndGetId(MonitoringMachineDTO(id: -1, operationId: model.operationId, date: DateTime.now(), changeId: change, timeStart: dateStartCh, timeStop: 0, statusMachineId: model.statusMachineId, userId: userId, machineId: idMachine, batchId: model.batchId, comment: 'Перенос на другой день'));
       }
@@ -113,7 +113,7 @@ class CubitOperator extends Cubit<StateOperator> {
         final model = MonitoringMachineDTO.fromMap(queerMonitoring.last);
         if (model.timeStop == 0){
           final statusId = model.statusMachine!.id;
-          if (statusId == 2 || statusId == 3 || statusId == 5 || statusId == 6 || statusId == 7 || statusId == 9) {await monitorTable.updateId(model.id, dateNow.millisecondsSinceEpoch);}
+          if (statusId == 2 || statusId == 3 || statusId == 5 || statusId == 6 || statusId == 7 || statusId == 9) {await monitorTable.updateId(model.id, dateNow.millisecondsSinceEpoch, TimeConverter().getTimeWorking(model.timeStart, DateTime.now().millisecondsSinceEpoch));}
           //подправить
           
           //
@@ -122,7 +122,7 @@ class CubitOperator extends Cubit<StateOperator> {
           // if (statusId == 2 || statusId == 4) {isSetMonitor = false;}
           if (statusId == 4) {isSetMonitor = false;}
           if (statusId == 1) {
-            await monitorTable.updateId(model.id, dateNow.millisecondsSinceEpoch);
+            await monitorTable.updateId(model.id, dateNow.millisecondsSinceEpoch, TimeConverter().getTimeWorking(model.timeStart, DateTime.now().millisecondsSinceEpoch));
             await monitorTable.insert(getMonitoringStatus2(idMachine, dateNow));
             final quereOper = await operatorOperationsTable.selectIdMachine(idMachine);
             final modelOper = OperatorOperationsDTO.fromMap(quereOper);

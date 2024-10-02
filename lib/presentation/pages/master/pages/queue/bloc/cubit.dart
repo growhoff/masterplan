@@ -8,6 +8,7 @@ import 'package:master_plan/data/repositories/supabase/service/order_table.dart'
 import 'package:master_plan/domain/model/area_machine.dart';
 import 'package:master_plan/domain/model/group_opt_path.dart';
 import 'package:master_plan/domain/model/item_machine.dart';
+import 'package:master_plan/domain/model/item_saver.dart';
 import 'package:master_plan/domain/model/name_index.dart';
 import 'package:master_plan/domain/model/operator_operations.dart';
 import 'package:master_plan/domain/model/otp_path_operations.dart';
@@ -18,8 +19,8 @@ class CubitQueueMaster extends Cubit<StateQueueMaster> {
   final int userId;
   final tableOperations = OperatorOperationsTable();
   final List<AreaMachine> listAreaMachine;
-  final bool isActiveStream;
-  CubitQueueMaster(this.userId, this.listAreaMachine, this.isActiveStream) : super(const StateQueueMaster()) {
+  bool isActiveStream = true;
+  CubitQueueMaster(this.userId, this.listAreaMachine) : super(const StateQueueMaster()) {
     emit(state.copyWith(listAreaMachine: listAreaMachine));
     setListItemDrop();
     tableOperations.table.stream(primaryKey: ['id']).inFilter('machine_id', listAreaMachine[state.activeArea].idListMachine).listen((event) {}).onData((data) async {
@@ -181,6 +182,29 @@ class CubitQueueMaster extends Cubit<StateQueueMaster> {
     newList.addAll(listMachine);
     emit(state.copyWith(listMachine: []));
     emit(state.copyWith(listMachine: newList));
+  }
+
+  void saver(List<GroupOptPath> list){
+    List<OptPathOperations> listNew = [];
+    for (var e in list) {
+      listNew.addAll(e.listOptPath);
+    }
+    emit(state.copyWith(listSaver: listNew));
+  }
+
+  Future<void> saveDate() async {
+    isActiveStream = false;
+    emit(state.copyWith(isLoading: true));
+    final tableOperations = OperatorOperationsTable();
+    List<ItemSaver> saveList = [];
+    for (var i = 0; i < state.listSaver.length; i++) {
+      saveList.add(ItemSaver(idPath: state.listSaver[i].idPath, order: i));
+    }
+    for (var element in saveList) {
+      await tableOperations.updateOrder(element.idPath, element.order);
+    }
+    isActiveStream = true;
+    emit(state.copyWith(listSaver: [], isLoading: false));
   }
 
   // Future<void> saveDate(List<OptPathOperations> operList) async {

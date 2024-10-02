@@ -14,7 +14,7 @@ class StageOnAreaPage extends StatelessWidget {
     final stateMain = context.read<CubitMain>().state;
     return BlocProvider<CubitStageOnArea>(
       create: (context) => CubitStageOnArea(stateMain.user!.areaId!),
-      child: const StageOnAreaContent(),
+      child: Scaffold(body: const StageOnAreaContent(), appBar: AppBar(title: const Text('Этапы в цехе'),),),
     );
   }
 }

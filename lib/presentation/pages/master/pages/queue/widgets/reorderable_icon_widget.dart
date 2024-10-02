@@ -9,7 +9,7 @@ class ReorderableIconWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ReorderableDragStartListener(
       index: index,
-      child: Icon(Icons.reorder, color: isGroup ? Colors.amber : Colors.black,),
+      child: Icon(Icons.reorder, color: isGroup ? Colors.blue : Colors.black),
     );
   }
 }

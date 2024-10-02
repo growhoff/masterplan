@@ -110,12 +110,12 @@ class MonitoringMachineTable extends SupabaseTable {
     return table.update({'name': '1'}).eq('id', id);
   }
 
-  Future<void> updateId(int id, int time) async{
-    return table.update({'time_stop': time}).eq('id', id);
+  Future<void> updateId(int id, int timeStop, int timeWork) async{
+    return table.update({'time_stop': timeStop, 'time_working': timeWork}).eq('id', id);
   }
 
-  Future<void> updateIdComment(int id, int time, String comment) async{
-    return table.update({'time_stop': time, 'comment': comment}).eq('id', id);
+  Future<void> updateIdComment(int id, int time, String comment, int timeWork) async{
+    return table.update({'time_stop': time, 'comment': comment, 'time_working': timeWork}).eq('id', id);
   }
 
   stream() {

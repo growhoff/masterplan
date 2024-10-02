@@ -6,10 +6,11 @@ import 'package:master_plan/presentation/pages/operator/pages/work/bloc/cubit.da
 import 'package:master_plan/presentation/pages/operator/pages/work/bloc/state.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/model/item_oper.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/widgets/dialog_input_comment.dart';
-import 'package:master_plan/presentation/pages/operator/pages/work/widgets/dialog_input_work.dart';
+import 'package:master_plan/presentation/pages/operator/pages/work/widgets/dialog_input_brak.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/widgets/elevated_button_castom.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/widgets/timer/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/widgets/timer/bloc/state.dart';
+import 'package:master_plan/theme/theme.dart';
 
 
 class Time extends StatelessWidget {
@@ -67,11 +68,11 @@ class Time extends StatelessWidget {
                             )
                             : SizedBox(
                               width: double.maxFinite,
-                              child: ElevatedButtonCastom(
+                              child: ElevatedButtonCastomGradient(
                                   icon: statusBtn == 'Простой' ? Icons.play_arrow_sharp : Icons.pause,
                                   text: statusBtn == 'Простой' ? 'Продолжить' : 'Пауза',
                                   isActive: (statusBtn == 'Все') || (statusBtn == 'В работе') || (statusBtn == 'Простой'),
-                                  color: Colors.blue,
+                                  color: statusBtn != 'Простой' ? AppColors.blueMaket : AppColors.redMaket,
                                   onPressed: () {
                                       context.read<CubitTimer>().startOrStop(index: activePage, isStart: !state.listState[activePage], idOptPath:  operActive!.idPath, userId: userId, batchId: operActive.list.first.batch.id, firstTimeBatch: operActive.list.first.timeFirstStart, machine: stateWork.pageData[stateWork.activePage].machine);
                                     },
@@ -90,7 +91,7 @@ class Time extends StatelessWidget {
                                         color: const Color.fromARGB(255, 222, 16, 16),
                                         onPressed: () async{
                                           String? val = '';
-                                          val = await showDialog<String>(context: context,builder: (BuildContext context) => DialogInputWork(count: operActive!.list.length, indexOper: 1));
+                                          val = await showDialog<String>(context: context,builder: (BuildContext context) => DialogInputBrak(count: operActive!.list.length, indexOper: 1));
                                           if (val != '' && context.mounted) {
                                             context.read<CubitWork>().setBrak(operActive!, context.read<CubitTimer>().state.listTick[activePage], val!, false);
                                             context.read<CubitTimer>().refresh(activePage);
@@ -109,7 +110,7 @@ class Time extends StatelessWidget {
                                   color: operActive.pause != null ? Colors.green : Colors.white70,
                                   onPressed: () async{
                                     String? val = '';
-                                    val = await showDialog<String>(context: context,builder: (BuildContext context) => const DialogInputComment());
+                                    val = await showDialog<String>(context: context,builder: (BuildContext context) => DialogInputComment(operActive!.list.length));
                                     if (val != ''){
                                       if (context.mounted) context.read<CubitWork>().setReady(operActive!, context.read<CubitTimer>().state.listTick[activePage], val!);
                                       if (context.mounted) context.read<CubitTimer>().refresh(activePage);
@@ -139,11 +140,11 @@ class Time extends StatelessWidget {
                               )
                               : SizedBox(
                                 width: double.maxFinite,
-                                child: ElevatedButtonCastom(
+                                child: ElevatedButtonCastomGradient(
                                     icon: statusBtn == 'Простой' ? Icons.play_arrow_sharp : Icons.pause,
                                     text: statusBtn == 'Простой' ? 'Продолжить' : 'Пауза',
                                     isActive: (statusBtn == 'Все') || (statusBtn == 'В работе') || (statusBtn == 'Простой'),
-                                    color: Colors.blue,
+                                    color: statusBtn != 'Простой' ? AppColors.blueMaket : AppColors.redMaket,
                                     onPressed: () {
                                         context.read<CubitTimer>().startOrStop(index: activePage, isStart: !state.listState[activePage], idOptPath:  operActive!.idPath, userId: userId, batchId: operActive.list.first.batch.id, firstTimeBatch: operActive.list.first.timeFirstStart, machine: stateWork.pageData[stateWork.activePage].machine);
                                         if (stateWork.newTransfer) {
@@ -167,11 +168,11 @@ class Time extends StatelessWidget {
 
                               operActive.pause == false && operActive.list.first.listTransfer!.isNotEmpty && operActive.list.first.listTransfer!.length != stateWork.activeTransfer + 1 ? SizedBox(
                               width: double.maxFinite,
-                              child: ElevatedButtonCastom(
+                              child: ElevatedButtonCastomGradient(
                                 icon: Icons.skip_next,
                                 text: 'Следующий переход',
                                 isActive: operActive.pause != null && (statusBtn == 'Все') || (statusBtn == 'В работе') || (statusBtn == 'Простой'),
-                                color: operActive.pause != null ? Colors.lightGreen : Colors.white70,
+                                color: operActive.pause != null ? AppColors.greenMaket : Colors.white70,
                                 onPressed: () async{
                                   context.read<CubitWork>().setReadyTransfer(operActive!, context.read<CubitTimer>().state.listTick[activePage], '');
                                   context.read<CubitWork>().toggleNewTransfer();
@@ -194,7 +195,7 @@ class Time extends StatelessWidget {
                                         color: const Color.fromARGB(255, 222, 16, 16),
                                         onPressed: () async{
                                           String? val = '';
-                                          val = await showDialog<String>(context: context,builder: (BuildContext context) => DialogInputWork(count: operActive!.list.length, indexOper: 1));
+                                          val = await showDialog<String>(context: context,builder: (BuildContext context) => DialogInputBrak(count: operActive!.list.length, indexOper: 1));
                                           
                                           if (val != '' && context.mounted) {
                                             context.read<CubitWork>().setBrak(operActive!, context.read<CubitTimer>().state.listTick[activePage], val!, true);
@@ -215,7 +216,7 @@ class Time extends StatelessWidget {
                                   color: operActive.list.first.listTransfer!.length == stateWork.activeTransfer + 1 ? Colors.green : Colors.white70,
                                   onPressed: () async{
                                     String? val = '';
-                                    val = await showDialog<String>(context: context,builder: (BuildContext context) => const DialogInputComment());
+                                    val = await showDialog<String>(context: context,builder: (BuildContext context) => DialogInputComment(operActive!.list.length));
                                     if (val != '' && context.mounted){
                                       context.read<CubitWork>().setReadyTransfer(operActive!, context.read<CubitTimer>().state.listTick[activePage], val!);
                                       context.read<CubitTimer>().refresh(activePage);

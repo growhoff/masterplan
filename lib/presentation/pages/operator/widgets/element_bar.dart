@@ -53,7 +53,7 @@ class ElementBarOperator extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              Image.asset('assets/images/operator/notDetails.jpg', width: 300)
+              Image.asset('assets/images/operator/notMachine.jpg', height: 300)
             ],
           ),
     );

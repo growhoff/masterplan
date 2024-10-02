@@ -255,14 +255,19 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
     return Random().nextInt(1000000);
   }
 
-  void updateOperation(int index){
+  Future<void> updateOperation(int index)async{
     DistribItemDetails pathOper = state.filterListOper[index];
       //проверяем заполнены ли поля
       if ((pathOper.setCount != null) && (pathOper.setCount != 0) && (pathOper.setMachine != '')) {
         //проходим по списку машин и сравниваем
-        for (var machine in state.listAreaMachine[state.activeArea].listMachine) {
-          if (machine.name == pathOper.setMachine) {
-            //считаем остаток
+        int? idMachine;
+        for (var machine in state.listAreaMachine[state.activeArea].listMachine){
+          if ('${machine.name} (инв.№ ${machine.inventoryNumber})' == pathOper.setMachine){idMachine = machine.id;}
+        }
+
+
+        if (idMachine != null){
+          //считаем остаток
             final int countRemains = pathOper.setCount! % pathOper.setOptPart!;
             List<int> listId = [];
             List<OperatorOperationsDTO> list = pathOper.listOperat;
@@ -272,7 +277,7 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
                 listId.add(list[i].id);
               }
               //меняем статус этих операций
-              tableOperations.updateMasterQueueListPath(listId, machine.id, getRandom());
+              await tableOperations.updateMasterQueueListPath(listId,idMachine, getRandom());
             } else{
               //если остатка нет
               if (countRemains == 0){
@@ -280,7 +285,7 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
                 for (var i = 0; i < pathOper.setCount!; i++) {
                   listId.add(list[i].id);
                   if ((listId.length) == pathOper.setOptPart) {
-                    tableOperations.updateMasterQueueListPath(listId, machine.id, getRandom()); 
+                    await tableOperations.updateMasterQueueListPath(listId, idMachine, getRandom()); 
                     listId.clear();
                   }
                 }
@@ -291,20 +296,19 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
                   listId.add(e.id);
                 }
                 list.removeRange(0, countRemains);
-                tableOperations.updateMasterQueueListPath(listId, machine.id, getRandom());
+                await tableOperations.updateMasterQueueListPath(listId, idMachine, getRandom());
                 listId.clear();
 
                 //countFull
                 for (var i = 0; i < pathOper.setCount!-countRemains; i++) {
                   listId.add(list[i].id);
                   if ((listId.length) == pathOper.setOptPart) {
-                    tableOperations.updateMasterQueueListPath(listId, machine.id, getRandom()); 
+                    await tableOperations.updateMasterQueueListPath(listId, idMachine, getRandom()); 
                     listId.clear();
                   }
                 }
               }
             }
-          }
         }
       }
     

@@ -260,11 +260,11 @@ class OperatorOperationsTable extends SupabaseTable {
   }
 
   //выбор машины и статус "очередь"
-  Future<void> updateMasterQueueListPath(
-      List<int> listId, int machineId, int random) async {
+  Future<void> updateMasterQueueListPath(List<int> listId, int machineId, int random) async{
+    final quere = await table.select('id').count();
     await table.update({
       'machine_id': machineId,
-      'order': 1000,
+      'order': quere.count,
       'status_id': 3,
       'optimal_part': DateTime.now().millisecondsSinceEpoch + random
     }).inFilter('id', listId);

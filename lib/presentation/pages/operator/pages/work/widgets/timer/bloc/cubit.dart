@@ -110,7 +110,7 @@ class CubitTimer extends Cubit<StateTimer> {
       final lastStatusMap = await monitorTable.selectStatusLastMachine(machine.id);
       if (lastStatusMap != null){
         final dtoLast = MonitoringMachineDTO.fromMap(lastStatusMap);
-        await monitorTable.updateId(dtoLast.id, DateTime.now().millisecondsSinceEpoch);
+        await monitorTable.updateId(dtoLast.id, DateTime.now().millisecondsSinceEpoch,  TimeConverter().getTimeWorking(dtoLast.timeStart, DateTime.now().millisecondsSinceEpoch));
       }
       await monitorTable.insert(MonitoringMachineDTO(id: 0, operationId: idOptPath, date: DateTime.now(), changeId: ChangeLogic(count: machine.shiftSchedule!.count, firstTime: machine.shiftSchedule!.timeFirst).getChange(), timeStart: DateTime.now().millisecondsSinceEpoch, timeStop: 0, statusMachineId: 1, userId: userId, machineId: machine.id, batchId: batchId, comment: 'Продолжение обработки', firstStartBatch: firstTimeBatch));
       
@@ -122,7 +122,7 @@ class CubitTimer extends Cubit<StateTimer> {
       final lastStatusMap = await monitorTable.selectStatusLastMachine(machine.id);
       if (lastStatusMap != null){
         final dtoLast = MonitoringMachineDTO.fromMap(lastStatusMap);
-        await monitorTable.updateId(dtoLast.id, DateTime.now().millisecondsSinceEpoch);
+        await monitorTable.updateId(dtoLast.id, DateTime.now().millisecondsSinceEpoch, TimeConverter().getTimeWorking(dtoLast.timeStart, DateTime.now().millisecondsSinceEpoch));
       }
       await monitorTable.insert(getMonitoringStatus2(userId, machine));
       

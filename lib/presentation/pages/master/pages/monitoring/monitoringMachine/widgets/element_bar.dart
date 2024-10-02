@@ -17,8 +17,10 @@ class ElementBarMonitor extends StatelessWidget {
     return BlocBuilder<CubitMonitoringMachine, StateMonitoringMachine>(
       builder:(context, state) {
       List<ShiftsDistributionDTO> listShifts = [];
-      for (var element in state.listShifts) {
-        if (element.machineId == state.listMonitor![state.activeMachine].machine.id) listShifts.add(element);
+      if (state.listMonitor!.isNotEmpty){
+        for (var element in state.listShifts) {
+          if (element.machineId == state.listMonitor![state.activeMachine].machine.id) listShifts.add(element);
+        }
       }
       return 
       state.listItemMachine.isNotEmpty

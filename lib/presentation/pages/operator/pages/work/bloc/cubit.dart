@@ -14,6 +14,7 @@ import 'package:master_plan/domain/model/transfer.dart';
 import 'package:master_plan/domain/usecase/button_status.dart';
 import 'package:master_plan/domain/usecase/change_logic.dart';
 import 'package:master_plan/domain/usecase/convert_dto_model.dart';
+import 'package:master_plan/domain/usecase/time_converter.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/model/item_oper.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/model/page_item.dart';
 import '../../../../../../data/repositories/supabase/service/chief_batch_table.dart';
@@ -154,113 +155,115 @@ class CubitWork extends Cubit<StateWork> {
     List<bool> listStartTime = [];
     List<int> listChange = [];
     //проход по списку машин в сменах
-    for (var shiftsDistr in zShiftsDistributionList!) {
-      List<ItemOperOp> listOperReady = [];
-      List<ItemOperOp> listOperQueue = [];
-      List<ItemOperOp> listBrak = [];
-      ItemOperOp? operActive;
-      //проход по опт. операциям
-      for (var operPath in listB) {
-        if (shiftsDistr.machine.id == operPath.machineId) {
-          if (operPath.statusId == 5 && operPath.staffId == userIds) listBrak.add(operPath);
-          if (operPath.statusId == 6 && operPath.staffId == userIds) listOperReady.add(operPath);
-          if (operPath.statusId == 3) listOperQueue.add(operPath);
-          if (operPath.statusId == 7) operActive = operPath;
+    if (zShiftsDistributionList != null){
+      for (var shiftsDistr in zShiftsDistributionList!) {
+        List<ItemOperOp> listOperReady = [];
+        List<ItemOperOp> listOperQueue = [];
+        List<ItemOperOp> listBrak = [];
+        ItemOperOp? operActive;
+        //проход по опт. операциям
+        for (var operPath in listB) {
+          if (shiftsDistr.machine.id == operPath.machineId) {
+            if (operPath.statusId == 5 && operPath.staffId == userIds && chekTimeOperAndNow(operPath.list.first.timestop!)) listBrak.add(operPath);
+            if (operPath.statusId == 6 && operPath.staffId == userIds && chekTimeOperAndNow(operPath.list.first.timestop!)) listOperReady.add(operPath);
+            if (operPath.statusId == 3) listOperQueue.add(operPath);
+            if (operPath.statusId == 7) operActive = operPath;
+          }
         }
-      }
-      //активным ставим первый
-      if (operActive == null && listOperQueue.isNotEmpty) {
-        // operActive ??= listOperQueue.first;
-        // listOperQueue.removeAt(0);
-        // print('Need id oper: ${operActive.list.first.operation.id}');
-      }
+        //активным ставим первый
+        if (operActive == null && listOperQueue.isNotEmpty) {
+          // operActive ??= listOperQueue.first;
+          // listOperQueue.removeAt(0);
+          // print('Need id oper: ${operActive.list.first.operation.id}');
+        }
 
-      final dtoL = await selectMonitorStatus(shiftsDistr.machine.id);
-      if (dtoL != null){
-        final status = dtoL.statusMachine!.id;
-        if (status == 3 || status == 4 || status == 5 || status == 6 || status == 7 || status == 9){
-          print('operActive == null/ btn = ${dtoL.statusMachine!.name}/ btnstart = false/ time = true');
-          statusBtn.add(ButtonStatus().getStringStatus(status));
-          listStartBtn.add(false);
-          listStartTime.add(true);
-          final difference = getDifferenceSec(dtoL.timeStart);
-          timeActive.add(difference);
-          emit(state.copyWith(monitorId: dtoL.id));
+        final dtoL = await selectMonitorStatus(shiftsDistr.machine.id);
+        if (dtoL != null){
+          final status = dtoL.statusMachine!.id;
+          if (status == 3 || status == 4 || status == 5 || status == 6 || status == 7 || status == 9){
+            print('operActive == null/ btn = ${dtoL.statusMachine!.name}/ btnstart = false/ time = true');
+            statusBtn.add(ButtonStatus().getStringStatus(status));
+            listStartBtn.add(false);
+            listStartTime.add(true);
+            final difference = getDifferenceSec(dtoL.timeStart);
+            timeActive.add(difference);
+            emit(state.copyWith(monitorId: dtoL.id));
+          } else {
+            if (operActive != null) {
+            if (operActive.pause == null) {
+              print('pause == null/ btn = Все/ btnstart = false/ time = false');
+              statusBtn.add('Все');
+              listStartBtn.add(false);
+              listStartTime.add(false);
+              timeActive.add(0);
+            } else if (operActive.pause == true) {
+              print('pause == true/ btn = Простой/ btnstart = true/ time = false');
+              final quereTransOper = await transferOperTable.selectOptPathLast(operActive.idPath);
+              TransferOperationsDTO? transferOper;
+              if (quereTransOper.isNotEmpty) transferOper = TransferOperationsDTO.fromMap(quereTransOper.last);
+              statusBtn.add('Простой');
+              listStartBtn.add(true);
+              listStartTime.add(false);
+              timeActive.add(transferOper != null ? transferOper.timeworking ?? 0 :  operActive.list.first.timeworking!);
+              if (quereTransOper.isNotEmpty) emit(state.copyWith(activeTransfer: transferOper!.order, newTransfer: false));
+            } else {
+              print('pause == false/ btn = Простой/ btnstart = false/ time = true');
+              final quereTransOper = await transferOperTable.selectOptPathLast(operActive.idPath);
+              TransferOperationsDTO? transferOper;
+              if (quereTransOper.isNotEmpty) transferOper = TransferOperationsDTO.fromMap(quereTransOper.last);
+              statusBtn.add('В работе');
+              listStartBtn.add(false);
+              listStartTime.add(true);
+              final difference = getDifferenceSec(transferOper != null ? transferOper.timestart! : operActive.list.first.timestart!);
+              timeActive.add(difference);
+              if (quereTransOper.isNotEmpty) emit(state.copyWith(activeTransfer: transferOper!.order, newTransfer: false));
+            }
+          } else {
+            statusBtn.add('Все');
+            listStartBtn.add(false);
+            listStartTime.add(false);
+            timeActive.add(0);
+          }
+          }
         } else {
           if (operActive != null) {
-          if (operActive.pause == null) {
-            print('pause == null/ btn = Все/ btnstart = false/ time = false');
+            if (operActive.pause == null) {
+              print('pause == null/ btn = Все/ btnstart = false/ time = false');
+              statusBtn.add('Все');
+              listStartBtn.add(false);
+              listStartTime.add(false);
+              timeActive.add(0);
+            } else if (operActive.pause == true) {
+              print('pause == true/ btn = Простой/ btnstart = true/ time = false');
+              statusBtn.add('Простой');
+              listStartBtn.add(true);
+              listStartTime.add(false);
+              timeActive.add(operActive.list.first.timeworking!);
+            } else {
+              print('pause == false/ btn = Простой/ btnstart = false/ time = true');
+              statusBtn.add('В работе');
+              listStartBtn.add(false);
+              listStartTime.add(true);
+              final difference = getDifferenceSec(operActive.list.first.timestart!);
+              timeActive.add(difference);
+            }
+          } else {
             statusBtn.add('Все');
             listStartBtn.add(false);
             listStartTime.add(false);
             timeActive.add(0);
-          } else if (operActive.pause == true) {
-            print('pause == true/ btn = Простой/ btnstart = true/ time = false');
-            final quereTransOper = await transferOperTable.selectOptPathLast(operActive.idPath);
-            TransferOperationsDTO? transferOper;
-            if (quereTransOper.isNotEmpty) transferOper = TransferOperationsDTO.fromMap(quereTransOper.last);
-            statusBtn.add('Простой');
-            listStartBtn.add(true);
-            listStartTime.add(false);
-            timeActive.add(transferOper != null ? transferOper.timeworking ?? 0 :  operActive.list.first.timeworking!);
-            if (quereTransOper.isNotEmpty) emit(state.copyWith(activeTransfer: transferOper!.order, newTransfer: false));
-          } else {
-            print('pause == false/ btn = Простой/ btnstart = false/ time = true');
-            final quereTransOper = await transferOperTable.selectOptPathLast(operActive.idPath);
-            TransferOperationsDTO? transferOper;
-            if (quereTransOper.isNotEmpty) transferOper = TransferOperationsDTO.fromMap(quereTransOper.last);
-            statusBtn.add('В работе');
-            listStartBtn.add(false);
-            listStartTime.add(true);
-            final difference = getDifferenceSec(transferOper != null ? transferOper.timestart! : operActive.list.first.timestart!);
-            timeActive.add(difference);
-            if (quereTransOper.isNotEmpty) emit(state.copyWith(activeTransfer: transferOper!.order, newTransfer: false));
           }
-        } else {
-          statusBtn.add('Все');
-          listStartBtn.add(false);
-          listStartTime.add(false);
-          timeActive.add(0);
         }
-        }
-      } else {
-        if (operActive != null) {
-          if (operActive.pause == null) {
-            print('pause == null/ btn = Все/ btnstart = false/ time = false');
-            statusBtn.add('Все');
-            listStartBtn.add(false);
-            listStartTime.add(false);
-            timeActive.add(0);
-          } else if (operActive.pause == true) {
-            print('pause == true/ btn = Простой/ btnstart = true/ time = false');
-            statusBtn.add('Простой');
-            listStartBtn.add(true);
-            listStartTime.add(false);
-            timeActive.add(operActive.list.first.timeworking!);
-          } else {
-            print('pause == false/ btn = Простой/ btnstart = false/ time = true');
-            statusBtn.add('В работе');
-            listStartBtn.add(false);
-            listStartTime.add(true);
-            final difference = getDifferenceSec(operActive.list.first.timestart!);
-            timeActive.add(difference);
-          }
-        } else {
-          statusBtn.add('Все');
-          listStartBtn.add(false);
-          listStartTime.add(false);
-          timeActive.add(0);
-        }
+
+        listChange.add(ChangeLogic(count: shiftsDistr.machine.shiftSchedule!.count, firstTime: shiftsDistr.machine.shiftSchedule!.timeFirst).getChange());
+
+        pageData.add(PageItem(
+            machine: shiftsDistr.machine,
+            operReadyList: listOperReady,
+            operQueueList: listOperQueue,
+            operBrakList: listBrak,
+            operActive: operActive));
       }
-
-      listChange.add(ChangeLogic(count: shiftsDistr.machine.shiftSchedule!.count, firstTime: shiftsDistr.machine.shiftSchedule!.timeFirst).getChange());
-
-      pageData.add(PageItem(
-          machine: shiftsDistr.machine,
-          operReadyList: listOperReady,
-          operQueueList: listOperQueue,
-          operBrakList: listBrak,
-          operActive: operActive));
     }
     emit(state.copyWith(
         pageData: pageData,
@@ -273,6 +276,15 @@ class CubitWork extends Cubit<StateWork> {
         ));
   }
 
+  bool chekTimeOperAndNow(int operTime){
+    final date = DateTime.fromMillisecondsSinceEpoch(operTime);
+    final dateNow = DateTime.now();
+    return dateToString(date) == dateToString(dateNow);
+  }
+
+  String dateToString(DateTime date){
+    return '${date.year}-${date.month}-${date.day}';
+  }
 
   Future<MonitoringMachineDTO?> selectMonitorStatus(int idMachine)async{
     final lastStatusMap = await monitorTable.selectStatusLastMachine(idMachine);
@@ -351,7 +363,7 @@ class CubitWork extends Cubit<StateWork> {
         oper.idPath);
     final model = MonitoringMachineDTO.fromMap(quereMon.last);
     if (model.timeStop == 0) {
-      await monitorTable.updateIdComment(model.id, DateTime.now().millisecondsSinceEpoch, comment);
+      await monitorTable.updateIdComment(model.id, DateTime.now().millisecondsSinceEpoch, comment, TimeConverter().getTimeWorking(model.timeStart, DateTime.now().millisecondsSinceEpoch));
       // await ChangeLogic(count: 2, firstTime: 8).setDateNext(model.timeStart, model, userIds, oper.idPath);
     } else {
       print('ошибка.пустое значение');
@@ -423,17 +435,13 @@ class CubitWork extends Cubit<StateWork> {
     setBtnStatus(status);
   }
 
-  Future<void> setMonitor(
-      String status, String comment, bool isStart, int optPathOper) async {
+  Future<void> setMonitor(String status, String comment, bool isStart, int optPathOper) async {
     if (isStart) {
       await setLastStatus(optPathOper, '-');
-
-      final id = await monitorTable.insertAndGetId(
-          getMonitoringMachineDTOMonitor(status, '-', optPathOper));
+      final id = await monitorTable.insertAndGetId(getMonitoringMachineDTOMonitor(status, '-', optPathOper));
       emit(state.copyWith(monitorId: id));
     } else {
-      await monitorTable.updateIdComment(
-          state.monitorId!, DateTime.now().millisecondsSinceEpoch, comment);
+      await monitorTable.updateIdComment(state.monitorId!, DateTime.now().millisecondsSinceEpoch, comment, 0);
       //ставим статус простоя без окончания
       await monitorTable.insert(getMonitoringStatus2());
     }

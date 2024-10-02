@@ -11,6 +11,7 @@ import 'package:master_plan/presentation/pages/operator/pages/work/widgets/butto
 import 'package:master_plan/presentation/pages/operator/pages/work/widgets/dialog_input_comment.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/widgets/dialog_work.dart';
 import 'package:master_plan/presentation/pages/operator/pages/work/widgets/timer/bloc/cubit.dart';
+import 'package:master_plan/theme/theme.dart';
 import 'line_text_spawn.dart';
 import 'timer/timer.dart';
 import 'elevated_button_castom.dart';
@@ -70,7 +71,7 @@ class ContentDetail extends StatelessWidget {
                       String? comment = '';
                       value = await Navigator.push(context, MaterialPageRoute(builder: (context) => StatusPage(statusBtn, true)));
                       if (value != null){
-                        if (statusBtn != value && context.mounted) {comment = await showDialog<String>(context: context,builder: (BuildContext context) => const DialogInputComment());}
+                        if (statusBtn != value && context.mounted) {comment = await showDialog<String>(context: context,builder: (BuildContext context) => DialogInputComment(operation!.list.length));}
                         else{comment = '-';}
                         if (comment != ''){
                           if (context.mounted) await context.read<CubitWork>().setMonitor(value, comment!, statusBtn != value, operation!.idPath);
@@ -108,14 +109,14 @@ class ContentDetail extends StatelessWidget {
                 child: ElevatedButtonCastom(
                     icon: null,
                     text: 'Выбор статуса',
-                    isActive: true,
-                    color: Colors.greenAccent,
+                    isActive: operation.pause == null,
+                    color: operation.pause == null ? AppColors.greenMaket : Colors.white70,
                     onPressed: () async{
                       String? value = '';
                       String? comment = '';
                       value = await Navigator.push(context, MaterialPageRoute(builder: (context) => StatusPage(statusBtn, false)));
                       if (value != null){
-                        if (statusBtn != value && context.mounted) {comment = await showDialog<String>(context: context,builder: (BuildContext context) => const DialogInputComment());}
+                        if (statusBtn != value && context.mounted) {comment = await showDialog<String>(context: context,builder: (BuildContext context) => DialogInputComment(operation!.list.length));}
                         else{comment = '-';}
                         if (comment != ''){
                           if (context.mounted) await context.read<CubitWork>().setMonitor(value, comment!, statusBtn != value, operation!.idPath);
@@ -144,9 +145,9 @@ class LineButtonInfo extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             ButtonIconItem(onPressed: ()=> Navigator.push(context, MaterialPageRoute(builder: (context) => QueuePage(dataPage: dataPage))), icon: Icons.description_outlined, isActive: (statusBtn == 'Все') || (statusBtn == 'В работе') || (statusBtn == 'Простой')),
-            ButtonIconItem(onPressed: ()=> Navigator.push(context, MaterialPageRoute(builder: (context) => TransferPage(operation: operation, activeTransfer))), icon: Icons.document_scanner_outlined, isActive: operation == null ? false : operation!.list.first.listTransfer!.isNotEmpty),
-            ButtonIconItem(onPressed: ()=> showDialog(context: context,builder: (BuildContext context) => const DialogWork()), icon: Icons.chat, isActive: true),
-            ButtonIconItem(onPressed: ()=> showDialog(context: context,builder: (BuildContext context) => const DialogWork()), icon: Icons.camera_alt_outlined, isActive: true),
+            ButtonIconItem(onPressed: ()=> Navigator.push(context, MaterialPageRoute(builder: (context) => TransferPage(operation: operation, activeTransfer))), icon: Icons.description, isActive: operation == null ? false : operation!.list.first.listTransfer!.isNotEmpty),
+            ButtonIconItem(onPressed: ()=> showDialog(context: context,builder: (BuildContext context) => const DialogWork()), icon: Icons.import_contacts, isActive: true),
+            ButtonIconItem(onPressed: ()=> showDialog(context: context,builder: (BuildContext context) => const DialogWork()), icon: Icons.devices_other, isActive: true),
           ],
         ),
       ),

@@ -2,6 +2,7 @@
 import 'package:intl/intl.dart';
 import 'package:master_plan/data/repositories/supabase/dto/monitoring_machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/monitoring_machine_table.dart';
+import 'package:master_plan/domain/usecase/time_converter.dart';
 
 class ChangeLogic {
   final int count;
@@ -114,7 +115,7 @@ class ChangeLogic {
     if (difference == 0){
       if (nowChange == thisChange){
         print('${getStringData(thisDate)} to ${getStringData(dateNow)}');
-        await monitorTable.updateId(dto.id, dateNow.millisecondsSinceEpoch);
+        await monitorTable.updateId(dto.id, dateNow.millisecondsSinceEpoch, TimeConverter().getTimeWorking(dto.timeStart, DateTime.now().millisecondsSinceEpoch));
       } else{
         writeDateOne(thisChange: thisChange, thisDate: thisDate, nowChange: nowChange, dto: dto, userId: userId, idPath: idPath);
       }
@@ -133,7 +134,7 @@ class ChangeLogic {
       final dataNext = getDateTime(listTime[change -1], firstTime, 0);
       print('${getStringData(firstTime)} to ${getStringData(dataNext)} // change $change');
       if (firstTime == thisDate){
-        await monitorTable.updateId(dto.id, dataNext.millisecondsSinceEpoch);
+        await monitorTable.updateId(dto.id, dataNext.millisecondsSinceEpoch, TimeConverter().getTimeWorking(dto.timeStart, DateTime.now().millisecondsSinceEpoch));
       } else {
         await monitorTable.insert(MonitoringMachineDTO(id: 0, timeStart: firstTime.millisecondsSinceEpoch, timeStop: dataNext.millisecondsSinceEpoch, statusMachineId: 1, userId: userId, machineId: dto.machineId, batchId: dto.batch!.id, comment: 'Перенос на следующий день', date: firstTime, changeId: changeOld, operationId: idPath));
       }
@@ -157,7 +158,7 @@ class ChangeLogic {
       final dataNext = getDateTime(listTime[change -1], firstTime, day);
       print('${getStringData(firstTime)} to ${getStringData(dataNext)} // change $change');
       if (firstTime == thisDate){
-        await monitorTable.updateId(dto.id, dataNext.millisecondsSinceEpoch);
+        await monitorTable.updateId(dto.id, dataNext.millisecondsSinceEpoch, TimeConverter().getTimeWorking(dto.timeStart, DateTime.now().millisecondsSinceEpoch));
       } else {
         await monitorTable.insert(MonitoringMachineDTO(id: 0, timeStart: firstTime.millisecondsSinceEpoch, timeStop: dataNext.millisecondsSinceEpoch, statusMachineId: 1, userId: userId, machineId: dto.machineId, batchId: dto.batch!.id, comment: 'Перенос на следующий день', date: firstTime, changeId: changeOld, operationId: idPath));
       }
@@ -204,7 +205,7 @@ class ChangeLogic {
       if (nowChange == thisChange){
         print('Смена сейчас == смене статуса. Разница 0 дней');
         print('${getStringData(thisDate)} to ${getStringData(dateNow)} (${dto.statusMachine!.name})');
-        await monitorTable.updateId(dto.id, dateNow.millisecondsSinceEpoch);
+        await monitorTable.updateId(dto.id, dateNow.millisecondsSinceEpoch, TimeConverter().getTimeWorking(dto.timeStart, DateTime.now().millisecondsSinceEpoch));
       } else{
         print('Смена сейчас != смене статуса. Разница 0 дней');
         writeDateOneSt2(thisChange: thisChange, thisDate: thisDate, nowChange: nowChange, dto: dto, userId: userId, idPath: idPath, comment: comment);
@@ -225,7 +226,7 @@ class ChangeLogic {
       final dataNext = getDateTime(listTime[change -1], firstTime, 0);
       print('${getStringData(firstTime)} to ${getStringData(dataNext)} -- change $change -- ${dto.statusMachine!.name}');
       if (firstTime == thisDate){
-        await monitorTable.updateId(dto.id, dataNext.millisecondsSinceEpoch);
+        await monitorTable.updateId(dto.id, dataNext.millisecondsSinceEpoch, TimeConverter().getTimeWorking(dto.timeStart, DateTime.now().millisecondsSinceEpoch));
       } else {
         await monitorTable.insert(MonitoringMachineDTO(id: 0, timeStart: firstTime.millisecondsSinceEpoch, timeStop: dataNext.millisecondsSinceEpoch, statusMachineId: dto.statusMachineId, userId: userId, machineId: dto.machineId, batchId: dto.batchId, comment: comment, date: firstTime, changeId: changeOld, operationId: idPath));
       }
@@ -249,7 +250,7 @@ class ChangeLogic {
       final dataNext = getDateTime(listTime[change -1], firstTime, day);
       print('${getStringData(firstTime)} to ${getStringData(dataNext)} -- change $change -- ${dto.statusMachine!.name}');
       if (firstTime == thisDate){
-        await monitorTable.updateId(dto.id, dataNext.millisecondsSinceEpoch);
+        await monitorTable.updateId(dto.id, dataNext.millisecondsSinceEpoch, TimeConverter().getTimeWorking(dto.timeStart, DateTime.now().millisecondsSinceEpoch));
       } else {
         await monitorTable.insert(MonitoringMachineDTO(id: 0, timeStart: firstTime.millisecondsSinceEpoch, timeStop: dataNext.millisecondsSinceEpoch, statusMachineId: dto.statusMachineId, userId: userId, machineId: dto.machineId, batchId: dto.batchId, comment: comment, date: firstTime, changeId: changeOld, operationId: idPath));
       }

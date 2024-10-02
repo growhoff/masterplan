@@ -433,4 +433,12 @@ class CubitMain extends Cubit<StateMain> {
           'Ошибка. Не получилось подключиться по данному адресу $url');
     }
   }
+
+  void toggleMonitor(){
+    emit(state.copyWith(isMonitor: !state.isMonitor));
+  }
+
+  void toggleSaverQuere(bool isSave){
+    emit(state.copyWith(isSaveOrder: isSave));
+  }
 }

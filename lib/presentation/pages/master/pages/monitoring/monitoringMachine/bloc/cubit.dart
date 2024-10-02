@@ -36,7 +36,7 @@ class CubitMonitoringMachine extends Cubit<StateMonitoringMachine> {
     emit(state.copyWith(isLoading: true));
     List<int> listId = [];
     for (var element in data!) {
-      listId.add(element['id']);
+      if (element['date'] as String == '${state.days.year}-${state.days.month}-${state.days.day}') listId.add(element['id']);
     }
     List<MonitoringMachineDTO> queueList = [];
     if (listId.isNotEmpty) {

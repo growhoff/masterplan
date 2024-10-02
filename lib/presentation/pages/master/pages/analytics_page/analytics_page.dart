@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:master_plan/presentation/app/bloc/cubit.dart';
 
 // import 'package:master_plan/presentation/app/bloc/cubit.dart';
 import 'package:master_plan/presentation/pages/master/pages/analytics_page/cubit/analytics_cubit.dart';
@@ -14,7 +13,7 @@ class AnalyticsPage extends StatelessWidget {
 
     return BlocProvider(
       create: (context) => AnalyticsCubit(),
-      child: AnalyticsPageView(),
+      child: Scaffold(body: AnalyticsPageView(), appBar: AppBar(title: const Text('Аналитика'),),),
     );
   }
 }

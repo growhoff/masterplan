@@ -14,7 +14,7 @@ class BrakDetailsPage extends StatelessWidget {
     // final stateMain = context.read<CubitMain>().state;
     return BlocProvider<CubitBrakDetails>(
       create: (context) => CubitBrakDetails(),
-      child: const BrakDetailsContent(),
+      child: Scaffold(body: const BrakDetailsContent(), appBar: AppBar(title: const Text('Отбракованные детали оператором'),),),
     );
   }
 }

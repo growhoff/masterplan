@@ -12,7 +12,7 @@ class BrakReadyDetailsPage extends StatelessWidget {
     final cubitMain = context.read<CubitMain>().state;
     return BlocProvider<CubitReadyDetails>(
       create: (context) => CubitReadyDetails(cubitMain.listAreaMachine ?? []),
-      child: const BrakReadyDetailsContent(),
+      child: Scaffold(body: const BrakReadyDetailsContent(), appBar: AppBar(title: const Text('Готовые детали'),),),
     );
   }
 }

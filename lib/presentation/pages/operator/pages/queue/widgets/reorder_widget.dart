@@ -1,4 +1,5 @@
 import 'package:master_plan/presentation/pages/operator/pages/work/model/item_oper.dart';
+import 'package:master_plan/theme/theme.dart';
 import '../bloc/cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,7 +20,7 @@ class ReorderQuereOper extends StatelessWidget {
         itemBuilder: (context, index) {
           return Card(
             key: ValueKey(index),
-            color: Colors.grey,
+            color: AppColors.greyMaket,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(

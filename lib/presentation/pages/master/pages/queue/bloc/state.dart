@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:master_plan/domain/model/area_machine.dart';
 import 'package:master_plan/domain/model/item_machine.dart';
 import 'package:master_plan/domain/model/name_index.dart';
+import 'package:master_plan/domain/model/otp_path_operations.dart';
 
 class StateQueueMaster extends Equatable {
   final List<ItemMachine>? listMachine;
@@ -13,6 +14,7 @@ class StateQueueMaster extends Equatable {
   final List<NameIndex> listItemMachine;
   final bool isGroup;
   final bool isLoading;
+  final List<OptPathOperations> listSaver;
   const StateQueueMaster({
     this.listMachine = const [],
     this.activeMachine = 0,
@@ -22,10 +24,11 @@ class StateQueueMaster extends Equatable {
     this.listItemMachine = const [],
     this.isGroup = false,
     this.isLoading = false,
+    this.listSaver = const [],
   });
 
   @override
-  List<Object> get props => [listMachine ?? [], activeArea, activeMachine, listAreaMachine, listItemArea, listItemMachine, isGroup, isLoading];
+  List<Object> get props => [listMachine ?? [], activeArea, listSaver, activeMachine, listAreaMachine, listItemArea, listItemMachine, isGroup, isLoading];
 
   StateQueueMaster copyWith({
     List<ItemMachine>? listMachine,
@@ -36,6 +39,7 @@ class StateQueueMaster extends Equatable {
     List<NameIndex>? listItemMachine,
     bool? isGroup,
     bool? isLoading,
+    List<OptPathOperations>? listSaver,
   }) {
     return StateQueueMaster(
       listMachine: listMachine ?? this.listMachine,
@@ -46,6 +50,7 @@ class StateQueueMaster extends Equatable {
       listItemMachine: listItemMachine ?? this.listItemMachine,
       isGroup: isGroup ?? this.isGroup,
       isLoading: isLoading ?? this.isLoading,
+      listSaver: listSaver ?? this.listSaver,
     );
   }
 

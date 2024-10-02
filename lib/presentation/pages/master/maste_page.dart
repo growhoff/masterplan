@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/pages/master/bloc/cubit.dart';
-import 'package:master_plan/presentation/pages/master/widgets/navbar_master.dart';
+import 'package:master_plan/presentation/pages/master/widgets/content_master.dart';
+// import 'package:master_plan/presentation/pages/master/widgets/navbar_master.dart';
 
 class MasterPage extends StatelessWidget {
   const MasterPage({super.key});
@@ -10,7 +11,8 @@ class MasterPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<CubitMaster>(
       create: (context) => CubitMaster(),
-      child: const NavbarMaster(),
+      child: const CardGrid(),
+      // child: const NavbarMaster(),
     );
   }
 }

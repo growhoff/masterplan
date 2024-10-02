@@ -24,11 +24,12 @@ class BodyItem extends StatelessWidget {
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Этап № ${oper.stageNumber}'),
+                    Text('Этап №: ${oper.stageNumber}'),
                     const SizedBox(height: 2),
                     Text('T п.з.= ${oper.timePZ}   T шт.= ${oper.timeSh}   T шт.к.= ${(oper.timeSh + (oper.timePZ / oper.count)).toStringAsFixed(2)}'),//T шт. + Т п. з./кол-во
                   ],
@@ -40,7 +41,7 @@ class BodyItem extends StatelessWidget {
             BlocBuilder<CubitMain, StateMain>(builder: (context, state) {
               List<String> list = [];
               for (var machine in state.machineList!) {
-                list.add(machine.name);
+                list.add('${machine.name} (инв.№ ${machine.inventoryNumber})');
               }
               return DropdownButtonCustom(list, index);
             }),
@@ -60,7 +61,7 @@ class BodyItem extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 8),
-            Row(
+            oper.countTransfer <= 0 ? Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Expanded(
@@ -74,14 +75,14 @@ class BodyItem extends StatelessWidget {
                     onChanged: (value) => context.read<CubitDistributionDetails>().setOptPath(index, value),
                 )))
               ],
-            ),
+            ) : Container(),
             const SizedBox(height: 8),
             SizedBox(
               width: double.maxFinite, 
               child: ElevatedButton(
-                style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll(Colors.blue)), 
+                style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll(Colors.white54)), 
                 onPressed: ()=> context.read<CubitDistributionDetails>().updateOperation(index), 
-                child: const Text('Добавить в задание', style: TextStyle(color: Colors.white),)))
+                child: const Text('Добавить в задание', style: TextStyle(color: Colors.black),)))
           ],
         ),
       ),

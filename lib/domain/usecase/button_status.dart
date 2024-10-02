@@ -60,7 +60,7 @@ class ButtonStatus {
       case 'Уборка': colorStatus = Colors.purple; break;
       case 'ОтсутствиеИнструмента': colorStatus = Colors.blueAccent; break;
       case 'НетУП': colorStatus = Colors.blue; break;
-      case 'НетЧертеж': colorStatus = Colors.purpleAccent; break;
+      case 'НетЧертеж': colorStatus = Colors.lightGreen; break;
       default: colorStatus = const Color.fromARGB(255, 207, 207, 207);
     }
     return colorStatus;

@@ -47,9 +47,11 @@ class StateMain extends Equatable {
   final List<ShiftScheduleDTO>? shiftScheduleList;
   final List<int> unitChiefMaster;
   final List<int> areaChiefMaster;
+  final bool isMonitor;
+  final bool isSaveOrder;
 
   const StateMain({
-    this.version = 'v2.7.11',
+    this.version = 'v2.7.14',
     this.user,
     this.unitId,
     this.staff,
@@ -75,6 +77,8 @@ class StateMain extends Equatable {
     this.shiftScheduleList,
     this.unitChiefMaster = const [],
     this.areaChiefMaster = const [],
+    this.isMonitor = true,
+    this.isSaveOrder = false,
   });
 
   @override
@@ -116,6 +120,8 @@ class StateMain extends Equatable {
     shiftScheduleList,
     unitChiefMaster,
     areaChiefMaster,
+    isMonitor,
+    isSaveOrder,
   ];
 
   StateMain copyWith({
@@ -144,6 +150,8 @@ class StateMain extends Equatable {
     List<ShiftScheduleDTO>? shiftScheduleList,
     List<int>? unitChiefMaster,
     List<int>? areaChiefMaster,
+    bool? isMonitor,
+    bool? isSaveOrder,
   }) {
     return StateMain(
       user: user ?? this.user,
@@ -173,6 +181,8 @@ class StateMain extends Equatable {
       shiftScheduleList: shiftScheduleList ?? this.shiftScheduleList,
       unitChiefMaster: unitChiefMaster ?? this.unitChiefMaster,
       areaChiefMaster: areaChiefMaster ?? this.areaChiefMaster,
+      isMonitor: isMonitor ?? this.isMonitor,
+      isSaveOrder: isSaveOrder ?? this.isSaveOrder,
     );
   }
 

@@ -1,5 +1,4 @@
 import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
-import 'package:master_plan/data/repositories/supabase/dto/transfer_operations_dto.dart';
 import '../../../../../domain/model/batch.dart';
 
 class AnalyticsOperationModel {

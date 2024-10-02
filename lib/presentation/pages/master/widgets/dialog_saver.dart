@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:master_plan/presentation/pages/master/bloc/cubit.dart';
+import 'package:master_plan/presentation/app/bloc/cubit.dart';
 
 class DialogSaver extends StatelessWidget {
   const DialogSaver({super.key});
@@ -17,16 +17,15 @@ class DialogSaver extends StatelessWidget {
                 actionsAlignment: MainAxisAlignment.center,
                 actions: [
                 ElevatedButton(
-                  onPressed: () async{ 
-                    await context.read<CubitMaster>().saveDate(); 
-                    if (context.mounted) Navigator.pop(context);
+                  onPressed: () { 
+                    context.read<CubitMain>().toggleSaverQuere(false); 
+                    Navigator.pop(context, true);
                 },
                   child: const Text('Сохранить'),
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    context.read<CubitMaster>().setList([]);
-                    Navigator.pop(context);
+                    Navigator.pop(context, false);
                   },
                   child: const Text('Отменить'),
                 ),

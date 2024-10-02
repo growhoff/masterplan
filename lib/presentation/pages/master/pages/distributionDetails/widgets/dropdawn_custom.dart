@@ -37,7 +37,7 @@ class _DropdownButtonCustomState extends State<DropdownButtonCustom> {
         underline: Container(),
         borderRadius: BorderRadius.circular(12),
         value: activeValue,
-        hint: const Text('Выберите станок'),
+        hint: const Text('Выберите оборудование', textAlign: TextAlign.center),
         items: listItem.map((e) => DropdownMenuItem(value: e, child: Text(e)),).toList(),
         selectedItemBuilder: (context) => listItem.map((e) => Center(child: Text(e),)).toList(),
         onChanged: (value){
