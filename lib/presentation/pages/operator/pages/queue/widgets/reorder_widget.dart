@@ -37,11 +37,13 @@ class ReorderQuereOper extends StatelessWidget {
           ); 
         },
         onReorder: (oldIndex, newIndex) {
-          if (newIndex > oldIndex) {newIndex = newIndex - 1;}
-          final element  = operQueueList.removeAt(oldIndex);
-          operQueueList.insert(newIndex, element);
-          //save
-          context.read<CubitEqueueOperator>().setList(operQueueList);
+          if ((operQueueList[oldIndex].list.first.batch.id == operQueueList[newIndex - 1].list.first.batch.id) && operQueueList[oldIndex].list.first.operation.id == operQueueList[newIndex - 1].list.first.operation.id){
+            if (newIndex > oldIndex) {newIndex = newIndex - 1;}
+            final element  = operQueueList.removeAt(oldIndex);
+            operQueueList.insert(newIndex, element);
+            //save
+            context.read<CubitEqueueOperator>().setList(operQueueList);
+          }
         }
       )
       ],

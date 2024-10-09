@@ -3,6 +3,7 @@ import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:lecle_downloads_path_provider/lecle_downloads_path_provider.dart';
 import 'package:master_plan/data/repositories/local/service/excel_cell_styles.dart';
+import 'package:master_plan/data/repositories/local/service/reports_headers_lists.dart';
 import 'package:master_plan/data/repositories/supabase/dto/batch_archive_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/chief_batch_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/chief_distribution_operations_dto.dart';
@@ -25,6 +26,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../domain/model/distribution_stage.dart';
+import '../../../../domain/model/report_items_models/monitoring_statuses_model.dart';
 import '../../../../presentation/pages/chief/chief_analytics_page/chief_stage_report_model.dart';
 import '../../../../presentation/pages/chief/chief_analytics_page/statistics_stage_model.dart';
 import '../../supabase/dto/batch_dto.dart';
@@ -83,86 +85,28 @@ class ExcelService {
 
   final _cellFocusTextStyle = ExcelCellStyles.focusCellStyle;
 
-  final _horizontalBorderBoldCellStyle = ExcelCellStyles.horizontalBorderBoldCellStyle;
+  final _horizontalBorderBoldCellStyle =
+      ExcelCellStyles.horizontalBorderBoldCellStyle;
 
   final _rightBorderBoldCellStyle = ExcelCellStyles.rightBorderBoldCellStyle;
 
-  static const List<String> stagesHeaderList = [
-    '№ п/п',
-    '№ Этапа',
-    '№ чертежа, наименование',
-    'Код детали',
-    'Кол-во деталей в партии',
-    'Добавлено деталей',
-    'Общее кол-во деталей',
-    'Общее кол-во полуфабрикатов в работе (в этапе)',
-    'Недостающие заготовки',
-    'кол-во выполненных деталей (в этапе)',
-    '% выполненных деталей',
-    'Кол-во бракованных деталей (в этапе)',
-    'Кол-во выполненных операций (в этапе)',
-    'Общее кол-во операций (в этапе)',
-    '% вып.',
-  ];
+  final _stageHeadersList = ReporstHeadersLists.stagesHeaderList;
 
-  static const List<String> operationsHeaderList = [
-    '№ п/п',
-    '№ Этапа',
-    '№ чертежа, наименование',
-    'Общее кол-во деталей',
-    'Код детали',
-    'Наименование операции',
-    '№ оп.',
-    'Кол-во выполненных деталей',
-    '% выполнено',
-    'В работе',
-    'Брак',
-    'Доработка'
-  ];
+  final _operationsHeaderList = ReporstHeadersLists.operationsHeaderList;
 
-  static const List<String> readyOperationsHeaderList = [
-    '№ этапа',
-    '№ чертежа',
-    'Наименование чертежа',
-    'наименование операции',
-    'наименование перехода',
-    'Код',
-    'T план',
-    'Т факт',
-    'Дата начала',
-    'Время начала',
-    'Дата окончания',
-    'Время окончания',
-    'Оборудование',
-    'Инв. №',
-    'ФИО оператора',
-    'Смена',
-    '№ цеха',
-    '№ участка',
-    'Брак',
-    'Доработка',
-    'Кол-во',
-    'Комментарий'
-  ];
+  final _readyOperationsHeaderList =
+      ReporstHeadersLists.readyOperationsHeaderList;
 
-  static const List<String> totalNumberReadyOperationsReportHeadersList = [
-    '№ этапа',
-    '№ цеха',
-    '№ участка',
-    'Чертежный номер',
-    'Наименование чертежа',
-    'Наименование операции',
-    'Код',
-    'Брак',
-    'Доработка',
-    'Кол-во',
-  ];
+  final _totalNumberReadyOperationsReportHeadersList =
+      ReporstHeadersLists.totalNumberReadyOperationsReportHeadersList;
 
-  static const List<String> filtersInfoHeadersList = [
-    'Цех',
-    'Участок',
-    'Период'
-  ];
+  final _filtersInfoHeadersList = ReporstHeadersLists.filtersInfoHeadersList;
+
+  final _readyAndDefectDetailsInStagesReportHeadersList =
+      ReporstHeadersLists.readyAndDefectDetailsInStagesReportHeadersList;
+
+  final _monitoringStatusesReportHeadersList =
+      ReporstHeadersLists.monitoringStatusesReportHeadersList;
 
   Future dispatcherLoadOrder() async {
     FilePickerResult? pickedFile = await FilePicker.platform.pickFiles(
@@ -177,31 +121,133 @@ class ExcelService {
 
       var excel = Excel.decodeBytes(bytes);
 
-      for (var table in excel.tables.keys) {
-        String customer = excel.tables[table]!.rows[3][0]!.value.toString();
-        String orderNumber = excel.tables[table]!.rows[3][1]!.value.toString();
+      var table = excel.tables.keys.first;
+      String customer = excel.tables[table]!.rows[3][0]!.value.toString();
+      String orderNumber = excel.tables[table]!.rows[3][1]!.value.toString();
 
-        int orderId = await _orderTable.insert(OrderDTO(
+      int orderId = await _orderTable.insert(OrderDTO(
+          id: 0,
+          number: orderNumber,
+          priority: 4,
+          statusId: 1,
+          customer: customer));
+
+      print('insert order: $orderNumber и возвращаем orderId : $orderId');
+
+      String batchNumber = excel.tables[table]!.rows[3][2]!.value.toString();
+      int quantity =
+          int.parse(excel.tables[table]!.rows[3][3]!.value.toString());
+
+      String planNumber = excel.tables[table]!.rows[3][4]!.value.toString();
+      String batchName = excel.tables[table]!.rows[3][5]!.value.toString();
+      String batchCode = excel.tables[table]!.rows[3][6]!.value.toString();
+      String technologyNumber =
+          excel.tables[table]!.rows[3][7]!.value.toString();
+      String description = excel.tables[table]!.rows[3][8]!.value.toString();
+
+      int batchId = await _batchTable.insert(BatchDTO(
+        id: 0,
+        orderId: orderId,
+        numberRS: planNumber,
+        number: batchNumber,
+        description: description,
+        name: batchName,
+        count: quantity,
+        code: batchCode,
+        technology: technologyNumber,
+      ));
+
+      BatchDTO insertedBatchDto = BatchDTO(
+        id: batchId,
+        orderId: orderId,
+        numberRS: planNumber,
+        number: batchNumber,
+        description: description,
+        name: batchName,
+        count: quantity,
+        code: batchCode,
+        technology: technologyNumber,
+      );
+
+      batchesDtosList.add(insertedBatchDto);
+
+      print(
+          'insert batch: $batchNumber $batchName и возвращаем batchId : $batchId');
+
+      String? stageNumber = excel.tables[table]!.rows[3][9]!.value.toString();
+      String? stageName = excel.tables[table]!.rows[3][10]!.value.toString();
+
+      int stageId = await _stageTable.insert(StageDTO(
+          id: 0, number: stageNumber, name: stageName, batchId: batchId));
+
+      print(
+          'insert stage: $stageNumber $stageName и возвращает stageId : $stageId');
+
+      String? operationCode =
+          excel.tables[table]!.rows[3][11]!.value.toString();
+      String? operationNumber =
+          excel.tables[table]!.rows[3][12]!.value.toString();
+      String? operationName =
+          excel.tables[table]!.rows[3][13]!.value.toString();
+      int timePZ = (int.parse(
+          (excel.tables[table]!.rows[3][16]!.value ?? 0).toString()));
+      int transferTimeSH =
+          int.parse((excel.tables[table]!.rows[3][17]!.value ?? 0).toString());
+
+      int operationTimeSH = transferTimeSH;
+
+      int operationId = await _operationTable.insert(OperationDTO(
+          id: 0,
+          number: operationNumber,
+          name: operationName,
+          code: operationCode,
+          timepz: timePZ,
+          stageId: stageId,
+          timeSH: operationTimeSH));
+
+      print(
+          'insert operation  $operationNumber $operationName и вернули operationId : $operationId');
+
+      String transferCode = excel.tables[table]!.rows[3][14]!.value.toString();
+      String? transferName = excel.tables[table]!.rows[3][15]!.value.toString();
+
+      if (excel.tables[table]!.rows[3][14]?.value != null) {
+        await _transferTable.insert(TransferDTO(
             id: 0,
-            number: orderNumber,
-            priority: 4,
-            statusId: 1,
-            customer: customer));
+            name: transferName,
+            code: transferCode,
+            timesh: transferTimeSH,
+            operationId: operationId));
+        print('insert transfer $transferCode $transferName');
+      }
 
-        print('insert order: $orderNumber и возвращаем orderId : $orderId');
+      for (int i = 4; i < excel.tables[table]!.maxRows; i++) {
+        var row = excel.tables[table]!.rows;
 
-        String batchNumber = excel.tables[table]!.rows[3][2]!.value.toString();
-        int quantity =
-            int.parse(excel.tables[table]!.rows[3][3]!.value.toString());
+        if (row[i][1]?.value != null) {
+          customer = excel.tables[table]!.rows[i][0]!.value.toString();
+          orderNumber = excel.tables[table]!.rows[i][1]!.value.toString();
+          orderId = await _orderTable.insert(OrderDTO(
+              id: 0,
+              number: orderNumber,
+              priority: 4,
+              statusId: 1,
+              customer: customer));
 
-        String planNumber = excel.tables[table]!.rows[3][4]!.value.toString();
-        String batchName = excel.tables[table]!.rows[3][5]!.value.toString();
-        String batchCode = excel.tables[table]!.rows[3][6]!.value.toString();
-        String technologyNumber =
-            excel.tables[table]!.rows[3][7]!.value.toString();
-        String description = excel.tables[table]!.rows[3][8]!.value.toString();
+          print('insert order: $orderNumber и возвращаем orderId : $orderId');
+        }
 
-        int batchId = await _batchTable.insert(BatchDTO(
+        if (row[i][2]?.value != null) {
+          print('row[$i][2] != null');
+          batchNumber = row[i][2]!.value.toString();
+          quantity = int.parse(row[i][3]!.value.toString());
+          planNumber = row[i][4]!.value.toString();
+          batchName = row[i][5]!.value.toString();
+          batchCode = row[i][6]!.value.toString();
+          technologyNumber = row[i][7]!.value.toString();
+          description = row[i][8]!.value.toString();
+
+          batchId = await _batchTable.insert(BatchDTO(
             id: 0,
             orderId: orderId,
             numberRS: planNumber,
@@ -211,9 +257,9 @@ class ExcelService {
             count: quantity,
             code: batchCode,
             technology: technologyNumber,
-           ));
+          ));
 
-        BatchDTO insertedBatchDto = BatchDTO(
+          BatchDTO insertedBatchDto = BatchDTO(
             id: batchId,
             orderId: orderId,
             numberRS: planNumber,
@@ -223,169 +269,64 @@ class ExcelService {
             count: quantity,
             code: batchCode,
             technology: technologyNumber,
-           );
+          );
 
-        batchesDtosList.add(insertedBatchDto);
+          batchesDtosList.add(insertedBatchDto);
+        }
 
-        print(
-            'insert batch: $batchNumber $batchName и возвращаем batchId : $batchId');
-
-        String? stageNumber = excel.tables[table]!.rows[3][9]!.value.toString();
-        String? stageName = excel.tables[table]!.rows[3][10]!.value.toString();
-
-        int stageId = await _stageTable.insert(StageDTO(
-            id: 0, number: stageNumber, name: stageName, batchId: batchId));
-
-        print(
-            'insert stage: $stageNumber $stageName и возвращает stageId : $stageId');
-
-        String? operationCode =
-            excel.tables[table]!.rows[3][11]!.value.toString();
-        String? operationNumber =
-            excel.tables[table]!.rows[3][12]!.value.toString();
-        String? operationName =
-            excel.tables[table]!.rows[3][13]!.value.toString();
-        int timePZ = (int.parse(
-            (excel.tables[table]!.rows[3][16]!.value ?? 0).toString()));
-        int transferTimeSH = int.parse(
-            (excel.tables[table]!.rows[3][17]!.value ?? 0).toString());
-
-        int operationTimeSH = transferTimeSH;
-
-        int operationId = await _operationTable.insert(OperationDTO(
+        if (row[i][9]?.value != null) {
+          stageNumber = row[i][9]?.value.toString();
+          stageName = row[i][10]?.value.toString();
+          stageId = await _stageTable.insert(StageDTO(
             id: 0,
-            number: operationNumber,
-            name: operationName,
-            code: operationCode,
+            number: stageNumber ?? '',
+            name: stageName ?? '',
+            areaId: 0,
+            batchId: batchId,
+          ));
+
+          stagesIdForDistributionStagesList.add(stageId);
+          print('инсерт этап $stageNumber, $stageName, $stageId');
+        }
+
+        if (row[i][11]?.value != null) {
+          operationCode = row[i][11]?.value.toString();
+          operationNumber = row[i][12]?.value.toString();
+          operationName = row[i][13]?.value.toString();
+          if (row[i][16]?.value != null) {
+            timePZ = (int.parse(row[i][16]!.value.toString()));
+          }
+          operationTimeSH = int.parse(row[i][17]!.value.toString());
+          print(
+              'добавляю операцию: $operationCode, $operationNumber, $operationName, operationTimeSH: $operationTimeSH');
+          operationId = await _operationTable.insert(OperationDTO(
+            id: 0,
+            number: operationNumber ?? '',
+            name: operationName ?? '',
+            code: operationCode ?? '',
             timepz: timePZ,
+            timeSH: operationTimeSH,
             stageId: stageId,
-            timeSH: operationTimeSH));
+          ));
+        }
 
-        print(
-            'insert operation  $operationNumber $operationName и вернули operationId : $operationId');
-
-        String transferCode =
-            excel.tables[table]!.rows[3][14]!.value.toString();
-        String? transferName =
-            excel.tables[table]!.rows[3][15]!.value.toString();
-
-        if (excel.tables[table]!.rows[3][14]?.value != null) {
-          await _transferTable.insert(TransferDTO(
+        if (row[i][14]?.value != null) {
+          transferCode = row[i][14]!.value.toString();
+          transferName = row[i][15]?.value.toString();
+          transferTimeSH = int.parse(row[i][17]!.value.toString());
+          operationTimeSH = operationTimeSH + transferTimeSH;
+          print('operationTimeSH : $operationTimeSH');
+          _transferTable.insert(TransferDTO(
               id: 0,
-              name: transferName,
+              number: 0,
+              name: transferName ?? '',
               code: transferCode,
               timesh: transferTimeSH,
               operationId: operationId));
-          print('insert transfer $transferCode $transferName');
-        }
-
-        for (int i = 4; i < excel.tables[table]!.maxRows; i++) {
-          var row = excel.tables[table]!.rows;
-
-          if (row[i][1]?.value != null) {
-            customer = excel.tables[table]!.rows[i][0]!.value.toString();
-            orderNumber = excel.tables[table]!.rows[i][1]!.value.toString();
-            orderId = await _orderTable.insert(OrderDTO(
-                id: 0,
-                number: orderNumber,
-                priority: 4,
-                statusId: 1,
-                customer: customer));
-
-            print('insert order: $orderNumber и возвращаем orderId : $orderId');
-          }
-
-          if (row[i][2]?.value != null) {
-            print('row[$i][2] != null');
-            batchNumber = row[i][2]!.value.toString();
-            quantity = int.parse(row[i][3]!.value.toString());
-            planNumber = row[i][4]!.value.toString();
-            batchName = row[i][5]!.value.toString();
-            batchCode = row[i][6]!.value.toString();
-            technologyNumber = row[i][7]!.value.toString();
-            description = row[i][8]!.value.toString();
-
-            batchId = await _batchTable.insert(BatchDTO(
-                id: 0,
-                orderId: orderId,
-                numberRS: planNumber,
-                number: batchNumber,
-                description: description,
-                name: batchName,
-                count: quantity,
-                code: batchCode,
-                technology: technologyNumber,
-               ));
-
-            BatchDTO insertedBatchDto = BatchDTO(
-                id: batchId,
-                orderId: orderId,
-                numberRS: planNumber,
-                number: batchNumber,
-                description: description,
-                name: batchName,
-                count: quantity,
-                code: batchCode,
-                technology: technologyNumber,
-                );
-
-            batchesDtosList.add(insertedBatchDto);
-          }
-
-          if (row[i][9]?.value != null) {
-            stageNumber = row[i][9]?.value.toString();
-            stageName = row[i][10]?.value.toString();
-            stageId = await _stageTable.insert(StageDTO(
-              id: 0,
-              number: stageNumber ?? '',
-              name: stageName ?? '',
-              areaId: 0,
-              batchId: batchId,
-            ));
-
-            stagesIdForDistributionStagesList.add(stageId);
-            print('инсерт этап $stageNumber, $stageName, $stageId');
-          }
-
-          if (row[i][11]?.value != null) {
-            operationCode = row[i][11]?.value.toString();
-            operationNumber = row[i][12]?.value.toString();
-            operationName = row[i][13]?.value.toString();
-            if (row[i][16]?.value != null) {
-              timePZ = (int.parse(row[i][16]!.value.toString()));
-            }
-            operationTimeSH = int.parse(row[i][17]!.value.toString());
-            print(
-                'добавляю операцию: $operationCode, $operationNumber, $operationName, operationTimeSH: $operationTimeSH');
-            operationId = await _operationTable.insert(OperationDTO(
-              id: 0,
-              number: operationNumber ?? '',
-              name: operationName ?? '',
-              code: operationCode ?? '',
-              timepz: timePZ,
-              timeSH: operationTimeSH,
-              stageId: stageId,
-            ));
-          }
-
-          if (row[i][14]?.value != null) {
-            transferCode = row[i][14]!.value.toString();
-            transferName = row[i][15]?.value.toString();
-            transferTimeSH = int.parse(row[i][17]!.value.toString());
-            operationTimeSH = operationTimeSH + transferTimeSH;
-            print('operationTimeSH : $operationTimeSH');
-            _transferTable.insert(TransferDTO(
-                id: 0,
-                number: 0,
-                name: transferName ?? '',
-                code: transferCode,
-                timesh: transferTimeSH,
-                operationId: operationId));
-            print(
-                'сейчас буду обновлять  operationId: $operationId,  operationTimeSH : $operationTimeSH');
-            _operationTable.updateTimeSH(operationId, operationTimeSH);
-            print('инсерт переход для операции $operationId : $transferName');
-          }
+          print(
+              'сейчас буду обновлять  operationId: $operationId,  operationTimeSH : $operationTimeSH');
+          _operationTable.updateTimeSH(operationId, operationTimeSH);
+          print('инсерт переход для операции $operationId : $transferName');
         }
       }
     }
@@ -393,6 +334,7 @@ class ExcelService {
   }
 
   Future finishDispatcherOrderLoading() async {
+    print('start finish dispatcher loading');
     List<ChiefBatchDTO> chiefBatchesDtosList = [];
     print('batchesDtosList : $batchesDtosList');
     for (var batchDto in batchesDtosList) {
@@ -458,7 +400,6 @@ class ExcelService {
           count: quantity,
           code: code,
           technology: technologyNumber,
-
           orderId: null,
         ));
 
@@ -709,19 +650,7 @@ class ExcelService {
             excel.tables[table]!.rows[3][7]!.value.toString();
         String description = excel.tables[table]!.rows[3][8]!.value.toString();
 
-        print('planNumber : $planNumber');
-        print('planName : $planName');
 
-        print('[3][4] :  ${excel.tables[table]!.rows[3][4]!.value.toString()}');
-        print('[3][5] :  ${excel.tables[table]!.rows[3][5]!.value.toString()}');
-        print('[3][6] :  ${excel.tables[table]!.rows[3][6]!.value.toString()}');
-        print('[3][7] :  ${excel.tables[table]!.rows[3][7]!.value.toString()}');
-        print('[3][8] :  ${excel.tables[table]!.rows[3][8]!.value.toString()}');
-        print('[3][9] :  ${excel.tables[table]!.rows[3][9]!.value.toString()}');
-        print(
-            '[3][10] :  ${excel.tables[table]!.rows[3][10]!.value.toString()}');
-        print(
-            '[3][11] :  ${excel.tables[table]!.rows[3][11]!.value.toString()}');
 
         int batchArchiveId = await _batchArchiveTable.insert(BatchArchiveDto(
           code: batchCode,
@@ -750,9 +679,9 @@ class ExcelService {
             excel.tables[table]!.rows[3][13]!.value.toString();
 
         int timepz = (int.parse(
-            (excel.tables[table]!.rows[1][16]!.value ?? 0).toString()));
+            (excel.tables[table]!.rows[3][16]!.value ?? 0).toString()));
         int transferTimeSH = int.parse(
-            (excel.tables[table]!.rows[1][17]!.value ?? 0).toString());
+            (excel.tables[table]!.rows[3][17]!.value ?? 0).toString());
 
         int operationTimeSH = transferTimeSH;
 
@@ -770,10 +699,11 @@ class ExcelService {
         String? transferCode;
         String? transferName;
 
-        if (excel.tables[table]!.rows[1][14]?.value != null) {
+        if (excel.tables[table]!.rows[3][14]?.value != null) {
           transferCode = excel.tables[table]!.rows[3][14]!.value.toString();
+          print('transferCode : ${transferCode}');
           transferName = excel.tables[table]!.rows[3][15]!.value.toString();
-          _transferArchiveTable.insert(TransferArchiveDto(
+          await _transferArchiveTable.insert(TransferArchiveDto(
               id: 0,
               name: transferName,
               code: transferCode,
@@ -1052,12 +982,12 @@ class ExcelService {
         stageRowIndex < stagesList.length;
         stageRowIndex++) {
       for (int stageColumnIndex = 0;
-          stageColumnIndex < stagesHeaderList.length;
+          stageColumnIndex < _stageHeadersList.length;
           stageColumnIndex++) {
         if (stageRowIndex == 1) {
           final cell = stageExcel.cell(CellIndex.indexByColumnRow(
               columnIndex: stageColumnIndex, rowIndex: stageRowIndex));
-          cell.value = TextCellValue(stagesHeaderList[stageColumnIndex]);
+          cell.value = TextCellValue(_stageHeadersList[stageColumnIndex]);
           cell.cellStyle = _cellHeaderStyle;
         }
         final cell = stageExcel.cell(CellIndex.indexByColumnRow(
@@ -1136,14 +1066,14 @@ class ExcelService {
 
       for (var operation in stagesList[stageRowIndex].operationsList) {
         for (int operationColumnIndex = 0;
-            operationColumnIndex < operationsHeaderList.length;
+            operationColumnIndex < _operationsHeaderList.length;
             operationColumnIndex++) {
           if (operationRowIndex == 0) {
             final cell = operationsExcel.cell(CellIndex.indexByColumnRow(
                 columnIndex: operationColumnIndex,
                 rowIndex: operationRowIndex));
             cell.value =
-                TextCellValue(operationsHeaderList[operationColumnIndex]);
+                TextCellValue(_operationsHeaderList[operationColumnIndex]);
             cell.cellStyle = _cellHeaderStyle;
           } else {
             final cell = operationsExcel.cell(CellIndex.indexByColumnRow(
@@ -1177,14 +1107,14 @@ class ExcelService {
         for (var readyOperation in operation.readyOperationsList) {
           print('readyOperationRowIndex: ${readyOperationRowIndex}');
           for (int readyOperationsColumnIndex = 0;
-              readyOperationsColumnIndex < readyOperationsHeaderList.length;
+              readyOperationsColumnIndex < _readyOperationsHeaderList.length;
               readyOperationsColumnIndex++) {
             if (readyOperationRowIndex == 0) {
               final cell = readyOperationsExcel.cell(CellIndex.indexByColumnRow(
                   columnIndex: readyOperationsColumnIndex,
                   rowIndex: readyOperationRowIndex));
               cell.value = TextCellValue(
-                  readyOperationsHeaderList[readyOperationsColumnIndex]);
+                  _readyOperationsHeaderList[readyOperationsColumnIndex]);
               cell.cellStyle = _cellHeaderStyle;
             } else {
               final cell = readyOperationsExcel.cell(CellIndex.indexByColumnRow(
@@ -1291,13 +1221,13 @@ class ExcelService {
         stageRowIndex++) {
       print('stageRowIndex: $stageRowIndex');
       for (int stageColumnIndex = 0;
-          stageColumnIndex < stagesHeaderList.length;
+          stageColumnIndex < _stageHeadersList.length;
           stageColumnIndex++) {
         if (stageRowIndex == 0) {
           final cell = stageExcel.cell(CellIndex.indexByColumnRow(
               columnIndex: stageColumnIndex, rowIndex: 1));
 
-          cell.value = TextCellValue(stagesHeaderList[stageColumnIndex]);
+          cell.value = TextCellValue(_stageHeadersList[stageColumnIndex]);
           cell.cellStyle = _cellHeaderStyle;
         }
         final cell = stageExcel.cell(CellIndex.indexByColumnRow(
@@ -1385,7 +1315,7 @@ class ExcelService {
 
     for (int stageNumber = 0; stageNumber < stagesList.length; stageNumber++) {
       for (int stageColumnIndex = 0;
-          stageColumnIndex < stagesHeaderList.length;
+          stageColumnIndex < _stageHeadersList.length;
           stageColumnIndex++) {
         final operationCell = operationsExcel.cell(CellIndex.indexByColumnRow(
             columnIndex: stageColumnIndex, rowIndex: operationRowIndex + 1));
@@ -1415,14 +1345,14 @@ class ExcelService {
 
       for (var operation in stagesList[stageNumber].operationsList) {
         for (int operationColumnIndex = 0;
-            operationColumnIndex < operationsHeaderList.length;
+            operationColumnIndex < _operationsHeaderList.length;
             operationColumnIndex++) {
           if (operationRowIndex == 0) {
             final cell = operationsExcel.cell(CellIndex.indexByColumnRow(
                 columnIndex: operationColumnIndex,
                 rowIndex: operationRowIndex));
             cell.value =
-                TextCellValue(operationsHeaderList[operationColumnIndex]);
+                TextCellValue(_operationsHeaderList[operationColumnIndex]);
             cell.cellStyle = _cellHeaderStyle;
           }
           final cell = operationsExcel.cell(CellIndex.indexByColumnRow(
@@ -1486,7 +1416,8 @@ class ExcelService {
     readyOperationsExcel.merge(
         CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 0),
         CellIndex.indexByColumnRow(
-            columnIndex: totalNumberReadyOperationsReportHeadersList.length - 1,
+            columnIndex:
+                _totalNumberReadyOperationsReportHeadersList.length - 1,
             rowIndex: 0));
     print('мердж названия');
     final cell = readyOperationsExcel
@@ -1504,7 +1435,7 @@ class ExcelService {
 
     for (int filterInfoColumnIndex = 0;
         filterInfoColumnIndex <
-            totalNumberReadyOperationsReportHeadersList.length;
+            _totalNumberReadyOperationsReportHeadersList.length;
         filterInfoColumnIndex++) {
       final cellFilterInfo = readyOperationsExcel.cell(
           CellIndex.indexByColumnRow(
@@ -1535,21 +1466,22 @@ class ExcelService {
     readyOperationsExcel.merge(
         CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 2),
         CellIndex.indexByColumnRow(
-            columnIndex: totalNumberReadyOperationsReportHeadersList.length - 1,
+            columnIndex:
+                _totalNumberReadyOperationsReportHeadersList.length - 1,
             rowIndex: 2));
 
     for (int operationRowIndex = 0;
         operationRowIndex < analyticsOperationsList.length;
         operationRowIndex++) {
       for (int operationColumnIndex = 0;
-          operationColumnIndex < readyOperationsHeaderList.length;
+          operationColumnIndex < _readyOperationsHeaderList.length;
           operationColumnIndex++) {
         if (operationRowIndex == 3) {
           final cell = readyOperationsExcel.cell(CellIndex.indexByColumnRow(
               columnIndex: operationColumnIndex, rowIndex: 3));
 
           cell.value =
-              TextCellValue(readyOperationsHeaderList[operationColumnIndex]);
+              TextCellValue(_readyOperationsHeaderList[operationColumnIndex]);
           cell.cellStyle = _cellHeaderStyle;
         }
         final cell = readyOperationsExcel.cell(CellIndex.indexByColumnRow(
@@ -1679,7 +1611,8 @@ class ExcelService {
     readyOperationsExcel.merge(
         CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 0),
         CellIndex.indexByColumnRow(
-            columnIndex: totalNumberReadyOperationsReportHeadersList.length - 1,
+            columnIndex:
+                _totalNumberReadyOperationsReportHeadersList.length - 1,
             rowIndex: 0));
     print('мердж названия');
     final cell = readyOperationsExcel
@@ -1697,7 +1630,7 @@ class ExcelService {
 
     for (int filterInfoColumnIndex = 0;
         filterInfoColumnIndex <
-            totalNumberReadyOperationsReportHeadersList.length;
+            _totalNumberReadyOperationsReportHeadersList.length;
         filterInfoColumnIndex++) {
       final cellFilterInfo = readyOperationsExcel.cell(
           CellIndex.indexByColumnRow(
@@ -1728,25 +1661,38 @@ class ExcelService {
     readyOperationsExcel.merge(
         CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 2),
         CellIndex.indexByColumnRow(
-            columnIndex: totalNumberReadyOperationsReportHeadersList.length - 1,
+            columnIndex:
+                _totalNumberReadyOperationsReportHeadersList.length - 1,
             rowIndex: 2));
 
-    int rowIndex = 3;
+
+    //заголовок
+    for (int headerColumnIndex = 0;
+        headerColumnIndex < _readyOperationsHeaderList.length;
+        headerColumnIndex++){
+
+      final cell = readyOperationsExcel.cell(CellIndex.indexByColumnRow(
+          columnIndex: headerColumnIndex, rowIndex: 3));
+      cell.value =
+          TextCellValue(_readyOperationsHeaderList[headerColumnIndex]);
+      cell.cellStyle = _cellHeaderStyle;
+
+    }
+
+
+
+      int rowIndex = 4;
 
     for (int operationIndex = 0;
         operationIndex < analyticsOperationsList.length;
         operationIndex++) {
       for (int operationColumnIndex = 0;
-          operationColumnIndex < readyOperationsHeaderList.length;
+          operationColumnIndex < _readyOperationsHeaderList.length;
           operationColumnIndex++) {
         final cell = readyOperationsExcel.cell(CellIndex.indexByColumnRow(
             columnIndex: operationColumnIndex, rowIndex: rowIndex));
 
-        if (rowIndex == 3) {
-          cell.value =
-              TextCellValue(readyOperationsHeaderList[operationColumnIndex]);
-          cell.cellStyle = _cellHeaderStyle;
-        } else {
+
           switch (operationColumnIndex) {
             case 0:
               cell.value = TextCellValue(
@@ -1852,16 +1798,16 @@ class ExcelService {
               cell.cellStyle = _rightBorderBoldCellStyle;
           }
         }
-      }
 
-      rowIndex++;
-      if (analyticsOperationsList[operationIndex].transfersList.isNotEmpty) {
+
+      if (analyticsOperationsList[operationIndex].transfersList.isNotEmpty &&
+          rowIndex != 3) {
         for (int transferIndex = 0;
             transferIndex <
                 analyticsOperationsList[operationIndex].transfersList.length;
             transferIndex++) {
           for (int transferColumnIndex = 0;
-              transferColumnIndex < readyOperationsHeaderList.length;
+              transferColumnIndex < _readyOperationsHeaderList.length;
               transferColumnIndex++) {
             final cell = readyOperationsExcel.cell(CellIndex.indexByColumnRow(
                 columnIndex: transferColumnIndex, rowIndex: rowIndex));
@@ -1939,7 +1885,6 @@ class ExcelService {
                 cell.value = TextCellValue(
                     '${analyticsOperationsList[operationIndex].transfersList[transferIndex].areaNumber}');
                 cell.cellStyle = _rightBorderBoldCellStyle;
-
               case 18:
                 cell.cellStyle = _cellTextStyle;
               case 19:
@@ -1953,6 +1898,7 @@ class ExcelService {
           rowIndex++;
         }
       }
+      rowIndex++;
     }
 
     var fileBytes = excel.save();
@@ -1992,7 +1938,8 @@ class ExcelService {
     totalNumberReadyOperationsExcel.merge(
         CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 0),
         CellIndex.indexByColumnRow(
-            columnIndex: totalNumberReadyOperationsReportHeadersList.length - 1,
+            columnIndex:
+                _totalNumberReadyOperationsReportHeadersList.length - 1,
             rowIndex: 0));
     print('мердж названия');
     final cell = totalNumberReadyOperationsExcel
@@ -2010,7 +1957,7 @@ class ExcelService {
 
     for (int filterInfoColumnIndex = 0;
         filterInfoColumnIndex <
-            totalNumberReadyOperationsReportHeadersList.length;
+            _totalNumberReadyOperationsReportHeadersList.length;
         filterInfoColumnIndex++) {
       final cellFilterInfo = totalNumberReadyOperationsExcel.cell(
           CellIndex.indexByColumnRow(
@@ -2041,7 +1988,8 @@ class ExcelService {
     totalNumberReadyOperationsExcel.merge(
         CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 2),
         CellIndex.indexByColumnRow(
-            columnIndex: totalNumberReadyOperationsReportHeadersList.length - 1,
+            columnIndex:
+                _totalNumberReadyOperationsReportHeadersList.length - 1,
             rowIndex: 2));
 
     for (int operationRowIndex = 0;
@@ -2050,7 +1998,7 @@ class ExcelService {
       print('вошли в цикл');
       for (int operationColumnIndex = 0;
           operationColumnIndex <
-              totalNumberReadyOperationsReportHeadersList.length;
+              _totalNumberReadyOperationsReportHeadersList.length;
           operationColumnIndex++) {
         if (operationRowIndex == 3) {
           final cell = totalNumberReadyOperationsExcel.cell(
@@ -2058,7 +2006,7 @@ class ExcelService {
                   columnIndex: operationColumnIndex, rowIndex: 3));
 
           cell.value = TextCellValue(
-              totalNumberReadyOperationsReportHeadersList[
+              _totalNumberReadyOperationsReportHeadersList[
                   operationColumnIndex]);
           cell.cellStyle = _cellHeaderStyle;
         }
@@ -2158,6 +2106,188 @@ class ExcelService {
 
       final fileName =
           '${downloadsDirectoryPath}/Отчет суммарного количества выполненных операций $reportNumber ${staff?.fio} (${filtersInfo?.timeStart} - ${filtersInfo?.timeEnd}).xlsx';
+
+      File(fileName).writeAsBytes(fileBytes!);
+
+      print('вывелось');
+      return fileName;
+    }
+
+    return '';
+  }
+
+  Future uploadMonitoringStatusesReport(
+      {required List<MonitoringStatusesModel> monitoringStatusesModelsList,
+      FiltersInfoModel? filtersInfo}) async {
+    var excel = Excel.createExcel();
+    excel.rename('Sheet1', 'Статусы мониторинга');
+
+    Sheet readyOperationsExcel = excel['Статусы мониторинга'];
+
+    //название отчета
+    readyOperationsExcel.merge(
+        CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 0),
+        CellIndex.indexByColumnRow(
+            columnIndex: _monitoringStatusesReportHeadersList.length - 1,
+            rowIndex: 0));
+    print('мердж названия');
+    final cell = readyOperationsExcel
+        .cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 0));
+    cell.value = TextCellValue('Статусы мониторинга');
+    cell.cellStyle = _cellHeaderStyle;
+
+    readyOperationsExcel.merge(
+        CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 1),
+        CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: 1));
+
+    readyOperationsExcel.merge(
+        CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: 1),
+        CellIndex.indexByColumnRow(columnIndex: 9, rowIndex: 1));
+
+    for (int filterInfoColumnIndex = 0;
+        filterInfoColumnIndex < _monitoringStatusesReportHeadersList.length;
+        filterInfoColumnIndex++) {
+      final cellFilterInfo = readyOperationsExcel.cell(
+          CellIndex.indexByColumnRow(
+              columnIndex: filterInfoColumnIndex, rowIndex: 1));
+
+      switch (filterInfoColumnIndex) {
+        case 0:
+          cellFilterInfo.value = TextCellValue('Цех');
+        case 3:
+          cellFilterInfo.value =
+              TextCellValue('${filtersInfo?.unitsNumbersList}');
+        case 4:
+          cellFilterInfo.value = TextCellValue('Участок');
+        case 5:
+          cellFilterInfo.value =
+              TextCellValue('${filtersInfo?.areasNumbersList}');
+        case 6:
+          cellFilterInfo.value = TextCellValue('Период');
+        case 7:
+          cellFilterInfo.value = TextCellValue(
+              '${filtersInfo?.timeStart} - ${filtersInfo?.timeEnd}');
+      }
+
+      cellFilterInfo.cellStyle = _cellTextStyle;
+    }
+    print('перед пустой строкой');
+    //пустая строка
+    readyOperationsExcel.merge(
+        CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 2),
+        CellIndex.indexByColumnRow(
+            columnIndex: _monitoringStatusesReportHeadersList.length - 1,
+            rowIndex: 2));
+
+    int rowIndex = 3;
+
+    for (int operationIndex = 0;
+        operationIndex < monitoringStatusesModelsList.length;
+        operationIndex++) {
+      for (int operationColumnIndex = 0;
+          operationColumnIndex < _monitoringStatusesReportHeadersList.length;
+          operationColumnIndex++) {
+        final cell = readyOperationsExcel.cell(CellIndex.indexByColumnRow(
+            columnIndex: operationColumnIndex, rowIndex: rowIndex));
+
+        if (rowIndex == 3) {
+          cell.value = TextCellValue(
+              _monitoringStatusesReportHeadersList[operationColumnIndex]);
+          cell.cellStyle = _cellHeaderStyle;
+        } else {
+          switch (operationColumnIndex) {
+            case 0:
+              cell.value = TextCellValue(
+                  '${monitoringStatusesModelsList[operationIndex].optimalBatchId}');
+              cell.cellStyle = _cellTextStyle;
+            case 1:
+              cell.value = TextCellValue(
+                  '${monitoringStatusesModelsList[operationIndex].stageNumber}');
+              cell.cellStyle = _cellTextStyle;
+            case 2:
+              cell.value = TextCellValue(
+                  '${monitoringStatusesModelsList[operationIndex].batchNumber}');
+              cell.cellStyle = _cellTextStyle;
+            case 3:
+              cell.value = TextCellValue(
+                  '${monitoringStatusesModelsList[operationIndex].batchName}');
+              cell.cellStyle = _cellTextStyle;
+            case 4:
+              cell.value = TextCellValue(
+                  '${monitoringStatusesModelsList[operationIndex].operationName}');
+              cell.cellStyle = _cellTextStyle;
+            case 5:
+              cell.value = TextCellValue(
+                  '${monitoringStatusesModelsList[operationIndex].statusName}');
+              cell.cellStyle = _cellTextStyle;
+            case 6:
+              cell.value = TextCellValue(
+                  '${monitoringStatusesModelsList[operationIndex].unitNumber} ${monitoringStatusesModelsList[operationIndex].unitName} ');
+              cell.cellStyle = _cellTextStyle;
+            case 7:
+              cell.value = TextCellValue(
+                  '${monitoringStatusesModelsList[operationIndex].areaNumber} ${monitoringStatusesModelsList[operationIndex].areaName}');
+              cell.cellStyle = _cellTextStyle;
+            case 8:
+              cell.value = TextCellValue(
+                  '${monitoringStatusesModelsList[operationIndex].inventoryNumber}');
+              cell.cellStyle = _cellTextStyle;
+            case 9:
+              cell.value = TextCellValue(
+                  '${monitoringStatusesModelsList[operationIndex].machineName}');
+              cell.cellStyle = _cellTextStyle;
+            case 10:
+              cell.value = TextCellValue(
+                  '${monitoringStatusesModelsList[operationIndex].dateStart}');
+              cell.cellStyle = _cellTextStyle;
+            case 11:
+              cell.value = TextCellValue(
+                  '${monitoringStatusesModelsList[operationIndex].timeStart}');
+              cell.cellStyle = _cellTextStyle;
+            case 12:
+              cell.value = TextCellValue(
+                  '${monitoringStatusesModelsList[operationIndex].dateEnd}');
+              cell.cellStyle = _cellTextStyle;
+            case 13:
+              cell.value = TextCellValue(
+                  '${monitoringStatusesModelsList[operationIndex].dateEnd}');
+              cell.cellStyle = _cellTextStyle;
+            case 14:
+              cell.value = TextCellValue(
+                  '${monitoringStatusesModelsList[operationIndex].duration}');
+              cell.cellStyle = _cellTextStyle;
+            case 15:
+              cell.value = TextCellValue(
+                  '${monitoringStatusesModelsList[operationIndex].fio}');
+              cell.cellStyle = _cellTextStyle;
+            case 16:
+              cell.value = TextCellValue(
+                  '${monitoringStatusesModelsList[operationIndex].change}');
+              cell.cellStyle = _cellTextStyle;
+            case 17:
+              cell.value = TextCellValue(
+                  '${monitoringStatusesModelsList[operationIndex].comment}');
+              cell.cellStyle = _cellTextStyle;
+          }
+        }
+      }
+
+      rowIndex++;
+    }
+
+    var fileBytes = excel.save();
+
+    final granted = await requestPermissions();
+
+    if (granted) {
+      String? downloadsDirectoryPath =
+          (await DownloadsPath.downloadsDirectory())?.path;
+      print(downloadsDirectoryPath);
+
+      int reportNumber = await insertReportInfoIntoDatabase(1);
+
+      final fileName =
+          '${downloadsDirectoryPath}/Статусы мониторинга $reportNumber ${staff?.fio} (${filtersInfo?.timeStart} - ${filtersInfo?.timeEnd}).xlsx';
 
       File(fileName).writeAsBytes(fileBytes!);
 

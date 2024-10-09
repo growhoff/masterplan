@@ -12,6 +12,7 @@ class MonitoringMachineDTO extends Dto {
   final int id;
   final int timeStart;
   final int timeStop;
+  final int? timeWorking;
   final int statusMachineId;
   final StatusMachineDTO? statusMachine;
   final int userId;
@@ -33,6 +34,7 @@ class MonitoringMachineDTO extends Dto {
     this.statusMachine,
     required this.userId,
     this.user,
+    this.timeWorking,
     required this.machineId,
     this.machine,
     this.batchId,
@@ -79,6 +81,7 @@ class MonitoringMachineDTO extends Dto {
       date: DateTime.tryParse(map['date'] as String) ?? DateTime(int.parse(listTime[0]), int.parse(listTime[1]), int.parse(listTime[2])),
       changeId: map['change_id'] as int,
       operationId: map['operation_id'] as int,
+      timeWorking: map['time_working'],
       firstStartBatch: map['first_start_batch'] != null ? map['first_start_batch'] as int : null,
     );
   }

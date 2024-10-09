@@ -485,7 +485,7 @@ class _StagesInBatchPageViewState extends State<StagesInBatchPageView> {
                                             : false,
                                       ),
                                       StagesInBatchTableCell(
-                                        '${state.stagesInBatchList[index].status}',
+                                        '${state.stagesInBatchList[index].status?.name}',
                                         stageModel:
                                             state.stagesInBatchList[index],
                                         isSelected: state

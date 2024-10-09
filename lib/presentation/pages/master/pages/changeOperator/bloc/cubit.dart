@@ -134,7 +134,10 @@ class CubitChangeOperator extends Cubit<StateCubitChangeOperator> {
     setActiveList(state.change);
   }
 
-  void deleteShifts(int id){
-    zshiftsDistributionTable.delete(id);
+  Future<void> deleteShifts(int id, int index) async{
+    List<ShiftsMachineActive> newList = [...state.activeShiftsList];
+    newList[index] = ShiftsMachineActive(machine: state.activeShiftsList[index].machine, changeItem: null);
+    emit(state.copyWith(activeShiftsList: newList));
+    await zshiftsDistributionTable.delete(id);
   }
 }

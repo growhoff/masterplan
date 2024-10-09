@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:master_plan/presentation/pages/chief/chief_distribution_page/chief_distirbution_cubit/chief_distribution_cubit.dart';
-import 'package:master_plan/presentation/pages/chief/chief_distribution_page/distribution_operation_model.dart';
+import 'package:master_plan/presentation/pages/chief/chief_distribution_page/models/distribution_operation_model.dart';
 
 import '../../../../../domain/model/area.dart';
 
@@ -106,11 +106,16 @@ class _DistributionOperationsListItemState
                                 .toList(),
                             onChanged: (area) => setState(() {
                                   _selectedArea = area;
+                                  print(
+                                      'старое area: ${widget.cubit.operationsForDistributionsList[widget.index].area.id}');
+
                                   widget
                                       .cubit
                                       .operationsForDistributionsList[
                                           widget.index]
                                       .area = area ?? Area.empty;
+                                  print(
+                                      'новое area: ${widget.cubit.operationsForDistributionsList[widget.index].area.id}');
                                 })),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -130,6 +135,15 @@ class _DistributionOperationsListItemState
                             const SizedBox(
                               width: 5,
                             ),
+                            Flexible(
+                              child: FittedBox(
+                                  fit: BoxFit.fill,
+                                  child: IconButton(
+                                      onPressed: () {},
+                                      icon: Image.asset(
+                                          'assets/images/chief/sketch.jpg'), iconSize: 32,)),
+                            ),
+
                             IconButton(
                               onPressed: _selectedArea == null
                                   ? null

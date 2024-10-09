@@ -62,7 +62,7 @@ class Time extends StatelessWidget {
                                 color: Colors.blue,
                                 onPressed: () {
                                     context.read<CubitTimer>().firstStart(activePage, operActive!);
-                                    context.read<CubitWork>().setStartMonitor('В работе', userId, 'Первый запуск', operActive.idPath);
+                                    context.read<CubitWork>().setStartMonitor('В работе', userId, 'Запуск ${operActive.idPath}', operActive.idPath);
                                   },
                               ),
                             )
@@ -133,7 +133,7 @@ class Time extends StatelessWidget {
                                   color: Colors.blue,
                                   onPressed: () {
                                       context.read<CubitTimer>().firstStart(activePage, operActive!);
-                                      context.read<CubitWork>().setStartMonitor('В работе', userId, 'Первый запуск', operActive.idPath);
+                                      context.read<CubitWork>().setStartMonitor('В работе', userId, 'Запуск ${operActive.idPath}', operActive.idPath);
                                       context.read<CubitTimer>().firstStartTransfer(operActive, stateWork.pageData[stateWork.activePage].machine.id, userId, stateWork.activeTransfer, stateWork.activeTransfer);
                                     },
                                 ),
@@ -147,12 +147,13 @@ class Time extends StatelessWidget {
                                     color: statusBtn != 'Простой' ? AppColors.blueMaket : AppColors.redMaket,
                                     onPressed: () {
                                         context.read<CubitTimer>().startOrStop(index: activePage, isStart: !state.listState[activePage], idOptPath:  operActive!.idPath, userId: userId, batchId: operActive.list.first.batch.id, firstTimeBatch: operActive.list.first.timeFirstStart, machine: stateWork.pageData[stateWork.activePage].machine);
-                                        if (stateWork.newTransfer) {
-                                          context.read<CubitTimer>().firstStartTransfer(operActive, stateWork.pageData[stateWork.activePage].machine.id, userId, stateWork.activeTransfer, stateWork.activeTransfer);
-                                          context.read<CubitWork>().toggleNewTransfer();
-                                        } else {
-                                          context.read<CubitTimer>().startOrStopTransfer(!state.listState[activePage], operActive, userId, stateWork.activeTransfer);
-                                        }
+                                        context.read<CubitTimer>().startOrStopTransfer(!state.listState[activePage], operActive, userId, stateWork.activeTransfer);
+                                        // if (stateWork.newTransfer) {
+                                        //   context.read<CubitTimer>().firstStartTransfer(operActive, stateWork.pageData[stateWork.activePage].machine.id, userId, stateWork.activeTransfer, stateWork.activeTransfer);
+                                        //   context.read<CubitWork>().toggleNewTransfer();
+                                        // } else {
+                                        //context.read<CubitTimer>().startOrStopTransfer(!state.listState[activePage], operActive, userId, stateWork.activeTransfer);
+                                        // }
                                       },
                                   ),
                               ),
@@ -174,11 +175,11 @@ class Time extends StatelessWidget {
                                 isActive: operActive.pause != null && (statusBtn == 'Все') || (statusBtn == 'В работе') || (statusBtn == 'Простой'),
                                 color: operActive.pause != null ? AppColors.greenMaket : Colors.white70,
                                 onPressed: () async{
-                                  context.read<CubitWork>().setReadyTransfer(operActive!, context.read<CubitTimer>().state.listTick[activePage], '');
-                                  context.read<CubitWork>().toggleNewTransfer();
-                                  context.read<CubitTimer>().refreshNext(activePage);
-                                  context.read<CubitTimer>().firstStartTransfer(operActive, stateWork.pageData[stateWork.activePage].machine.id, userId, stateWork.activeTransfer, stateWork.activeTransfer);
-                                  
+                                  print('activeTransfer: ${stateWork.activeTransfer}');
+                                  if (context.mounted) await context.read<CubitWork>().setReadyTransfer(operActive!, context.read<CubitTimer>().state.listTick[activePage], '');
+                                  if (context.mounted) await context.read<CubitWork>().toggleNewTransfer();
+                                  if (context.mounted) await context.read<CubitTimer>().refreshNext(activePage);
+                                  if (context.mounted) await context.read<CubitWork>().firstStartTransfer(operActive!, stateWork.pageData[stateWork.activePage].machine.id, userId);
                                 },
                               )) : Container(),
 
@@ -212,13 +213,15 @@ class Time extends StatelessWidget {
                                   icon: Icons.flag,
                                   text: 'Деталь готова',
                                   // isActive: operActive.list.first.listTransfer!.length == stateWork.activeTransfer + 1 && (statusBtn == 'Все') || (statusBtn == 'В работе') || (statusBtn == 'Простой'),
-                                  isActive: operActive.list.first.listTransfer!.length == stateWork.activeTransfer + 1 &&  (statusBtn == 'В работе') ,
+                                  isActive: operActive.list.first.listTransfer!.length == stateWork.activeTransfer + 1 &&  (statusBtn == 'В работе'),
                                   color: operActive.list.first.listTransfer!.length == stateWork.activeTransfer + 1 ? Colors.green : Colors.white70,
                                   onPressed: () async{
                                     String? val = '';
                                     val = await showDialog<String>(context: context,builder: (BuildContext context) => DialogInputComment(operActive!.list.length));
                                     if (val != '' && context.mounted){
+                                      // context.read<CubitWork>().setReady(operActive!, context.read<CubitTimer>().state.listTick[activePage], val!);
                                       context.read<CubitWork>().setReadyTransfer(operActive!, context.read<CubitTimer>().state.listTick[activePage], val!);
+                                      context.read<CubitWork>().getMonitoringIdAndSetMonitor(operActive, val);
                                       context.read<CubitTimer>().refresh(activePage);
                                     }
                                   },

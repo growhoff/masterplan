@@ -90,7 +90,7 @@ class ChiefOperationTable extends SupabaseTable {
   Future<List<Map<String, dynamic>>> fetchOperationsByOperationIdWithLimit(
       {required int limit, required int operationId}) async {
     return await table
-        .select()
+        .select('*, z_chief_batch(*,z_batch(*))')
         .eq('operation_id', operationId)
         .eq('is_distributed', false)
         .limit(limit);

@@ -98,8 +98,8 @@ class CubitTimer extends Cubit<StateTimer> {
     await orderTable.updateStatusJob(listIdOrder);
   }
 
-  void firstStartTransfer(ItemOperOp operActive, int machineId, int staffId, int activeTransfer, int order){
-      transferOperTable.insertDto(TransferOperationsDTO(id: 0, operatorOperationId: operActive.list.first.id, order: order, transferId: operActive.list.first.listTransfer?[activeTransfer].id, batchId: operActive.list.first.batch.id, operationId: operActive.list.first.operation.id, optPath: operActive.idPath, pause: false, timeFirstStart: DateTime.now().millisecondsSinceEpoch, timestart: DateTime.now().millisecondsSinceEpoch, timestop: 0, timeworking: 0, machineId: machineId, staffId: staffId));
+  Future<void> firstStartTransfer(ItemOperOp operActive, int machineId, int staffId, int activeTransfer, int order) async{
+     await transferOperTable.insertDto(TransferOperationsDTO(id: 0, operatorOperationId: operActive.list.first.id, order: order, transferId: operActive.list.first.listTransfer?[activeTransfer].id, batchId: operActive.list.first.batch.id, operationId: operActive.list.first.operation.id, optPath: operActive.idPath, pause: false, timeFirstStart: DateTime.now().millisecondsSinceEpoch, timestart: DateTime.now().millisecondsSinceEpoch, timestop: 0, timeworking: 0, machineId: machineId, staffId: staffId));
   }
 //
   Future<void> startOrStop({required int index,required bool isStart, required int idOptPath, required int userId, required int batchId, required int firstTimeBatch, required Machine machine})async{
@@ -183,7 +183,7 @@ class CubitTimer extends Cubit<StateTimer> {
     emit(state.copyWith(listState: listState, listTick: listTick, listRes: listRes));
   }
 
-  void refreshNext(index) {
+  Future<void> refreshNext(index) async{
     List<bool> listState = [...state.listState];
     List<int> listTick = [...state.listTick];
     List<String> listRes = [...state.listRes];

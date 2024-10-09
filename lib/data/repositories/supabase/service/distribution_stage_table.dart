@@ -125,13 +125,13 @@ class DistributionStageTable extends SupabaseTable {
   Future<List<Map<String, dynamic>>> selectByUnitId(int unitId) async {
     return await _table
         .select(
-        '*, z_chief_batch!inner(*, z_batch!inner(*, z_order!inner(*))), z_stage(*), z_stage_status(*)')
+            '*, z_chief_batch!inner(*, z_batch!inner(*, z_order!inner(*))), z_stage(*), z_stage_status(*)')
         .eq('z_chief_batch.z_batch.company_id', _companyId)
         .eq('unit_id', unitId)
         .order('chief_batch_id', ascending: true)
+        .order('stage_id', ascending: true)
         .order('id', ascending: true);
   }
-
 
   Future<List<Map<String, dynamic>>> selectByIdsList(List<int> idsList) async {
     return await _table
@@ -186,6 +186,18 @@ class DistributionStageTable extends SupabaseTable {
         .order('id', ascending: true);
   }
 
+
+  Future<List<Map<String, dynamic>>> selectNotUploadedByBatchIdAndStageId(
+      {required int batchId, required int stageId}) async {
+    return await _table
+        .select(
+        '*, z_chief_batch!inner(*, z_batch!inner(*, z_batch_archive(*))), z_stage(*)')
+        .eq('z_chief_batch.z_batch.company_id', _companyId)
+        .eq('stage_id', stageId)
+        .eq('z_chief_batch.batch_id', batchId).neq('status_id', 4)
+        .order('id', ascending: true);
+  }
+
   Future<List<Map<String, dynamic>>> selectUploadedByStageIdsList(
       List<int> stagesIdsList) async {
     return await _table
@@ -203,9 +215,10 @@ class DistributionStageTable extends SupabaseTable {
     }).inFilter('id', idList);
   }
 
-  Future bulkChangeStatusToExecute(List<int> idList) async {
+  Future bulkUpdateStatusToExecuteAndUnit(List<int> idList, int unitId) async {
     await _table.update({
       'status_id': 6,
+      'unit_id': unitId,
     }).inFilter('id', idList);
   }
 
@@ -262,6 +275,8 @@ class DistributionStageTable extends SupabaseTable {
   Future<void> updateUnit(int id, int unitId) async {
     await _table.update({'unit_id': unitId}).eq('id', id);
   }
+
+
 
   Future<void> bulkUpdate(List<int> idsList) async {
     await _table.update({'unit_id': 1}).inFilter('id', idsList);

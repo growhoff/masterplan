@@ -350,7 +350,7 @@ class CubitWork extends Cubit<StateWork> {
     setStateStart(false);
   }
 
-  void toggleNewTransfer(){
+  Future<void> toggleNewTransfer()async{
     emit(state.copyWith(newTransfer: false));
   } 
 
@@ -425,8 +425,7 @@ class CubitWork extends Cubit<StateWork> {
           statusMachineId: 1,
           userId: userid,
           machineId: state.pageData[state.activePage].machine.id,
-          batchId:
-              state.pageData[state.activePage].operActive!.list.first.batch.id,
+          batchId: state.pageData[state.activePage].operActive == null ? state.pageData[state.activePage].operQueueList.first.list.first.batch.id : state.pageData[state.activePage].operActive!.list.first.batch.id,
           comment: comment));
       List<bool> list = [...state.listStartBtn];
       list[state.activePage] = true;
@@ -549,6 +548,11 @@ class CubitWork extends Cubit<StateWork> {
 
   void toggleVisibleStatus() {
     emit(state.copyWith(visibleStatus: !state.visibleStatus));
+  }
+
+  Future<void> firstStartTransfer(ItemOperOp operActive, int machineId, int staffId) async{
+    print('activeTransfer: ${state.activeTransfer}');
+     await transferOperTable.insertDto(TransferOperationsDTO(id: 0, operatorOperationId: operActive.list.first.id, order: state.activeTransfer, transferId: operActive.list.first.listTransfer?[state.activeTransfer].id, batchId: operActive.list.first.batch.id, operationId: operActive.list.first.operation.id, optPath: operActive.idPath, pause: false, timeFirstStart: DateTime.now().millisecondsSinceEpoch, timestart: DateTime.now().millisecondsSinceEpoch, timestop: 0, timeworking: 0, machineId: machineId, staffId: staffId));
   }
 
   String getButtonName(List<Transfer>? listTransfer, String statusBtn){

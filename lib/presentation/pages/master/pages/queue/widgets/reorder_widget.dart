@@ -30,7 +30,7 @@ class Reorder extends StatelessWidget {
           int priority = list[index].listOptPath.first.list.first.batch.order == null ? 0 : list[index].listOptPath.first.list.first.batch.order!.priority;
           return Card(
             key: ValueKey(index),
-            color:  active ? const Color.fromARGB(255, 175, 250, 178) : mod != null ? AppColors.modific : AppColors.notModific,
+            color:  active ? const Color.fromARGB(255, 175, 250, 178) : AppColors.notModific,
             child: GestureDetector(
               onLongPress: () => context.read<CubitQueueMaster>().choiseOptPath(index),
               onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => TableInfoPage(list[index].listOptPath.first.list))),

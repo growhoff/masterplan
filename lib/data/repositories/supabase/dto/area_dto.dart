@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
+import 'package:master_plan/data/repositories/supabase/dto/unit_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 
 class AreaDTO extends Dto {
@@ -7,16 +8,16 @@ class AreaDTO extends Dto {
   final String name;
   final String number;
   final int unitId;
+  final UnitDTO? unit;
   final int? companyId;
 
-  AreaDTO({
-    required this.id,
-    required this.name,
-    required this.number,
-     required this.unitId,
-   this.companyId
-
-  });
+  AreaDTO(
+      {required this.id,
+      required this.name,
+      required this.number,
+      required this.unitId,
+      this.unit,
+      this.companyId});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -33,12 +34,13 @@ class AreaDTO extends Dto {
       name: map['name'] as String,
       number: map['number'] as String,
       unitId: map['unit_id'] as int,
-      companyId: map['company_id'] != null ? map['company_id'] : null
-
+      unit: map['z_unit'] != null ? UnitDTO.fromMap(map['z_unit']) : null,
+      companyId: map['company_id'] != null ? map['company_id'] : null,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory AreaDTO.fromJson(String source) => AreaDTO.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory AreaDTO.fromJson(String source) =>
+      AreaDTO.fromMap(json.decode(source) as Map<String, dynamic>);
 }

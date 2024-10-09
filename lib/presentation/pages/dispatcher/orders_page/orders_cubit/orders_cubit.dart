@@ -69,26 +69,50 @@ class OrdersCubit extends Cubit<OrdersState> {
     }
   }
 
-  Future<void> createOrder() async {
-    await _orderTable.insert(OrderDTO(
-        id: 0,
-        number: numberController.text,
-        dateReceipt: receiptDate.toString(),
-        customer: customerController.text,
-        requiredCompletionDate: requiredCompletionDate.toString(),
-        priority: selectedPriority,
-        statusId: 1));
+  Future<bool> createOrder() async {
+    final fetchedOrder =
+        await _orderTable.selectByNumber(numberController.text);
+
+    if (fetchedOrder.isEmpty) {
+      await _orderTable.insert(OrderDTO(
+          id: 0,
+          number: numberController.text,
+          dateReceipt: receiptDate.toString(),
+          customer: customerController.text,
+          requiredCompletionDate: requiredCompletionDate.toString(),
+          priority: selectedPriority,
+          statusId: 1));
+      return true;
+    }
+    return false;
   }
 
-  Future editOrder(Order order) async {
-    await _orderTable.updateOrder(OrderDTO(
-        id: order.id,
-        number: numberController.text,
-        dateReceipt: receiptDate.toString(),
-        customer: customerController.text,
-        requiredCompletionDate: requiredCompletionDate.toString(),
-        priority: selectedPriority,
-        statusId: 1));
+  Future<bool> editOrder(Order order) async {
+    bool isHaveSameNumber = false;
+
+    if (numberController.text != order.number) {
+      final fetchedOrder =
+      await _orderTable.selectByNumber(numberController.text);
+      if (fetchedOrder.isNotEmpty) {
+        isHaveSameNumber = true;
+      }
+    }
+
+    if (!isHaveSameNumber) {
+      await _orderTable.updateOrder(OrderDTO(
+          id: order.id,
+          number: numberController.text,
+          dateReceipt: receiptDate.toString(),
+          customer: customerController.text,
+          requiredCompletionDate: requiredCompletionDate.toString(),
+          priority: selectedPriority,
+          statusId: 1));
+
+      return true;
+    } else {
+      emit(state.copyWith(status: OrdersStatus.success));
+      return false;
+    }
   }
 
   Future initEditOrderPage(Order order) async {

@@ -25,6 +25,13 @@ class OperatorOperationsTable extends SupabaseTable {
     return await table.delete().inFilter('id', id);
   }
 
+  Future<void> bulkDeleteByDistributionStagesIdsList(
+      List<int> distributionStagesIdsList) {
+    return table
+        .delete()
+        .inFilter('distribution_stage_id', distributionStagesIdsList);
+  }
+
   @override
   Future<void> insert(Dto dto) async {
     if (dto is OperatorOperationsDTO) {
@@ -72,15 +79,22 @@ class OperatorOperationsTable extends SupabaseTable {
         .order('id', ascending: true);
   }
 
+
+
   Future<List<Map<String, dynamic>>>
       selectByDistributionStagesIdsListAndNotDefectDistributionStage(
-          List<int> distributionStagesIdsList) {
-    return table
+          List<int> distributionStagesIdsList) async {
+    print(distributionStagesIdsList);
+    var res = await table
         .select(
             '*, z_status(*),  z_batch(*), z_operation(*), z_distribution_stage!inner(*)')
         .inFilter('distribution_stage_id', distributionStagesIdsList)
         .neq('z_distribution_stage.status_id', 5)
         .order('id', ascending: true);
+
+    print(res);
+
+    return res;
   }
 
   Future<List<Map<String, dynamic>>> selectByBatchIdWithoutDistributionStage(
@@ -131,8 +145,8 @@ class OperatorOperationsTable extends SupabaseTable {
         .eq('z_area.company_id', _companyId)
         .inFilter('operation_id', operationsIdsList)
         .inFilter('distribution_stage_id', distributionStageIdsList)
-    .order('chief_batch_id', ascending: true)
-        .order('id', ascending: true);
+        .order('chief_batch_id', ascending: true)
+        .order('operation_id', ascending: true);
     //.order('chief_operation_id', ascending: true);
   }
 
@@ -260,7 +274,8 @@ class OperatorOperationsTable extends SupabaseTable {
   }
 
   //выбор машины и статус "очередь"
-  Future<void> updateMasterQueueListPath(List<int> listId, int machineId, int random) async{
+  Future<void> updateMasterQueueListPath(
+      List<int> listId, int machineId, int random) async {
     final quere = await table.select('id').count();
     await table.update({
       'machine_id': machineId,

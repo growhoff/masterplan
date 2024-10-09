@@ -161,17 +161,20 @@ class _QueueStageItemViewState extends State<QueueStageItemView> {
                             ],
                           ),
                         ),
-                        (widget.stageModel.status == 'Выполняется' ||
-                                widget.stageModel.status == 'Готов')
+                        (widget.stageModel.status?.id == 2 ||
+                                widget.stageModel.status?.id == 3 ||
+                                widget.stageModel.status?.id == 4)
                             ? Container()
                             : Divider(
                                 height: 1,
                               ),
-                        (widget.stageModel.status == 'Выполняется' ||
-                                widget.stageModel.status == 'Готов')
+                        (widget.stageModel.status?.id == 2 ||
+                            widget.stageModel.status?.id == 3 ||
+                            widget.stageModel.status?.id == 4)
                             ? Container()
                             : SimpleDialogOption(
                                 onPressed: () async {
+                                  Navigator.pop(context);
                                   await context
                                       .read<QueueStagesCubit>()
                                       .redistribute(widget.stageModel);
@@ -252,7 +255,7 @@ class _QueueStageItemViewState extends State<QueueStageItemView> {
                       Expanded(
                         child: Container(
                           child: Text(
-                            '${widget.stageModel.status}',
+                            '${widget.stageModel.status?.name}',
                             textAlign: TextAlign.center,
                           ),
                         ),

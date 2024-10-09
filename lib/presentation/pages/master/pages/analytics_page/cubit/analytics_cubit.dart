@@ -396,8 +396,8 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
           photo: '',
           company: Company(id: 0, name: '', code: ''),
           position: Position(
-              id: dto.staff?.position.id ?? 0,
-              name: dto.staff?.position.name ?? ''),
+              id: dto.staff?.position?.id ?? 0,
+              name: dto.staff?.position?.name ?? ''),
         ),
         machine: Machine(
             id: 0,

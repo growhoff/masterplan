@@ -25,6 +25,7 @@ import '../../../../../data/repositories/supabase/service/stage_table.dart';
 import '../../../../../domain/model/batch.dart';
 import '../../../../../domain/model/distribution_stage.dart';
 
+import '../../../../../domain/model/status.dart';
 import '../../../dispatcher/orders_page/batches_page/batch_model.dart'
     hide OperationInStageModel;
 import '../stages_in_unit_model.dart';
@@ -68,7 +69,7 @@ class StagesInUnitCubit extends Cubit<StagesInUnitState> {
       distributionStagesList.add(distributionStage);
       distributionStagesIdsList.add(distributionStage.id);
       stagesIdsList.add(distributionStage.stageId);
-      print('получили стейджи');
+      //print('получили стейджи');
     }
 
     var fetchedOperationsList =
@@ -83,13 +84,22 @@ class StagesInUnitCubit extends Cubit<StagesInUnitState> {
       } else {
         operationsInStageQuantityMap[operationDto.stageId] = 1;
       }
-      print('получили операции');
+     // print('получили операции');
     }
-    print('начали получать ОПОП');
+
+    distributionStagesIdsList.toSet();
+
+    var halfList = distributionStagesIdsList
+        .skip((distributionStagesIdsList.length / 2).round());
+
+   // print('начали получать ОПОП');
     var fetchedOperatorOperationsList = await _operatorOperationsTable
         .selectByDistributionStagesIdsListAndNotDefectDistributionStage(
-            distributionStagesIdsList);
-    print('получили ОПОП');
+        halfList.toList());
+
+
+
+   // print('получили ОПОП');
     for (var operatorOperation in fetchedOperatorOperationsList) {
       final operatorOperationDto =
           OperatorOperationsDTO.fromMap(operatorOperation);
@@ -98,7 +108,13 @@ class StagesInUnitCubit extends Cubit<StagesInUnitState> {
       operatorOperationsList.add(operatorOperationDto);
     }
 
-    print('запросы получили');
+    var lastList = distributionStagesIdsList.getRange(0, halfList.length);
+
+    fetchedOperatorOperationsList.addAll(await _operatorOperationsTable
+        .selectByDistributionStagesIdsListAndNotDefectDistributionStage(
+        lastList.toList()));
+
+    //print('запросы получили');
     var batchesMap =
         groupBy(distributionStagesList, (stage) => stage.chiefBatch?.batchId);
 
@@ -152,7 +168,7 @@ class StagesInUnitCubit extends Cubit<StagesInUnitState> {
           unitNumber: stageValue.first.unit?.number ?? '',
         );
 
-        stageModel.status = stageValue.last.stageStatus?.name ?? '';
+        stageModel.status = stageValue.last.stageStatus;
 
         List<int> stagesStatusesIdsList = [];
         for (var stage in stageValue) {
@@ -197,19 +213,19 @@ class StagesInUnitCubit extends Cubit<StagesInUnitState> {
             stageModel.uploadedQuantity;
 
         if (stagesStatusesIdsList.contains(1)) {
-          stageModel.status = 'на распределении';
+          stageModel.status = Status(id: 1, name: 'на распределении');
         } else {
           if (stagesStatusesIdsList.contains(2)) {
-            stageModel.status = 'выполняется';
+            stageModel.status = Status(id: 2, name: 'выполняется');
           } else {
             if (stagesStatusesIdsList.contains(3)) {
-              stageModel.status = 'готов';
+              stageModel.status = Status(id: 3, name: 'готов');
             } else {
               if (stagesStatusesIdsList.contains(4)) {
-                stageModel.status = 'выгружен';
+                stageModel.status = Status(id: 4, name: 'выгружен');
               } else {
                 if (stagesStatusesIdsList.contains(6)) {
-                  stageModel.status = 'к выполнению';
+                  stageModel.status = Status(id: 6, name: 'к выполнению');
                 }
               }
             }

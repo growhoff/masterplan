@@ -10,6 +10,7 @@ import 'package:master_plan/presentation/pages/master/pages/distributionDetails/
 import 'package:master_plan/presentation/pages/master/pages/monitoring/monitoring_page.dart';
 import 'package:master_plan/presentation/pages/master/pages/queue/queue_page.dart';
 import 'package:master_plan/presentation/pages/master/pages/readyDetails/ready_details.dart';
+import 'package:master_plan/presentation/pages/master/pages/stageOnArea/stage_area_page.dart';
 
 class CardGrid extends StatelessWidget {
   const CardGrid({super.key});
@@ -44,7 +45,7 @@ class CardGrid extends StatelessWidget {
               ButtonCustomMasterStart(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const QueuePageMaster())), text: 'Очередь деталей на станках'),
               ButtonCustomMasterStart(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const BrakReadyDetailsPage())), text: 'Готовые детали'),
               ButtonCustomMasterStart(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const BrakDetailsPage())), text: 'Отбракованные детали  оператором'),
-              ButtonCustomMasterStart(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const BrakDetailsPage())), text: 'Этапы на участке (просмотр)'),
+              ButtonCustomMasterStart(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const StageOnAreaPage())), text: 'Этапы на участке (просмотр)'),
               ButtonCustomMasterStart(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AnalyticsPage())), text: 'Аналитика'),
               ButtonCustomMasterStart(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const MonitoringPage())), text: 'Мониторинг'),
             ],

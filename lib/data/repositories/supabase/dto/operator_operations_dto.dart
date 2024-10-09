@@ -160,6 +160,7 @@ class OperatorOperationsDTO extends Dto {
         chiefOperation: map['z_chief_operation'] != null
             ? ChiefOperationDto.fromMap(map['z_chief_operation'])
             : null,
+        distributionStageId: map['distribution_stage_id'],
         modific: map['modific'] != null ? map['modific'] as bool : null,
         comment: map['comment'] != null ? map['comment'] as String : null,
         distributionStageDto: map['z_distribution_stage'] != null

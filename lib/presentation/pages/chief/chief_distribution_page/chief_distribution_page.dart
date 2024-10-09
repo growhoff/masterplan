@@ -87,12 +87,17 @@ class _ChiefDistributionPageViewState extends State<ChiefDistributionPageView> {
                   const SizedBox(
                     height: 10,
                   ),
-
-
                   Expanded(
                     child: ListView.separated(
                         itemBuilder: (context, index) =>
-                            ChiefDistributionListItem(state.stagesList[index]),
+                            ChiefDistributionListItem(
+                              state.stagesList[index],
+                              setState: () => setState(() {
+                                context
+                                    .read<ChiefDistributionCubit>()
+                                    .initChiefDistributionPage();
+                              }),
+                            ),
                         separatorBuilder: (context, index) => const SizedBox(
                               height: 10,
                             ),

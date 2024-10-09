@@ -1,6 +1,7 @@
 import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
+import 'package:master_plan/domain/model/area.dart';
 import 'package:master_plan/domain/usecase/chief_unit_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -67,6 +68,17 @@ class AreaTable extends SupabaseTable {
   Future<List<Map<String, dynamic>>> selectByUnitIdList(
       List<int> unitIdList) async {
     return await table.select().inFilter('unit_id', unitIdList);
+  }
+
+  Future<List<Area>> selectByUnitIdListDTO(List<int> unitIdList) async {
+    final fetchedAreasList =
+        await table.select().inFilter('unit_id', unitIdList);
+
+    return fetchedAreasList
+        .map((area) => AreaDTO.fromMap(area))
+        .toList()
+        .map((areaDTO) => Area.fromDTO(areaDTO))
+        .toList();
   }
 
   Future<List<Map<String, dynamic>>> selectListId(List<int> areaId) {

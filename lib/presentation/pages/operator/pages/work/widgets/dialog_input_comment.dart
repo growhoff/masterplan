@@ -19,15 +19,18 @@ class DialogInputComment extends StatelessWidget {
                     const Divider(),
                     Text('Передать максимум: $count'),
                     const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        const Expanded(flex: 2, child: Text('Количество')),
-                        Expanded(
-                          child: TextFormField(
-                            controller: brakController,
-                            ),
-                        ),
-                      ],
+                    Visibility(
+                      visible: count > 0,
+                      child: Row(
+                        children: [
+                          const Expanded(flex: 2, child: Text('Количество')),
+                          Expanded(
+                            child: TextFormField(
+                              controller: brakController,
+                              ),
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 8),
                     TextFormField(

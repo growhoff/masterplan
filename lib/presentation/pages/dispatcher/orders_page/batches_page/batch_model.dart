@@ -4,6 +4,7 @@
 import '../../../../../domain/model/batch.dart';
 import '../../../../../domain/model/distribution_stage.dart';
 import '../../../../../domain/model/operation.dart';
+import '../../../../../domain/model/status.dart';
 
 class BatchModel {
   final Batch batch;
@@ -23,6 +24,7 @@ class StageModel {
       required this.stageName,
       required this.batch,
       required this.operationsQuantity,
+        this.status,
       required this.unitNumber});
 
   final String stageNumber;
@@ -44,7 +46,7 @@ class StageModel {
   int defectQuantity = 0;
   int readyPercent = 0;
   int availableQuantity = 0;
-  String status = '';
+  Status? status;
 }
 
 class OperationInStageModel {

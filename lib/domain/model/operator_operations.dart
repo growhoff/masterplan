@@ -1,14 +1,19 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operation_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
 import 'package:master_plan/domain/model/batch.dart';
+import 'package:master_plan/domain/model/company.dart';
 import 'package:master_plan/domain/model/machine.dart';
+import 'package:master_plan/domain/model/position.dart';
 import 'package:master_plan/domain/model/status.dart';
 import 'package:master_plan/domain/model/transfer.dart';
+import 'package:master_plan/domain/model/unit.dart';
 import 'package:master_plan/domain/model/user.dart';
 
 import 'distribution_stage.dart';
+import 'order.dart';
 
 class OperatorOperations {
   final int id;
@@ -51,7 +56,6 @@ class OperatorOperations {
     this.order,
     this.distributionStageId,
     this.optimalPart,
-
     this.timestart,
     this.timestop,
     this.timeworking,
@@ -63,7 +67,6 @@ class OperatorOperations {
     this.distributionStage,
     this.listTransfer,
   });
-
 
   OperatorOperations copyWith({
     int? id,
@@ -113,5 +116,63 @@ class OperatorOperations {
       comment: comment ?? this.comment,
       listTransfer: listTransfer ?? this.listTransfer,
     );
+  }
+
+  factory OperatorOperations.fromDTO({required OperatorOperationsDTO dto}) {
+    return OperatorOperations(
+        timeworking: dto.timeworking,
+        optimalPart: dto.optimalPart,
+        timeplan: dto.timeplan ?? 0,
+        id: dto.id,
+        timestop: dto.timestop,
+        user: User(
+          id: 0,
+          fio: dto.staff?.fio ?? 'empty',
+          positionId: dto.staff?.positionId ?? 0,
+          companyId: 0,
+          unitId: 0,
+          areaId: 0,
+          photo: '',
+          company: Company(id: 0, name: '', code: ''),
+          position: Position(
+              id: dto.staff?.position?.id ?? 0,
+              name: dto.staff?.position?.name ?? ''),
+        ),
+        machine: Machine(
+            id: 0,
+            isActivated: dto.machine?.isActivated ?? false,
+            inventoryNumber: dto.machine?.inventoryNumber ?? 0,
+            name: dto.machine?.name ?? 'empty_machine_name',
+            areaId: 0),
+        timeFirstStart: dto.timeFirstStart ?? 0,
+        comment: dto.comment,
+        status: Status(id: dto.status.id, name: dto.status.name),
+        batch: Batch(
+            id: dto.batch.id,
+            numberRS: dto.batch.numberRS,
+            name: dto.batch.name,
+            number: dto.batch.number,
+            count: dto.batch.count,
+            code: dto.batch.code,
+            technology: dto.batch.technology,
+            order: Order(
+                id: dto.batch.order?.id ?? 0,
+                number: dto.batch.order?.number ?? '',
+                priority: dto.batch.order?.priority ?? 0,
+                statusId: dto.batch.order?.statusId ?? 0),
+            orderId: dto.batch.orderId),
+        stage: dto.stage ?? StageDTO.empty,
+        distributionStage: DistributionStage(
+            id: dto.distributionStageDto?.id ?? 0,
+            chiefBatchId: dto.distributionStageDto?.chiefBatchId ?? 0,
+            unit: Unit(
+                id: dto.distributionStageDto?.unitDto?.id ?? 0,
+                name: dto.distributionStageDto?.unitDto?.name,
+                number: dto.distributionStageDto?.unitDto?.number,
+                companyId: dto.distributionStageDto?.unitDto?.companyId ?? 0),
+            stageId: dto.distributionStageDto?.stageId ?? 0,
+            statusId: dto.distributionStageDto?.statusId ?? 0),
+        operation: dto.operation,
+        area: dto.area ?? AreaDTO(id: 0, name: '', number: '', unitId: 0));
   }
 }

@@ -3,6 +3,7 @@ import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
 import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
 import 'package:master_plan/domain/usecase/chief_unit_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../../domain/model/chief_distribution_operations_model.dart';
 import '../../../../domain/usecase/company_service.dart';
 
 class ChiefDistributionOperationsTable extends SupabaseTable {
@@ -36,7 +37,7 @@ class ChiefDistributionOperationsTable extends SupabaseTable {
     return 0;
   }
 
-  Future bulkInsert(List<ChiefDistributionOperationsDTO> dtosList)async{
+  Future bulkInsert(List<ChiefDistributionOperationsDTO> dtosList) async {
     List<Map<String, Object>> mapsList = [];
 
     for (var dto in dtosList) {
@@ -63,6 +64,29 @@ class ChiefDistributionOperationsTable extends SupabaseTable {
     return res;
   }
 
+  Future<List<Map<String, dynamic>>> selectByBatchAndStageIdWithNotZeroQuantity(
+      {required int batchId, required int stageId}) async {
+    var res = await table
+        .select(
+            '*, z_batch:batch_id!inner(*), z_stage:stage_id(*, z_area(*)), z_operation:operation_id(*)')
+        .eq('batch_id', batchId)
+        .eq('stage_id', stageId)
+        .neq('quantity', 0)
+        .order('id', ascending: true);
+
+    return res;
+  }
+
+  Future<List<Map<String, dynamic>>> selectByBatchAId(int batchId) async {
+    var res = await table
+        .select(
+            '*, z_batch:batch_id!inner(*), z_stage:stage_id(*, z_area(*)), z_operation:operation_id(*)')
+        .eq('batch_id', batchId)
+        .order('operation_id', ascending: true);
+
+    return res;
+  }
+
   Future<List<Map<String, dynamic>>> selectByBatchAndStageId(
       {required int batchId, required int stageId}) async {
     var res = await table
@@ -70,7 +94,19 @@ class ChiefDistributionOperationsTable extends SupabaseTable {
             '*, z_batch:batch_id!inner(*), z_stage:stage_id(*, z_area(*)), z_operation:operation_id(*)')
         .eq('batch_id', batchId)
         .eq('stage_id', stageId)
-    .neq('quantity', 0)
+        .order('id', ascending: true);
+
+    return res;
+  }
+
+  Future<List<Map<String, dynamic>>> selectByBatchesIdsLists({
+    required List<int> batchesIdsList,
+  }) async {
+    var res = await table
+        .select(
+            '*, z_batch:batch_id!inner(*), z_stage:stage_id(*, z_area(*)), z_operation:operation_id(*)')
+        .inFilter('batch_id', batchesIdsList)
+        .neq('quantity', 0)
         .order('id', ascending: true);
 
     return res;
@@ -80,7 +116,7 @@ class ChiefDistributionOperationsTable extends SupabaseTable {
       List<int> batchId) async {
     var res = await table
         .select(
-        '*, z_batch:batch_id!inner(*), z_stage:stage_id(*, z_area(*)), z_operation:operation_id(*)')
+            '*, z_batch:batch_id!inner(*), z_stage:stage_id(*, z_area(*)), z_operation:operation_id(*)')
         .inFilter('batch_id', batchId)
         .eq('z_batch.company_id', _companyId ?? 1)
         .order('operation_id', ascending: true);

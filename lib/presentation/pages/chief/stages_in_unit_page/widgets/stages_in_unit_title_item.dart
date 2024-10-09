@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_plan/presentation/pages/chief/stages_in_unit_page/stages_in_unit_cubit/stages_in_unit_cubit.dart';
-import 'package:master_plan/presentation/pages/chief/stages_in_unit_page/stages_in_unit_model.dart';
 
 import '../../../dispatcher/orders_page/batches_page/batch_model.dart';
 import '../../../dispatcher/orders_page/batches_page/stages_in_batch_page.dart';
@@ -350,7 +349,7 @@ class _StagesInUnitTitleItemViewState extends State<StagesInUnitTitleItemView> {
                       Expanded(
                         child: Container(
                           child: Text(
-                            '${widget.stageModel.status}',
+                            '${widget.stageModel.status?.name}',
                             textAlign: TextAlign.center,
                           ),
                         ),

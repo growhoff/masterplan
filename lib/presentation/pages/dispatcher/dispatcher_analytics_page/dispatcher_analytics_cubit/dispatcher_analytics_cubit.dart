@@ -2,19 +2,18 @@ import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:master_plan/data/repositories/local/dto/filters_info_model.dart';
+import 'package:master_plan/data/repositories/supabase/dto/machine_dto.dart';
+import 'package:master_plan/data/repositories/supabase/dto/monitoring_machine_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/transfer_operations_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/unit_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/area_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/machine_table.dart';
+import 'package:master_plan/data/repositories/supabase/service/monitoring_machine_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/transfer_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/unit_table.dart';
 import 'package:master_plan/domain/model/distribution_stage.dart';
-import 'package:master_plan/domain/usecase/staff_service.dart';
 import 'package:master_plan/domain/usecase/upload_reports_service.dart';
-import 'package:open_filex/open_filex.dart';
 
-import '../../../../../data/repositories/local/service/excel_service.dart';
-import '../../../../../data/repositories/local/service/notification_service.dart';
 import '../../../../../data/repositories/supabase/dto/area_dto.dart';
 import '../../../../../data/repositories/supabase/dto/operator_operations_dto.dart';
 import '../../../../../data/repositories/supabase/dto/stage_dto.dart';
@@ -26,7 +25,7 @@ import '../../../../../domain/model/machine.dart';
 import '../../../../../domain/model/operator_operations.dart';
 import '../../../../../domain/model/order.dart';
 import '../../../../../domain/model/position.dart';
-import '../../../../../domain/model/staff.dart';
+import '../../../../../domain/model/report_items_models/monitoring_statuses_model.dart';
 import '../../../../../domain/model/status.dart';
 import '../../../../../domain/model/unit.dart';
 import '../../../../../domain/model/user.dart';
@@ -42,14 +41,18 @@ class DispatcherAnalyticsCubit extends Cubit<DispatcherAnalyticsState> {
 
   final _operatorOperationsTable = OperatorOperationsTable();
   final _transferOperationsTable = TransferOperationsTable();
+  final _monitoringMachineTable = MonitoringMachineTable();
+
   final _unitTable = UnitTable();
   final _areaTable = AreaTable();
 
   List<Area> selectedAreasList = [];
   List<Unit> selectedUnitsList = [];
+  List<Machine> selectedMachinesList = [];
 
   Area selectedArea = Area.empty;
   Unit selectedUnit = Unit.empty;
+  Machine? selectedMachine;
 
   DateTime timeStart = DateTime.now();
   DateTime timeEnd = DateTime.now();
@@ -76,6 +79,7 @@ class DispatcherAnalyticsCubit extends Cubit<DispatcherAnalyticsState> {
     unitsList.forEach((unit) => print('unit number: ${unit.number}'));
     emit(state.copyWith(unitsList: unitsList));
     await fetchAreas();
+    // await fetchMachines();
   }
 
   Future fetchAreas() async {
@@ -104,6 +108,48 @@ class DispatcherAnalyticsCubit extends Cubit<DispatcherAnalyticsState> {
 
     emit(state.copyWith(
         areasList: areasList, status: DispatcherAnalyticsStateStatus.success));
+  }
+
+  Future fetchMachines() async {
+    //emit(state.copyWith(status: DispatcherAnalyticsStateStatus.loading));
+    final MachineTable machineTable = MachineTable();
+
+    List<int> selectedAreasIdsList = getIdsListFromAreasList(selectedAreasList);
+
+    List<Machine> machinesList = [];
+
+    var fetchedMachinesList =
+        await machineTable.selectMachineToAreaList(selectedAreasIdsList);
+
+    for (var fetchedMachine in fetchedMachinesList) {
+      final machineDto = MachineDTO.fromMap(fetchedMachine);
+
+      final machine = Machine(
+          id: machineDto.id,
+          inventoryNumber: machineDto.inventoryNumber,
+          name: machineDto.name,
+          areaId: machineDto.areaId,
+          isActivated: machineDto.isActivated);
+
+      machinesList.add(machine);
+    }
+
+
+    selectedMachinesList = machinesList;
+
+    emit(state.copyWith(
+        machinesList: machinesList,
+        status: DispatcherAnalyticsStateStatus.success));
+
+    print('from cubit : ${state.machinesList}');
+  }
+
+  Future initMonitoringStatusesFilters() async {
+    // emit(state.copyWith(status: DispatcherAnalyticsStateStatus.loading));
+
+    await fetchMachines();
+
+    // emit(state.copyWith(status: DispatcherAnalyticsStateStatus.success));
   }
 
   addSelectedAreaToList(Area area) {
@@ -210,6 +256,7 @@ class DispatcherAnalyticsCubit extends Cubit<DispatcherAnalyticsState> {
       String timeStart = '${dateTimeStart.hour}:${dateTimeStart.minute}';
 
       int change = 1;
+
       (hours >= 8 && hours <= 20) ? change = 1 : change = 2;
 
       AnalyticsOperationModel analyticsOperation = AnalyticsOperationModel(
@@ -283,13 +330,12 @@ class DispatcherAnalyticsCubit extends Cubit<DispatcherAnalyticsState> {
             machineName: value.first.machine?.name ?? '',
             machineInventoryNumber: value.first.machine?.inventoryNumber ?? 0,
             timeFact: transfer.timeworking ?? 0,
-           // TimeConverter.instance.convertTimeFromSeconds(transfer.timeworking ?? 0),
+            // TimeConverter.instance.convertTimeFromSeconds(transfer.timeworking ?? 0),
             unitNumber: value.first.distributionStage?.unit?.number ?? '',
           );
 
           transfersAnalyticsModelsList.add(transferAnalyticsModel);
         }
-
       }
 
       analyticsOperation.transfersList = transfersAnalyticsModelsList;
@@ -393,6 +439,86 @@ class DispatcherAnalyticsCubit extends Cubit<DispatcherAnalyticsState> {
         totalNumberReadyOperationModelsList: finalOperationsList));
   }
 
+  Future fetchMonitoringStatuses() async {
+    List<int> areasIdsList = getIdsListFromAreasList(selectedAreasList);
+
+    List<MonitoringMachineDTO> monitoringMachinesList = [];
+
+    List<MonitoringStatusesModel> monitoringStatusesModelsList = [];
+
+    int start = timeStart.millisecondsSinceEpoch;
+    int end = timeEnd.millisecondsSinceEpoch + 86399000;
+
+    var fetchedMonitoringMachinesList = await _monitoringMachineTable
+        .selectByAreasIdsList(areasIdsList: areasIdsList);
+
+    for (var fetchedMonitoringMachine in fetchedMonitoringMachinesList) {
+      final monitoringMachineDto =
+          MonitoringMachineDTO.fromMap(fetchedMonitoringMachine);
+
+      if ((monitoringMachineDto.timeStart >= start &&
+          monitoringMachineDto.timeStart <= end)) {
+        monitoringMachinesList.add(monitoringMachineDto);
+      }
+    }
+
+    var monitoringMachinesMap = groupBy(monitoringMachinesList,
+        (monitoringMachine) => monitoringMachine.operationId);
+
+    monitoringMachinesMap.forEach((key, value) {
+      for (var status in value) {
+        final DateTimeStart =
+            DateTime.fromMillisecondsSinceEpoch(status.timeStart);
+
+        final DateTimeEnd =
+            DateTime.fromMillisecondsSinceEpoch(status.timeStop);
+
+        final String dateStart =
+            '${DateTimeStart.day}.${DateTimeStart.month}.${DateTimeStart.year}';
+
+        final String dateEnd =
+            '${DateTimeEnd.day}.${DateTimeEnd.month}.${DateTimeEnd.year}';
+
+        final String timeStart =
+            '${DateTimeStart.hour}:${DateTimeStart.minute}';
+
+        final String timeEnd = '${DateTimeEnd.hour}:${DateTimeEnd.minute}';
+
+        final monitoringStatusesModel = MonitoringStatusesModel(
+            statusName: status.statusMachine?.name ?? '',
+            unitNumber: status.machine?.area?.unit?.number ?? '',
+            unitName: status.machine?.area?.unit?.name ?? '',
+            areaNumber: status.machine?.area?.number ?? '',
+            areaName: status.machine?.area?.name ?? '',
+            machineName: status.machine?.name ?? '',
+            fio: status.user?.fio ?? '',
+            change: status.changeId,
+            dateStart: dateStart,
+            timeStart: dateEnd,
+            dateEnd: timeStart,
+            timeEnd: timeEnd,
+            duration: status.timeWorking == null
+                ? '_'
+                : TimeConverter()
+                    .convertTimeFromSeconds(status.timeWorking ?? 0),
+            comment: status.comment,
+            optimalBatchId:
+                status.operationId == -1 ? '_' : '${status.operationId}',
+            stageNumber: '',
+            batchNumber:
+                status.batch == null ? '_' : '${status.batch?.numberRS}',
+            batchName: status.batch == null ? '_' : '${status.batch?.name}',
+            operationName: '',
+            inventoryNumber: '${status.machine?.inventoryNumber}');
+
+        monitoringStatusesModelsList.add(monitoringStatusesModel);
+      }
+    });
+
+    emit(state.copyWith(
+        monitoringStatusesModelsList: monitoringStatusesModelsList));
+  }
+
   Future fetchTime(BuildContext context) async {
     DateTime start = DateTime(2024);
     DateTime end = DateTime.now();
@@ -421,6 +547,7 @@ class DispatcherAnalyticsCubit extends Cubit<DispatcherAnalyticsState> {
         unitsList: selectedUnitsList,
         timeStart: timeStart,
         timeEnd: timeEnd);
+
   }
 
   Future<void> uploadTotalNumberReadyOperationsReport() async {
@@ -433,6 +560,15 @@ class DispatcherAnalyticsCubit extends Cubit<DispatcherAnalyticsState> {
         unitsList: selectedUnitsList,
         timeStart: timeStart,
         timeEnd: timeEnd);
+  }
+
+  Future<void> uploadMonitoringStatusesReport() async {
+    await fetchMonitoringStatuses();
+
+    _uploadReportsService.uploadMonitoringStatusesReport(
+        timeStart: timeStart,
+        timeEnd: timeEnd,
+        monitoringStatusesModelsList: state.monitoringStatusesModelsList);
   }
 
   OperatorOperations convertOperationDtoToModel(
@@ -453,8 +589,8 @@ class DispatcherAnalyticsCubit extends Cubit<DispatcherAnalyticsState> {
           photo: '',
           company: Company(id: 0, name: '', code: ''),
           position: Position(
-              id: dto.staff?.position.id ?? 0,
-              name: dto.staff?.position.name ?? ''),
+              id: dto.staff?.position?.id ?? 0,
+              name: dto.staff?.position?.name ?? ''),
         ),
         machine: Machine(
             id: 0,
@@ -473,7 +609,6 @@ class DispatcherAnalyticsCubit extends Cubit<DispatcherAnalyticsState> {
             count: dto.batch.count,
             code: dto.batch.code,
             technology: dto.batch.technology,
-
             order: Order(
                 id: dto.batch.order?.id ?? 0,
                 number: dto.batch.order?.number ?? '',

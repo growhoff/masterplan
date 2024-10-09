@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_plan/presentation/pages/dispatcher/dispatcher_analytics_page/dispatcher_analytics_page_2.dart';
 import 'package:master_plan/presentation/pages/dispatcher/orders_page/orders_page.dart';
 import 'package:master_plan/presentation/pages/dispatcher/queue_stages_page/queue_stages_page.dart';
 import 'package:master_plan/presentation/pages/dispatcher/ready_orders_page/ready_orders_page.dart';

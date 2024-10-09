@@ -70,8 +70,8 @@ class ConvertDtoModel {
     );
   }
 
-  static Position convertToPosition(PositionDTO dto){
-    return Position(id: dto.id, name: dto.name);
+  static Position convertToPosition(PositionDTO? dto){
+    return Position(id: dto?.id ?? 0, name: dto?.name ?? '');
   }
 
   static Company convertToCompany(CompanyDTO dto){

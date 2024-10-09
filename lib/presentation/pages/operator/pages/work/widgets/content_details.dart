@@ -56,6 +56,7 @@ class ContentDetail extends StatelessWidget {
             ),
 
             const Time(true),
+            const SizedBox(height: 16),
             Image.asset('assets/images/operator/notDetails.jpg', width: 300),
 
             const SizedBox(height: 8),
@@ -71,10 +72,10 @@ class ContentDetail extends StatelessWidget {
                       String? comment = '';
                       value = await Navigator.push(context, MaterialPageRoute(builder: (context) => StatusPage(statusBtn, true)));
                       if (value != null){
-                        if (statusBtn != value && context.mounted) {comment = await showDialog<String>(context: context,builder: (BuildContext context) => DialogInputComment(operation!.list.length));}
+                        if (statusBtn != value && context.mounted) {comment = await showDialog<String>(context: context,builder: (BuildContext context) => DialogInputComment(operation == null ? 0 : operation.list.length));}
                         else{comment = '-';}
                         if (comment != ''){
-                          if (context.mounted) await context.read<CubitWork>().setMonitor(value, comment!, statusBtn != value, operation!.idPath);
+                          if (context.mounted) await context.read<CubitWork>().setMonitor(value, comment!, statusBtn != value, operation == null ? -1 : operation.idPath);
                           if (context.mounted) context.read<CubitTimer>().refreshAndStartStop(astivePage, statusBtn != value);
                         }
                       }

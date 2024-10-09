@@ -16,7 +16,7 @@ class ElevatedButtonCastom extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            FittedBox(child: Image.asset(assets, height: 70,  fit: BoxFit.contain)),//width: 70,
+            Image.asset(assets, height: 70,  fit: BoxFit.contain),//width: 70,
             Card(
               color: isActive ? color: Colors.black26,
               child: Container(

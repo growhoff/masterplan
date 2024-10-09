@@ -51,7 +51,7 @@ class StateMain extends Equatable {
   final bool isSaveOrder;
 
   const StateMain({
-    this.version = 'v2.7.14',
+    this.version = 'v2.7.16',
     this.user,
     this.unitId,
     this.staff,

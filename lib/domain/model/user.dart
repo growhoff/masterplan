@@ -57,6 +57,6 @@ class User {
         unit: unit,
         area: area,
         photo: dto.photo,
-        position: Position(id: dto.position.id, name: dto.position.name));
+        position: Position(id: dto.position?.id ?? 0, name: dto.position?.name ?? ''));
   }
 }

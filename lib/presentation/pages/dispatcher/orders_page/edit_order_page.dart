@@ -289,8 +289,26 @@ class _EditOrderPageViewState extends State<EditOrderPageView> {
                                 EdgeInsets.symmetric(
                                     vertical: 10, horizontal: 20))),
                         onPressed: () async {
-                          await context.read<OrdersCubit>().editOrder(widget.order);
-                          Navigator.pop(context, true);
+                          await context
+                                  .read<OrdersCubit>()
+                                  .editOrder(widget.order)
+                              ? (Navigator.pop(context, true))
+                              : (showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                        alignment: Alignment.centerRight,
+                                        title: Text(
+                                            'заказ с таким номером уже существует'),
+                                        content: SimpleDialogOption(
+                                          child: Text(
+                                            'ОК',
+                                            style: TextStyle(fontSize: 18),
+                                          ),
+                                          onPressed: () =>
+                                              Navigator.pop(context, true),
+                                        ),
+                                      )));
+                          ;
                         },
                         child: Text(
                           'редактировать',

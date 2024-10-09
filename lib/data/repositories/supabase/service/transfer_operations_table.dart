@@ -89,12 +89,20 @@ class TransferOperationsTable extends SupabaseTable {
     return table.select('*');
   }
 
+  Future<List<Map<String, dynamic>>> selectByAreasIdsList(
+      {required List<int> areasIdsList}) {
+    return table
+        .select('*,z_operator_operations!inner(*)')
+        .inFilter('z_operator_operations.area_id', areasIdsList);
+  }
+
   Future<List<Map<String, dynamic>>> selectByOperatorOperationsIdsList(
       List<int> operatorOperationsIdsList) async {
     return await table
         .select('*, z_transfer(*)')
         .inFilter('operator_operation_id', operatorOperationsIdsList)
-        .order('operator_operation_id', ascending: true).order('id', ascending: true);
+        .order('operator_operation_id', ascending: true)
+        .order('id', ascending: true);
   }
 
   Future<List<Map<String, dynamic>>> selectId(int id) {

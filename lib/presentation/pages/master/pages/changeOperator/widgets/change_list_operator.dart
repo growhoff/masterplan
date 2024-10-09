@@ -7,8 +7,15 @@ class ChangeListOperator extends StatelessWidget {
   final List<ShiftsMachineActive> list;
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: list.map((element) => ItemMachineChange(element)).toList(),
-    );
+    return ListView.builder(
+      shrinkWrap: true,
+      controller: ScrollController(),
+      itemCount: list.length,
+      itemBuilder: (context, index) => ItemMachineChange(list[index], index),
+      );
+    
+    // Column(
+    //   children: list.map((element) => ItemMachineChange(element)).toList(),
+    // );
   }
 }

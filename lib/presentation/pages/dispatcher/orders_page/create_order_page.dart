@@ -35,261 +35,283 @@ class _AddOrderPageViewState extends State<AddOrderPageView> {
         ),
         body: BlocBuilder<OrdersCubit, OrdersState>(
           builder: (context, state) {
-            return SingleChildScrollView(
-              child: Container(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                child: Column(
-                  children: [
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Container(
-                      alignment: Alignment.center,
-                      child: Row(
+            if (state.status == OrdersStatus.success) {
+              return SingleChildScrollView(
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        alignment: Alignment.center,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Flexible(
+                              child: Text(
+                                softWrap: true,
+                                textAlign: TextAlign.center,
+                                'номер',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            SizedBox(
+                              width: 150,
+                              child: TextField(
+                                controller: context
+                                    .read<OrdersCubit>()
+                                    .numberController,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 40,
+                      ),
+                      Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const Flexible(
-                            child: Text(
-                              softWrap: true,
-                              textAlign: TextAlign.center,
-                              'номер',
-                              style: TextStyle(fontSize: 20),
-                            ),
-                          ),
+                              child: Text(
+                            'дата получения',
+                            textAlign: TextAlign.center,
+                            softWrap: true,
+                            style: TextStyle(fontSize: 20),
+                          )),
                           const SizedBox(
                             width: 20,
                           ),
-                          SizedBox(
-                            width: 150,
-                            child: TextField(
-                              controller:
-                                  context.read<OrdersCubit>().numberController,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 40,
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Flexible(
-                            child: Text(
-                          'дата получения',
-                          textAlign: TextAlign.center,
-                          softWrap: true,
-                          style: TextStyle(fontSize: 20),
-                        )),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        GestureDetector(
-                          onTap: () async {
-                            var pickedDate = await showDatePicker(
-                                context: context,
-                                firstDate: DateTime(2024),
-                                lastDate: DateTime.now());
-                            setState(() {
-                              if (pickedDate != null) {
-                                context.read<OrdersCubit>().receiptDate =
-                                    pickedDate;
-                              }
-                            });
-                          },
-                          child: Container(
-                              padding: EdgeInsets.all(10),
-                              width: 150,
-                              decoration: BoxDecoration(
-                                  color: Colors.grey[350],
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.withOpacity(0.5),
-                                      spreadRadius: 2,
-                                      blurRadius: 7,
-                                      offset: Offset(
-                                          4, 4), // changes position of shadow
+                          GestureDetector(
+                            onTap: () async {
+                              var pickedDate = await showDatePicker(
+                                  context: context,
+                                  firstDate: DateTime(2024),
+                                  lastDate: DateTime.now());
+                              setState(() {
+                                if (pickedDate != null) {
+                                  context.read<OrdersCubit>().receiptDate =
+                                      pickedDate;
+                                }
+                              });
+                            },
+                            child: Container(
+                                padding: EdgeInsets.all(10),
+                                width: 150,
+                                decoration: BoxDecoration(
+                                    color: Colors.grey[350],
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.5),
+                                        spreadRadius: 2,
+                                        blurRadius: 7,
+                                        offset: Offset(
+                                            4, 4), // changes position of shadow
+                                      ),
+                                    ],
+                                    borderRadius: BorderRadius.circular(8)),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.calendar_month_rounded),
+                                    const SizedBox(
+                                      width: 15,
                                     ),
-                                  ],
-                                  borderRadius: BorderRadius.circular(8)),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.calendar_month_rounded),
-                                  const SizedBox(
-                                    width: 15,
-                                  ),
-                                  Text(
-                                    '${context.read<OrdersCubit>().receiptDate.day}.${context.read<OrdersCubit>().receiptDate.month}.${context.read<OrdersCubit>().receiptDate.year}',
-                                    style: TextStyle(fontSize: 18),
-                                  )
-                                ],
-                              )),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 40,
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Flexible(
-                            child: Text(
-                          'планируемая дата завершения',
-                          textAlign: TextAlign.center,
-                          softWrap: true,
-                          style: TextStyle(fontSize: 20),
-                        )),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        GestureDetector(
-                          onTap: () async {
-                            var pickedDate = await showDatePicker(
-                                context: context,
-                                firstDate: DateTime(2024),
-                                lastDate: DateTime(2100));
-                            setState(() {
-                              if (pickedDate != null) {
-                                context
-                                    .read<OrdersCubit>()
-                                    .requiredCompletionDate = pickedDate;
-                              }
-                            });
-                          },
-                          child: Container(
-                              padding: EdgeInsets.all(10),
-                              width: 150,
-                              decoration: BoxDecoration(
-                                  color: Colors.grey[350],
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.withOpacity(0.5),
-                                      spreadRadius: 2,
-                                      blurRadius: 7,
-                                      offset: Offset(
-                                          4, 4), // changes position of shadow
-                                    ),
-                                  ],
-                                  borderRadius: BorderRadius.circular(8)),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.calendar_month_rounded),
-                                  const SizedBox(
-                                    width: 13,
-                                  ),
-                                  FittedBox(
-                                    fit: BoxFit.fill,
-                                    child: Text(
-                                      softWrap: true,
-                                      '${context.read<OrdersCubit>().requiredCompletionDate.day}.${context.read<OrdersCubit>().requiredCompletionDate.month}.${context.read<OrdersCubit>().requiredCompletionDate.year}',
+                                    Text(
+                                      '${context.read<OrdersCubit>().receiptDate.day}.${context.read<OrdersCubit>().receiptDate.month}.${context.read<OrdersCubit>().receiptDate.year}',
                                       style: TextStyle(fontSize: 18),
+                                    )
+                                  ],
+                                )),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 40,
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Flexible(
+                              child: Text(
+                            'планируемая дата завершения',
+                            textAlign: TextAlign.center,
+                            softWrap: true,
+                            style: TextStyle(fontSize: 20),
+                          )),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          GestureDetector(
+                            onTap: () async {
+                              var pickedDate = await showDatePicker(
+                                  context: context,
+                                  firstDate: DateTime(2024),
+                                  lastDate: DateTime(2100));
+                              setState(() {
+                                if (pickedDate != null) {
+                                  context
+                                      .read<OrdersCubit>()
+                                      .requiredCompletionDate = pickedDate;
+                                }
+                              });
+                            },
+                            child: Container(
+                                padding: EdgeInsets.all(10),
+                                width: 150,
+                                decoration: BoxDecoration(
+                                    color: Colors.grey[350],
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.5),
+                                        spreadRadius: 2,
+                                        blurRadius: 7,
+                                        offset: Offset(
+                                            4, 4), // changes position of shadow
+                                      ),
+                                    ],
+                                    borderRadius: BorderRadius.circular(8)),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.calendar_month_rounded),
+                                    const SizedBox(
+                                      width: 13,
                                     ),
-                                  )
-                                ],
-                              )),
+                                    FittedBox(
+                                      fit: BoxFit.fill,
+                                      child: Text(
+                                        softWrap: true,
+                                        '${context.read<OrdersCubit>().requiredCompletionDate.day}.${context.read<OrdersCubit>().requiredCompletionDate.month}.${context.read<OrdersCubit>().requiredCompletionDate.year}',
+                                        style: TextStyle(fontSize: 18),
+                                      ),
+                                    )
+                                  ],
+                                )),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 40,
+                      ),
+                      Container(
+                        alignment: Alignment.center,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Flexible(
+                              child: Text(
+                                softWrap: true,
+                                textAlign: TextAlign.center,
+                                'заказчик',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            SizedBox(
+                              width: 150,
+                              child: TextField(
+                                controller: context
+                                    .read<OrdersCubit>()
+                                    .customerController,
+                              ),
+                            )
+                          ],
                         ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 40,
-                    ),
-                    Container(
-                      alignment: Alignment.center,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Flexible(
-                            child: Text(
-                              softWrap: true,
-                              textAlign: TextAlign.center,
-                              'заказчик',
-                              style: TextStyle(fontSize: 20),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          SizedBox(
-                            width: 150,
-                            child: TextField(
-                              controller:
-                              context.read<OrdersCubit>().customerController,
-                            ),
-                          )
-                        ],
                       ),
-                    ),  const SizedBox(
-                      height: 40,
-                    ),
-                    Container(
-                      alignment: Alignment.center,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Flexible(
-                            child: Text(
-                              softWrap: true,
-                              textAlign: TextAlign.center,
-                              'приоритет',
-                              style: TextStyle(fontSize: 20),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          Center(
-                            child: DropdownButton(
-                                isDense: true,
-                                value: context
-                                    .read<OrdersCubit>()
-                                    .selectedPriority,
-                                items: context
-                                    .read<OrdersCubit>()
-                                    .prioritiesList
-                                    .map((int priority) => DropdownMenuItem(
-                                        value: priority,
-                                        child: PriorityCircle(
-                                          priority,
-                                          size: 20,
-                                        )))
-                                    .toList(),
-                                onChanged: (priority) => setState(() {
-                                      context
-                                          .read<OrdersCubit>()
-                                          .selectedPriority = priority ?? 1;
-                                    })),
-                          )
-                        ],
+                      const SizedBox(
+                        height: 40,
                       ),
-                    ),
-
-
-                    const SizedBox(
-                      height: 40,
-                    ),
-                    ElevatedButton(
-                        style: ButtonStyle(
-                            padding: WidgetStateProperty.all(
-                                EdgeInsets.symmetric(
-                                    vertical: 10, horizontal: 20))),
-                        onPressed: () async{
-                          await context.read<OrdersCubit>().createOrder();
-                          Navigator.pop(context, true);
-                        },
-                        child: Text(
-                          'создать',
-                          style: TextStyle(fontSize: 20),
-                        ))
-                  ],
+                      Container(
+                        alignment: Alignment.center,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Flexible(
+                              child: Text(
+                                softWrap: true,
+                                textAlign: TextAlign.center,
+                                'приоритет',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            Center(
+                              child: DropdownButton(
+                                  isDense: true,
+                                  value: context
+                                      .read<OrdersCubit>()
+                                      .selectedPriority,
+                                  items: context
+                                      .read<OrdersCubit>()
+                                      .prioritiesList
+                                      .map((int priority) => DropdownMenuItem(
+                                          value: priority,
+                                          child: PriorityCircle(
+                                            priority,
+                                            size: 20,
+                                          )))
+                                      .toList(),
+                                  onChanged: (priority) => setState(() {
+                                        context
+                                            .read<OrdersCubit>()
+                                            .selectedPriority = priority ?? 1;
+                                      })),
+                            )
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 40,
+                      ),
+                      ElevatedButton(
+                          style: ButtonStyle(
+                              padding: WidgetStateProperty.all(
+                                  EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 20))),
+                          onPressed: () async {
+                            await context.read<OrdersCubit>().createOrder()
+                                ? (Navigator.pop(context, true))
+                                : (showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                          alignment: Alignment.centerRight,
+                                          title: Text(
+                                              'заказ с таким номером уже существует'),
+                                          content: SimpleDialogOption(
+                                            child: Text(
+                                              'ОК',
+                                              style: TextStyle(fontSize: 18),
+                                            ),
+                                            onPressed: () =>
+                                                Navigator.pop(context, true),
+                                          ),
+                                        )));
+                          },
+                          child: Text(
+                            'создать',
+                            style: TextStyle(fontSize: 20),
+                          ))
+                    ],
+                  ),
                 ),
-              ),
-            );
+              );
+            } else {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
           },
         ));
   }

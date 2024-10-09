@@ -37,52 +37,58 @@ class _DispatcherDistributionPageViewState
   Widget build(BuildContext context) {
     return BlocBuilder<DispatcherDistributionCubit,
         DispatcherDistributionState>(builder: (context, state) {
-      return Stack(
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                const SizedBox(height: 10),
-                Expanded(
-                    child: state.status == DispatcherDistributionStatus.success
-                        ? ListView.separated(
-                            addAutomaticKeepAlives: false,
-                            physics: AlwaysScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) => Card(
-                                  child: ExpansionTile(
-                                    maintainState: true,
-                                    tilePadding: EdgeInsets.all(0),
-                                    title: DispatcherDistributionTitleItem(
-                                        state.distributionStagesList[index]),
-                                    childrenPadding:
-                                        EdgeInsets.fromLTRB(20, 0, 20, 10),
-                                    expandedAlignment: Alignment.topLeft,
-                                    children: [
-                                      DispatcherDistributionBodyItem(
-                                        cubit: context.read<DispatcherDistributionCubit>(),
-                                        stage:
-                                            state.distributionStagesList[index],
-                                      )
-                                    ],
+      if (state.status == DispatcherDistributionStatus.success) {
+        return Stack(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 10),
+                  Expanded(
+                      child: state.status ==
+                              DispatcherDistributionStatus.success
+                          ? ListView.separated(
+                              addAutomaticKeepAlives: false,
+                              physics: AlwaysScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) => Card(
+                                    child: ExpansionTile(
+                                      maintainState: true,
+                                      tilePadding: EdgeInsets.all(0),
+                                      title: DispatcherDistributionTitleItem(
+                                          state.distributionStagesList[index]),
+                                      childrenPadding:
+                                          EdgeInsets.fromLTRB(20, 0, 20, 10),
+                                      expandedAlignment: Alignment.topLeft,
+                                      children: [
+                                        DispatcherDistributionBodyItem(
+                                          cubit: context.read<
+                                              DispatcherDistributionCubit>(),
+                                          stage: state
+                                              .distributionStagesList[index],
+                                        )
+                                      ],
+                                    ),
                                   ),
-                                ),
-                            separatorBuilder: (ctx, i) => SizedBox(
-                                  height: 5,
-                                ),
-                            itemCount: state.distributionStagesList.length)
-                        : Center(
-                            child: CircularProgressIndicator(),
-                          )),
-
-              ],
+                              separatorBuilder: (ctx, i) => SizedBox(
+                                    height: 5,
+                                  ),
+                              itemCount: state.distributionStagesList.length)
+                          : Center(
+                              child: CircularProgressIndicator(),
+                            )),
+                ],
+              ),
             ),
-          ),
-
-        ],
-      );
+          ],
+        );
+      } else {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      }
     });
   }
 }

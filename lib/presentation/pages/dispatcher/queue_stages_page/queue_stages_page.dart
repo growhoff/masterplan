@@ -1,10 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:master_plan/domain/usecase/chief_unit_service.dart';
-import 'package:master_plan/presentation/pages/chief/stages_in_unit_page/stages_in_unit_cubit/stages_in_unit_cubit.dart';
-import 'package:master_plan/presentation/pages/chief/stages_in_unit_page/widgets/stages_in_unit_title_item.dart';
 import 'package:master_plan/presentation/pages/dispatcher/queue_stages_page/queue_stages_cubit/queue_stages_cubit.dart';
 import 'package:master_plan/presentation/pages/dispatcher/queue_stages_page/widgets/queue_stage_item.dart';
 
@@ -141,7 +137,7 @@ class _QueueStagesPageViewState extends State<QueueStagesPageView> {
                         itemBuilder: (context, index) => QueueStageItem(
                               state.stagesList[index],
                               setState: () => setState(() {
-                                Navigator.pop(context);
+                               // Navigator.pop(context);
                                 context.read<QueueStagesCubit>().fetchStages();
                               }),
                             ),

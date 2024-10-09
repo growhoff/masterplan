@@ -14,7 +14,8 @@ class StaffDTO extends Dto {
   final CompanyDTO? company;
   final String? photo;
   final int positionId;
-  final PositionDTO position;
+  final PositionDTO? position;
+
   StaffDTO({
     required this.id,
     required this.login,
@@ -24,7 +25,7 @@ class StaffDTO extends Dto {
     this.companyId,
     this.company,
     required this.positionId,
-    required this.position,
+    this.position,
   });
 
   Map<String, dynamic> toMap() {
@@ -37,7 +38,7 @@ class StaffDTO extends Dto {
       'company': company?.toMap(),
       'photo': photo,
       'position_id': positionId,
-      'position': position.toMap(),
+      'position': position?.toMap(),
     };
   }
 
@@ -48,14 +49,19 @@ class StaffDTO extends Dto {
       password: map['password'] as String,
       fio: map['fio'] as String,
       companyId: map['company_id'] != null ? map['company_id'] as int : null,
-      company: map['z_company'] != null ? CompanyDTO.fromMap(map['z_company'] as Map<String,dynamic>) : null,
+      company: map['z_company'] != null
+          ? CompanyDTO.fromMap(map['z_company'] as Map<String, dynamic>)
+          : null,
       photo: map['photo'] != null ? map['photo'] as String : null,
       positionId: map['position_id'] as int,
-      position: PositionDTO.fromMap(map['z_position'] as Map<String,dynamic>),
+      position: map['z_position'] != null
+          ? PositionDTO.fromMap(map['z_position'] as Map<String, dynamic>)
+          : null,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory StaffDTO.fromJson(String source) => StaffDTO.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory StaffDTO.fromJson(String source) =>
+      StaffDTO.fromMap(json.decode(source) as Map<String, dynamic>);
 }

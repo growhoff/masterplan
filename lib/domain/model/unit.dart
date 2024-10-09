@@ -15,7 +15,7 @@ class Unit {
   final int? operatorsQuantity;
   final int? supportStaffQuantity;
 
-  Unit({
+  const Unit({
     required this.id,
     this.name,
     this.number,
@@ -28,7 +28,7 @@ class Unit {
     this.supportStaffQuantity,
   });
 
-  static final empty = Unit(
+  static const empty = Unit(
       id: 0,
       companyId: 0,
       areasQuantity: 0,

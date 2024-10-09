@@ -153,6 +153,7 @@ class BatchesCubit extends Cubit<BatchesState> {
   }
 
   Future<void> fetchBatches() async {
+    emit(state.copyWith(status: BatchesStatus.loading));
     List<BatchArchive> batchesList = [];
 
     try {
@@ -176,11 +177,13 @@ class BatchesCubit extends Cubit<BatchesState> {
         status: BatchesStatus.success,
       ));
     } catch (e) {
+
       emit(state.copyWith(status: BatchesStatus.failure));
     }
   }
 
   Future<void> addBatch({int? orderId}) async {
+    emit(state.copyWith(status: BatchesStatus.loading));
     final int batchNumber = await _batchTable
             .fetchBatchesInOrderQuantity(orderId ?? order?.id ?? 0) +
         1;
@@ -244,6 +247,8 @@ class BatchesCubit extends Cubit<BatchesState> {
       batchId: batchId,
       quantity: int.parse(quantityController.text),
     );
+
+    emit(state.copyWith(status: BatchesStatus.success));
   }
 
   Future<void> editBatch(Batch batch) async {
@@ -651,19 +656,19 @@ class BatchesCubit extends Cubit<BatchesState> {
         print(stageIdsStatusesList);
 
         if (stageIdsStatusesList.contains(1)) {
-          stageInBatchModel.status = 'на распределении';
+          stageInBatchModel.status = Status(id: 1, name: 'на распределении');
         } else {
           if (stageIdsStatusesList.contains(2)) {
-            stageInBatchModel.status = 'выполняется';
+            stageInBatchModel.status = Status(id: 2, name: 'выполняется');
           } else {
             if (stageIdsStatusesList.contains(3)) {
-              stageInBatchModel.status = 'готов';
+              stageInBatchModel.status = Status(id: 3, name: 'готов');
             } else {
               if (stageIdsStatusesList.contains(4)) {
-                stageInBatchModel.status = 'выгружен';
+                stageInBatchModel.status = Status(id: 4, name: 'выгружен');
               } else {
                 if (stageIdsStatusesList.contains(6)) {
-                  stageInBatchModel.status = 'к выполнению';
+                  stageInBatchModel.status = Status(id: 6, name: 'к выполнению');
                 }
               }
             }

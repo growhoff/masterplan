@@ -11,7 +11,6 @@ import 'package:master_plan/data/repositories/supabase/service/unit_table.dart';
 import 'package:master_plan/domain/model/position_staff.dart';
 import 'package:master_plan/domain/model/unit.dart';
 
-import '../../../../../../data/repositories/supabase/dto/company_dto.dart';
 import '../../../../../../data/repositories/supabase/dto/position_dto.dart';
 import '../../../../../../data/repositories/supabase/dto/position_staff_dto.dart';
 import '../../../../../../data/repositories/supabase/dto/staff_dto.dart';
@@ -209,7 +208,9 @@ class ChiefsListCubit extends Cubit<ChiefsListState> {
       positionId = selectedPositionsList.contains('Начальник') ? 2 : 3;
     }
 
-    await _staffTable.update(
+    print('selectedPositionsList : ${selectedPositionsList}');
+
+    await _staffTable.updateWithPositionId(
         positionStaff.staffId,
         StaffDTO(
           fio: fioController.text,
@@ -231,6 +232,7 @@ class ChiefsListCubit extends Cubit<ChiefsListState> {
     }
 
     for (int i = 0; i < selectedPositionsList.length; i++) {
+      print('area id : ${areasForPositionsList[i].id}');
       await _positionStaffTable.insertChief(PositionStaffDTO(
           id: 0,
           positionId: selectedPositionsList[i] == 'Начальник' ? 2 : 3,
@@ -243,7 +245,9 @@ class ChiefsListCubit extends Cubit<ChiefsListState> {
               position: PositionDTO(id: 0, name: ''),
               positionId: 0,
               fio: ''),
-          areaId: areasForPositionsList[i].id,
+          areaId: areasForPositionsList[i].id == 0
+              ? null
+              : areasForPositionsList[i].id,
           unitId: selectedUnit.id,
           area: AreaDTO(id: 0, name: '', number: '', unitId: 0)));
     }

@@ -42,6 +42,14 @@ class OrderTable extends SupabaseTable {
         .order('priority', ascending: true);
   }
 
+  Future<List<Map<String, dynamic>>> selectByNumber(String number) {
+    return table
+        .select('*, z_order_status(*)')
+        .eq('number', number)
+        .eq('company_id', _companyId)
+        .order('priority', ascending: true);
+  }
+
   Future<List<Map<String, dynamic>>> selectReadyOrders() {
     return table
         .select('*, z_order_status(*)')

@@ -66,6 +66,18 @@ class StaffTable extends SupabaseTable {
     }
   }
 
+
+  Future<void> updateWithPositionId(int id, Dto dto) async {
+    if (dto is StaffDTO) {
+      await table.update({
+        'login': dto.login,
+        'password': dto.password,
+        'fio': dto.fio,
+        'position_id': dto.positionId
+      }).eq('id', id);
+    }
+  }
+
   stream() {
     return table.stream(primaryKey: ['id']);
   }

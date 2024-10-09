@@ -125,6 +125,7 @@ class CubitDistributionDetails extends Cubit<StateDistributionDetails> {
   }
 
   void getFilterList(String filter){
+    // emit(state.copyWith(filterListOper: [], timeWork:0));
     List<DistribItemDetails> newList = FilterList.getList(state.pathListOper, filter);
     int timeWork = getTimeWork(newList);
     emit(state.copyWith(filterListOper: newList, timeWork:timeWork));

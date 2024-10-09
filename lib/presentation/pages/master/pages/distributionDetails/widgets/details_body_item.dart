@@ -15,6 +15,8 @@ class BodyItem extends StatelessWidget {
   final DistribItemDetails oper;
   @override
   Widget build(BuildContext context) {
+    // TextEditingController controllerCount = TextEditingController(text: '${oper.setCount}');
+    // TextEditingController controllerOptPath = TextEditingController(text: '${oper.setOptPart}'); 
     return Card(
       color: color,
       child: Padding(
@@ -55,8 +57,12 @@ class BodyItem extends StatelessWidget {
                 Expanded(child: SizedBox(
                   width: 80, 
                   child: TextFormField(
-                    initialValue: '${oper.setCount}',
-                    onChanged: (value) => context.read<CubitDistributionDetails>().setCount(index, value),
+                    // controller: controllerCount,  //TextEditingController(text: '${oper.setCount}'),
+                    initialValue: '${oper.listOperat.length}',
+                    onChanged: (value) {
+                      context.read<CubitDistributionDetails>().setCount(index, value);
+                      // controllerCount.text = value;
+                    },
                 )))
               ],
             ),
@@ -71,8 +77,12 @@ class BodyItem extends StatelessWidget {
                   width: 80, 
                   child: TextFormField(
                     initialValue: '${oper.setOptPart}',
+                    // controller: controllerOptPath,
                     readOnly: readOnly,
-                    onChanged: (value) => context.read<CubitDistributionDetails>().setOptPath(index, value),
+                    onChanged: (value) {
+                      context.read<CubitDistributionDetails>().setOptPath(index, value);
+                      // controllerOptPath.text = value;
+                    },
                 )))
               ],
             ) : Container(),

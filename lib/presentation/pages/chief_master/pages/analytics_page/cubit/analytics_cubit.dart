@@ -2,12 +2,10 @@ import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:master_plan/data/repositories/local/service/excel_service.dart';
 import 'package:master_plan/data/repositories/supabase/dto/area_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/operator_operations_dto.dart';
 
-// import 'package:master_plan/data/repositories/supabase/dto/staff_dto.dart';
 import 'package:master_plan/data/repositories/supabase/dto/stage_dto.dart';
 import 'package:master_plan/data/repositories/supabase/service/operator_operations_table.dart';
 import 'package:master_plan/data/repositories/supabase/service/position_staff_table.dart';
@@ -16,10 +14,8 @@ import 'package:master_plan/domain/model/company.dart';
 import 'package:master_plan/domain/model/machine.dart';
 import 'package:master_plan/domain/model/position.dart';
 
-// import 'package:master_plan/domain/model/staff.dart';
 import 'package:master_plan/domain/model/status.dart';
 import 'package:master_plan/domain/model/user.dart';
-import 'package:master_plan/domain/usecase/time_converter.dart';
 import 'package:master_plan/presentation/pages/master/pages/analytics_page/analytics_operation_model.dart';
 import 'package:open_filex/open_filex.dart';
 
@@ -518,8 +514,8 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
           photo: '',
           company: Company(id: 0, name: '', code: ''),
           position: Position(
-              id: dto.staff?.position.id ?? 0,
-              name: dto.staff?.position.name ?? ''),
+              id: dto.staff?.position?.id ?? 0,
+              name: dto.staff?.position?.name ?? ''),
         ),
         machine: Machine(
             id: 0,

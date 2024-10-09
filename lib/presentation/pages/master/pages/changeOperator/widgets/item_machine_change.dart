@@ -8,8 +8,9 @@ import 'package:master_plan/presentation/pages/master/pages/changeOperator/bloc/
 import 'package:master_plan/presentation/pages/master/pages/choosingOperator/choosing_operator_page.dart';
 
 class ItemMachineChange extends StatelessWidget {
-  const ItemMachineChange(this.machineShif, {super.key});
+  const ItemMachineChange(this.machineShif, this.index, {super.key});
   final ShiftsMachineActive machineShif;
+  final int index;
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -54,7 +55,7 @@ class ItemMachineChange extends StatelessWidget {
                                 child: IconButton(
                                     onPressed: () => context
                                         .read<CubitChangeOperator>()
-                                        .deleteShifts(machineShif.changeItem!.id),
+                                        .deleteShifts(machineShif.changeItem!.id, index),
                                     icon: const Icon(Icons.delete)))
                           ],
                         ),

@@ -39,7 +39,7 @@ class Staff {
         login: dto.login,
         fio: dto.fio,
         photo: dto.photo,
-        position: Position(id: dto.position.id, name: dto.position.name),
+        position: Position(id: dto.position?.id ?? 0, name: dto.position?.name ?? ''),
         // user: User.fromDTO(dto.user),
         // userId: dto.userId,
         password: dto.password);
