@@ -47,9 +47,41 @@ class DistributionStageRepository {
 
   Future<int> fetchQuantityOfUploadedDistributionStagesByBatchAndStageId(
       {required int batchId, required int stageId}) async {
-    final fetchedList = await _distributionStageTable.selectNotUploadedByBatchIdAndStageId(
-        batchId: batchId, stageId: stageId);
+    final fetchedList =
+        await _distributionStageTable.selectNotUploadedByBatchIdAndStageId(
+            batchId: batchId, stageId: stageId);
 
     return fetchedList.length;
+  }
+
+  Future<List<DistributionStage>> fetchDistributionStagesByBatchesList(
+      List<int> batchesIdsList) async {
+    List<DistributionStageDto> dtosList = [];
+
+    final fetchedDistributionStagesList = await _distributionStageTable
+        .selectByBatchesIdsListOrderedByChiefBatchAndStageId(batchesIdsList);
+
+    for (final fetchedStage in fetchedDistributionStagesList) {
+      final distributionStageDTO = DistributionStageDto.fromMap(fetchedStage);
+      dtosList.add(distributionStageDTO);
+    }
+    return _distributionStageMapper.listFromDto(dtosList);
+  }
+
+  Future<List<DistributionStage>>
+      fetchDistributionStagesByBatchesAndStagesIdsList(
+          {required List<int> batchesIdsList,
+          required List<int> stagesIdsList}) async {
+    List<DistributionStageDto> dtosList = [];
+
+    final fetchedDistributionStagesList =
+        await _distributionStageTable.selectByBatchesAndStagesIdsList(
+            batchesIdsList: batchesIdsList, stagesIdsList: stagesIdsList);
+
+    for (final fetchedStage in fetchedDistributionStagesList) {
+      final distributionStageDTO = DistributionStageDto.fromMap(fetchedStage);
+      dtosList.add(distributionStageDTO);
+    }
+    return _distributionStageMapper.listFromDto(dtosList);
   }
 }

@@ -101,6 +101,31 @@ class DistributionStageTable extends SupabaseTable {
         .order('id', ascending: true);
   }
 
+  Future<List<Map<String, dynamic>>>
+      selectByBatchesIdsListOrderedByChiefBatchAndStageId(
+          List<int> batchesIdsList) async {
+    return await _table
+        .select(
+            '*, z_chief_batch!inner(*, z_batch!inner(*, z_batch_archive(*), z_order(*))), z_stage(*), z_stage_status(*)')
+        .eq('z_chief_batch.z_batch.company_id', _companyId)
+        .inFilter('z_chief_batch.batch_id', batchesIdsList)
+        .order('chief_batch_id', ascending: true)
+        .order('stage_id', ascending: true);
+  }
+
+  Future<List<Map<String, dynamic>>> selectByBatchesAndStagesIdsList(
+      {required List<int> batchesIdsList,
+      required List<int> stagesIdsList}) async {
+    return await _table
+        .select(
+            '*, z_chief_batch!inner(*, z_batch!inner(*, z_batch_archive(*), z_order(*))), z_stage(*), z_stage_status(*)')
+        .eq('z_chief_batch.z_batch.company_id', _companyId)
+        .inFilter('z_chief_batch.batch_id', batchesIdsList)
+        .inFilter('z_chief_batch.batch_id', stagesIdsList)
+        .order('chief_batch_id', ascending: true)
+        .order('stage_id', ascending: true);
+  }
+
   Future<List<Map<String, dynamic>>> select691() async {
     return await _table
         .select(
@@ -186,15 +211,15 @@ class DistributionStageTable extends SupabaseTable {
         .order('id', ascending: true);
   }
 
-
   Future<List<Map<String, dynamic>>> selectNotUploadedByBatchIdAndStageId(
       {required int batchId, required int stageId}) async {
     return await _table
         .select(
-        '*, z_chief_batch!inner(*, z_batch!inner(*, z_batch_archive(*))), z_stage(*)')
+            '*, z_chief_batch!inner(*, z_batch!inner(*, z_batch_archive(*))), z_stage(*)')
         .eq('z_chief_batch.z_batch.company_id', _companyId)
         .eq('stage_id', stageId)
-        .eq('z_chief_batch.batch_id', batchId).neq('status_id', 4)
+        .eq('z_chief_batch.batch_id', batchId)
+        .neq('status_id', 4)
         .order('id', ascending: true);
   }
 
@@ -275,8 +300,6 @@ class DistributionStageTable extends SupabaseTable {
   Future<void> updateUnit(int id, int unitId) async {
     await _table.update({'unit_id': unitId}).eq('id', id);
   }
-
-
 
   Future<void> bulkUpdate(List<int> idsList) async {
     await _table.update({'unit_id': 1}).inFilter('id', idsList);

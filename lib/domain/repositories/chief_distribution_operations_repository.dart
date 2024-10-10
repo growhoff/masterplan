@@ -43,11 +43,27 @@ class ChiefDistributionOperationsRepository {
     return _chiefDistributionOperationsMapper.listFromDto(dtosList);
   }
 
+  Future<List<ChiefDistributionOperation>> fetchByBatchesIdsList(
+      List<int> batchIdsList) async {
+    final fetchedList = await _chiefDistributionOperationsTable
+        .selectByBatchesIdsLists(batchesIdsList: batchIdsList);
+
+    List<ChiefDistributionOperationsDTO> dtosList = [];
+
+    for (var fetchedDistributionOperation in fetchedList) {
+      final chiefDistributionOperationDto =
+          ChiefDistributionOperationsDTO.fromMap(fetchedDistributionOperation);
+      dtosList.add(chiefDistributionOperationDto);
+    }
+
+    return _chiefDistributionOperationsMapper.listFromDto(dtosList);
+  }
+
   Future<List<ChiefDistributionOperation>> fetchByBathesAndStagesIdsLists({
     required List<int> batchesIdsList,
   }) async {
     final fetchedList = await _chiefDistributionOperationsTable
-        .selectByBatchesIdsLists(batchesIdsList: batchesIdsList);
+        .selectByBatchesIdsListsWithNoZeroQuantity(batchesIdsList: batchesIdsList);
 
     List<ChiefDistributionOperationsDTO> dtosList = [];
 

@@ -122,6 +122,11 @@ class _DistributionOperationsListItemState
                           children: [
                             Expanded(
                               child: TextField(
+                                onChanged: widget.cubit
+                                    .changeDistributionOperationQuantity(
+                                        indexInList: widget.index,
+                                        newQuantity: int.parse(
+                                            _textEditingController.text)),
                                 controller: _textEditingController,
                                 keyboardType: TextInputType.number,
                                 textAlign: TextAlign.center,
@@ -139,11 +144,12 @@ class _DistributionOperationsListItemState
                               child: FittedBox(
                                   fit: BoxFit.fill,
                                   child: IconButton(
-                                      onPressed: () {},
-                                      icon: Image.asset(
-                                          'assets/images/chief/sketch.jpg'), iconSize: 32,)),
+                                    onPressed: () {},
+                                    icon: Image.asset(
+                                        'assets/images/chief/sketch.jpg'),
+                                    iconSize: 32,
+                                  )),
                             ),
-
                             IconButton(
                               onPressed: _selectedArea == null
                                   ? null

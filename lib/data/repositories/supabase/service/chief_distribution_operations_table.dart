@@ -104,6 +104,19 @@ class ChiefDistributionOperationsTable extends SupabaseTable {
   }) async {
     var res = await table
         .select(
+        '*, z_batch:batch_id!inner(*), z_stage:stage_id(*, z_area(*)), z_operation:operation_id(*)')
+        .inFilter('batch_id', batchesIdsList)
+        .order('id', ascending: true);
+
+    return res;
+  }
+
+
+  Future<List<Map<String, dynamic>>> selectByBatchesIdsListsWithNoZeroQuantity({
+    required List<int> batchesIdsList,
+  }) async {
+    var res = await table
+        .select(
             '*, z_batch:batch_id!inner(*), z_stage:stage_id(*, z_area(*)), z_operation:operation_id(*)')
         .inFilter('batch_id', batchesIdsList)
         .neq('quantity', 0)

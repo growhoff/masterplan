@@ -144,11 +144,17 @@ class _DistributionOperationsOfStagePageViewState
                             height: 5,
                           ),
                           itemCount: state.operationsList.length)),
-                  ElevatedButton(onPressed: () {
+                  ElevatedButton(onPressed: () async{
 
 
 
-                    context.read<ChiefDistributionCubit>().distributeAll(
+                    await context.read<ChiefDistributionCubit>().distributeAll(
+                        unitId: widget.chiefDistributionStageModel.unitId);
+
+
+                    context.read<ChiefDistributionCubit>().initOperationsOfStagePage(
+                        batchId: widget.chiefDistributionStageModel.batchId,
+                        stageId: widget.chiefDistributionStageModel.stageId,
                         unitId: widget.chiefDistributionStageModel.unitId);
                   }, child: Text('Передать все'))
                 ],
