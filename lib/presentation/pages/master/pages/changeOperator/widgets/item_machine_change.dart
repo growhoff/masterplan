@@ -1,0 +1,73 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:master_plan/domain/model/shifts_distribution.dart';
+// import 'package:master_plan/domain/model/shifts_machine.dart';
+import 'package:master_plan/domain/model/shifts_machine_active.dart';
+import 'package:master_plan/presentation/pages/master/pages/changeOperator/bloc/cubit.dart';
+import 'package:master_plan/presentation/pages/master/pages/changeOperator/bloc/state.dart';
+import 'package:master_plan/presentation/pages/master/pages/choosingOperator/choosing_operator_page.dart';
+
+class ItemMachineChange extends StatelessWidget {
+  const ItemMachineChange(this.machineShif, this.index, {super.key});
+  final ShiftsMachineActive machineShif;
+  final int index;
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: const Color.fromARGB(255, 233, 233, 233),
+      child: Padding(
+        padding: const EdgeInsets.only(top: 8),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(machineShif.machine.name),
+                Card(child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  child: Text('${machineShif.machine.shiftSchedule!.timeChange}ч'),
+                ),),
+                const SizedBox(width: 2),
+                Card(child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  child: Text('инв.№ ${machineShif.machine.inventoryNumber}'),
+                ),)
+              ],
+            ),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: BlocBuilder<CubitChangeOperator, StateCubitChangeOperator>(
+                  builder: (context, state) {
+                    // ShiftsDistribution? changeItem;
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(machineShif.changeItem != null ? machineShif.changeItem!.user.fio : 'none'),
+                        Row(
+                          children: [
+                            IconButton(
+                                onPressed: () => Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) => ChoosingOperatorPage(machine: machineShif.machine,time: state.days,change: state.change,operatorList: state.operatorList))),
+                                icon: const Icon(Icons.add)),
+                            Visibility(
+                                visible: (machineShif.changeItem != null),
+                                child: IconButton(
+                                    onPressed: () => context
+                                        .read<CubitChangeOperator>()
+                                        .deleteShifts(machineShif.changeItem!.id, index),
+                                    icon: const Icon(Icons.delete)))
+                          ],
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

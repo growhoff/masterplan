@@ -1,0 +1,105 @@
+import 'package:master_plan/data/repositories/supabase/dto/machine_dto.dart';
+import 'package:master_plan/data/repositories/supabase/impliments/imp_dto.dart';
+import 'package:master_plan/data/repositories/supabase/impliments/imp_table.dart';
+import 'package:master_plan/domain/usecase/company_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+class MachineTable extends SupabaseTable {
+  final table = Supabase.instance.client.from('z_machine');
+  final _companyId = CompanyService.instance.companyId ?? 0;
+  final setectTable = '*,z_area!inner(*), z_shift_schedule(*), z_control_machine(*), z_type_machine(*), z_view_machine(*)';
+
+  @override
+  Future<void> delete(int id) {
+    return table.delete().eq('id', id);
+  }
+
+  @override
+  Future<int> insert(Dto dto) async {
+    if (dto is MachineDTO) {
+      var data = await table.insert({
+        'name': dto.name,
+        'inventory_number': dto.inventoryNumber,
+        'area_id': dto.areaId,
+        'shift_schedule_id': dto.shiftScheduleId,
+        'view_id': dto.viewId,
+        'control_id': dto.controlId,
+        'type_machine_id': dto.typeMachineId,
+        'prefix': dto.prefix,
+        'model': dto.model,
+      }).select('id');
+      return data[0]['id'];
+    }
+    return 0;
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> select() {
+    return table.select(setectTable);
+  }
+
+  Future<int> fetchActivatedMachinesByCompanyId() async {
+    var res = await table
+        .select(setectTable)
+        .eq('z_area.company_id', _companyId)
+        .eq('is_activated', true)
+        .count();
+    return res.count;
+  }
+
+  Future<List<Map<String, dynamic>>> selectId(int id) {
+    return table.select(setectTable).eq('id', id);
+  }
+
+  Future<List<Map<String, dynamic>>> selectMachineToArea(int areaId) {
+    return table.select(setectTable).eq('area_id', areaId);
+  }
+
+  Future<List<Map<String, dynamic>>> selectMachineToAreaList(List<int> listAreaId) {
+    return table.select(setectTable).inFilter('area_id', listAreaId).order('name', ascending: true);
+  }
+
+  Future<List<Map<String, dynamic>>> selectByUnitIdList(
+      List<int> unitIdList) async {
+    return await table
+        .select(setectTable)
+        .inFilter('z_area.unit_id', unitIdList);
+  }
+
+  Future<List<Map<String, dynamic>>> selectListId(List<int> listId) {
+    String filters = '';
+    for (var i = 0; i < listId.length; i++) {
+      if (i == (listId.length - 1)) {
+        filters += 'id.eq.${listId[i]}';
+      } else {
+        filters += 'id.eq.${listId[i]},';
+      }
+    }
+    return table.select(setectTable).or(filters);
+  }
+
+  @override
+  Future update(int id, Dto dto) async {
+    if (dto is MachineDTO) {
+      await table.update({
+        'name': dto.name,
+        'inventory_number': dto.inventoryNumber,
+        'area_id': dto.areaId,
+        'shift_schedule_id': dto.shiftScheduleId,
+        'view_id': dto.viewId,
+        'control_id': dto.controlId,
+        'type_machine_id': dto.typeMachineId,
+      }).eq('id', id);
+    }
+  }
+
+  stream() {
+    return table.stream(primaryKey: ['id']);
+  }
+
+  Future<int> fetchMachinesQuantityOnArea({required int areaId}) async {
+    var res =
+    await table.select('id').eq('area_id', areaId).count(CountOption.exact);
+    return res.count;
+  }
+}

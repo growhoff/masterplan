@@ -6,13 +6,13 @@ class Dialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('ошибка'),
-      content: Text('Неверный номер или пароль'),
+      title: const Text('ошибка'),
+      content: const Text('Неверный номер или пароль'),
       actions: [
         TextButton(
           onPressed: (){}, 
           // Navigator.pop(alertDialogContext),
-          child: Text('Ok'),
+          child: const Text('Ok'),
         ),
       ],
     );
